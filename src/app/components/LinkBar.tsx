@@ -45,39 +45,22 @@ const LinkBar = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div
-      className="
-    flex items-center justify-between 
-    bg-gradient-to-r 
-    from-[var(--link-bar-gradient-start)] 
-    via-[var(--link-bar-gradient-mid)] 
-    to-[var(--link-bar-gradient-end)] 
-    h-[28px] px-2
-  "
-    >
+    <div className="flex items-center justify-between bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 backdrop-blur-sm border-b border-white/10 h-[32px] px-3 shadow-lg">
       <div className="flex items-center gap-2 sm:gap-3 md:gap-4 h-full">
         {fullItems.map((item) => (
           <a
             key={item.name}
             href={item.linkUrl}
-            className="
-          flex items-center gap-1 sm:gap-2 
-          bg-[var(--link-bar-full-bg)] 
-          px-1 sm:px-2 md:px-3 
-          h-[20px] rounded shadow 
-          hover:bg-[var(--link-bar-full-hover)] 
-          transition 
-          text-[10px] sm:text-xs md:text-sm lg:text-base
-        "
+            className="flex items-center gap-1 sm:gap-2 bg-white/10 backdrop-blur-sm border border-white/20 px-2 sm:px-3 md:px-4 h-[24px] rounded-full shadow-lg hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:border-blue-400/30 hover:scale-105 transition-all duration-300 text-[10px] sm:text-xs md:text-sm lg:text-base group"
           >
             <Image
               src={item.iconUrl}
               alt={item.name}
               width={12}
               height={12}
-              className="sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px]"
+              className="sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] group-hover:brightness-110 transition-all duration-300"
             />
-            <span className="font-medium text-[var(--link-bar-text)] leading-none hidden sm:inline">
+            <span className="font-medium text-white/90 group-hover:text-white leading-none hidden sm:inline transition-colors duration-300">
               {item.description}
             </span>
           </a>
@@ -89,20 +72,14 @@ const LinkBar = () => {
           <a
             key={item.name}
             href={item.linkUrl}
-            className="
-          flex items-center justify-center 
-          bg-[var(--link-bar-icon-bg)] 
-          rounded-full shadow 
-          hover:scale-110 transition-transform 
-          w-[18px] h-[18px] sm:w-[20px] sm:h-[20px] md:w-[24px] md:h-[24px]
-        "
+            className="flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/20 rounded-full shadow-lg hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:border-blue-400/30 hover:scale-110 transition-all duration-300 w-[20px] h-[20px] sm:w-[22px] sm:h-[22px] md:w-[26px] md:h-[26px] group"
           >
             <Image
               src={item.iconUrl || DEFAULT_ICON_URL}
               alt={item.name}
               width={12}
               height={12}
-              className="sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px]"
+              className="sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] group-hover:brightness-110 transition-all duration-300"
             />
           </a>
         ))}
