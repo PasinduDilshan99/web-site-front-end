@@ -3,6 +3,15 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+    /* link bar */
+  --link-bar-gradient-start: #3b82f6;
+  --link-bar-gradient-mid: #8b5cf6;
+  --link-bar-gradient-end: #ec4899;
+  --link-bar-full-bg: #2563eb;
+  --link-bar-full-hover: #f3f4f6;
+  --link-bar-icon-bg: #2563eb;
+  --link-bar-text: #1f2937;
 }
 
 @theme inline {
