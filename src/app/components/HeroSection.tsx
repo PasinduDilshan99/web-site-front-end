@@ -20,11 +20,11 @@ const HeroSection = () => {
 
         if (response.ok) {
           const items: HeroSlideData[] = data.data || [];
-          const activeSlides = items
-            .filter((slide) => slide.isActive)
-            .sort((a, b) => (a.order || 0) - (b.order || 0));
+        //   const activeSlides = items
+        //     .filter((slide) => slide.isActive)
+        //     .sort((a, b) => (a.order || 0) - (b.order || 0));
 
-          setHeroData(activeSlides);
+          setHeroData(items);
           setError(null);
         } else {
           setError(data.error || "Failed to fetch hero section items");

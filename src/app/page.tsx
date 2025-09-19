@@ -1,6 +1,7 @@
 import HeroSection from "./components/HeroSection";
 import LinkBar from "./components/LinkBar";
 import NavBar from "./components/NavBar";
+import WhyChooseUs from "./components/WhyChooseUs";
 
 export default function Home() {
   return (
@@ -12,7 +13,10 @@ export default function Home() {
         <NavBar />
       </div>
       <div>
-        <HeroSection/>
+        <HeroSection />
+      </div>
+      <div>
+        <WhyChooseUs />
       </div>
     </div>
   );
