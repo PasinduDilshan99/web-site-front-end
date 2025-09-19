@@ -1,52 +1,7 @@
-"use client"
+"use client";
 import { HeroSlideData } from "@/types/hero-section-types";
+import { GET_ALL_HERO_SECTION_DATA } from "@/utils/frontEndConstant";
 import React, { useState, useEffect } from "react";
-
-
-const initialData: HeroSlideData[] = [
-  {
-    id: 1,
-    name: "slider-1",
-    imageUrl: "/images/hero-section-images/slider-1.jpg",
-    title: "Welcome to Our",
-    subtitle: "Amazing World",
-    description: "Discover extraordinary experiences and create unforgettable memories with our premium services",
-    primaryButtonText: "Get Started",
-    primaryButtonLink: "/get-started",
-    secondaryButtonText: "Learn More",
-    secondaryButtonLink: "/learn-more",
-    isActive: true,
-    order: 1
-  },
-  {
-    id: 2,
-    name: "slider-2",
-    imageUrl: "/images/hero-section-images/slider-2.jpg",
-    title: "Explore New",
-    subtitle: "Possibilities",
-    description: "Join thousands of satisfied customers who have transformed their lives with our innovative solutions",
-    primaryButtonText: "Start Now",
-    primaryButtonLink: "/start-now",
-    secondaryButtonText: "View Demo",
-    secondaryButtonLink: "/demo",
-    isActive: true,
-    order: 2
-  },
-  {
-    id: 3,
-    name: "slider-3",
-    imageUrl: "/images/hero-section-images/slider-3.jpg",
-    title: "Your Journey",
-    subtitle: "Begins Here",
-    description: "Take the first step towards excellence with our comprehensive range of professional services",
-    primaryButtonText: "Join Us",
-    primaryButtonLink: "/join",
-    secondaryButtonText: "Contact",
-    secondaryButtonLink: "/contact",
-    isActive: true,
-    order: 3
-  },
-];
 
 const HeroSection = () => {
   const [loading, setLoading] = useState(true);
@@ -55,26 +10,25 @@ const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
-  // Fetch hero data - replace with actual API call
   useEffect(() => {
     const fetchHeroData = async () => {
       try {
         setLoading(true);
-        
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // TODO: Replace with actual API call
-        // const response = await fetch('/api/hero-sections');
-        // const data = await response.json();
-        
-        // Filter active slides and sort by order
-        const activeSlides = initialData
-          .filter(slide => slide.isActive)
-          .sort((a, b) => (a.order || 0) - (b.order || 0));
-        
-        setHeroData(activeSlides);
-        setError(null);
+
+        const response = await fetch(GET_ALL_HERO_SECTION_DATA);
+        const data = await response.json();
+
+        if (response.ok) {
+          const items: HeroSlideData[] = data.data || [];
+          const activeSlides = items
+            .filter((slide) => slide.isActive)
+            .sort((a, b) => (a.order || 0) - (b.order || 0));
+
+          setHeroData(activeSlides);
+          setError(null);
+        } else {
+          setError(data.error || "Failed to fetch hero section items");
+        }
       } catch (err) {
         console.error("Error fetching hero data:", err);
         setError("Failed to load hero content");
@@ -89,7 +43,7 @@ const HeroSection = () => {
   // Auto-play functionality
   useEffect(() => {
     if (!isAutoPlaying || heroData.length === 0) return;
-    
+
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroData.length);
     }, 5000);
@@ -127,10 +81,12 @@ const HeroSection = () => {
   const getFallbackImage = (index: number) => {
     const fallbackImages = [
       "1506905925346-21bea83d5653",
-      "1469474968028-56623f02e42e", 
-      "1506197603052-3cc9c3a201bd"
+      "1469474968028-56623f02e42e",
+      "1506197603052-3cc9c3a201bd",
     ];
-    return `https://images.unsplash.com/photo-${fallbackImages[index % fallbackImages.length]}?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80`;
+    return `https://images.unsplash.com/photo-${
+      fallbackImages[index % fallbackImages.length]
+    }?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80`;
   };
 
   // Loading state
@@ -150,8 +106,10 @@ const HeroSection = () => {
     return (
       <div className="relative w-full h-screen overflow-hidden bg-gray-900 flex items-center justify-center">
         <div className="text-center text-white">
-          <p className="text-xl text-red-400 mb-4">{error || "No hero content available"}</p>
-          <button 
+          <p className="text-xl text-red-400 mb-4">
+            {error || "No hero content available"}
+          </p>
+          <button
             onClick={() => window.location.reload()}
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
@@ -178,12 +136,16 @@ const HeroSection = () => {
             <div
               className="w-full h-full bg-cover bg-center bg-no-repeat"
               style={{
-                backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('${item.imageUrl || getFallbackImage(index)}')`
+                backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('${
+                  item.imageUrl || getFallbackImage(index)
+                }')`,
               }}
               onError={(e) => {
                 // Fallback to placeholder image if original fails
                 const target = e.target as HTMLDivElement;
-                target.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('${getFallbackImage(index)}')`;
+                target.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('${getFallbackImage(
+                  index
+                )}')`;
               }}
             />
           </div>
@@ -200,20 +162,25 @@ const HeroSection = () => {
             </span>
           </h1>
           <p className="text-xl md:text-2xl mb-8 text-gray-200 max-w-2xl mx-auto leading-relaxed">
-            {currentSlideData.description || "Discover amazing experiences with us"}
+            {currentSlideData.description ||
+              "Discover amazing experiences with us"}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             {currentSlideData.primaryButtonText && (
-              <button 
-                onClick={() => handleButtonClick(currentSlideData.primaryButtonLink)}
+              <button
+                onClick={() =>
+                  handleButtonClick(currentSlideData.primaryButtonLink)
+                }
                 className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-full hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg"
               >
                 {currentSlideData.primaryButtonText}
               </button>
             )}
             {currentSlideData.secondaryButtonText && (
-              <button 
-                onClick={() => handleButtonClick(currentSlideData.secondaryButtonLink)}
+              <button
+                onClick={() =>
+                  handleButtonClick(currentSlideData.secondaryButtonLink)
+                }
                 className="px-8 py-4 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-gray-900 transition-all duration-300"
               >
                 {currentSlideData.secondaryButtonText}
@@ -230,8 +197,18 @@ const HeroSection = () => {
             onClick={prevSlide}
             className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/30 transition-all duration-300 group"
           >
-            <svg className="w-6 h-6 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <svg
+              className="w-6 h-6 group-hover:scale-110 transition-transform duration-200"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
           </button>
 
@@ -239,8 +216,18 @@ const HeroSection = () => {
             onClick={nextSlide}
             className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/30 transition-all duration-300 group"
           >
-            <svg className="w-6 h-6 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            <svg
+              className="w-6 h-6 group-hover:scale-110 transition-transform duration-200"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
             </svg>
           </button>
         </div>
@@ -254,8 +241,8 @@ const HeroSection = () => {
               key={index}
               onClick={() => goToSlide(index)}
               className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === currentSlide 
-                  ? "bg-white scale-125" 
+                index === currentSlide
+                  ? "bg-white scale-125"
                   : "bg-white/50 hover:bg-white/75"
               }`}
             />
@@ -266,9 +253,11 @@ const HeroSection = () => {
       {/* Progress Bar */}
       {heroData.length > 1 && (
         <div className="absolute bottom-0 left-0 w-full h-1 bg-white/20">
-          <div 
+          <div
             className="h-full bg-gradient-to-r from-blue-400 to-purple-600 transition-all duration-300"
-            style={{ width: `${((currentSlide + 1) / heroData.length) * 100}%` }}
+            style={{
+              width: `${((currentSlide + 1) / heroData.length) * 100}%`,
+            }}
           />
         </div>
       )}
@@ -276,8 +265,12 @@ const HeroSection = () => {
       {/* Auto-play Indicator */}
       {heroData.length > 1 && (
         <div className="absolute top-6 right-6 flex items-center space-x-2 text-white/70 text-sm">
-          <div className={`w-2 h-2 rounded-full ${isAutoPlaying ? 'bg-green-400 animate-pulse' : 'bg-gray-400'}`} />
-          <span>{isAutoPlaying ? 'Auto-playing' : 'Paused'}</span>
+          <div
+            className={`w-2 h-2 rounded-full ${
+              isAutoPlaying ? "bg-green-400 animate-pulse" : "bg-gray-400"
+            }`}
+          />
+          <span>{isAutoPlaying ? "Auto-playing" : "Paused"}</span>
         </div>
       )}
 
