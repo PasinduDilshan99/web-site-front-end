@@ -405,7 +405,7 @@ const Faq = () => {
               Still have questions?
             </h3>
             <p className="text-sm sm:text-base lg:text-lg text-gray-600 mb-4 sm:mb-6 max-w-md sm:max-w-lg mx-auto leading-relaxed">
-              Can't find the answer you're looking for? Please chat to our
+              Cant find the answer youre looking for? Please chat to our
               friendly team.
             </p>
             <button className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium sm:font-semibold rounded-full hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg">
