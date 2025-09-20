@@ -5,6 +5,7 @@ import NavBar from "./components/NavBar";
 import OurServices from "./components/OurServices";
 import Partners from "./components/Partners";
 import WhyChooseUs from "./components/WhyChooseUs";
+import WorkFlow from "./components/WorkFlow";
 
 export default function Home() {
   return (
@@ -29,6 +30,9 @@ export default function Home() {
       </div>
       <div>
         <OurServices />
+      </div>
+      <div>
+        <WorkFlow />
       </div>
     </div>
   );

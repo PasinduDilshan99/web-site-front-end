@@ -26,7 +26,7 @@ interface PartnerType {
 
 // Default fallback image
 const getDefaultImage = () => {
-  return "/images/default-image.jpg";
+  return "/images/default-partner-logo.png";
 };
 
 const Partners = () => {
@@ -58,6 +58,7 @@ const Partners = () => {
 
         if (response.ok) {
           const items: PartnerType[] = data.data || [];
+    
           setPartners(items);
           setError(null);
         } else {
@@ -136,27 +137,27 @@ const Partners = () => {
   const duplicatedPartners = [...partners, ...partners];
 
   return (
-    <section className="py-12 bg-gradient-to-br from-gray-50 to-white border-t border-b border-gray-200 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-8 sm:py-10 lg:py-12 xl:py-16 bg-gradient-to-br from-gray-50 to-white border-t border-b border-gray-200 overflow-hidden">
+      <div className="max-w-full sm:max-w-6xl lg:max-w-7xl xl:max-w-8xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8">
         {/* Section Header */}
-        <div className="text-center mb-8">
-          <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2 uppercase tracking-wider">
+        <div className="text-center mb-6 sm:mb-8 lg:mb-10 xl:mb-12">
+          <h2 className="text-base sm:text-lg lg:text-xl xl:text-2xl font-semibold text-gray-800 mb-1 sm:mb-2 lg:mb-3 uppercase tracking-wider">
             Our Partners
           </h2>
-          <p className="text-sm sm:text-base text-gray-600">
+          <p className="text-xs sm:text-sm lg:text-base xl:text-lg text-gray-600 max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl mx-auto">
             Trusted by leading organizations worldwide
           </p>
-          <div className="mt-4 w-16 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto"></div>
+          <div className="mt-2 sm:mt-3 lg:mt-4 xl:mt-5 w-12 sm:w-14 lg:w-16 xl:w-20 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto"></div>
         </div>
 
         {/* Partners Logo Strip */}
         <div className="relative">
-          {/* Gradient Overlays */}
-          <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-gray-50 to-transparent z-10"></div>
-          <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-gray-50 to-transparent z-10"></div>
+          {/* Gradient Overlays - Responsive widths */}
+          <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-12 lg:w-16 xl:w-20 bg-gradient-to-r from-gray-50 to-transparent z-10"></div>
+          <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-12 lg:w-16 xl:w-20 bg-gradient-to-l from-gray-50 to-transparent z-10"></div>
           
-          {/* Scrolling Container */}
-          <div className="flex animate-scroll space-x-12 sm:space-x-16 lg:space-x-20">
+          {/* Scrolling Container - Responsive spacing */}
+          <div className="flex animate-scroll space-x-6 sm:space-x-10 lg:space-x-16 xl:space-x-20">
             {duplicatedPartners.map((partner, index) => {
               const imageUrl = getValidImageUrl(partner.partnerLogoUrl);
               const isDefault = imageUrl === getDefaultImage();
@@ -170,10 +171,11 @@ const Partners = () => {
                     href={partner.partnerWebsiteUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block p-4 rounded-lg hover:bg-white/60 hover:shadow-lg transition-all duration-300"
+                    className="block p-2 sm:p-3 lg:p-4 xl:p-5 rounded-lg hover:bg-white/60 hover:shadow-lg transition-all duration-300"
                     title={partner.partnerCompanyName}
                   >
-                    <div className="w-20 h-12 sm:w-24 sm:h-14 lg:w-28 lg:h-16 relative">
+                    {/* Responsive logo sizes */}
+                    <div className="w-16 h-10 sm:w-20 sm:h-12 lg:w-28 lg:h-16 xl:w-32 xl:h-20 relative">
                       {isDefault ? (
                         <img
                           src={imageUrl}
@@ -193,8 +195,8 @@ const Partners = () => {
                       )}
                     </div>
                     
-                    {/* Hover Tooltip */}
-                    <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-20">
+                    {/* Responsive Hover Tooltip */}
+                    <div className="absolute -bottom-6 sm:-bottom-7 lg:-bottom-8 xl:-bottom-9 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs sm:text-xs lg:text-sm xl:text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-20">
                       {partner.partnerCompanyName}
                     </div>
                   </a>
@@ -205,60 +207,44 @@ const Partners = () => {
         </div>
 
         {/* Partner Count */}
-        <div className="text-center mt-8">
-          <p className="text-sm text-gray-500">
+        <div className="text-center mt-6 sm:mt-7 lg:mt-8 xl:mt-10">
+          <p className="text-xs sm:text-sm lg:text-base xl:text-lg text-gray-500">
             {partners.length} trusted partner{partners.length !== 1 ? 's' : ''}
           </p>
         </div>
       </div>
 
       <style jsx>{`
-  @keyframes scroll {
-    0% {
-      transform: translateX(0);
-    }
-    100% {
-      transform: translateX(-50%);
-    }
-  }
+        @keyframes scroll {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+        
+        .animate-scroll {
+          animation: scroll 30s linear infinite;
+        }
+        
+        .animate-scroll:hover {
+          animation-play-state: paused;
+        }
 
-  .animate-scroll {
-    animation: scroll 25s linear infinite;
-  }
-
-  .animate-scroll:hover {
-    animation-play-state: paused;
-  }
-
-  /* Mobile (default <640px) */
-  @media (max-width: 639px) {
-    .animate-scroll {
-      animation-duration: 15s;
-    }
-  }
-
-  /* Tablet (640px - 1023px) */
-  @media (min-width: 640px) and (max-width: 1023px) {
-    .animate-scroll {
-      animation-duration: 25s;
-    }
-  }
-
-  /* Laptop (1024px - 1279px) */
-  @media (min-width: 1024px) and (max-width: 1279px) {
-    .animate-scroll {
-      animation-duration: 35s;
-    }
-  }
-
-  /* PC/Desktop (≥1280px) */
-  @media (min-width: 1280px) {
-    .animate-scroll {
-      animation-duration: 45s;
-    }
-  }
-`}</style>
-
+        /* Responsive animation speed */
+        @media (max-width: 640px) {
+          .animate-scroll {
+            animation-duration: 20s;
+          }
+        }
+        
+        @media (min-width: 1024px) {
+          .animate-scroll {
+            animation-duration: 40s;
+          }
+        }
+      `}</style>
     </section>
   );
 };

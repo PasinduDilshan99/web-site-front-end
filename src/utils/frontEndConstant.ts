@@ -6,6 +6,7 @@ const WHY_CHOOSE_US = "/why-choose-us";
 const FAQ = "/faq";
 const PARTNERS = "/partners";
 const OUR_SERVICES = "/our-services";
+const WORK_FLOW = "/work-flow";
 
 export const GET_ALL_LINK_BAR_DATA = `${API}${LINK_BAR}`;
 export const GET_ALL_NAV_BAR_DATA = `${API}${NAV_BAR}`;
@@ -15,3 +16,4 @@ export const GET_ALL_FAQ_DATA = `${API}${FAQ}`;
 export const UPDATE_FAQ_VIEW_COUNT = `${API}${FAQ}/update-view-count`;
 export const GET_ALL_PARTNERS = `${API}${PARTNERS}`;
 export const GET_ALL_OUR_SERVICES = `${API}${OUR_SERVICES}`;
+export const GET_ACTIVE_WORK_FLOW_STEPS = `${API}${WORK_FLOW}`;
