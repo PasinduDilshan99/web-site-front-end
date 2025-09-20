@@ -1,4 +1,6 @@
 import Accommodations from "./components/Accommodations";
+import DestinationsCategories from "./components/destinations/DestinationsCategories";
+import PopularDestinations from "./components/destinations/PopularDestinations";
 import Faq from "./components/Faq";
 import Footer from "./components/Footer";
 import HeroSection from "./components/HeroSection";
@@ -42,6 +44,12 @@ export default function Home() {
       </div>
       <div>
         <Inquire />
+      </div>
+      <div>
+        <DestinationsCategories />
+      </div>
+      <div>
+        <PopularDestinations />
       </div>
       <div>
         <Footer />
