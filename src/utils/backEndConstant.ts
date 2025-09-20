@@ -12,6 +12,7 @@ const FAQ = "/faq";
 const PARTNERS = "/partner";
 const OUR_SERVICES = "/our-service";
 const WORK_FLOW = "/work-flow";
+const ACCOMMODATION = "/accommodation";
 
 export const BASE_PATH = `${PROTOCOL}://${DOMAIN}:${PORT}/${CONTEXT_ROOT}`;
 export const GET_ALL_LINK_BAR_DATA = `${BASE_PATH}${VERSION}${API}${LINK_BAR}/all`;
@@ -24,3 +25,4 @@ export const UPDATE_FAQ_VIEW_COUNT = `${BASE_PATH}${VERSION}${API}${FAQ}/view-co
 export const GET_VISIBLE_PARTNERS = `${BASE_PATH}${VERSION}${API}${PARTNERS}/visible`;
 export const GET_VISIBLE_OUR_SERVICES = `${BASE_PATH}${VERSION}${API}${OUR_SERVICES}/visible`;
 export const GET_ACTIVE_WORK_FLOW = `${BASE_PATH}${VERSION}${API}${WORK_FLOW}/active`;
+export const GET_AVAILABLE_ACCOMMODATION = `${BASE_PATH}${VERSION}${API}${ACCOMMODATION}/available`;

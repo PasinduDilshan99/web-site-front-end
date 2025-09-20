@@ -7,6 +7,8 @@ const FAQ = "/faq";
 const PARTNERS = "/partners";
 const OUR_SERVICES = "/our-services";
 const WORK_FLOW = "/work-flow";
+const ACCOMMODATION = "/accommodations";
+
 
 export const GET_ALL_LINK_BAR_DATA = `${API}${LINK_BAR}`;
 export const GET_ALL_NAV_BAR_DATA = `${API}${NAV_BAR}`;
@@ -17,3 +19,4 @@ export const UPDATE_FAQ_VIEW_COUNT = `${API}${FAQ}/update-view-count`;
 export const GET_ALL_PARTNERS = `${API}${PARTNERS}`;
 export const GET_ALL_OUR_SERVICES = `${API}${OUR_SERVICES}`;
 export const GET_ACTIVE_WORK_FLOW_STEPS = `${API}${WORK_FLOW}`;
+export const GET_AVAILABLE_ACCOMMODATION = `${API}${ACCOMMODATION}`;
