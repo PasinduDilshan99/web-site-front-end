@@ -59,7 +59,7 @@ const NavBar = () => {
             {/* Logo / Brand */}
             <div className="flex items-center">
               <Link href="/" className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent hover:from-blue-300 hover:to-purple-500 transition-all duration-300">
-                MyBrand
+                Felicita
               </Link>
             </div>
 
@@ -158,7 +158,7 @@ const NavBar = () => {
             {/* Compact Logo / Brand */}
             <div className="flex items-center">
               <Link href="/" className="text-lg font-bold bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent hover:from-blue-300 hover:to-purple-500 transition-all duration-300">
-                MyBrand
+                Felicita
               </Link>
             </div>
 

@@ -8,6 +8,7 @@ const LINK_BAR = "/link-bar";
 const NAV_BAR = "/nav-bar";
 const HERO_SECTION = "/hero-section";
 const WHY_CHOOSE_US = "/why-choose-us";
+const FAQ = "/faq";
 
 export const BASE_PATH = `${PROTOCOL}://${DOMAIN}:${PORT}/${CONTEXT_ROOT}`;
 export const GET_ALL_LINK_BAR_DATA = `${BASE_PATH}${VERSION}${API}${LINK_BAR}/all`;
@@ -15,3 +16,5 @@ export const GET_VISIBLE_LINK_BAR_DATA = `${BASE_PATH}${VERSION}${API}${LINK_BAR
 export const GET_VISIBLE_NAV_BAR_DATA = `${BASE_PATH}${VERSION}${API}${NAV_BAR}/visible`;
 export const GET_VISIBLE_HERO_SECTION_DATA = `${BASE_PATH}${VERSION}${API}${HERO_SECTION}/visible`;
 export const GET_VISIBLE_WHY_CHOOSE_US_DATA = `${BASE_PATH}${VERSION}${API}${WHY_CHOOSE_US}/visible`;
+export const GET_VISIBLE_FAQ_DATA = `${BASE_PATH}${VERSION}${API}${FAQ}/visible`;
+export const UPDATE_FAQ_VIEW_COUNT = `${BASE_PATH}${VERSION}${API}${FAQ}/view-count`;

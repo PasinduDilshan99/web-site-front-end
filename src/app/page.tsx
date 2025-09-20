@@ -1,3 +1,4 @@
+import Faq from "./components/Faq";
 import HeroSection from "./components/HeroSection";
 import LinkBar from "./components/LinkBar";
 import NavBar from "./components/NavBar";
@@ -17,6 +18,9 @@ export default function Home() {
       </div>
       <div>
         <WhyChooseUs />
+      </div>
+      <div>
+        <Faq />
       </div>
     </div>
   );
