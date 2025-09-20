@@ -2,6 +2,7 @@ import Faq from "./components/Faq";
 import HeroSection from "./components/HeroSection";
 import LinkBar from "./components/LinkBar";
 import NavBar from "./components/NavBar";
+import OurServices from "./components/OurServices";
 import Partners from "./components/Partners";
 import WhyChooseUs from "./components/WhyChooseUs";
 
@@ -25,6 +26,9 @@ export default function Home() {
       </div>
       <div>
         <Partners />
+      </div>
+      <div>
+        <OurServices />
       </div>
     </div>
   );
