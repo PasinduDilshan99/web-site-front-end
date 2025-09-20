@@ -3,8 +3,13 @@ const LINK_BAR = "/link-bar";
 const NAV_BAR = "/nav-bar";
 const HERO_SECTION = "/hero-section";
 const WHY_CHOOSE_US = "/why-choose-us";
+const FAQ = "/faq";
+const PARTNERS = "/partners";
 
 export const GET_ALL_LINK_BAR_DATA = `${API}${LINK_BAR}`;
 export const GET_ALL_NAV_BAR_DATA = `${API}${NAV_BAR}`;
 export const GET_ALL_HERO_SECTION_DATA = `${API}${HERO_SECTION}`;
 export const GET_ALL_WHY_CHOOSE_US_DATA = `${API}${WHY_CHOOSE_US}`;
+export const GET_ALL_FAQ_DATA = `${API}${FAQ}`;
+export const UPDATE_FAQ_VIEW_COUNT = `${API}${FAQ}/update-view-count`;
+export const GET_ALL_PARTNERS = `${API}${PARTNERS}`;
