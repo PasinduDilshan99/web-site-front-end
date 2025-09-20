@@ -11,6 +11,7 @@ const WHY_CHOOSE_US = "/why-choose-us";
 const FAQ = "/faq";
 const PARTNERS = "/partner";
 const OUR_SERVICES = "/our-service";
+const WORK_FLOW = "/work-flow";
 
 export const BASE_PATH = `${PROTOCOL}://${DOMAIN}:${PORT}/${CONTEXT_ROOT}`;
 export const GET_ALL_LINK_BAR_DATA = `${BASE_PATH}${VERSION}${API}${LINK_BAR}/all`;
@@ -22,3 +23,4 @@ export const GET_VISIBLE_FAQ_DATA = `${BASE_PATH}${VERSION}${API}${FAQ}/visible`
 export const UPDATE_FAQ_VIEW_COUNT = `${BASE_PATH}${VERSION}${API}${FAQ}/view-count`;
 export const GET_VISIBLE_PARTNERS = `${BASE_PATH}${VERSION}${API}${PARTNERS}/visible`;
 export const GET_VISIBLE_OUR_SERVICES = `${BASE_PATH}${VERSION}${API}${OUR_SERVICES}/visible`;
+export const GET_ACTIVE_WORK_FLOW = `${BASE_PATH}${VERSION}${API}${WORK_FLOW}/active`;
