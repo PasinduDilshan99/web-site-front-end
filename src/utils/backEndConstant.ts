@@ -29,3 +29,6 @@ export const GET_ACTIVE_WORK_FLOW = `${BASE_PATH}${VERSION}${API}${WORK_FLOW}/ac
 export const GET_AVAILABLE_ACCOMMODATION = `${BASE_PATH}${VERSION}${API}${ACCOMMODATION}/available`;
 export const GET_ALL_DESTINATIONS_CATEGORIES = `${BASE_PATH}${VERSION}${API}${DESTINATIONS}/active-categories`;
 export const GET_POPULAR_DESTINATIONS = `${BASE_PATH}${VERSION}${API}${DESTINATIONS}/popular-destinations`;
+export const GET_TRENDING_DESTINATIONS = `${BASE_PATH}${VERSION}${API}${DESTINATIONS}/trending-destinations`;
+export const GET_NEW_DESTINATIONS = `${BASE_PATH}${VERSION}${API}${DESTINATIONS}/new-destinations`;
+

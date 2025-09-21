@@ -1,6 +1,8 @@
 import Accommodations from "./components/Accommodations";
 import DestinationsCategories from "./components/destinations/DestinationsCategories";
+import NewDestinations from "./components/destinations/NewDestinations";
 import PopularDestinations from "./components/destinations/PopularDestinations";
+import TrendingDestinations from "./components/destinations/TrendingDestinations";
 import Faq from "./components/Faq";
 import Footer from "./components/Footer";
 import HeroSection from "./components/HeroSection";
@@ -50,6 +52,12 @@ export default function Home() {
       </div>
       <div>
         <PopularDestinations />
+      </div>
+      <div>
+        <TrendingDestinations />
+      </div>
+      <div>
+        <NewDestinations />
       </div>
       <div>
         <Footer />
