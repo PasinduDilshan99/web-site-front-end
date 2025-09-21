@@ -12,6 +12,8 @@ import LinkBar from "./components/LinkBar";
 import NavBar from "./components/NavBar";
 import OurServices from "./components/OurServices";
 import Partners from "./components/Partners";
+import ActiveToursHome from "./components/tours/ActiveToursHome";
+import ActiveToursHomeGrid from "./components/tours/ActiveToursHomeGrid";
 import WhyChooseUs from "./components/WhyChooseUs";
 import WorkFlow from "./components/WorkFlow";
 
@@ -62,6 +64,12 @@ export default function Home() {
       </div>
       <div>
         <ActiveBlogsSummery />
+      </div>
+      <div>
+        <ActiveToursHome />
+      </div>
+      <div>
+        <ActiveToursHomeGrid />
       </div>
       <div>
         <Footer />
