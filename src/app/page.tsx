@@ -1,4 +1,5 @@
 import Accommodations from "./components/Accommodations";
+import ActiveBlogsSummery from "./components/blogs/ActiveBlogsSummery";
 import DestinationsCategories from "./components/destinations/DestinationsCategories";
 import NewDestinations from "./components/destinations/NewDestinations";
 import PopularDestinations from "./components/destinations/PopularDestinations";
@@ -58,6 +59,9 @@ export default function Home() {
       </div>
       <div>
         <NewDestinations />
+      </div>
+      <div>
+        <ActiveBlogsSummery />
       </div>
       <div>
         <Footer />
