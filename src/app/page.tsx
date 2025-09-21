@@ -1,5 +1,12 @@
+import Accommodations from "./components/Accommodations";
+import DestinationsCategories from "./components/destinations/DestinationsCategories";
+import NewDestinations from "./components/destinations/NewDestinations";
+import PopularDestinations from "./components/destinations/PopularDestinations";
+import TrendingDestinations from "./components/destinations/TrendingDestinations";
 import Faq from "./components/Faq";
+import Footer from "./components/Footer";
 import HeroSection from "./components/HeroSection";
+import Inquire from "./components/Inquire";
 import LinkBar from "./components/LinkBar";
 import NavBar from "./components/NavBar";
 import OurServices from "./components/OurServices";
@@ -33,6 +40,27 @@ export default function Home() {
       </div>
       <div>
         <WorkFlow />
+      </div>
+      <div>
+        <Accommodations />
+      </div>
+      <div>
+        <Inquire />
+      </div>
+      <div>
+        <DestinationsCategories />
+      </div>
+      <div>
+        <PopularDestinations />
+      </div>
+      <div>
+        <TrendingDestinations />
+      </div>
+      <div>
+        <NewDestinations />
+      </div>
+      <div>
+        <Footer />
       </div>
     </div>
   );
