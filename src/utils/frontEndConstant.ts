@@ -12,6 +12,7 @@ const DESTINATIONS = "/destinations";
 const CATEGORIES = "/categories";
 const BLOGS = "/blogs";
 const TOUR = "/tour";
+const PACKAGES = "/packages";
 
 
 export const GET_ALL_LINK_BAR_DATA = `${API}${LINK_BAR}`;
@@ -30,3 +31,4 @@ export const GET_TRENDING_DESTINATIONS = `${API}${DESTINATIONS}/trending-destina
 export const GET_NEW_DESTINATIONS = `${API}${DESTINATIONS}/new-destinations`;
 export const GET_ALL_ACTIVE_BLOGS = `${API}${BLOGS}`;
 export const GET_ALL_ACTIVE_TOUR_FE = `${API}${TOUR}`;
+export const GET_ALL_ACTIVE_PACKAGES_FE = `${API}${PACKAGES}`;

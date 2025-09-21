@@ -11,6 +11,7 @@ import Inquire from "./components/Inquire";
 import LinkBar from "./components/LinkBar";
 import NavBar from "./components/NavBar";
 import OurServices from "./components/OurServices";
+import PackagesHome from "./components/packages/PackagesHome";
 import Partners from "./components/Partners";
 import ActiveToursHome from "./components/tours/ActiveToursHome";
 import ActiveToursHomeGrid from "./components/tours/ActiveToursHomeGrid";
@@ -70,6 +71,9 @@ export default function Home() {
       </div>
       <div>
         <ActiveToursHomeGrid />
+      </div>
+      <div>
+        <PackagesHome />
       </div>
       <div>
         <Footer />
