@@ -14,6 +14,7 @@ const OUR_SERVICES = "/our-service";
 const WORK_FLOW = "/work-flow";
 const ACCOMMODATION = "/accommodation";
 const DESTINATIONS = "/destination";
+const BLOG = "/blog";
 
 export const BASE_PATH = `${PROTOCOL}://${DOMAIN}:${PORT}/${CONTEXT_ROOT}`;
 export const GET_ALL_LINK_BAR_DATA = `${BASE_PATH}${VERSION}${API}${LINK_BAR}/all`;
@@ -31,4 +32,5 @@ export const GET_ALL_DESTINATIONS_CATEGORIES = `${BASE_PATH}${VERSION}${API}${DE
 export const GET_POPULAR_DESTINATIONS = `${BASE_PATH}${VERSION}${API}${DESTINATIONS}/popular-destinations`;
 export const GET_TRENDING_DESTINATIONS = `${BASE_PATH}${VERSION}${API}${DESTINATIONS}/trending-destinations`;
 export const GET_NEW_DESTINATIONS = `${BASE_PATH}${VERSION}${API}${DESTINATIONS}/new-destinations`;
+export const GET_ALL_ACTIVE_BLOGS = `${BASE_PATH}${VERSION}${API}${BLOG}/active`;
 

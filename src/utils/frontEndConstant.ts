@@ -10,6 +10,7 @@ const WORK_FLOW = "/work-flow";
 const ACCOMMODATION = "/accommodations";
 const DESTINATIONS = "/destinations";
 const CATEGORIES = "/categories";
+const BLOGS = "/blogs";
 
 
 export const GET_ALL_LINK_BAR_DATA = `${API}${LINK_BAR}`;
@@ -26,3 +27,4 @@ export const GET_ALL_DESTINATIONS_CATEGORIES = `${API}${DESTINATIONS}${CATEGORIE
 export const GET_POPULAR_DESTINATIONS = `${API}${DESTINATIONS}/popular-destinations`;
 export const GET_TRENDING_DESTINATIONS = `${API}${DESTINATIONS}/trending-destinations`;
 export const GET_NEW_DESTINATIONS = `${API}${DESTINATIONS}/new-destinations`;
+export const GET_ALL_ACTIVE_BLOGS = `${API}${BLOGS}`;
