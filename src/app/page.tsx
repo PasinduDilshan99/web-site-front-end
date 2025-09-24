@@ -13,6 +13,7 @@ import NavBar from "./components/NavBar";
 import OurServices from "./components/OurServices";
 import PackagesHome from "./components/packages/PackagesHome";
 import Partners from "./components/Partners";
+import ReviewsHome from "./components/reviews/ReviewsHome";
 import ActiveToursHome from "./components/tours/ActiveToursHome";
 import ActiveToursHomeGrid from "./components/tours/ActiveToursHomeGrid";
 import WhyChooseUs from "./components/WhyChooseUs";
@@ -75,6 +76,14 @@ export default function Home() {
       <div>
         <PackagesHome />
       </div>
+      <div>
+        <ReviewsHome />
+      </div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
       <div>
         <Footer />
       </div>
