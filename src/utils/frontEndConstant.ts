@@ -35,6 +35,7 @@ export const GET_TRENDING_DESTINATIONS = `${API}${DESTINATIONS}/trending-destina
 export const GET_NEW_DESTINATIONS = `${API}${DESTINATIONS}/new-destinations`;
 export const GET_ALL_ACTIVE_BLOGS = `${API}${BLOGS}`;
 export const GET_ALL_ACTIVE_TOUR_FE = `${API}${TOUR}`;
+export const GET_POPULAR_TOUR_FE = `${API}${TOUR}/popular`;
 export const GET_ALL_ACTIVE_PACKAGES_FE = `${API}${PACKAGES}`;
 export const GET_ALL_ACTIVE_REVIEW_FE = `${API}${REVIEW}`;
 export const GET_ALL_ACTIVE_USER_LEVEL_FE = `${API}${USER_LEVEL}`;
