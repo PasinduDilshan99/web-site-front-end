@@ -1,4 +1,6 @@
 import Accommodations from "./components/Accommodations";
+import ActivitiesHome from "./components/activities/ActivitiesHome";
+import ActivityCategoriesHome from "./components/activities/categories/ActivityCategoriesHome";
 import ActiveBlogsSummery from "./components/blogs/ActiveBlogsSummery";
 import DestinationsCategories from "./components/destinations/DestinationsCategories";
 import NewDestinations from "./components/destinations/NewDestinations";
@@ -100,11 +102,24 @@ export default function Home() {
       <div>
         <PopularTours />
       </div>
-      <div>
-        <Footer />
-      </div>
+
       <div>
         <GalleryHome />
+      </div>
+      <div>
+        <ActivitiesHome />
+      </div>
+      <div>
+        <ActivityCategoriesHome />
+      </div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div>
+        <Footer />
       </div>
     </div>
   );
