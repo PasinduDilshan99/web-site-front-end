@@ -14,6 +14,8 @@ const BLOGS = "/blogs";
 const TOUR = "/tour";
 const PACKAGES = "/packages";
 const REVIEW = "/review";
+const USER_LEVEL = "/user-levels";
+const USER_BENEFITS = "/user-benefits";
 
 
 export const GET_ALL_LINK_BAR_DATA = `${API}${LINK_BAR}`;
@@ -34,3 +36,6 @@ export const GET_ALL_ACTIVE_BLOGS = `${API}${BLOGS}`;
 export const GET_ALL_ACTIVE_TOUR_FE = `${API}${TOUR}`;
 export const GET_ALL_ACTIVE_PACKAGES_FE = `${API}${PACKAGES}`;
 export const GET_ALL_ACTIVE_REVIEW_FE = `${API}${REVIEW}`;
+export const GET_ALL_ACTIVE_USER_LEVEL_FE = `${API}${USER_LEVEL}`;
+export const GET_ALL_ACTIVE_USER_LEVEL_WITH_BENEFITS_FE = `${API}${USER_LEVEL}/benefits`;
+export const GET_ALL_ACTIVE_USER_BENEFITS_FE = `${API}${USER_BENEFITS}`;
