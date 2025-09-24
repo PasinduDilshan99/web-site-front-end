@@ -16,6 +16,9 @@ import Partners from "./components/Partners";
 import ReviewsHome from "./components/reviews/ReviewsHome";
 import ActiveToursHome from "./components/tours/ActiveToursHome";
 import ActiveToursHomeGrid from "./components/tours/ActiveToursHomeGrid";
+import UserBenefitsHome from "./components/user-benefits/UserBenefitsHome";
+import { UserLevelsWithBenefitsHome } from "./components/user-levels/benefits/UserLevelsWithBenefitsHome";
+import UserLevelsHome from "./components/user-levels/UserLevelsHome";
 import WhyChooseUs from "./components/WhyChooseUs";
 import WorkFlow from "./components/WorkFlow";
 
@@ -79,9 +82,15 @@ export default function Home() {
       <div>
         <ReviewsHome />
       </div>
-      <div></div>
-      <div></div>
-      <div></div>
+      <div>
+        <UserLevelsHome />
+      </div>
+      <div>
+        <UserLevelsWithBenefitsHome />
+      </div>
+      <div>
+        <UserBenefitsHome />
+      </div>
       <div></div>
       <div></div>
       <div>
