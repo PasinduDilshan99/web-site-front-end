@@ -17,6 +17,7 @@ const REVIEW = "/review";
 const USER_LEVEL = "/user-levels";
 const USER_BENEFITS = "/user-benefits";
 const PROMOTIONS = "/promotions";
+const GALLERY = "/gallery";
 
 
 export const GET_ALL_LINK_BAR_DATA = `${API}${LINK_BAR}`;
@@ -42,3 +43,4 @@ export const GET_ALL_ACTIVE_USER_LEVEL_FE = `${API}${USER_LEVEL}`;
 export const GET_ALL_ACTIVE_USER_LEVEL_WITH_BENEFITS_FE = `${API}${USER_LEVEL}/benefits`;
 export const GET_ALL_ACTIVE_USER_BENEFITS_FE = `${API}${USER_BENEFITS}`;
 export const GET_ALL_ACTIVE_PROMOTIONS_FE = `${API}${PROMOTIONS}`;
+export const GET_OPEN_GALLERY_FE = `${API}${GALLERY}`;

@@ -4,8 +4,9 @@ import DestinationsCategories from "./components/destinations/DestinationsCatego
 import NewDestinations from "./components/destinations/NewDestinations";
 import PopularDestinations from "./components/destinations/PopularDestinations";
 import TrendingDestinations from "./components/destinations/TrendingDestinations";
-import Faq from "./components/Faq";
-import Footer from "./components/Footer";
+import Faq from "./components/faq/Faq";
+import Footer from "./components/footer/Footer";
+import GalleryHome from "./components/gallery/GalleryHome";
 import HeroSection from "./components/HeroSection";
 import Inquire from "./components/Inquire";
 import LinkBar from "./components/LinkBar";
@@ -101,6 +102,9 @@ export default function Home() {
       </div>
       <div>
         <Footer />
+      </div>
+      <div>
+        <GalleryHome />
       </div>
     </div>
   );
