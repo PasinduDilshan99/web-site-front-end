@@ -17,6 +17,7 @@ import PromotionsHome from "./components/promotions/PromotionsHome";
 import ReviewsHome from "./components/reviews/ReviewsHome";
 import ActiveToursHome from "./components/tours/ActiveToursHome";
 import ActiveToursHomeGrid from "./components/tours/ActiveToursHomeGrid";
+import PopularTours from "./components/tours/PopularTours";
 import UserBenefitsHome from "./components/user-benefits/UserBenefitsHome";
 import { UserLevelsWithBenefitsHome } from "./components/user-levels/benefits/UserLevelsWithBenefitsHome";
 import UserLevelsHome from "./components/user-levels/UserLevelsHome";
@@ -95,7 +96,9 @@ export default function Home() {
       <div>
         <PromotionsHome />
       </div>
-      <div></div>
+      <div>
+        <PopularTours />
+      </div>
       <div>
         <Footer />
       </div>
