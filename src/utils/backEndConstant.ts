@@ -20,6 +20,7 @@ const PACKAGE = "/package";
 const REVIEW = "/review";
 const USER_LEVEL = "/user-level";
 const USER_BENEFITS = "/user-benefits";
+const PROMOTIONS = "/promotions";
 
 export const BASE_PATH = `${PROTOCOL}://${DOMAIN}:${PORT}/${CONTEXT_ROOT}`;
 export const GET_ALL_LINK_BAR_DATA = `${BASE_PATH}${VERSION}${API}${LINK_BAR}/all`;
@@ -44,4 +45,5 @@ export const GET_ALL_ACTIVE_REVIEW_BE = `${BASE_PATH}${VERSION}${API}${REVIEW}/a
 export const GET_ALL_ACTIVE_USER_LEVEL_BE = `${BASE_PATH}${API}${VERSION}${USER_LEVEL}/active`;
 export const GET_ALL_ACTIVE_USER_LEVEL_WITH_BENEFITS_BE = `${BASE_PATH}${API}${VERSION}${USER_LEVEL}/active-with-benefits`;
 export const GET_ALL_ACTIVE_USER_BENEFITS_BE = `${BASE_PATH}${API}${VERSION}${USER_BENEFITS}/active`;
+export const GET_ALL_ACTIVE_PROMOTIONS_BE = `${BASE_PATH}${API}${VERSION}${PROMOTIONS}/active`;
 
