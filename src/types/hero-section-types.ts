@@ -1,14 +1,21 @@
 export interface HeroSlideData {
-  id: number;
-  name: string;
+  imageId: number;
+  imageName: string;
   imageUrl: string;
-  title?: string;
-  subtitle?: string;
-  description?: string;
-  primaryButtonText?: string;
-  primaryButtonLink?: string;
-  secondaryButtonText?: string;
-  secondaryButtonLink?: string;
-  isActive?: boolean;
-  order?: number;
+  imageTitle?: string;
+  imageSubTitle?: string;
+  imageDescription?: string;
+  imagePrimaryButtonText?: string;
+  imagePrimaryButtonLink?: string;
+  imageSecondaryButtonText?: string;
+  imageSecondaryButtonLink?: string;
+  imageStatus?: string;        
+  imageStatusStatus?: string;
+  imageOrder?: number;
+  imageCreatedAt?: string;
+  imageCreatedBy?: number;
+  imageUpdatedAt?: string;
+  imageUpdatedBy?: number;
+  imageTerminatedAt?: string | null;
+  imageTerminatedBy?: number;
 }

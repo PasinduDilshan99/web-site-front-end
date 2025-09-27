@@ -1,0 +1,169 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+
+  /* ================================
+   Link Bar Colors start
+   ================================ */
+
+  /* Background gradient */
+  --link-bar-bg-from: #4c1d95f2; /* purple-900/95 */
+  --link-bar-bg-via: #6b21a8f2; /* purple-800/95 */
+  --link-bar-bg-to: #1e3a8af2; /* blue-900/95 */
+
+  /* Border */
+  --link-bar-border: rgba(192, 132, 252, 0.3); /* purple-400/30 */
+
+  /* Overlay animation */
+  --link-bar-overlay-from: rgba(147, 51, 234, 0.1); /* purple-600/10 */
+  --link-bar-overlay-via: rgba(59, 130, 246, 0.1); /* blue-500/10 */
+  --link-bar-overlay-to: rgba(34, 211, 238, 0.1); /* cyan-400/10 */
+
+  /* Full item gradient */
+  --link-bar-full-from: rgba(126, 34, 206, 0.4); /* purple-700/40 */
+  --link-bar-full-to: rgba(37, 99, 235, 0.4); /* blue-600/40 */
+
+  /* Full item hover */
+  --link-bar-full-hover-from: rgba(147, 51, 234, 0.6); /* purple-600/60 */
+  --link-bar-full-hover-to: rgba(59, 130, 246, 0.6); /* blue-500/60 */
+  --link-bar-full-hover-border: rgba(216, 180, 254, 0.5); /* purple-200/50 */
+
+  /* Icon-only item gradient */
+  --link-bar-icon-from: rgba(147, 51, 234, 0.4); /* purple-600/40 */
+  --link-bar-icon-to: rgba(59, 130, 246, 0.4); /* blue-500/40 */
+
+  /* Icon-only hover */
+  --link-bar-icon-hover-from: rgba(147, 51, 234, 0.6); /* purple-500/60 */
+  --link-bar-icon-hover-to: rgba(59, 130, 246, 0.6); /* blue-400/60 */
+  --link-bar-icon-hover-border: rgba(34, 211, 238, 0.4); /* cyan-300/40 */
+
+  /* Text */
+  --link-bar-text: rgba(255, 255, 255, 0.95);
+  --link-bar-text-hover: #ffffff;
+
+  /* ================================
+   Link Bar Colors end
+   ================================ */
+
+  /* ================================
+   Nav Bar Colors starts
+   ================================ */
+
+  /* Background */
+  /* Background */
+  --nav-bar-bg: rgba(17, 24, 39, 0.8); /* gray-900/80 */
+  --nav-bar-bg-scrolled: rgba(17, 24, 39, 0.95); /* gray-900/95 */
+  --nav-bar-bg-mobile: rgba(17, 24, 39, 0.3); /* gray-900/30 */
+  --nav-bar-bg-mobile-scrolled: rgba(17, 24, 39, 0.4); /* gray-900/40 */
+
+  /* Border */
+  --nav-bar-border: rgba(255, 255, 255, 0.2); /* white/20 */
+  --nav-bar-border-scrolled: rgba(255, 255, 255, 0.3); /* white/30 */
+  --nav-bar-border-mobile: rgba(255, 255, 255, 0.1); /* white/10 */
+  --nav-bar-border-mobile-scrolled: rgba(255, 255, 255, 0.2); /* white/20 */
+
+  /* Gradient - Purple Luxury + Ocean */
+  --nav-bar-gradient-from: #0ea5e9; /* ocean-500 */
+  --nav-bar-gradient-to: #7c3aed; /* purple-600 */
+  --nav-bar-gradient-hover-from: #38bdf8; /* ocean-400 */
+  --nav-bar-gradient-hover-to: #8b5cf6; /* purple-500 */
+
+  /* Text */
+  --nav-bar-text: rgba(255, 255, 255, 0.9); /* white/90 */
+  --nav-bar-text-hover: #ffffff;
+  --nav-bar-text-gradient: linear-gradient(
+    to right,
+    var(--nav-bar-gradient-from),
+    var(--nav-bar-gradient-to)
+  );
+
+  /* Hover states */
+  --nav-bar-hover-bg: rgba(255, 255, 255, 0.1); /* white/10 */
+  --nav-bar-hover-bg-mobile: rgba(255, 255, 255, 0.2); /* white/20 */
+  --nav-bar-hover-gradient-mobile: linear-gradient(
+    to right,
+    rgba(14, 165, 233, 0.2),
+    rgba(124, 58, 237, 0.2)
+  );
+
+  /* Underline */
+  --nav-bar-underline: linear-gradient(
+    to right,
+    var(--nav-bar-gradient-from),
+    var(--nav-bar-gradient-to)
+  );
+
+  /* Dropdown Menu */
+  --nav-bar-dropdown-bg: rgba(17, 24, 39, 0.95); /* gray-900/95 */
+  --nav-bar-dropdown-border: rgba(255, 255, 255, 0.1); /* white/10 */
+  --nav-bar-dropdown-text: rgba(255, 255, 255, 0.8); /* white/80 */
+  --nav-bar-dropdown-text-hover: #ffffff;
+  --nav-bar-dropdown-bg-hover: rgba(255, 255, 255, 0.1); /* white/10 */
+  --nav-bar-dropdown-divider: rgba(255, 255, 255, 0.1); /* white/10 */
+
+  /* User Avatar */
+  --nav-bar-avatar-bg: linear-gradient(to right, #8b5cf6, #3b82f6); /* purple-500 to blue-500 */
+  --nav-bar-avatar-border: rgba(255, 255, 255, 0.2); /* white/20 */
+  --nav-bar-avatar-text: #ffffff;
+
+  /* Buttons */
+  --nav-bar-button-login-bg: transparent;
+  --nav-bar-button-login-border: rgba(255, 255, 255, 0.2); /* white/20 */
+  --nav-bar-button-login-text: var(--nav-bar-text);
+  --nav-bar-button-login-bg-hover: var(--nav-bar-hover-bg);
+  --nav-bar-button-login-border-hover: rgba(255, 255, 255, 0.4); /* white/40 */
+  --nav-bar-button-login-text-hover: var(--nav-bar-text-hover);
+
+  --nav-bar-button-signup-bg: linear-gradient(
+    to right,
+    var(--nav-bar-gradient-from),
+    var(--nav-bar-gradient-to)
+  );
+  --nav-bar-button-signup-text: #ffffff;
+  --nav-bar-button-signup-bg-hover: linear-gradient(
+    to right,
+    var(--nav-bar-gradient-hover-from),
+    var(--nav-bar-gradient-hover-to)
+  );
+  --nav-bar-button-signup-text-hover: #ffffff;
+
+  /* Mobile Menu */
+  --nav-bar-mobile-divider: rgba(255, 255, 255, 0.1); /* white/10 */
+  --nav-bar-mobile-auth-bg: transparent;
+  --nav-bar-mobile-auth-border: var(--nav-bar-border);
+
+  /* Logout/Sign Out */
+  --nav-bar-logout-text: rgba(248, 113, 113, 1); /* red-400 */
+  --nav-bar-logout-text-hover: rgba(252, 165, 165, 1); /* red-300 */
+  --nav-bar-logout-bg-hover: rgba(220, 38, 38, 0.2); /* red-600/20 */
+
+  /* ================================
+   Nav Bar Colors end
+   ================================ */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.abc {
+  border: 2px solid black;
+}

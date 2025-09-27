@@ -128,7 +128,7 @@ const HeroSection = () => {
       <div className="relative w-full h-full">
         {heroData.map((item, index) => (
           <div
-            key={item.id}
+            key={item.imageId}
             className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
               index === currentSlide ? "opacity-100" : "opacity-0"
             }`}
@@ -156,34 +156,34 @@ const HeroSection = () => {
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="text-center text-white px-6 max-w-4xl mx-auto">
           <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-            {currentSlideData.title || "Welcome"}
+            {currentSlideData.imageTitle}
             <span className="block bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent">
-              {currentSlideData.subtitle || "To Our World"}
+              {currentSlideData.imageSubTitle}
             </span>
           </h1>
           <p className="text-xl md:text-2xl mb-8 text-gray-200 max-w-2xl mx-auto leading-relaxed">
-            {currentSlideData.description ||
+            {currentSlideData.imageDescription ||
               "Discover amazing experiences with us"}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            {currentSlideData.primaryButtonText && (
+            {currentSlideData.imagePrimaryButtonText && (
               <button
                 onClick={() =>
-                  handleButtonClick(currentSlideData.primaryButtonLink)
+                  handleButtonClick(currentSlideData.imagePrimaryButtonLink)
                 }
                 className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-full hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg"
               >
-                {currentSlideData.primaryButtonText}
+                {currentSlideData.imagePrimaryButtonText}
               </button>
             )}
-            {currentSlideData.secondaryButtonText && (
+            {currentSlideData.imageSecondaryButtonText && (
               <button
                 onClick={() =>
-                  handleButtonClick(currentSlideData.secondaryButtonLink)
+                  handleButtonClick(currentSlideData.imageSecondaryButtonLink)
                 }
                 className="px-8 py-4 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-gray-900 transition-all duration-300"
               >
-                {currentSlideData.secondaryButtonText}
+                {currentSlideData.imageSecondaryButtonText}
               </button>
             )}
           </div>
