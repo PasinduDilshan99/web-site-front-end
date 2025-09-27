@@ -20,10 +20,6 @@ const HeroSection = () => {
 
         if (response.ok) {
           const items: HeroSlideData[] = data.data || [];
-        //   const activeSlides = items
-        //     .filter((slide) => slide.isActive)
-        //     .sort((a, b) => (a.order || 0) - (b.order || 0));
-
           setHeroData(items);
           setError(null);
         } else {
@@ -157,7 +153,7 @@ const HeroSection = () => {
         <div className="text-center text-white px-6 max-w-4xl mx-auto">
           <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
             {currentSlideData.imageTitle}
-            <span className="block bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent">
+            <span className="block bg-gradient-to-r from-amber-400 to-purple-500 bg-clip-text text-transparent">
               {currentSlideData.imageSubTitle}
             </span>
           </h1>
@@ -171,7 +167,7 @@ const HeroSection = () => {
                 onClick={() =>
                   handleButtonClick(currentSlideData.imagePrimaryButtonLink)
                 }
-                className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-full hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg"
+                className="px-8 py-4 bg-gradient-to-r from-purple-600 to-amber-600 text-white font-semibold rounded-full hover:from-amber-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg"
               >
                 {currentSlideData.imagePrimaryButtonText}
               </button>
@@ -254,7 +250,7 @@ const HeroSection = () => {
       {heroData.length > 1 && (
         <div className="absolute bottom-0 left-0 w-full h-1 bg-white/20">
           <div
-            className="h-full bg-gradient-to-r from-blue-400 to-purple-600 transition-all duration-300"
+            className="h-full bg-gradient-to-r from-amber-400 to-purple-600 transition-all duration-300"
             style={{
               width: `${((currentSlide + 1) / heroData.length) * 100}%`,
             }}

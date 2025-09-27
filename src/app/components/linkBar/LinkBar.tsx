@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Loading from "./Loading";
 import Image from "next/image";
 import { GET_ALL_LINK_BAR_DATA } from "@/utils/frontEndConstant";
 import { LinkBarItem } from "@/types/link-bar-types";
-import { FULL, ICON_ONLY } from "../../../public/data/link-bar-data";
 import { DEFAULT_ICON_URL } from "@/utils/constant";
+import { FULL, ICON_ONLY } from "../../../../public/data/link-bar-data";
+import Loading from "../loading/Loading";
 
 const LinkBar = () => {
   const [loading, setLoading] = useState(true);
@@ -47,14 +47,14 @@ const LinkBar = () => {
     <div 
       className="flex items-center justify-between backdrop-blur-lg border-b h-[32px] md:h-[36px] lg:h-[40px] px-3 md:px-4 lg:px-6 shadow-xl relative overflow-hidden"
       style={{
-        background: `linear-gradient(to right, var(--link-bar-bg-from), var(--link-bar-bg-via), var(--link-bar-bg-to))`,
-        borderColor: 'var(--link-bar-border)'
+        background: `linear-gradient(to right, #6D28D9 0%, #B45309 50%, #6D28D9 100%)`,
+        borderColor: 'rgba(124, 58, 237, 0.6)'
       }}
     >
       <div 
         className="absolute inset-0 animate-pulse-slow"
         style={{
-          background: `linear-gradient(to right, var(--link-bar-overlay-from), var(--link-bar-overlay-via), var(--link-bar-overlay-to))`
+          background: `linear-gradient(to right, rgba(124, 58, 237, 0.2) 0%, rgba(180, 83, 9, 0.15) 50%, rgba(124, 58, 237, 0.2) 100%)`
         }}
       ></div>
       
@@ -65,20 +65,20 @@ const LinkBar = () => {
             href={item.linkUrl}
             className="flex items-center gap-1 sm:gap-2 backdrop-blur-md px-2 sm:px-3 md:px-3 lg:px-4 h-[22px] md:h-[24px] lg:h-[26px] rounded-full shadow-lg hover:scale-105 active:scale-95 transition-all duration-300 text-[10px] sm:text-xs md:text-sm lg:text-base group relative overflow-hidden"
             style={{
-              background: `linear-gradient(to right, var(--link-bar-full-from), var(--link-bar-full-to))`,
-              border: '1px solid var(--link-bar-border)'
+              background: `linear-gradient(to right, rgba(124, 58, 237, 0.4), rgba(180, 83, 9, 0.3))`,
+              border: '1px solid rgba(168, 85, 247, 0.6)'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = `linear-gradient(to right, var(--link-bar-full-hover-from), var(--link-bar-full-hover-to))`;
-              e.currentTarget.style.borderColor = 'var(--link-bar-full-hover-border)';
+              e.currentTarget.style.background = `linear-gradient(to right, rgba(124, 58, 237, 0.6), rgba(180, 83, 9, 0.5))`;
+              e.currentTarget.style.borderColor = 'rgba(168, 85, 247, 0.8)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = `linear-gradient(to right, var(--link-bar-full-from), var(--link-bar-full-to))`;
-              e.currentTarget.style.borderColor = 'var(--link-bar-border)';
+              e.currentTarget.style.background = `linear-gradient(to right, rgba(124, 58, 237, 0.4), rgba(180, 83, 9, 0.3))`;
+              e.currentTarget.style.borderColor = 'rgba(168, 85, 247, 0.6)';
             }}
           >
             {/* Hover effect overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/10 to-blue-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-amber-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             
             <Image
               src={item.iconUrl}
@@ -90,7 +90,8 @@ const LinkBar = () => {
             <span 
               className="font-medium leading-none hidden sm:inline transition-all duration-300 relative z-10 drop-shadow-sm"
               style={{
-                color: 'var(--link-bar-text)'
+                color: '#FFFFFF',
+                textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)'
               }}
             >
               {item.description}
@@ -106,27 +107,30 @@ const LinkBar = () => {
             href={item.linkUrl}
             className="flex items-center justify-center backdrop-blur-md rounded-full shadow-lg hover:scale-110 active:scale-95 transition-all duration-300 w-[18px] h-[18px] sm:w-[20px] sm:h-[20px] md:w-[22px] md:h-[22px] lg:w-[24px] lg:h-[24px] group relative overflow-hidden"
             style={{
-              background: `linear-gradient(to bottom right, var(--link-bar-icon-from), var(--link-bar-icon-to))`,
-              border: '1px solid var(--link-bar-border)'
+              background: `linear-gradient(135deg, rgba(124, 58, 237, 0.5), rgba(180, 83, 9, 0.4))`,
+              border: '1px solid rgba(168, 85, 247, 0.6)'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = `linear-gradient(to bottom right, var(--link-bar-icon-hover-from), var(--link-bar-icon-hover-to))`;
-              e.currentTarget.style.borderColor = 'var(--link-bar-icon-hover-border)';
+              e.currentTarget.style.background = `linear-gradient(135deg, rgba(124, 58, 237, 0.7), rgba(180, 83, 9, 0.6))`;
+              e.currentTarget.style.borderColor = 'rgba(168, 85, 247, 0.9)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = `linear-gradient(to bottom right, var(--link-bar-icon-from), var(--link-bar-icon-to))`;
-              e.currentTarget.style.borderColor = 'var(--link-bar-border)';
+              e.currentTarget.style.background = `linear-gradient(135deg, rgba(124, 58, 237, 0.5), rgba(180, 83, 9, 0.4))`;
+              e.currentTarget.style.borderColor = 'rgba(168, 85, 247, 0.6)';
             }}
           >
             {/* Hover effect overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/20 to-blue-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-600/25 to-amber-600/25 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             
             <Image
               src={item.iconUrl || DEFAULT_ICON_URL}
               alt={item.name}
               width={10}
               height={10}
-              className="w-[8px] h-[8px] sm:w-[10px] sm:h-[10px] md:w-[12px] md:h-[12px] lg:w-[14px] lg:h-[14px] group-hover:scale-110 transition-transform duration-300 relative z-10"
+              className="w-[8px] h-[8px] sm:w-[10px] sm:h-[10px] md:w-[12px] md:h-[12px] lg:w-[14px] lg:h-[14px] group-hover:scale-110 transition-transform duration-300 relative z-10 filter brightness-0 invert"
+              style={{
+                filter: 'brightness(0) invert(1)'
+              }}
             />
           </a>
         ))}

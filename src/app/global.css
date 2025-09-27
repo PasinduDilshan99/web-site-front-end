@@ -4,42 +4,42 @@
   --background: #ffffff;
   --foreground: #171717;
 
-  /* ================================
-   Link Bar Colors start
+/* ================================
+   Link Bar Colors start - Sunset Purple Theme
    ================================ */
 
-  /* Background gradient */
-  --link-bar-bg-from: #4c1d95f2; /* purple-900/95 */
-  --link-bar-bg-via: #6b21a8f2; /* purple-800/95 */
-  --link-bar-bg-to: #1e3a8af2; /* blue-900/95 */
+  /* Background gradient - Sunset Purple */
+  --link-bar-bg-from: #7c2d12f2; /* amber-800/95 */
+  --link-bar-bg-via: #a855f7f2; /* purple-500/95 */
+  --link-bar-bg-to: #92400ef2; /* amber-700/95 */
 
-  /* Border */
-  --link-bar-border: rgba(192, 132, 252, 0.3); /* purple-400/30 */
+  /* Border - Sunset glow */
+  --link-bar-border: rgba(168, 85, 247, 0.3); /* purple-500/30 */
 
-  /* Overlay animation */
-  --link-bar-overlay-from: rgba(147, 51, 234, 0.1); /* purple-600/10 */
-  --link-bar-overlay-via: rgba(59, 130, 246, 0.1); /* blue-500/10 */
-  --link-bar-overlay-to: rgba(34, 211, 238, 0.1); /* cyan-400/10 */
+  /* Overlay animation - Sunset gradient */
+  --link-bar-overlay-from: rgba(245, 158, 11, 0.1); /* amber-500/10 */
+  --link-bar-overlay-via: rgba(168, 85, 247, 0.1); /* purple-500/10 */
+  --link-bar-overlay-to: rgba(251, 191, 36, 0.1); /* amber-400/10 */
 
-  /* Full item gradient */
-  --link-bar-full-from: rgba(126, 34, 206, 0.4); /* purple-700/40 */
-  --link-bar-full-to: rgba(37, 99, 235, 0.4); /* blue-600/40 */
+  /* Full item gradient - Sunset purple to amber */
+  --link-bar-full-from: rgba(168, 85, 247, 0.4); /* purple-500/40 */
+  --link-bar-full-to: rgba(245, 158, 11, 0.4); /* amber-500/40 */
 
-  /* Full item hover */
-  --link-bar-full-hover-from: rgba(147, 51, 234, 0.6); /* purple-600/60 */
-  --link-bar-full-hover-to: rgba(59, 130, 246, 0.6); /* blue-500/60 */
-  --link-bar-full-hover-border: rgba(216, 180, 254, 0.5); /* purple-200/50 */
+  /* Full item hover - Enhanced sunset */
+  --link-bar-full-hover-from: rgba(168, 85, 247, 0.6); /* purple-500/60 */
+  --link-bar-full-hover-to: rgba(245, 158, 11, 0.6); /* amber-500/60 */
+  --link-bar-full-hover-border: rgba(251, 191, 36, 0.5); /* amber-400/50 */
 
-  /* Icon-only item gradient */
-  --link-bar-icon-from: rgba(147, 51, 234, 0.4); /* purple-600/40 */
-  --link-bar-icon-to: rgba(59, 130, 246, 0.4); /* blue-500/40 */
+  /* Icon-only item gradient - Sunset theme */
+  --link-bar-icon-from: rgba(168, 85, 247, 0.4); /* purple-500/40 */
+  --link-bar-icon-to: rgba(245, 158, 11, 0.4); /* amber-500/40 */
 
-  /* Icon-only hover */
-  --link-bar-icon-hover-from: rgba(147, 51, 234, 0.6); /* purple-500/60 */
-  --link-bar-icon-hover-to: rgba(59, 130, 246, 0.6); /* blue-400/60 */
-  --link-bar-icon-hover-border: rgba(34, 211, 238, 0.4); /* cyan-300/40 */
+  /* Icon-only hover - Bright sunset */
+  --link-bar-icon-hover-from: rgba(147, 51, 234, 0.6); /* purple-600/60 */
+  --link-bar-icon-hover-to: rgba(217, 119, 6, 0.6); /* amber-600/60 */
+  --link-bar-icon-hover-border: rgba(251, 191, 36, 0.4); /* amber-400/40 */
 
-  /* Text */
+  /* Text - Sunset theme */
   --link-bar-text: rgba(255, 255, 255, 0.95);
   --link-bar-text-hover: #ffffff;
 
@@ -48,29 +48,28 @@
    ================================ */
 
   /* ================================
-   Nav Bar Colors starts
+   Nav Bar Colors starts - Sunset Purple Theme
    ================================ */
 
-  /* Background */
-  /* Background */
-  --nav-bar-bg: rgba(17, 24, 39, 0.8); /* gray-900/80 */
-  --nav-bar-bg-scrolled: rgba(17, 24, 39, 0.95); /* gray-900/95 */
-  --nav-bar-bg-mobile: rgba(17, 24, 39, 0.3); /* gray-900/30 */
-  --nav-bar-bg-mobile-scrolled: rgba(17, 24, 39, 0.4); /* gray-900/40 */
+  /* Background - Sunset gradient base */
+  --nav-bar-bg: rgba(120, 45, 18, 0.8); /* amber-800/80 */
+  --nav-bar-bg-scrolled: rgba(120, 45, 18, 0.95); /* amber-800/95 */
+  --nav-bar-bg-mobile: rgba(168, 85, 247, 0.3); /* purple-500/30 */
+  --nav-bar-bg-mobile-scrolled: rgba(168, 85, 247, 0.4); /* purple-500/40 */
 
-  /* Border */
-  --nav-bar-border: rgba(255, 255, 255, 0.2); /* white/20 */
-  --nav-bar-border-scrolled: rgba(255, 255, 255, 0.3); /* white/30 */
-  --nav-bar-border-mobile: rgba(255, 255, 255, 0.1); /* white/10 */
-  --nav-bar-border-mobile-scrolled: rgba(255, 255, 255, 0.2); /* white/20 */
+  /* Border - Sunset glow */
+  --nav-bar-border: rgba(251, 191, 36, 0.2); /* amber-400/20 */
+  --nav-bar-border-scrolled: rgba(251, 191, 36, 0.3); /* amber-400/30 */
+  --nav-bar-border-mobile: rgba(168, 85, 247, 0.01); /* purple-500/10 */
+  --nav-bar-border-mobile-scrolled: rgba(168, 85, 247, 0.2); /* purple-500/20 */
 
-  /* Gradient - Purple Luxury + Ocean */
-  --nav-bar-gradient-from: #0ea5e9; /* ocean-500 */
-  --nav-bar-gradient-to: #7c3aed; /* purple-600 */
-  --nav-bar-gradient-hover-from: #38bdf8; /* ocean-400 */
-  --nav-bar-gradient-hover-to: #8b5cf6; /* purple-500 */
+  /* Gradient - Sunset Purple + Amber */
+  --nav-bar-gradient-from: #f59e0b; /* amber-500 */
+  --nav-bar-gradient-to: #a855f7; /* purple-500 */
+  --nav-bar-gradient-hover-from: #fbbf24; /* amber-400 */
+  --nav-bar-gradient-hover-to: #9333ea; /* purple-600 */
 
-  /* Text */
+  /* Text - Sunset theme */
   --nav-bar-text: rgba(255, 255, 255, 0.9); /* white/90 */
   --nav-bar-text-hover: #ffffff;
   --nav-bar-text-gradient: linear-gradient(
@@ -79,41 +78,45 @@
     var(--nav-bar-gradient-to)
   );
 
-  /* Hover states */
-  --nav-bar-hover-bg: rgba(255, 255, 255, 0.1); /* white/10 */
-  --nav-bar-hover-bg-mobile: rgba(255, 255, 255, 0.2); /* white/20 */
+  /* Hover states - Sunset glow */
+  --nav-bar-hover-bg: rgba(251, 191, 36, 0.1); /* amber-400/10 */
+  --nav-bar-hover-bg-mobile: rgba(168, 85, 247, 0.2); /* purple-500/20 */
   --nav-bar-hover-gradient-mobile: linear-gradient(
     to right,
-    rgba(14, 165, 233, 0.2),
-    rgba(124, 58, 237, 0.2)
+    rgba(245, 158, 11, 0.2),
+    rgba(168, 85, 247, 0.2)
   );
 
-  /* Underline */
+  /* Underline - Sunset gradient */
   --nav-bar-underline: linear-gradient(
     to right,
     var(--nav-bar-gradient-from),
     var(--nav-bar-gradient-to)
   );
 
-  /* Dropdown Menu */
-  --nav-bar-dropdown-bg: rgba(17, 24, 39, 0.95); /* gray-900/95 */
-  --nav-bar-dropdown-border: rgba(255, 255, 255, 0.1); /* white/10 */
+  /* Dropdown Menu - Sunset theme */
+  --nav-bar-dropdown-bg: rgba(120, 45, 18, 0.95); /* amber-800/95 */
+  --nav-bar-dropdown-border: rgba(251, 191, 36, 0.1); /* amber-400/10 */
   --nav-bar-dropdown-text: rgba(255, 255, 255, 0.8); /* white/80 */
   --nav-bar-dropdown-text-hover: #ffffff;
-  --nav-bar-dropdown-bg-hover: rgba(255, 255, 255, 0.1); /* white/10 */
-  --nav-bar-dropdown-divider: rgba(255, 255, 255, 0.1); /* white/10 */
+  --nav-bar-dropdown-bg-hover: rgba(168, 85, 247, 0.1); /* purple-500/10 */
+  --nav-bar-dropdown-divider: rgba(251, 191, 36, 0.1); /* amber-400/10 */
 
-  /* User Avatar */
-  --nav-bar-avatar-bg: linear-gradient(to right, #8b5cf6, #3b82f6); /* purple-500 to blue-500 */
-  --nav-bar-avatar-border: rgba(255, 255, 255, 0.2); /* white/20 */
+  /* User Avatar - Sunset gradient */
+  --nav-bar-avatar-bg: linear-gradient(
+    to right,
+    #a855f7,
+    #f59e0b
+  ); /* purple-500 to amber-500 */
+  --nav-bar-avatar-border: rgba(251, 191, 36, 0.2); /* amber-400/20 */
   --nav-bar-avatar-text: #ffffff;
 
-  /* Buttons */
+  /* Buttons - Sunset theme */
   --nav-bar-button-login-bg: transparent;
-  --nav-bar-button-login-border: rgba(255, 255, 255, 0.2); /* white/20 */
+  --nav-bar-button-login-border: rgba(251, 191, 36, 0.2); /* amber-400/20 */
   --nav-bar-button-login-text: var(--nav-bar-text);
   --nav-bar-button-login-bg-hover: var(--nav-bar-hover-bg);
-  --nav-bar-button-login-border-hover: rgba(255, 255, 255, 0.4); /* white/40 */
+  --nav-bar-button-login-border-hover: rgba(251, 191, 36, 0.4); /* amber-400/40 */
   --nav-bar-button-login-text-hover: var(--nav-bar-text-hover);
 
   --nav-bar-button-signup-bg: linear-gradient(
@@ -129,18 +132,126 @@
   );
   --nav-bar-button-signup-text-hover: #ffffff;
 
-  /* Mobile Menu */
-  --nav-bar-mobile-divider: rgba(255, 255, 255, 0.1); /* white/10 */
+  /* Mobile Menu - Sunset accents */
+  --nav-bar-mobile-divider: rgba(168, 85, 247, 0.1); /* purple-500/10 */
   --nav-bar-mobile-auth-bg: transparent;
   --nav-bar-mobile-auth-border: var(--nav-bar-border);
 
-  /* Logout/Sign Out */
-  --nav-bar-logout-text: rgba(248, 113, 113, 1); /* red-400 */
-  --nav-bar-logout-text-hover: rgba(252, 165, 165, 1); /* red-300 */
+  /* Logout/Sign Out - Warning sunset */
+  --nav-bar-logout-text: rgba(239, 68, 68, 1); /* red-500 */
+  --nav-bar-logout-text-hover: rgba(248, 113, 113, 1); /* red-400 */
   --nav-bar-logout-bg-hover: rgba(220, 38, 38, 0.2); /* red-600/20 */
 
   /* ================================
    Nav Bar Colors end
+   ================================ */
+
+  /* ================================
+   Why Choose Us Colors start - Sunset Purple Theme
+   ================================ */
+
+  /* Background gradients - Sunset inspired */
+  --why-choose-us-bg-from: #fef7ed; /* amber-50 */
+  --why-choose-us-bg-to: #faf5ff; /* purple-50 */
+
+  /* Card styles - Sunset theme */
+  --why-choose-us-card-bg: #ffffff;
+  --why-choose-us-card-shadow: 0 10px 15px -3px rgba(168, 85, 247, 0.1);
+  --why-choose-us-card-hover-shadow: 0 25px 50px -12px rgba(245, 158, 11, 0.25);
+
+  /* Text colors - Sunset palette */
+  --why-choose-us-title-color: #451a03; /* amber-900 */
+  --why-choose-us-subtitle-color: #78350f; /* amber-800 */
+  --why-choose-us-description-color: #92400e; /* amber-700 */
+
+  /* Hover effects - Sunset purple */
+  --why-choose-us-title-hover: #a855f7; /* purple-500 */
+
+  /* Button styles - Sunset gradient */
+  --why-choose-us-button-from: #a855f7; /* purple-500 */
+  --why-choose-us-button-to: #f59e0b; /* amber-500 */
+  --why-choose-us-button-hover-from: #9333ea; /* purple-600 */
+  --why-choose-us-button-hover-to: #d97706; /* amber-600 */
+
+  /* Overlay colors - Sunset tints */
+  --why-choose-us-image-overlay: rgba(168, 85, 247, 0.2);
+  --why-choose-us-image-overlay-hover: rgba(245, 158, 11, 0.1);
+
+  /* Loading states - Sunset neutrals */
+  --why-choose-us-loading-bg: #fbbf24; /* amber-400 */
+  --why-choose-us-loading-bg-light: #fde68a; /* amber-200 */
+
+  /* Error states - Contrasting red for visibility */
+  --why-choose-us-error-color: #dc2626; /* red-600 */
+
+  /* ================================
+   Why Choose Us Colors end
+   ================================ */
+
+  /* ================================
+   Additional Sunset Purple Utilities
+   ================================ */
+
+  /* Primary Sunset Colors */
+  --sunset-purple-500: #a855f7;
+  --sunset-amber-500: #f59e0b;
+  
+  /* Gradient Combinations */
+  --sunset-gradient-primary: linear-gradient(to right, #a855f7, #f59e0b);
+  --sunset-gradient-reverse: linear-gradient(to right, #f59e0b, #a855f7);
+  --sunset-gradient-vertical: linear-gradient(to bottom, #a855f7, #f59e0b);
+  --sunset-gradient-diagonal: linear-gradient(135deg, #a855f7, #f59e0b);
+  
+  /* Opacity Variants */
+  --sunset-purple-10: rgba(168, 85, 247, 0.1);
+  --sunset-purple-20: rgba(168, 85, 247, 0.2);
+  --sunset-purple-30: rgba(168, 85, 247, 0.3);
+  --sunset-purple-40: rgba(168, 85, 247, 0.4);
+  --sunset-purple-50: rgba(168, 85, 247, 0.5);
+  
+  --sunset-amber-10: rgba(245, 158, 11, 0.1);
+  --sunset-amber-20: rgba(245, 158, 11, 0.2);
+  --sunset-amber-30: rgba(245, 158, 11, 0.3);
+  --sunset-amber-40: rgba(245, 158, 11, 0.4);
+  --sunset-amber-50: rgba(245, 158, 11, 0.5);
+  
+  /* Background Overlays */
+  --sunset-overlay-light: linear-gradient(135deg, 
+    rgba(168, 85, 247, 0.05), 
+    rgba(245, 158, 11, 0.05));
+  --sunset-overlay-medium: linear-gradient(135deg, 
+    rgba(168, 85, 247, 0.1), 
+    rgba(245, 158, 11, 0.1));
+  --sunset-overlay-strong: linear-gradient(135deg, 
+    rgba(168, 85, 247, 0.2), 
+    rgba(245, 158, 11, 0.2));
+    
+  /* Text Gradients */
+  --sunset-text-gradient: linear-gradient(to right, #a855f7, #f59e0b);
+  --sunset-text-gradient-hover: linear-gradient(to right, #9333ea, #d97706);
+  
+  /* Shadow Effects */
+  --sunset-shadow-sm: 0 1px 2px 0 rgba(168, 85, 247, 0.05);
+  --sunset-shadow-md: 0 4px 6px -1px rgba(168, 85, 247, 0.1), 
+                      0 2px 4px -1px rgba(245, 158, 11, 0.06);
+  --sunset-shadow-lg: 0 10px 15px -3px rgba(168, 85, 247, 0.1), 
+                      0 4px 6px -2px rgba(245, 158, 11, 0.05);
+  --sunset-shadow-xl: 0 20px 25px -5px rgba(168, 85, 247, 0.1), 
+                      0 10px 10px -5px rgba(245, 158, 11, 0.04);
+                      
+  /* Glow Effects */
+  --sunset-glow-purple: 0 0 20px rgba(168, 85, 247, 0.3);
+  --sunset-glow-amber: 0 0 20px rgba(245, 158, 11, 0.3);
+  --sunset-glow-combined: 0 0 30px rgba(168, 85, 247, 0.2), 
+                          0 0 40px rgba(245, 158, 11, 0.1);
+  
+  /* Border Gradients */
+  --sunset-border-gradient: linear-gradient(90deg, 
+    rgba(168, 85, 247, 0.3), 
+    rgba(245, 158, 11, 0.3));
+    
+  /* ================================
+   End Additional Utilities
    ================================ */
 }
 
