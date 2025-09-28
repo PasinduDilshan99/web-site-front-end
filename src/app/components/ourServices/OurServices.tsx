@@ -9,6 +9,7 @@ interface OurServiceDataType {
   serviceSubTitle: string;
   serviceDescription: string;
   serviceImageUrl: string;
+  serviceIconUrl: string;
   serviceColor: string;
   serviceStatus: string;
   serviceStatusStatus: string;
@@ -80,30 +81,48 @@ const OurServices = () => {
           {ourServices.map((service) => (
             <div
               key={service.serviceId}
-              className="group relative rounded-xl p-4 shadow-md bg-white flex flex-row lg:flex-col items-center text-left lg:text-center transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+              className="group relative rounded-xl p-4 shadow-md bg-white flex flex-row lg:flex-col items-center text-left lg:text-center transition-all duration-500 hover:scale-105 hover:shadow-2xl overflow-hidden"
               style={{
                 border: `3px solid ${service.serviceColor || '#A855F7'}`,
               }}
             >
-              {/* Image */}
-              <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 relative flex-shrink-0 mb-0 sm:mb-0 sm:mr-4 lg:mr-0">
+              {/* Background Image on Hover */}
+              <div 
+                className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-500 z-0"
+                style={{
+                  backgroundImage: `url(${service.serviceImageUrl})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
+                }}
+              />
+              
+              {/* Overlay for better text readability on hover */}
+              <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-80 transition-opacity duration-500 z-10" />
+
+              {/* Icon (normally visible) */}
+              <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 relative flex-shrink-0 mb-0 sm:mb-0 sm:mr-4 lg:mr-0 z-20">
                 <Image
-                  src={service.serviceImageUrl}
-                  alt={service.serviceTitle}
+                  src={service.serviceIconUrl}
+                  alt={`${service.serviceTitle} icon`}
                   fill
-                  className="object-contain"
+                  className="object-contain transition-all duration-500"
                 />
               </div>
 
               {/* Text Content */}
-              <div className="flex flex-col justify-center">
-                <h3 className="text-lg sm:text-xl font-semibold mb-1 text-gray-900">{service.serviceTitle}</h3>
+              <div className="flex flex-col justify-center z-20 relative">
+                <h3 className="text-lg sm:text-xl font-semibold mb-1 text-gray-900 group-hover:text-gray-900 transition-colors duration-500">
+                  {service.serviceTitle}
+                </h3>
                 {service.serviceSubTitle && (
-                  <p className="text-sm sm:text-base font-medium bg-gradient-to-r from-[#A855F7] to-[#F59E0B] bg-clip-text text-transparent mb-2">
+                  <p className="text-sm sm:text-base font-medium bg-gradient-to-r from-[#A855F7] to-[#F59E0B] bg-clip-text text-transparent mb-2 group-hover:text-opacity-100 transition-all duration-500">
                     {service.serviceSubTitle}
                   </p>
                 )}
-                <p className="text-gray-600 text-sm sm:text-base">{service.serviceDescription}</p>
+                <p className="text-gray-600 text-sm sm:text-base group-hover:text-gray-800 transition-colors duration-500">
+                  {service.serviceDescription}
+                </p>
               </div>
             </div>
           ))}

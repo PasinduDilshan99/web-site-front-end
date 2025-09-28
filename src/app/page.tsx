@@ -10,7 +10,7 @@ import Faq from "./components/faq/Faq";
 import Footer from "./components/footer/Footer";
 import GalleryHome from "./components/gallery/GalleryHome";
 import HeroSection from "./components/heroSection/HeroSection";
-import Inquire from "./components/Inquire";
+import Inquire from "./components/inquire/Inquire";
 import LinkBar from "./components/linkBar/LinkBar";
 import NavBar from "./components/navBar/NavBar";
 import OurServices from "./components/ourServices/OurServices";
@@ -57,14 +57,14 @@ export default function Home() {
       <div>
         <Accommodations />
       </div>
-      {/* 
-
-      <div>
-        <Inquire />
-      </div>
       <div>
         <DestinationsCategories />
       </div>
+      {/* <div>
+        <Inquire />
+      </div> */}
+      {/* 
+
       <div>
         <PopularDestinations />
       </div>
