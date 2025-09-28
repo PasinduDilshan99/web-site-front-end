@@ -131,51 +131,54 @@ const ActiveToursHome = () => {
   useEffect(() => {
     if (activeTours.length > cardsToShow && !isTransitioning) {
       const timer = setInterval(() => {
-        nextSlide();
-      }, 3000);
+        setCurrentIndex((prev) => {
+          const maxIndex = activeTours.length - cardsToShow;
+          if (prev >= maxIndex) {
+            return 0; // Loop back to start
+          }
+          return prev + 1;
+        });
+      }, 4000); // Increased to 4 seconds for better user experience
       return () => clearInterval(timer);
     }
-  }, [activeTours.length, cardsToShow, currentIndex, isTransitioning]);
+  }, [activeTours.length, cardsToShow, isTransitioning]);
 
   const nextSlide = () => {
-    if (isTransitioning) return;
-    setIsTransitioning(true);
+    if (isTransitioning || activeTours.length <= cardsToShow) return;
     
+    setIsTransitioning(true);
     setCurrentIndex((prev) => {
       const maxIndex = activeTours.length - cardsToShow;
       return prev >= maxIndex ? 0 : prev + 1;
     });
     
-    setTimeout(() => setIsTransitioning(false), 300);
+    setTimeout(() => setIsTransitioning(false), 700); // Match transition duration
   };
 
   const prevSlide = () => {
-    if (isTransitioning) return;
-    setIsTransitioning(true);
+    if (isTransitioning || activeTours.length <= cardsToShow) return;
     
+    setIsTransitioning(true);
     setCurrentIndex((prev) => {
       const maxIndex = activeTours.length - cardsToShow;
       return prev <= 0 ? maxIndex : prev - 1;
     });
     
-    setTimeout(() => setIsTransitioning(false), 300);
+    setTimeout(() => setIsTransitioning(false), 700); // Match transition duration
   };
 
   const goToSlide = (index: number) => {
-    if (isTransitioning) return;
+    if (isTransitioning || activeTours.length <= cardsToShow) return;
+    
+    setIsTransitioning(true);
     const maxIndex = activeTours.length - cardsToShow;
     const validIndex = Math.min(Math.max(0, index), maxIndex);
     setCurrentIndex(validIndex);
+    
+    setTimeout(() => setIsTransitioning(false), 700); // Match transition duration
   };
 
-  // Get visible tours based on current index
-  const getVisibleTours = () => {
-    if (activeTours.length === 0) return [];
-    const endIndex = Math.min(currentIndex + cardsToShow, activeTours.length);
-    return activeTours.slice(currentIndex, endIndex);
-  };
-
-  const visibleTours = getVisibleTours();
+  // Get total number of possible slides
   const maxSlides = Math.max(0, activeTours.length - cardsToShow + 1);
 
   if (loading) {
@@ -241,22 +244,23 @@ const ActiveToursHome = () => {
           </div>
 
           {/* Carousel Container */}
-          <div className="relative h-full">
-            {/* Cards Grid */}
-            <div className={`grid gap-2 sm:gap-3 md:gap-4 h-full transition-all duration-500 ease-in-out ${
-              cardsToShow === 1 ? 'grid-cols-1' :
-              cardsToShow === 2 ? 'grid-cols-2' :
-              cardsToShow === 3 ? 'grid-cols-3' :
-              'grid-cols-4'
-            }`}>
-              {visibleTours.map((tour, index) => (
+          <div className="relative h-full overflow-hidden">
+            {/* Cards Container */}
+            <div 
+              className="flex h-full transition-transform duration-700 ease-out"
+              style={{ 
+                transform: `translateX(-${currentIndex * (100 / cardsToShow)}%)`,
+                width: `${activeTours.length * (50 / cardsToShow)}%`,
+                transitionTimingFunction: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+              }}
+            >
+              {activeTours.map((tour, index) => (
                 <div 
-                  key={`${tour.tourId}-${currentIndex}-${index}`}
-                  className="bg-white rounded-lg sm:rounded-xl shadow-md sm:shadow-lg overflow-hidden hover:shadow-lg sm:hover:shadow-xl transition-all duration-300 h-full flex flex-col transform opacity-0 animate-slide-in"
-                  style={{
-                    animationDelay: `${index * 100}ms`,
-                    animationFillMode: 'forwards'
-                  }}
+                  key={tour.tourId}
+                  className="flex-shrink-0 h-full px-1 sm:px-2"
+                  style={{ width: `${100 / cardsToShow}%` }}
+                >
+                  <div className="bg-white rounded-lg sm:rounded-xl shadow-md sm:shadow-lg overflow-hidden hover:shadow-lg sm:hover:shadow-xl transition-all duration-300 h-full flex flex-col"
                 >
                   {/* Tour Image */}
                   <div className="relative h-32 sm:h-40 md:h-48 lg:h-40 xl:h-44 overflow-hidden">
@@ -299,13 +303,14 @@ const ActiveToursHome = () => {
                     </div>
                     
                     {/* Learn More Button */}
-                    <button className="w-full bg-amber-600 hover:bg-amber-700 text-white py-1.5 sm:py-2 px-2 sm:px-3 rounded-md sm:rounded-lg transition-colors duration-200 font-medium text-xs sm:text-sm lg:text-xs xl:text-sm flex items-center justify-center">
+                    <button className="w-full bg-gradient-to-r from-amber-600 to-purple-600 hover:from-purple-700 hover:to-amber-700 transition-colors text-white py-1.5 sm:py-2 px-2 sm:px-3 rounded-md sm:rounded-lg transition-colors duration-200 font-medium text-xs sm:text-sm lg:text-xs xl:text-sm flex items-center justify-center">
                       Learn More
                       <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
                     </button>
                   </div>
+                </div>
                 </div>
               ))}
             </div>
@@ -317,7 +322,9 @@ const ActiveToursHome = () => {
               <button 
                 onClick={prevSlide}
                 disabled={isTransitioning}
-                className="absolute left-1 lg:left-2 top-1/2 transform -translate-y-1/2 w-8 h-8 xl:w-10 xl:h-10 rounded-full bg-white shadow-lg hover:bg-gray-100 transition-colors flex items-center justify-center border border-gray-200 z-10 disabled:opacity-50"
+                className={`absolute left-1 lg:left-2 top-1/2 transform -translate-y-1/2 w-8 h-8 xl:w-10 xl:h-10 rounded-full bg-white shadow-lg hover:bg-gray-100 hover:shadow-2xl transition-all duration-300 flex items-center justify-center border border-gray-200 z-10 ${
+                  isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'
+                }`}
                 aria-label="Previous tour"
               >
                 <svg className="w-4 h-4 xl:w-5 xl:h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -327,7 +334,9 @@ const ActiveToursHome = () => {
               <button 
                 onClick={nextSlide}
                 disabled={isTransitioning}
-                className="absolute right-1 lg:right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 xl:w-10 xl:h-10 rounded-full bg-white shadow-lg hover:bg-gray-100 transition-colors flex items-center justify-center border border-gray-200 z-10 disabled:opacity-50"
+                className={`absolute right-1 lg:right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 xl:w-10 xl:h-10 rounded-full bg-white shadow-lg hover:bg-gray-100 hover:shadow-2xl transition-all duration-300 flex items-center justify-center border border-gray-200 z-10 ${
+                  isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'
+                }`}
                 aria-label="Next tour"
               >
                 <svg className="w-4 h-4 xl:w-5 xl:h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -343,7 +352,9 @@ const ActiveToursHome = () => {
               <button 
                 onClick={prevSlide}
                 disabled={isTransitioning}
-                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-amber-600 hover:bg-amber-700 transition-colors flex items-center justify-center text-white disabled:opacity-50"
+                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-amber-600 hover:bg-amber-700 transition-all duration-300 flex items-center justify-center text-white shadow-lg ${
+                  isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 hover:shadow-2xl'
+                }`}
                 aria-label="Previous tour"
               >
                 <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -353,7 +364,9 @@ const ActiveToursHome = () => {
               <button 
                 onClick={nextSlide}
                 disabled={isTransitioning}
-                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-amber-600 hover:bg-amber-700 transition-colors flex items-center justify-center text-white disabled:opacity-50"
+                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-amber-600 hover:bg-amber-700 transition-all duration-300 flex items-center justify-center text-white shadow-lg ${
+                  isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 hover:shadow-2xl'
+                }`}
                 aria-label="Next tour"
               >
                 <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -365,14 +378,17 @@ const ActiveToursHome = () => {
 
           {/* Slide Indicators */}
           {maxSlides > 1 && (
-            <div className="absolute bottom-1 sm:bottom-2 lg:bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-1 sm:space-x-2">
+            <div className="absolute bottom-1 sm:bottom-1 lg:bottom-1 left-1/2 transform -translate-x-1/2 flex space-x-1 sm:space-x-2">
               {Array.from({ length: maxSlides }, (_, index) => (
                 <button
                   key={index}
                   onClick={() => goToSlide(index)}
-                  className={`w-1.5 h-1.5 sm:w-2 sm:h-2 lg:w-3 lg:h-3 rounded-full transition-colors ${
-                    index === currentIndex ? 'bg-purple-600' : 'bg-gray-300'
-                  }`}
+                  disabled={isTransitioning}
+                  className={`w-1.5 h-1.5 sm:w-2 sm:h-2 lg:w-3 lg:h-3 rounded-full transition-all duration-300 ${
+                    index === currentIndex 
+                      ? 'bg-purple-600 scale-110 shadow-lg' 
+                      : 'bg-gray-300 hover:bg-gray-400'
+                  } ${isTransitioning ? 'cursor-not-allowed' : 'cursor-pointer hover:scale-105'}`}
                   aria-label={`Go to slide ${index + 1}`}
                 />
               ))}
@@ -386,22 +402,7 @@ const ActiveToursHome = () => {
         </div>
       </div>
 
-      <style jsx>{`
-        @keyframes slide-in {
-          from {
-            opacity: 0;
-            transform: translateX(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-        
-        .animate-slide-in {
-          animation: slide-in 0.6s ease-out;
-        }
-      `}</style>
+
     </div>
   );
 };
