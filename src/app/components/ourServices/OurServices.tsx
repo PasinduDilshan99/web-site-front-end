@@ -88,7 +88,7 @@ const OurServices = () => {
             >
               {/* Background Image on Hover */}
               <div 
-                className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-500 z-0"
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"
                 style={{
                   backgroundImage: `url(${service.serviceImageUrl})`,
                   backgroundSize: 'cover',

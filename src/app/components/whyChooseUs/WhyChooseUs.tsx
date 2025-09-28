@@ -279,9 +279,9 @@ const WhyChooseUs = () => {
         </div>
 
         {/* Call to Action - Fully Responsive */}
-        <div className="text-center mt-8 sm:mt-10 md:mt-12 lg:mt-16">
-          <button className="px-6 sm:px-8 md:px-10 lg:px-12 py-3 sm:py-4 md:py-5 text-white font-medium sm:font-semibold md:font-bold text-sm sm:text-base md:text-lg lg:text-xl rounded-full sm:rounded-2xl transform hover:scale-105 lg:hover:scale-110 transition-all duration-300 shadow-lg hover:shadow-2xl bg-gradient-to-r from-amber-500 to-purple-600 hover:from-amber-600 hover:to-purple-700 border border-white/20 backdrop-blur-sm">
-            Learn More About Us
+        <div className="text-center mt-8 sm:mt-12 md:mt-16">
+          <button className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-amber-600 to-purple-600 text-white font-semibold rounded-full hover:from-purple-700 hover:to-amber-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl text-sm sm:text-base">
+            Learn More About us
           </button>
         </div>
       </div>

@@ -60,11 +60,6 @@ export default function Home() {
       <div>
         <DestinationsCategories />
       </div>
-      {/* <div>
-        <Inquire />
-      </div> */}
-      {/* 
-
       <div>
         <PopularDestinations />
       </div>
@@ -86,6 +81,12 @@ export default function Home() {
       <div>
         <PackagesHome />
       </div>
+      {/* <div>
+        <Inquire />
+      </div> */}
+      {/* 
+
+
       <div>
         <ReviewsHome />
       </div>

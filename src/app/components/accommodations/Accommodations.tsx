@@ -348,7 +348,7 @@ const Accommodations = () => {
                   {/* Content Wrapper with higher z-index */}
                   <div className="relative z-10 flex flex-col items-center h-full">
                     {/* Status badge */}
-                    <div
+                    {/* <div
                       className={`absolute -top-2 sm:-top-3 right-0 sm:right-0 text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full ${getStatusColor(
                         accommodation.accommodationStatus
                       )} shadow-md`}
@@ -361,11 +361,11 @@ const Accommodations = () => {
                           .replace(/_/g, " ")
                           .substring(0, 8)}
                       </span>
-                    </div>
+                    </div> */}
 
                     {/* Icon Container */}
-                    <div className="mb-3 sm:mb-4 md:mb-5 lg:mb-6 transform transition-transform duration-300 group-hover:scale-110 flex-shrink-0 mt-4">
-                      <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-18 md:h-18 lg:w-20 lg:h-20 relative">
+                    {/* <div className="mb-3 sm:mb-4 md:mb-5 lg:mb-6 transform transition-transform duration-300 group-hover:scale-110 flex-shrink-0 mt-4">
+                      <div className="w-6 h-6 sm:w-8 sm:h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 relative">
                         <Image
                           src={getValidImageUrl(
                             accommodation.accommodationIconUrl
@@ -376,7 +376,7 @@ const Accommodations = () => {
                           unoptimized
                         />
                       </div>
-                    </div>
+                    </div> */}
 
                     {/* Content */}
                     <div className="text-center flex-1 flex flex-col justify-center">
@@ -394,7 +394,12 @@ const Accommodations = () => {
                     </div>
 
                     {/* Hover Effect Underline */}
-                    <div className="mt-2 sm:mt-3 md:mt-4 h-0.5 sm:h-1 w-0 group-hover:w-full transition-all duration-300 rounded-full bg-white opacity-80"></div>
+                    <div
+                      className="mt-2 sm:mt-3 md:mt-4 h-0.5 sm:h-1 w-0 group-hover:w-full transition-all duration-300 rounded-full opacity-80"
+                      style={{
+                        backgroundColor: `${accommodation.accommodationHoverColor}`,
+                      }}
+                    ></div>
                   </div>
                 </div>
               );

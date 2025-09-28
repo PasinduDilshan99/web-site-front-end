@@ -210,7 +210,7 @@ const WorkFlow = () => {
                 <div className="flex-shrink-0">
                   <div
                     className={`w-14 sm:w-16 h-14 sm:h-16 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 ease-in-out ${
-                      hoveredStep === step.id ? 'scale-110' : 'scale-100'
+                      hoveredStep === step.id ? "scale-110" : "scale-100"
                     }`}
                     style={{ backgroundColor: step.bgColor || "#A855F7" }}
                     onMouseEnter={() => setHoveredStep(step.id)}
@@ -267,7 +267,7 @@ const WorkFlow = () => {
                 {/* Step Icon */}
                 <div
                   className={`w-16 md:w-20 h-16 md:h-20 rounded-full flex items-center justify-center mb-4 md:mb-6 shadow-lg border-4 border-white transition-all duration-300 ease-in-out ${
-                    hoveredStep === step.id ? 'scale-110' : 'scale-100'
+                    hoveredStep === step.id ? "scale-110" : "scale-100"
                   }`}
                   style={{ backgroundColor: step.bgColor || "#A855F7" }}
                   onMouseEnter={() => setHoveredStep(step.id)}
@@ -328,15 +328,9 @@ const WorkFlow = () => {
         </div>
 
         {/* CTA Button */}
-        <div className="text-center mt-12 sm:mt-16 lg:mt-20">
-          <button
-            onClick={() =>
-              workFlowSteps[0]?.linkUrl &&
-              (window.location.href = workFlowSteps[0].linkUrl)
-            }
-            className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-[#A855F7] to-[#F59E0B] text-white font-semibold rounded-lg hover:scale-105 transition-transform duration-300 shadow-lg text-sm sm:text-lg"
-          >
-            Get Started Now
+        <div className="text-center mt-8 sm:mt-12 md:mt-16">
+          <button className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-amber-600 to-purple-600 text-white font-semibold rounded-full hover:from-purple-700 hover:to-amber-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl text-sm sm:text-base">
+            Get Start Now
           </button>
         </div>
       </div>
