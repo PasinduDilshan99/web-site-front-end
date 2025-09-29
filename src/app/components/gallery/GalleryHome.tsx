@@ -57,16 +57,9 @@ const GalleryHome = () => {
     return (
       <div className="min-h-screen bg-gray-50 py-8 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="bg-white rounded-lg shadow animate-pulse">
-                <div className="w-full h-48 bg-gray-300 rounded-t-lg"></div>
-                <div className="p-4">
-                  <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
-                  <div className="h-3 bg-gray-300 rounded w-full mb-1"></div>
-                  <div className="h-3 bg-gray-300 rounded w-1/2"></div>
-                </div>
-              </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2">
+            {[...Array(12)].map((_, i) => (
+              <div key={i} className="aspect-square bg-gray-300 rounded animate-pulse"></div>
             ))}
           </div>
         </div>
@@ -90,34 +83,22 @@ const GalleryHome = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-7xl mx-auto">
-        {/* Gallery Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Image Gallery
-          </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Bien reprité non telle baiser lhonneur
-          </p>
-        </div>
-
-        {/* Images Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {/* Images Grid Only */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2">
           {openImages.map((image) => (
             <div
               key={image.imageId}
-              className="group relative bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden"
-              style={{ backgroundColor: image.color }}
+              className="group relative aspect-square rounded-lg overflow-hidden transition-all duration-300"
               onMouseEnter={() => setHoveredImage(image.imageId)}
               onMouseLeave={() => setHoveredImage(null)}
             >
-              {/* Image Container with Hover Overlay */}
-              <div className="relative overflow-hidden">
+              {/* Image Container */}
+              <div className="relative w-full h-full">
                 <Image
                   src={image.imageLink}
                   alt={image.imageName}
-                  width={80}
-                  height={80}
-                  className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
 
                 {/* Hover Overlay */}
@@ -126,73 +107,32 @@ const GalleryHome = () => {
                     className="absolute inset-0 transition-all duration-300"
                     style={{
                       backgroundColor: image.hoverColor,
-                      opacity: 0.3, // Semi-transparent overlay
+                      mixBlendMode: "multiply",
                     }}
                   />
                 )}
 
-                {/* Hover Info Box */}
+                {/* Hover Info (Optional - shows only on hover) */}
                 <div
-                  className={`absolute bottom-0 left-0 right-0 p-3 transition-all duration-300 transform ${
+                  className={`absolute bottom-0 left-0 right-0 p-2 transition-all duration-300 transform ${
                     hoveredImage === image.imageId
-                      ? "translate-y-0"
-                      : "translate-y-full"
+                      ? "translate-y-0 opacity-100"
+                      : "translate-y-2 opacity-0"
                   }`}
                   style={{
                     background:
-                      "linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%)",
+                      "linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%)",
                   }}
                 >
                   <div className="text-white">
-                    <h3 className="font-semibold text-sm mb-1">
+                    <h3 className="font-semibold text-xs mb-1 truncate">
                       {image.imageName}
                     </h3>
-                    <p className="text-xs opacity-90">{image.location}</p>
+                    <p className="text-xs opacity-90 truncate">
+                      {image.imageOwner}
+                    </p>
                   </div>
                 </div>
-              </div>
-
-              {/* Content Section */}
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-900 text-sm mb-2 line-clamp-1">
-                  {image.imageName}
-                </h3>
-                <p className="text-gray-600 text-xs mb-3 line-clamp-2">
-                  {image.imageDescription}
-                </p>
-
-                <div className="flex items-center justify-between text-xs text-gray-500">
-                  <span className="flex items-center">
-                    <svg
-                      className="w-3 h-3 mr-1"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                      />
-                    </svg>
-                    {image.imageOwner}
-                  </span>
-                  <span className="bg-gray-100 px-2 py-1 rounded text-xs">
-                    {image.imageSource}
-                  </span>
-                </div>
-
-                {image.imageSourceLink && (
-                  <a
-                    href={image.imageSourceLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block mt-3 text-blue-600 hover:text-blue-800 text-xs font-medium transition-colors duration-200"
-                  >
-                    View Source →
-                  </a>
-                )}
               </div>
             </div>
           ))}

@@ -80,20 +80,31 @@ export default function Home() {
         <ActiveToursHomeGrid />
       </div>
       <div>
+        <TourMap />
+      </div>
+      <div>
         <PackagesHome />
       </div>
       <div>
-        <TourMap />
+        <PopularTours />
       </div>
+      <div>
+        <GalleryHome />
+      </div>
+      <div>
+        <ReviewsHome />
+      </div>
+      <div>
+        <Footer />
+      </div>
+
       {/* <div>
         <Inquire />
       </div> */}
       {/* 
 
 
-      <div>
-        <ReviewsHome />
-      </div>
+
       <div>
         <UserLevelsHome />
       </div>
@@ -106,22 +117,14 @@ export default function Home() {
       <div>
         <PromotionsHome />
       </div>
-      <div>
-        <PopularTours />
-      </div>
 
-      <div>
-        <GalleryHome />
-      </div>
       <div>
         <ActivitiesHome />
       </div>
       <div>
         <ActivityCategoriesHome />
       </div>
-      <div>
-        <Footer />
-      </div> */}
+ */}
     </div>
   );
 }
