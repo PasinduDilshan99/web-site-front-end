@@ -21,6 +21,7 @@ import ReviewsHome from "./components/reviews/ReviewsHome";
 import ActiveToursHome from "./components/tours/ActiveToursHome";
 import ActiveToursHomeGrid from "./components/tours/ActiveToursHomeGrid";
 import PopularTours from "./components/tours/PopularTours";
+import TourMap from "./components/tours/TourMap";
 import UserBenefitsHome from "./components/user-benefits/UserBenefitsHome";
 import { UserLevelsWithBenefitsHome } from "./components/user-levels/benefits/UserLevelsWithBenefitsHome";
 import UserLevelsHome from "./components/user-levels/UserLevelsHome";
@@ -80,6 +81,9 @@ export default function Home() {
       </div>
       <div>
         <PackagesHome />
+      </div>
+      <div>
+        <TourMap />
       </div>
       {/* <div>
         <Inquire />
