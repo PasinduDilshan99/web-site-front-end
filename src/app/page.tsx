@@ -1,4 +1,4 @@
-import Accommodations from "./components/Accommodations";
+import Accommodations from "./components/accommodations/Accommodations";
 import ActivitiesHome from "./components/activities/ActivitiesHome";
 import ActivityCategoriesHome from "./components/activities/categories/ActivityCategoriesHome";
 import ActiveBlogsSummery from "./components/blogs/ActiveBlogsSummery";
@@ -9,23 +9,24 @@ import TrendingDestinations from "./components/destinations/TrendingDestinations
 import Faq from "./components/faq/Faq";
 import Footer from "./components/footer/Footer";
 import GalleryHome from "./components/gallery/GalleryHome";
-import HeroSection from "./components/HeroSection";
-import Inquire from "./components/Inquire";
-import LinkBar from "./components/LinkBar";
-import NavBar from "./components/NavBar";
-import OurServices from "./components/OurServices";
+import HeroSection from "./components/heroSection/HeroSection";
+import Inquire from "./components/inquire/Inquire";
+import LinkBar from "./components/linkBar/LinkBar";
+import NavBar from "./components/navBar/NavBar";
+import OurServices from "./components/ourServices/OurServices";
 import PackagesHome from "./components/packages/PackagesHome";
-import Partners from "./components/Partners";
+import Partners from "./components/partners/Partners";
 import PromotionsHome from "./components/promotions/PromotionsHome";
 import ReviewsHome from "./components/reviews/ReviewsHome";
 import ActiveToursHome from "./components/tours/ActiveToursHome";
 import ActiveToursHomeGrid from "./components/tours/ActiveToursHomeGrid";
 import PopularTours from "./components/tours/PopularTours";
+import TourMap from "./components/tours/TourMap";
 import UserBenefitsHome from "./components/user-benefits/UserBenefitsHome";
 import { UserLevelsWithBenefitsHome } from "./components/user-levels/benefits/UserLevelsWithBenefitsHome";
 import UserLevelsHome from "./components/user-levels/UserLevelsHome";
-import WhyChooseUs from "./components/WhyChooseUs";
-import WorkFlow from "./components/WorkFlow";
+import WhyChooseUs from "./components/whyChooseUs/WhyChooseUs";
+import WorkFlow from "./components/workFlow/WorkFlow";
 
 export default function Home() {
   return (
@@ -58,9 +59,6 @@ export default function Home() {
         <Accommodations />
       </div>
       <div>
-        <Inquire />
-      </div>
-      <div>
         <DestinationsCategories />
       </div>
       <div>
@@ -84,6 +82,15 @@ export default function Home() {
       <div>
         <PackagesHome />
       </div>
+      <div>
+        <TourMap />
+      </div>
+      {/* <div>
+        <Inquire />
+      </div> */}
+      {/* 
+
+
       <div>
         <ReviewsHome />
       </div>
@@ -112,15 +119,9 @@ export default function Home() {
       <div>
         <ActivityCategoriesHome />
       </div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
       <div>
         <Footer />
-      </div>
+      </div> */}
     </div>
   );
 }

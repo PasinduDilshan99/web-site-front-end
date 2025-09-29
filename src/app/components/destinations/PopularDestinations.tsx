@@ -1,7 +1,7 @@
-"use client"
-import { GET_POPULAR_DESTINATIONS } from '@/utils/frontEndConstant';
-import React, { useEffect, useState } from 'react'
-import Slider from 'react-slick';
+"use client";
+import { GET_POPULAR_DESTINATIONS } from "@/utils/frontEndConstant";
+import React, { useEffect, useState } from "react";
+import Slider from "react-slick";
 
 // Import Slick CSS files
 import "slick-carousel/slick/slick.css";
@@ -38,7 +38,12 @@ export interface PopularDestinationsType {
 const PopularDestinations = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [popularDestinations, setPopularDestinations] = useState<PopularDestinationsType[]>([]);
+  const [popularDestinations, setPopularDestinations] = useState<
+    PopularDestinationsType[]
+  >([]);
+  const [activeImages, setActiveImages] = useState<{ [key: number]: number }>(
+    {}
+  );
 
   useEffect(() => {
     const fetchPopularDestinations = async () => {
@@ -49,8 +54,18 @@ const PopularDestinations = () => {
 
         if (response.ok) {
           const items: PopularDestinationsType[] = data.data || [];
-          const activePopularDestinations = items.filter(item => item.destinationStatus === "ACTIVE");
+          const activePopularDestinations = items.filter(
+            (item) => item.destinationStatus === "ACTIVE"
+          );
           setPopularDestinations(activePopularDestinations);
+
+          // Initialize active image index for each destination (default to first image)
+          const initialActiveImages: { [key: number]: number } = {};
+          activePopularDestinations.forEach((dest) => {
+            initialActiveImages[dest.destinationId] = 0;
+          });
+          setActiveImages(initialActiveImages);
+
           setError(null);
         } else {
           setError(data.message || "Failed to fetch popular destinations ");
@@ -66,120 +81,359 @@ const PopularDestinations = () => {
     fetchPopularDestinations();
   }, []);
 
-  // Slick carousel settings
+  // Function to handle image switching
+  const handleImageSwitch = (destinationId: number, imageIndex: number) => {
+    setActiveImages((prev) => ({
+      ...prev,
+      [destinationId]: imageIndex,
+    }));
+  };
+
+  // Enhanced Slick carousel settings with 4 responsive breakpoints
   const sliderSettings = {
     dots: true,
     infinite: true,
     speed: 500,
-    slidesToShow: 3,
+    slidesToShow: 3, // PC - show 3 cards like the image
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 3000,
+    autoplaySpeed: 4000,
     pauseOnHover: true,
     responsive: [
       {
-        breakpoint: 1024,
+        breakpoint: 1440, // Large laptops/small desktops
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 1024, // Laptops/tablets landscape
         settings: {
           slidesToShow: 2,
           slidesToScroll: 1,
-        }
+        },
       },
       {
-        breakpoint: 640,
+        breakpoint: 768, // Tablets portrait
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
-        }
-      }
-    ]
+          dots: true,
+        },
+      },
+      {
+        breakpoint: 640, // Mobile devices
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          dots: true,
+          arrows: false,
+        },
+      },
+    ],
   };
 
-  if (loading) return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="text-center">Loading popular destinations...</div>
-    </div>
-  );
-  
-  if (error) return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="text-red-500 text-center">{error}</div>
-    </div>
-  );
+  // Get discount percentage (mock data for demo)
+  const getDiscountPercentage = (destinationId: number) => {
+    const discounts = [10, 15, 20, 25, 30, 40];
+    return discounts[destinationId % discounts.length];
+  };
+
+  // Get tour duration (mock data for demo)
+  const getTourDuration = (destinationId: number) => {
+    const durations = [3, 5, 7, 10, 14, 15];
+    return durations[destinationId % durations.length];
+  };
+
+  // Get price (mock data for demo)
+  const getPrice = (popularity: number, rating: number) => {
+    const basePrice = popularity * rating * 10;
+    return Math.round(basePrice);
+  };
+
+  // Get original price
+  const getOriginalPrice = (currentPrice: number, discount: number) => {
+    return Math.round(currentPrice / (1 - discount / 100));
+  };
+
+  if (loading)
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <div className="text-center text-gray-600">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          Loading popular destinations...
+        </div>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <div className="text-red-500 text-center bg-red-50 p-6 rounded-lg">
+          {error}
+        </div>
+      </div>
+    );
 
   return (
-    <section className="container mx-auto px-4 py-12">
+    <section className="mx-auto px-4 py-12 bg-gradient-to-br from-purple-100 to-orange-50">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10">
-        <div className="max-w-lg">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Explore Popular Destinations</h2>
-          <p className="text-gray-600 mb-6 md:mb-0">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
-          </p>
-        </div>
-        <button className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+      <div className="text-center mb-10 sm:mb-12 md:mb-16 lg:mb-20">
+        <p className="text-gray-700 max-w-2xl mx-auto text-sm sm:text-base md:text-lg">
+          Explore our Tours
+        </p>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-r from-[#A855F7] to-[#F59E0B] bg-clip-text text-transparent mb-3 sm:mb-4 md:mb-6 leading-tight">
+          Most Popular Tours
+        </h2>
+        <p className="text-gray-700 max-w-2xl mx-auto text-sm sm:text-base md:text-lg">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore
+        </p>
+        <div className="mt-4 sm:mt-6 w-16 sm:w-20 md:w-24 lg:w-32 h-1 bg-gradient-to-r from-[#A855F7] to-[#F59E0B] mx-auto rounded-full"></div>
+      </div>
+
+      {/* Destinations Carousel */}
+      <div className="relative mb-12">
+        <Slider {...sliderSettings}>
+          {popularDestinations.map((destination) => {
+            const discount = getDiscountPercentage(destination.destinationId);
+            const duration = getTourDuration(destination.destinationId);
+            const currentPrice = getPrice(
+              destination.popularity,
+              destination.rating
+            );
+            const originalPrice = getOriginalPrice(currentPrice, discount);
+            const activeImageIndex =
+              activeImages[destination.destinationId] || 0;
+
+            return (
+              <div
+                key={destination.destinationId}
+                className="px-3 focus:outline-none"
+              >
+                <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 h-full">
+                  {/* Main Image Container */}
+                  <div className="relative h-64 overflow-hidden">
+                    {destination.images.length > 0 ? (
+                      <img
+                        src={
+                          destination.images[activeImageIndex]?.imageUrl ||
+                          destination.images[0].imageUrl
+                        }
+                        alt={
+                          destination.images[activeImageIndex]
+                            ?.imageDescription ||
+                          destination.images[0].imageDescription
+                        }
+                        className="w-full h-full object-cover transition-all duration-500 ease-in-out"
+                        onError={(e) => {
+                          e.currentTarget.src = "/api/placeholder/400/250";
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-amber-400 to-purple-600 flex items-center justify-center">
+                        <span className="text-white font-semibold text-lg">
+                          {destination.destinationName}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Discount Badge */}
+                    <div className="absolute top-4 left-4 bg-purple-400 text-white px-3 py-1 rounded-full text-sm font-semibold z-10">
+                      {discount}% Off
+                    </div>
+
+                    {/* Favorite Button */}
+                    <button className="absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-100 transition-colors z-10">
+                      <svg
+                        className="w-4 h-4 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                        />
+                      </svg>
+                    </button>
+
+                    {/* Enhanced Thumbnail Images */}
+                    {destination.images.length > 1 && (
+                      <div className="absolute bottom-4 right-4 flex flex-col space-y-2">
+                        {destination.images.slice(0, 4).map((image, index) => (
+                          <div
+                            key={image.imageId}
+                            className={`w-16 h-12 rounded-lg overflow-hidden border-2 cursor-pointer transition-all duration-200 hover:scale-105 ${
+                              activeImageIndex === index
+                                ? "border-amber-500 shadow-lg"
+                                : "border-white hover:border-amber-300"
+                            }`}
+                            onClick={() =>
+                              handleImageSwitch(
+                                destination.destinationId,
+                                index
+                              )
+                            }
+                          >
+                            <img
+                              src={image.imageUrl}
+                              alt={image.imageDescription}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                e.currentTarget.src = "/api/placeholder/64/48";
+                              }}
+                            />
+                          </div>
+                        ))}
+                        {destination.images.length > 4 && (
+                          <div className="w-16 h-12 rounded-lg bg-black bg-opacity-70 flex items-center justify-center cursor-pointer hover:bg-opacity-80 transition-all">
+                            <span className="text-white text-xs font-semibold">
+                              +{destination.images.length - 4}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Image Counter */}
+                    {destination.images.length > 1 && (
+                      <div className="absolute bottom-4 left-4 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs">
+                        {activeImageIndex + 1} / {destination.images.length}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-6">
+                    {/* Duration and Rating */}
+                    <div className="flex justify-between items-center mb-3">
+                      <div className="flex items-center text-gray-500 text-sm">
+                        <svg
+                          className="w-4 h-4 mr-1"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                        {duration} days
+                      </div>
+
+                      <div className="flex items-center">
+                        {[...Array(5)].map((_, i) => (
+                          <svg
+                            key={i}
+                            className={`w-4 h-4 ${
+                              i < Math.floor(destination.rating)
+                                ? "text-yellow-400"
+                                : "text-gray-300"
+                            }`}
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
+                        ))}
+                        <span className="ml-1 text-sm font-semibold text-gray-700">
+                          {destination.rating}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Title */}
+                    <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2">
+                      {destination.destinationName}
+                    </h3>
+
+                    {/* Location */}
+                    <p className="text-gray-500 text-sm mb-4 flex items-center">
+                      <svg
+                        className="w-4 h-4 mr-1 text-purple-500"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                      </svg>
+                      {destination.location}
+                    </p>
+
+                    {/* Price and Button */}
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center space-x-2">
+                        {/* <span className="text-2xl font-bold text-gray-900">
+                          ${currentPrice}.00
+                        </span> */}
+                        <span className="text-sm text-gray-500">
+                          ${originalPrice}.00
+                        </span>
+                      </div>
+
+                      <button className="bg-purple-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-semibold transition-colors">
+                        Explore
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </Slider>
+      </div>
+
+      {/* View All Button */}
+      <div className="text-center mt-8 sm:mt-12 md:mt-16">
+        <button className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-amber-600 to-purple-600 text-white font-semibold rounded-full hover:from-purple-700 hover:to-amber-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl text-sm sm:text-base">
           View All Destinations
         </button>
       </div>
 
-      {/* Divider */}
-      <div className="border-t border-gray-200 mb-10"></div>
-
-      {/* Destinations Carousel */}
-      <div className="relative">
-        <Slider {...sliderSettings}>
-          {popularDestinations.map(destination => (
-            <div key={destination.destinationId} className="px-2 focus:outline-none">
-              <div className="rounded-xl overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 h-full">
-                {/* Image */}
-                {destination.images.length > 0 && (
-                  <div className="relative h-60 overflow-hidden">
-                    <img
-                      src={destination.images[0].imageUrl}
-                      alt={destination.images[0].imageDescription}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute top-4 right-4 bg-white rounded-full px-3 py-1 shadow-md flex items-center">
-                      <span className="text-yellow-500 mr-1">⭐</span>
-                      <span className="font-semibold text-gray-800">{destination.rating}</span>
-                    </div>
-                  </div>
-                )}
-                
-                {/* Content */}
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-xl font-bold text-gray-800">{destination.destinationName}</h3>
-                    <span className="text-sm text-blue-600 font-medium bg-blue-50 px-2 py-1 rounded">
-                      {destination.category.categoryName}
-                    </span>
-                  </div>
-                  
-                  <p className="text-gray-500 text-sm mb-4 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    {destination.location}
-                  </p>
-                  
-                  <p className="text-gray-600 mb-4 line-clamp-2">{destination.destinationDescription}</p>
-                  
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-500">
-                      {Math.round(destination.popularity)}k visitors this year
-                    </span>
-                    <button className="text-blue-600 font-medium hover:text-blue-800 transition-colors">
-                      Explore →
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </Slider>
-      </div>
+      {/* Custom CSS */}
+      <style jsx>{`
+        .slick-dots {
+          bottom: -60px;
+        }
+        .slick-dots li button:before {
+          font-size: 12px;
+          color: #cbd5e0;
+        }
+        .slick-dots li.slick-active button:before {
+          color: #f97316;
+        }
+        .slick-prev:before,
+        .slick-next:before {
+          color: #f97316;
+          font-size: 24px;
+        }
+        .line-clamp-2 {
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+      `}</style>
     </section>
   );
-}
+};
 
 export default PopularDestinations;

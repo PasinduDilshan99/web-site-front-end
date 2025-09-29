@@ -1,5 +1,6 @@
 "use client";
 import { GET_ALL_ACTIVE_PACKAGES_FE } from "@/utils/frontEndConstant";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
 interface PackageType {
@@ -43,9 +44,11 @@ interface ActivePackagesType {
 const PackagesHome = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activePackages, setActivePackages] = useState<ActivePackagesType[]>([]);
+  const [activePackages, setActivePackages] = useState<ActivePackagesType[]>(
+    []
+  );
 
-    useEffect(() => {
+  useEffect(() => {
     const fetchPackages = async () => {
       try {
         setLoading(true);
@@ -122,9 +125,11 @@ const PackagesHome = () => {
             >
               {/* Package Image */}
               <div className="relative h-48 overflow-hidden">
-                <img
+                <Image
                   src={pkg.images[0] || "/placeholder.jpg"}
                   alt={pkg.packageName}
+                  width={500}
+                  height={500}
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                 />
               </div>
@@ -139,24 +144,44 @@ const PackagesHome = () => {
                 {/* Duration Badge */}
                 <div className="flex items-center gap-2 mb-3">
                   <div className="flex items-center gap-1">
-                    <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                    <svg
+                      className="w-4 h-4 text-gray-400"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     <span className="text-sm text-gray-600">
                       {formatDuration(pkg.packageStartDate, pkg.packageEndDate)}
                     </span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                    <svg
+                      className="w-4 h-4 text-gray-400"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                        clipRule="evenodd"
+                      />
                     </svg>
-                    <span className="text-sm text-gray-600">{pkg.maxPersonCount} max</span>
+                    <span className="text-sm text-gray-600">
+                      {pkg.maxPersonCount} max
+                    </span>
                   </div>
                 </div>
 
                 {/* Tour Covers Section */}
                 <div className="mb-4">
-                  <p className="text-sm text-gray-500 mb-1">Tour Covers Locations:</p>
+                  <p className="text-sm text-gray-500 mb-1">
+                    Tour Covers Locations:
+                  </p>
                   <p className="text-sm text-blue-600 leading-relaxed">
                     {extractLocations(pkg.packageDescription)}
                   </p>
@@ -170,7 +195,10 @@ const PackagesHome = () => {
                 {/* Price Section */}
                 <div className="flex items-center justify-between mb-4">
                   <div className="text-sm text-gray-500">
-                    From <span className="text-2xl font-bold text-gray-900">${pkg.totalPrice}</span>
+                    From{" "}
+                    <span className="text-2xl font-bold text-gray-900">
+                      ${pkg.totalPrice}
+                    </span>
                     {pkg.discountPercentage > 0 && (
                       <span className="ml-2 text-xs bg-red-100 text-red-600 px-2 py-1 rounded-full">
                         {pkg.discountPercentage}% OFF
