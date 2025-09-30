@@ -64,36 +64,37 @@ export default function Home() {
       <div>
         <PopularDestinations />
       </div>
-      <div>
+            <div>
+        <ActiveBlogsSummery />
+      </div>
+      {/* <div>
         <TrendingDestinations />
       </div>
       <div>
-        <NewDestinations />
+        <NewDestinations /> 
       </div>
-      <div>
-        <ActiveBlogsSummery />
-      </div>
+
       <div>
         <ActiveToursHome />
       </div>
       <div>
         <ActiveToursHomeGrid />
-      </div>
-      <div>
+      </div> */}
+      {/* <div>
         <TourMap />
-      </div>
-      <div>
+      </div> */}
+      {/* <div>
         <PackagesHome />
-      </div>
-      <div>
+      </div> */}
+      {/* <div>
         <PopularTours />
-      </div>
+      </div> */}
       <div>
         <GalleryHome />
       </div>
-      <div>
+      {/* <div>
         <ReviewsHome />
-      </div>
+      </div> */}
       <div>
         <Footer />
       </div>
@@ -101,11 +102,8 @@ export default function Home() {
       {/* <div>
         <Inquire />
       </div> */}
-      {/* 
-
-
-
-      <div>
+      
+      {/* <div>
         <UserLevelsHome />
       </div>
       <div>
@@ -123,8 +121,8 @@ export default function Home() {
       </div>
       <div>
         <ActivityCategoriesHome />
-      </div>
- */}
+      </div> */}
+
     </div>
   );
 }
