@@ -19,6 +19,7 @@ const USER_BENEFITS = "/user-benefits";
 const PROMOTIONS = "/promotions";
 const GALLERY = "/gallery";
 const ACTIVITIES = "/activities";
+const FOOTER = "/footer";
 
 
 export const GET_ALL_LINK_BAR_DATA = `${API}${LINK_BAR}`;
@@ -49,3 +50,4 @@ export const GET_ALL_ACTIVE_PROMOTIONS_FE = `${API}${PROMOTIONS}`;
 export const GET_OPEN_GALLERY_FE = `${API}${GALLERY}`;
 export const GET_ACTIVE_ACTIVITIES_FE = `${API}${ACTIVITIES}`;
 export const GET_ACTIVE_ACTIVITIES_CATEGORIES_FE = `${API}${ACTIVITIES}/categories`;
+export const GET_ACTIVE_FOOTER_DATA = `${API}${FOOTER}`;

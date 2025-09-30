@@ -23,6 +23,7 @@ const USER_BENEFITS = "/user-benefits";
 const PROMOTIONS = "/promotions";
 const GALLERY = "/gallery";
 const ACTIVITIES = "/activities";
+const FOOTER = "/footer";
 
 export const BASE_PATH = `${PROTOCOL}://${DOMAIN}:${PORT}/${CONTEXT_ROOT}`;
 export const GET_ALL_LINK_BAR_DATA = `${BASE_PATH}${VERSION}${API}${LINK_BAR}/all`;
@@ -54,4 +55,5 @@ export const GET_ALL_ACTIVE_PROMOTIONS_BE = `${BASE_PATH}${API}${VERSION}${PROMO
 export const GET_OPEN_GALLERY_BE = `${BASE_PATH}${API}${VERSION}${GALLERY}/open`;
 export const GET_ACTIVE_ACTIVITIES_BE = `${BASE_PATH}${API}${VERSION}${ACTIVITIES}/active`;
 export const GET_ACTIVE_ACTIVITIES_CATEGORIES_BE = `${BASE_PATH}${API}${VERSION}${ACTIVITIES}/active-category`;
+export const GET_ACTIVE_FOOTER_DATA = `${BASE_PATH}${API}${VERSION}${FOOTER}/active`;
 

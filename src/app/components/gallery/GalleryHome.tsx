@@ -162,7 +162,7 @@ const GalleryHome = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-4 sm:py-6 md:py-8">
+    <div className=" bg-gray-50 py-4 sm:py-6 md:py-8">
       <style jsx global>{`
         @keyframes scroll-left {
           0% {

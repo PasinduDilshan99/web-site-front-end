@@ -64,7 +64,7 @@ export default function Home() {
       <div>
         <PopularDestinations />
       </div>
-            <div>
+      <div>
         <ActiveBlogsSummery />
       </div>
       {/* <div>
@@ -92,9 +92,12 @@ export default function Home() {
       <div>
         <GalleryHome />
       </div>
-      {/* <div>
+      <div>
         <ReviewsHome />
-      </div> */}
+      </div>
+      <div>
+        <ActivitiesHome />
+      </div>
       <div>
         <Footer />
       </div>
@@ -102,7 +105,7 @@ export default function Home() {
       {/* <div>
         <Inquire />
       </div> */}
-      
+
       {/* <div>
         <UserLevelsHome />
       </div>
@@ -117,12 +120,8 @@ export default function Home() {
       </div>
 
       <div>
-        <ActivitiesHome />
-      </div>
-      <div>
         <ActivityCategoriesHome />
       </div> */}
-
     </div>
   );
 }
