@@ -98,14 +98,6 @@ export default function Home() {
       <div>
         <ActivitiesHome />
       </div>
-      <div>
-        <Footer />
-      </div>
-
-      {/* <div>
-        <Inquire />
-      </div> */}
-
       {/* <div>
         <UserLevelsHome />
       </div>
@@ -114,14 +106,24 @@ export default function Home() {
       </div>
       <div>
         <UserBenefitsHome />
-      </div>
+      </div> */}
+      {/* <div>
+        <Inquire />
+      </div> */}
+
+      {/*
+
       <div>
         <PromotionsHome />
       </div>
 
       <div>
         <ActivityCategoriesHome />
-      </div> */}
+      </div> 
+      */}
+      <div>
+        <Footer />
+      </div>
     </div>
   );
 }

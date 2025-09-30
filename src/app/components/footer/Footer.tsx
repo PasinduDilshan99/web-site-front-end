@@ -166,7 +166,7 @@ const Footer = () => {
   }
 
   return (
-    <footer className="bg-gradient-to-r from-purple-950 to-amber-950 text-white">
+    <footer className="bg-gray-900 text-white">
       {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12">
