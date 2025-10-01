@@ -2,64 +2,57 @@
 import { GET_ACTIVE_ACTIVITIES_FE } from "@/utils/frontEndConstant";
 import React, { useEffect, useState } from "react";
 
-interface Category {
+interface Schedule {
   id: number;
   name: string;
   description: string;
-  imageUrl: string;
-}
-
-interface Destination {
-  id: number;
-  name: string;
-  description: string;
-  location: string;
-  rating: number;
-}
-
-interface Status {
-  id: number;
-  name: string;
-  description: string;
+  status: number;
+  assume_start_date: string;
+  assume_end_date: string;
+  duration_hours_start: number;
+  duration_hours_end: number;
+  special_note: string;
 }
 
 interface Requirement {
-  type: string;
+  id: number;
+  name: string;
   value: string;
   description: string;
+  color: string;
+  status: number;
 }
 
-interface HistoryImage {
+interface ActivityImage {
   id: number;
   name: string;
-  imageUrl: string;
-  imageOwner: string;
-}
-
-interface History {
-  id: number;
-  name: string;
-  startDate: string;
-  endDate: string;
-  price: number;
-  participantsCount: number;
-  guide: string;
-  images: HistoryImage[];
+  description: string;
+  status: number;
+  image_url: string;
 }
 
 interface ActiveActivitiesType {
   id: number;
   name: string;
   description: string;
-  durationHours: number;
-  price: number;
-  maxParticipants: number;
-  minParticipants: number;
-  category: Category;
-  destination: Destination;
-  status: Status;
+  season: string;
+  status: string;
+  schedules: Schedule[];
   requirements: Requirement[];
-  historyList: History[];
+  images: ActivityImage[];
+  destination_id: number;
+  activities_category: string;
+  duration_hours: number;
+  available_from: string;
+  available_to: string;
+  price_local: number;
+  price_foreigners: number;
+  min_participate: number;
+  max_participate: number;
+  created_at: string;
+  updated_at: string;
+  category_name: string;
+  category_description: string;
 }
 
 const ActivitiesHome = () => {
@@ -110,6 +103,20 @@ const ActivitiesHome = () => {
       'CANCELLED': 'bg-red-100 text-red-800'
     };
     return colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+  };
+
+  // Parse seasons
+  const getSeasonBadges = (seasonString: string) => {
+    return seasonString.split(',').map(s => s.trim());
+  };
+
+  // Get category image (fallback to placeholder)
+  const getCategoryImage = (activity: ActiveActivitiesType) => {
+    if (activity.images && activity.images.length > 0) {
+      return activity.images[0].image_url;
+    }
+    // Fallback placeholder based on category
+    return `https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80`;
   };
 
   // Loading skeleton
@@ -201,27 +208,35 @@ const ActivitiesHome = () => {
                 {/* Activity Image */}
                 <div className="relative overflow-hidden rounded-t-2xl">
                   <img
-                    src={activity.category.imageUrl}
-                    alt={activity.category.name}
+                    src={getCategoryImage(activity)}
+                    alt={activity.category_name}
                     className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   
                   {/* Category Badge */}
                   <div className="absolute top-4 left-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm font-medium">
-                    {activity.category.name}
+                    {activity.category_name}
                   </div>
 
                   {/* Status Badge */}
                   <div className="absolute top-4 right-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(activity.status.name)}`}>
-                      {activity.status.name}
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(activity.status)}`}>
+                      {activity.status}
                     </span>
                   </div>
 
                   {/* Price Badge */}
                   <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-xl">
-                    <span className="text-2xl font-bold text-gray-900">${activity.price}</span>
-                    <span className="text-sm text-gray-600 ml-1">per person</span>
+                    <div className="flex flex-col">
+                      <div>
+                        <span className="text-xl font-bold text-gray-900">${activity.price_foreigners}</span>
+                        <span className="text-xs text-gray-600 ml-1">foreign</span>
+                      </div>
+                      <div>
+                        <span className="text-sm font-semibold text-gray-700">${activity.price_local}</span>
+                        <span className="text-xs text-gray-600 ml-1">local</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -241,7 +256,7 @@ const ActivitiesHome = () => {
                       <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <span className="text-sm font-medium text-gray-700">{activity.durationHours} hours</span>
+                      <span className="text-sm font-medium text-gray-700">{activity.duration_hours} hours</span>
                     </div>
                     
                     <div className="flex items-center space-x-2">
@@ -249,25 +264,25 @@ const ActivitiesHome = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                       </svg>
                       <span className="text-sm font-medium text-gray-700">
-                        {activity.minParticipants}-{activity.maxParticipants}
+                        {activity.min_participate}-{activity.max_participate}
                       </span>
                     </div>
                   </div>
 
-                  {/* Destination */}
-                  <div className="flex items-center justify-between mb-4 p-3 bg-gray-50 rounded-lg">
-                    <div>
-                      <div className="font-semibold text-gray-900 text-sm">{activity.destination.name}</div>
-                      <div className="text-xs text-gray-600 flex items-center">
-                        <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        </svg>
-                        {activity.destination.location}
-                      </div>
+                  {/* Seasons */}
+                  <div className="mb-4">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                      </svg>
+                      <span className="text-sm font-semibold text-gray-900">Best Seasons</span>
                     </div>
-                    <div className="flex items-center bg-white px-2 py-1 rounded-full">
-                      <span className="text-yellow-500">⭐</span>
-                      <span className="text-sm font-bold ml-1">{activity.destination.rating}</span>
+                    <div className="flex flex-wrap gap-2">
+                      {getSeasonBadges(activity.season).map((season, idx) => (
+                        <span key={idx} className="bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-xs">
+                          {season}
+                        </span>
+                      ))}
                     </div>
                   </div>
 
@@ -275,15 +290,22 @@ const ActivitiesHome = () => {
                   {activity.requirements.length > 0 && (
                     <div className="mb-4">
                       <div className="flex items-center space-x-2 mb-2">
-                        <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                         </svg>
                         <span className="text-sm font-semibold text-gray-900">Requirements</span>
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        {activity.requirements.slice(0, 3).map((req, idx) => (
-                          <span key={idx} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
-                            {req.type}
+                        {activity.requirements.slice(0, 3).map((req) => (
+                          <span 
+                            key={req.id} 
+                            className="px-2 py-1 rounded-full text-xs font-medium"
+                            style={{ 
+                              backgroundColor: `${req.color}20`,
+                              color: req.color
+                            }}
+                          >
+                            {req.name}: {req.value}
                           </span>
                         ))}
                         {activity.requirements.length > 3 && (
@@ -295,32 +317,42 @@ const ActivitiesHome = () => {
                     </div>
                   )}
 
-                  {/* Upcoming Sessions */}
-                  {activity.historyList.length > 0 && (
+                  {/* Schedules */}
+                  {activity.schedules.length > 0 && (
                     <div className="mb-4">
                       <div className="flex items-center space-x-2 mb-2">
-                        <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
-                        <span className="text-sm font-semibold text-gray-900">Upcoming Sessions</span>
+                        <span className="text-sm font-semibold text-gray-900">Available Schedules</span>
                       </div>
                       <div className="space-y-2">
-                        {activity.historyList.slice(0, 2).map((history) => (
-                          <div key={history.id} className="bg-gray-50 rounded-lg p-3 text-sm">
-                            <div className="font-medium text-gray-900">{history.name}</div>
+                        {activity.schedules.slice(0, 2).map((schedule) => (
+                          <div key={schedule.id} className="bg-gray-50 rounded-lg p-3 text-sm">
+                            <div className="font-medium text-gray-900">{schedule.name}</div>
                             <div className="text-gray-600 text-xs">
-                              {formatDate(history.startDate)} • Guide: {history.guide}
+                              {formatDate(schedule.assume_start_date)} - {formatDate(schedule.assume_end_date)}
                             </div>
+                            {schedule.special_note && (
+                              <div className="text-blue-600 text-xs mt-1">💡 {schedule.special_note}</div>
+                            )}
                           </div>
                         ))}
-                        {activity.historyList.length > 2 && (
+                        {activity.schedules.length > 2 && (
                           <div className="text-center text-xs text-gray-500">
-                            +{activity.historyList.length - 2} more sessions
+                            +{activity.schedules.length - 2} more schedules
                           </div>
                         )}
                       </div>
                     </div>
                   )}
+
+                  {/* Availability Times */}
+                  <div className="mb-4 bg-blue-50 rounded-lg p-3">
+                    <div className="text-sm text-gray-700">
+                      <span className="font-semibold">Available:</span> {activity.available_from} - {activity.available_to}
+                    </div>
+                  </div>
 
                   {/* Action Button */}
                   <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105">

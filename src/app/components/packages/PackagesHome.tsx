@@ -3,35 +3,32 @@ import { GET_ALL_ACTIVE_PACKAGES_FE } from "@/utils/frontEndConstant";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
-interface PackageType {
-  id: number;
-  name: string;
-  description: string;
-  status: string;
+interface Schedule {
+  scheduleId: number;
+  scheduleName: string;
+  assumeStartDate: string;
+  assumeEndDate: string;
+  durationStart: number;
+  durationEnd: number;
+  specialNote: string;
+  scheduleDescription: string;
 }
 
-interface Tour {
-  tourId: number;
-  tourName: string;
-  tourDescription: string;
-  tourStartDate: string;
-  tourEndDate: string;
-  durationDays: number;
-  maxPeople: number;
-  minPeople: number;
-  pricePerPerson: number;
-  tourStatus: string;
+interface Feature {
+  featureId: number;
+  featureName: string;
+  featureValue: string;
+  featureDescription: string;
+  color: string;
+  specialNote: string;
 }
 
-interface DestinationDto {
-  destinationName: string;
-  destinationDescription: string;
-}
-
-interface PackageImageDto {
+interface PackageImage {
   imageId: number;
+  imageName: string;
+  imageDescription: string;
   imageUrl: string;
-  imageStatus: string;
+  color: string;
 }
 
 interface ActivePackagesType {
@@ -40,25 +37,32 @@ interface ActivePackagesType {
   packageDescription: string;
   totalPrice: number;
   discountPercentage: number;
-  packageStartDate: string;
-  packageEndDate: string;
+  startDate: string;
+  endDate: string;
   color: string;
   hoverColor: string;
   minPersonCount: number;
   maxPersonCount: number;
+  pricePerPerson: number | null;
   packageStatus: string;
-  packageType: PackageType;
-  tour: Tour;
-  destinationDto: DestinationDto[];
-  images: PackageImageDto[];
+  tourId: number;
+  tourName: string;
+  tourDescription: string;
+  duration: number;
+  latitude: number;
+  longitude: number;
+  startLocation: string;
+  endLocation: string;
+  tourStatus: string;
+  schedules: Schedule[];
+  features: Feature[];
+  images: PackageImage[];
 }
 
 const PackagesHome = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activePackages, setActivePackages] = useState<ActivePackagesType[]>(
-    []
-  );
+  const [activePackages, setActivePackages] = useState<ActivePackagesType[]>([]);
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const [currentImageIndexes, setCurrentImageIndexes] = useState<{
     [key: number]: number;
@@ -113,7 +117,7 @@ const PackagesHome = () => {
 
         return newIndexes;
       });
-    }, 3000); // Change image every 3 seconds
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [activePackages]);
@@ -126,16 +130,9 @@ const PackagesHome = () => {
     return `${diffDays} days`;
   };
 
-  const extractLocations = (destinations: DestinationDto[]) => {
-    if (!destinations || destinations.length === 0) {
-      return "No destinations available";
-    }
-    return destinations.map((dest) => dest.destinationName).join(", ");
-  };
-
   const getCurrentImageUrl = (pkg: ActivePackagesType) => {
     if (!pkg.images || pkg.images.length === 0) {
-      return "/placeholder.jpg";
+      return "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=500&h=500&fit=crop";
     }
     const currentIndex = currentImageIndexes[pkg.packageId] || 0;
     return pkg.images[currentIndex]?.imageUrl || pkg.images[0].imageUrl;
@@ -183,8 +180,7 @@ const PackagesHome = () => {
             Our Most Popular Tour Packages
           </h1>
           <p className="text-gray-600 text-sm sm:text-base max-w-2xl mx-auto px-4">
-            Discover amazing travel experiences with our carefully curated
-            packages
+            Discover amazing travel experiences with our carefully curated packages
           </p>
         </div>
 
@@ -218,12 +214,12 @@ const PackagesHome = () => {
                 onClick={(e) => handleImageClick(pkg.packageId, e)}
               >
                 <Image
-                  src={getCurrentImageUrl(pkg)}
+                  src={pkg.images[0] || ""}
                   alt={pkg.packageName}
                   width={500}
                   height={500}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  priority={false}
+                  // priority={false}
                 />
 
                 {/* Image Dots Indicator */}
@@ -264,21 +260,19 @@ const PackagesHome = () => {
                   {pkg.packageName}
                 </h3>
 
-                {/* Package Type */}
-                {pkg.packageType?.name && (
-                  <div className="mb-2 sm:mb-3">
-                    <span
-                      className="inline-block text-xs px-2 py-1 rounded-full font-medium border"
-                      style={{
-                        backgroundColor: `${pkg.color}15`,
-                        color: pkg.color,
-                        borderColor: `${pkg.color}30`,
-                      }}
-                    >
-                      {pkg.packageType.name}
-                    </span>
-                  </div>
-                )}
+                {/* Tour Name Badge */}
+                <div className="mb-2 sm:mb-3">
+                  <span
+                    className="inline-block text-xs px-2 py-1 rounded-full font-medium border"
+                    style={{
+                      backgroundColor: `${pkg.color}15`,
+                      color: pkg.color,
+                      borderColor: `${pkg.color}30`,
+                    }}
+                  >
+                    {pkg.tourName}
+                  </span>
+                </div>
 
                 {/* Duration and People Badge */}
                 <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
@@ -295,7 +289,7 @@ const PackagesHome = () => {
                       />
                     </svg>
                     <span className="text-xs sm:text-sm text-gray-600">
-                      {formatDuration(pkg.packageStartDate, pkg.packageEndDate)}
+                      {pkg.duration} {pkg.duration === 1 ? 'day' : 'days'}
                     </span>
                   </div>
                   <div className="flex items-center gap-1">
@@ -316,35 +310,70 @@ const PackagesHome = () => {
                   </div>
                 </div>
 
-                {/* Tour Covers Section */}
+                {/* Location Section */}
                 <div className="mb-3 sm:mb-4">
                   <p className="text-xs sm:text-sm text-gray-500 mb-1">
-                    Tour Locations:
+                    Tour Route:
                   </p>
-                  <p className="text-xs sm:text-sm text-blue-600 leading-relaxed line-clamp-2">
-                    {extractLocations(pkg.destinationDto)}
+                  <p className="text-xs sm:text-sm text-blue-600 leading-relaxed">
+                    {pkg.startLocation} → {pkg.endLocation}
                   </p>
                 </div>
+
+                {/* Features */}
+                {pkg.features && pkg.features.length > 0 && (
+                  <div className="mb-3 sm:mb-4">
+                    <p className="text-xs sm:text-sm text-gray-500 mb-2">Included Features:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {pkg.features.slice(0, 3).map((feature) => (
+                        <span
+                          key={feature.featureId}
+                          className="inline-flex items-center text-xs px-2 py-1 rounded-full font-medium"
+                          style={{
+                            backgroundColor: `${feature.color}15`,
+                            color: feature.color,
+                          }}
+                          title={feature.featureDescription}
+                        >
+                          {feature.featureName}: {feature.featureValue}
+                        </span>
+                      ))}
+                      {pkg.features.length > 3 && (
+                        <span className="inline-flex items-center text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-600">
+                          +{pkg.features.length - 3} more
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
 
                 {/* Description */}
                 <p className="text-gray-600 text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4 line-clamp-3 min-h-[3.75rem]">
                   {pkg.packageDescription}
                 </p>
 
+                {/* Schedule Info */}
+                {pkg.schedules && pkg.schedules.length > 0 && (
+                  <div className="mb-3 sm:mb-4 bg-purple-50 rounded p-2">
+                    <div className="text-xs text-gray-700">
+                      <div className="font-semibold text-purple-700">{pkg.schedules[0].scheduleName}</div>
+                      {pkg.schedules[0].specialNote && (
+                        <div className="text-xs text-gray-600 mt-1">💡 {pkg.schedules[0].specialNote}</div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 {/* Price Section */}
                 <div className="flex items-center justify-between mb-3 sm:mb-4">
                   <div>
                     <div className="flex items-baseline gap-1 sm:gap-2">
                       <span className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
-                        ${pkg.totalPrice}
+                        ${pkg.totalPrice.toFixed(2)}
                       </span>
                       {pkg.discountPercentage > 0 && (
                         <span className="text-xs sm:text-sm text-gray-500 line-through">
-                          $
-                          {(
-                            pkg.totalPrice /
-                            (1 - pkg.discountPercentage / 100)
-                          ).toFixed(2)}
+                          ${(pkg.totalPrice / (1 - pkg.discountPercentage / 100)).toFixed(2)}
                         </span>
                       )}
                     </div>
