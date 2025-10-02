@@ -2,30 +2,31 @@
 import { GET_NEW_DESTINATIONS } from "@/utils/frontEndConstant";
 import React, { useEffect, useState } from "react";
 
-interface CategoryType {
-  categoryName: string;
-  categoryDescription: string;
-  categoryStatus: string;
-  categoryImageUrl: string | null;
-}
-
 interface ImageType {
   imageId: number;
   imageName: string;
   imageDescription: string;
   imageUrl: string;
   imageStatus: string;
+  imageCreatedAt: string;
 }
 
 interface NewDestinationsType {
+  popularId: number;
+  rating: number;
+  popularity: number;
+  popularCreatedAt: string;
   destinationId: number;
   destinationName: string;
   destinationDescription: string;
-  destinationStatus: string;
-  category: CategoryType;
   location: string;
-  rating: number;
-  popularity: number;
+  latitude: number;
+  longitude: number;
+  destinationStatus: string;
+  categoryId: number;
+  categoryName: string;
+  categoryDescription: string;
+  categoryStatus: string;
   images: ImageType[];
 }
 
@@ -33,9 +34,9 @@ interface NewDestinationsType {
 const ImageCarousel: React.FC<{ 
   images: ImageType[]; 
   destinationName: string;
-  category: CategoryType;
+  categoryName: string;
   rating: number;
-}> = ({ images, destinationName, category, rating }) => {
+}> = ({ images, destinationName, categoryName, rating }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
@@ -50,12 +51,38 @@ const ImageCarousel: React.FC<{
     return () => clearInterval(interval);
   }, [images.length]);
 
-  if (!images || images.length === 0) return null;
+  // Filter active images
+  const activeImages = images.filter(img => img.imageStatus === "ACTIVE");
+
+  if (!activeImages || activeImages.length === 0) {
+    return (
+      <div className="relative h-48 sm:h-52 md:h-56 lg:h-60 xl:h-64 2xl:h-72 overflow-hidden group bg-gradient-to-br from-amber-400 to-purple-600 flex items-center justify-center">
+        <span className="text-white font-semibold text-lg">
+          {destinationName}
+        </span>
+        
+        {/* Category Badge */}
+        <div className="absolute top-2 left-2 sm:top-3 sm:left-3 md:top-4 md:left-4 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 sm:px-3 shadow-sm">
+          <span className="text-amber-600 text-xs sm:text-sm font-medium">
+            {categoryName}
+          </span>
+        </div>
+
+        {/* Rating Badge */}
+        <div className="absolute top-2 right-2 sm:top-3 sm:right-3 md:top-4 md:right-4 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 sm:px-3 flex items-center shadow-sm">
+          <span className="text-yellow-500 mr-1 text-xs sm:text-sm">⭐</span>
+          <span className="font-bold text-gray-800 text-xs sm:text-sm">
+            {rating}
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative h-48 sm:h-52 md:h-56 lg:h-60 xl:h-64 2xl:h-72 overflow-hidden group">
       {/* Images */}
-      {images.map((image, index) => (
+      {activeImages.map((image, index) => (
         <div
           key={image.imageId}
           className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
@@ -73,7 +100,7 @@ const ImageCarousel: React.FC<{
       {/* Category Badge */}
       <div className="absolute top-2 left-2 sm:top-3 sm:left-3 md:top-4 md:left-4 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 sm:px-3 shadow-sm">
         <span className="text-amber-600 text-xs sm:text-sm font-medium">
-          {category.categoryName}
+          {categoryName}
         </span>
       </div>
 
@@ -86,9 +113,9 @@ const ImageCarousel: React.FC<{
       </div>
 
       {/* Image Indicators */}
-      {images.length > 1 && (
+      {activeImages.length > 1 && (
         <div className="absolute bottom-2 sm:bottom-3 md:bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-1 sm:space-x-2">
-          {images.map((_, index) => (
+          {activeImages.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentImageIndex(index)}
@@ -103,11 +130,11 @@ const ImageCarousel: React.FC<{
       )}
 
       {/* Navigation Arrows (appear on hover) */}
-      {images.length > 1 && (
+      {activeImages.length > 1 && (
         <>
           <button
             onClick={() => setCurrentImageIndex(
-              currentImageIndex === 0 ? images.length - 1 : currentImageIndex - 1
+              currentImageIndex === 0 ? activeImages.length - 1 : currentImageIndex - 1
             )}
             className="absolute left-1 sm:left-2 top-1/2 transform -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white rounded-full w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm sm:text-base"
           >
@@ -115,7 +142,7 @@ const ImageCarousel: React.FC<{
           </button>
           <button
             onClick={() => setCurrentImageIndex(
-              (currentImageIndex + 1) % images.length
+              (currentImageIndex + 1) % activeImages.length
             )}
             className="absolute right-1 sm:right-2 top-1/2 transform -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white rounded-full w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm sm:text-base"
           >
@@ -125,9 +152,9 @@ const ImageCarousel: React.FC<{
       )}
 
       {/* Image Counter */}
-      {images.length > 1 && (
+      {activeImages.length > 1 && (
         <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 md:bottom-4 md:right-4 bg-black/40 text-white text-xs px-2 py-1 rounded-full">
-          {currentImageIndex + 1}/{images.length}
+          {currentImageIndex + 1}/{activeImages.length}
         </div>
       )}
     </div>
@@ -217,7 +244,7 @@ const NewDestinations = () => {
               <ImageCarousel
                 images={destination.images}
                 destinationName={destination.destinationName}
-                category={destination.category}
+                categoryName={destination.categoryName}
                 rating={destination.rating}
               />
 

@@ -7,31 +7,32 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-// TypeScript interfaces based on your API response
+// TypeScript interfaces based on your updated API response
 interface DestinationImage {
   imageId: number;
   imageName: string;
   imageDescription: string;
   imageUrl: string;
   imageStatus: string;
-}
-
-interface DestinationCategory {
-  categoryName: string;
-  categoryDescription: string;
-  categoryStatus: string;
-  categoryImageUrl: string | null;
+  imageCreatedAt: string;
 }
 
 export interface PopularDestinationsType {
+  popularId: number;
+  rating: number;
+  popularity: number;
+  popularCreatedAt: string;
   destinationId: number;
   destinationName: string;
   destinationDescription: string;
-  destinationStatus: string;
-  category: DestinationCategory;
   location: string;
-  rating: number;
-  popularity: number;
+  latitude: number;
+  longitude: number;
+  destinationStatus: string;
+  categoryId: number;
+  categoryName: string;
+  categoryDescription: string;
+  categoryStatus: string;
   images: DestinationImage[];
 }
 
@@ -207,6 +208,11 @@ const PopularDestinations = () => {
             const activeImageIndex =
               activeImages[destination.destinationId] || 0;
 
+            // Filter active images
+            const activeDestinationImages = destination.images.filter(
+              (img) => img.imageStatus === "ACTIVE"
+            );
+
             return (
               <div
                 key={destination.destinationId}
@@ -215,16 +221,16 @@ const PopularDestinations = () => {
                 <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 h-full">
                   {/* Main Image Container */}
                   <div className="relative h-64 overflow-hidden">
-                    {destination.images.length > 0 ? (
+                    {activeDestinationImages.length > 0 ? (
                       <img
                         src={
-                          destination.images[activeImageIndex]?.imageUrl ||
-                          destination.images[0].imageUrl
+                          activeDestinationImages[activeImageIndex]?.imageUrl ||
+                          activeDestinationImages[0].imageUrl
                         }
                         alt={
-                          destination.images[activeImageIndex]
+                          activeDestinationImages[activeImageIndex]
                             ?.imageDescription ||
-                          destination.images[0].imageDescription
+                          activeDestinationImages[0].imageDescription
                         }
                         className="w-full h-full object-cover transition-all duration-500 ease-in-out"
                         onError={(e) => {
@@ -262,37 +268,40 @@ const PopularDestinations = () => {
                     </button>
 
                     {/* Enhanced Thumbnail Images */}
-                    {destination.images.length > 1 && (
+                    {activeDestinationImages.length > 1 && (
                       <div className="absolute bottom-4 right-4 flex flex-col space-y-2">
-                        {destination.images.slice(0, 4).map((image, index) => (
-                          <div
-                            key={image.imageId}
-                            className={`w-16 h-12 rounded-lg overflow-hidden border-2 cursor-pointer transition-all duration-200 hover:scale-105 ${
-                              activeImageIndex === index
-                                ? "border-amber-500 shadow-lg"
-                                : "border-white hover:border-amber-300"
-                            }`}
-                            onClick={() =>
-                              handleImageSwitch(
-                                destination.destinationId,
-                                index
-                              )
-                            }
-                          >
-                            <img
-                              src={image.imageUrl}
-                              alt={image.imageDescription}
-                              className="w-full h-full object-cover"
-                              onError={(e) => {
-                                e.currentTarget.src = "/api/placeholder/64/48";
-                              }}
-                            />
-                          </div>
-                        ))}
-                        {destination.images.length > 4 && (
+                        {activeDestinationImages
+                          .slice(0, 4)
+                          .map((image, index) => (
+                            <div
+                              key={image.imageId}
+                              className={`w-16 h-12 rounded-lg overflow-hidden border-2 cursor-pointer transition-all duration-200 hover:scale-105 ${
+                                activeImageIndex === index
+                                  ? "border-amber-500 shadow-lg"
+                                  : "border-white hover:border-amber-300"
+                              }`}
+                              onClick={() =>
+                                handleImageSwitch(
+                                  destination.destinationId,
+                                  index
+                                )
+                              }
+                            >
+                              <img
+                                src={image.imageUrl}
+                                alt={image.imageDescription}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  e.currentTarget.src =
+                                    "/api/placeholder/64/48";
+                                }}
+                              />
+                            </div>
+                          ))}
+                        {activeDestinationImages.length > 4 && (
                           <div className="w-16 h-12 rounded-lg bg-black bg-opacity-70 flex items-center justify-center cursor-pointer hover:bg-opacity-80 transition-all">
                             <span className="text-white text-xs font-semibold">
-                              +{destination.images.length - 4}
+                              +{activeDestinationImages.length - 4}
                             </span>
                           </div>
                         )}
@@ -300,9 +309,10 @@ const PopularDestinations = () => {
                     )}
 
                     {/* Image Counter */}
-                    {destination.images.length > 1 && (
+                    {activeDestinationImages.length > 1 && (
                       <div className="absolute bottom-4 left-4 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs">
-                        {activeImageIndex + 1} / {destination.images.length}
+                        {activeImageIndex + 1} /{" "}
+                        {activeDestinationImages.length}
                       </div>
                     )}
                   </div>

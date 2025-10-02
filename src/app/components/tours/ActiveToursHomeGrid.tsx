@@ -2,84 +2,62 @@
 import React, { useEffect, useState } from "react";
 import { GET_ALL_ACTIVE_TOUR_FE } from "@/utils/frontEndConstant";
 
-// Interfaces for the API response
+// Updated Interfaces for the new API response
 interface TourImage {
-  id: number;
-  name: string;
-  imageUrl: string;
-  description: string;
-  status: string;
-}
-
-interface DestinationImage {
   imageId: number;
   imageName: string;
   imageDescription: string;
   imageUrl: string;
-  imageStatus: string;
 }
 
-interface DestinationCategory {
-  categoryName: string;
-  categoryDescription: string;
-  categoryStatus: string;
-  categoryImageUrl: string | null;
-}
-
-interface Destination {
-  destinationId: number;
-  destinationName: string;
-  destinationDescription: string;
-  destinationStatus: string;
-  category: DestinationCategory;
-  location: string;
-  rating: number;
-  popularity: number;
-  createdAt: string;
-  createdBy: number;
-  updatedAt: string;
-  updatedBy: number | null;
-  terminatedAt: string | null;
-  terminatedBy: number | null;
-  images: DestinationImage[];
+interface Schedule {
+  scheduleId: number;
+  scheduleName: string;
+  assumeStartDate: string;
+  assumeEndDate: string;
+  durationStart: number;
+  durationEnd: number;
+  specialNote: string;
+  scheduleDescription: string;
 }
 
 interface ActiveToursType {
   tourId: number;
   tourName: string;
   tourDescription: string;
-  tourType: string;
-  tourCategory: string;
-  durationDays: number;
-  startDate: string;
-  endDate: string;
+  duration: number;
+  latitude: number;
+  longitude: number;
   startLocation: string;
   endLocation: string;
-  maxPeople: number;
-  minPeople: number;
-  pricePerPerson: number;
-  tourStatus: string;
-  tourImages: TourImage[];
-  destinations: Destination[];
-  createdAt: string;
-  createdBy: number;
-  updatedAt: string;
-  updatedBy: number | null;
-  terminatedAt: string | null;
-  terminatedBy: number | null;
+  tourTypeName: string;
+  tourTypeDescription: string;
+  tourCategoryName: string;
+  tourCategoryDescription: string;
+  seasonName: string;
+  seasonDescription: string;
+  statusName: string;
+  schedules: Schedule[];
+  images: TourImage[];
+}
+
+interface ApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: ActiveToursType[];
+  timestamp: string;
 }
 
 // Tour Card Component with Image Slideshow
 const TourCard = ({ tour }: { tour: ActiveToursType }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // Get all images (tour images + destination images)
-  const allImages = [
-    ...tour.tourImages.map((img) => ({ url: img.imageUrl, name: img.name })),
-    // ...tour.destinations.flatMap(dest =>
-    //   dest.images.map(img => ({ url: img.imageUrl, name: img.imageName }))
-    // )
-  ].filter((img) => img.url); // Filter out any empty URLs
+  // Get all tour images
+  const allImages = tour.images.map(img => ({ 
+    url: img.imageUrl, 
+    name: img.imageName 
+  })).filter(img => img.url); // Filter out any empty URLs
 
   // Auto-rotate images every 3 seconds
   useEffect(() => {
@@ -102,6 +80,21 @@ const TourCard = ({ tour }: { tour: ActiveToursType }) => {
   const handleThumbnailClick = (index: number) => {
     setCurrentImageIndex(index);
   };
+
+  // Calculate price based on tour category and duration
+  const calculatePrice = () => {
+    const basePrice = 50; // Base price per day
+    let multiplier = 1;
+    
+    // Adjust price based on tour category
+    if (tour.tourCategoryName === "Luxury") multiplier = 2.5;
+    else if (tour.tourCategoryName === "Family") multiplier = 1.2;
+    else if (tour.tourCategoryName === "Budget") multiplier = 0.8;
+    
+    return Math.round(basePrice * tour.duration * multiplier);
+  };
+
+  const price = calculatePrice();
 
   return (
     <div className="group cursor-pointer">
@@ -185,11 +178,18 @@ const TourCard = ({ tour }: { tour: ActiveToursType }) => {
               {tour.tourName}
             </h3>
           </div>
+
+          {/* Season Badge */}
+          <div className="absolute top-4 left-4">
+            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              {tour.seasonName}
+            </span>
+          </div>
         </div>
 
         {/* Tour Details Card */}
         <div className="bg-white p-4 rounded-b-lg">
-          {/* Duration */}
+          {/* Duration and Locations */}
           <div className="flex items-center gap-2 mb-2">
             <span className="inline-block w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center">
               <svg
@@ -205,8 +205,26 @@ const TourCard = ({ tour }: { tour: ActiveToursType }) => {
               </svg>
             </span>
             <span className="text-sm font-semibold text-gray-700">
-              {formatDuration(tour.durationDays)}
+              {formatDuration(tour.duration)}
             </span>
+          </div>
+
+          {/* Locations */}
+          <div className="flex items-center gap-2 mb-3 text-sm text-gray-600">
+            <span className="inline-block w-4 h-4 bg-blue-100 rounded-full flex items-center justify-center">
+              <svg
+                className="w-2 h-2 text-blue-600"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </span>
+            <span>{tour.startLocation} → {tour.endLocation}</span>
           </div>
 
           {/* Description */}
@@ -219,7 +237,7 @@ const TourCard = ({ tour }: { tour: ActiveToursType }) => {
             <div className="text-sm text-gray-500">
               From{" "}
               <span className="text-lg font-bold text-gray-800">
-                ${tour.pricePerPerson}
+                ${price}
               </span>
             </div>
             <button className="bg-gradient-to-r from-amber-600 to-purple-600 hover:from-purple-700 hover:to-amber-700 transition-colors text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
@@ -227,25 +245,38 @@ const TourCard = ({ tour }: { tour: ActiveToursType }) => {
             </button>
           </div>
 
-          {/* Tour Type Badge */}
+          {/* Tour Type and Category Badges */}
           <div className="mt-3 flex items-center justify-between">
-            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-              {tour.tourType}
-            </span>
-            <div className="flex items-center gap-1">
-              <span className="inline-block w-4 h-4 bg-yellow-100 rounded-full flex items-center justify-center">
-                <svg
-                  className="w-2 h-2 text-yellow-600"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
+            <div className="flex gap-2">
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                {tour.tourTypeName}
               </span>
-              <span className="text-xs text-gray-600">
-                {tour.maxPeople} max
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                {tour.tourCategoryName}
               </span>
             </div>
+            
+            {/* Schedules Count */}
+            {tour.schedules.length > 0 && (
+              <div className="flex items-center gap-1">
+                <span className="inline-block w-4 h-4 bg-blue-100 rounded-full flex items-center justify-center">
+                  <svg
+                    className="w-2 h-2 text-blue-600"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </span>
+                <span className="text-xs text-gray-600">
+                  {tour.schedules.length} schedule{tour.schedules.length !== 1 ? 's' : ''}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -264,11 +295,13 @@ const ActiveToursHomeGrid = () => {
       try {
         setLoading(true);
         const response = await fetch(GET_ALL_ACTIVE_TOUR_FE);
-        const data = await response.json();
+        const data: ApiResponse = await response.json();
 
-        if (response.ok) {
+        if (response.ok && data.code === 200) {
           const items: ActiveToursType[] = data.data || [];
-          setActiveTours(items);
+          // Filter only active tours
+          const activeItems = items.filter(tour => tour.statusName === "ACTIVE");
+          setActiveTours(activeItems);
           setError(null);
         } else {
           setError(data.message || "Failed to fetch active tours");
@@ -312,16 +345,24 @@ const ActiveToursHomeGrid = () => {
         <div className="mt-4 sm:mt-6 w-16 sm:w-20 md:w-24 lg:w-32 h-1 bg-gradient-to-r from-[#A855F7] to-[#F59E0B] mx-auto rounded-full"></div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {activeTours.map((tour) => (
-          <TourCard key={tour.tourId} tour={tour} />
-        ))}
-      </div>
-      <div className="text-center mt-8 sm:mt-12 md:mt-16">
-        <button className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-amber-600 to-purple-600 text-white font-semibold rounded-full hover:from-purple-700 hover:to-amber-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl text-sm sm:text-base">
-          View All Tours
-        </button>
-      </div>
+      {activeTours.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-gray-500 text-lg">No active tours available at the moment.</p>
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {activeTours.map((tour) => (
+              <TourCard key={tour.tourId} tour={tour} />
+            ))}
+          </div>
+          <div className="text-center mt-8 sm:mt-12 md:mt-16">
+            <button className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-amber-600 to-purple-600 text-white font-semibold rounded-full hover:from-purple-700 hover:to-amber-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl text-sm sm:text-base">
+              View All Tours
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 };

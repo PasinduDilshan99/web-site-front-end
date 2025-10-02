@@ -2,50 +2,62 @@
 import { GET_POPULAR_TOUR_FE } from "@/utils/frontEndConstant";
 import React, { useEffect, useState } from "react";
 
-// TypeScript interfaces
-interface TourImage {
-  id: number;
-  name: string;
-  imageUrl: string;
-  description: string;
-  status: string;
-}
-
+// Updated TypeScript interfaces based on new API response
 interface Review {
   reviewId: number;
-  userId: number;
+  reviewerName: string;
+  review: string;
   rating: number;
-  comment: string;
-  reviewStatusId: number;
-  reviewStatusName: string;
-  createdAt: string;
-  updatedAt: string;
+  reviewDescription: string;
+  numberOfParticipate: number;
+  reviewStatus: string;
+  reviewCreatedAt: string;
+}
+
+interface Destination {
+  destinationId: number;
+  destinationName: string;
+  destinationDescription: string;
+  location: string;
+  destinationStatus: string;
+}
+
+interface Schedule {
+  scheduleId: number;
+  scheduleName: string;
+  assumeStartDate: string;
+  assumeEndDate: string;
+  durationStart: number;
+  durationEnd: number;
+  specialNote: string;
+  scheduleDescription: string;
+  scheduleStatus: string;
+  destinations: Destination[];
+  reviews: Review[];
 }
 
 interface PopularToursType {
   tourId: number;
   tourName: string;
   tourDescription: string;
-  tourType: string;
-  tourCategory: string;
-  durationDays: number;
-  startDate: string;
-  endDate: string;
+  duration: number;
+  latitude: number;
+  longitude: number;
   startLocation: string;
   endLocation: string;
-  maxPeople: number;
-  minPeople: number;
-  pricePerPerson: number;
+  tourType: string;
+  tourCategory: string;
+  season: string;
   tourStatus: string;
-  tourImages: TourImage[];
-  destinations: any[];
-  createdAt: string;
-  createdBy: number;
-  updatedAt: string;
-  updatedBy: number | null;
-  terminatedAt: string | null;
-  terminatedBy: number | null;
-  reviews: Review[];
+  schedules: Schedule[];
+}
+
+interface ApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: PopularToursType[];
+  timestamp: string;
 }
 
 const PopularTours = () => {
@@ -58,11 +70,15 @@ const PopularTours = () => {
       try {
         setLoading(true);
         const response = await fetch(GET_POPULAR_TOUR_FE);
-        const data = await response.json();
+        const data: ApiResponse = await response.json();
 
-        if (response.ok) {
+        if (response.ok && data.code === 200) {
           const items: PopularToursType[] = data.data || [];
-          setPopularTours(items);
+          // Filter only active tours
+          const activeTours = items.filter(
+            (tour) => tour.tourStatus === "ACTIVE"
+          );
+          setPopularTours(activeTours);
           setError(null);
         } else {
           setError(data.message || "Failed to fetch popular tours");
@@ -78,11 +94,22 @@ const PopularTours = () => {
     fetchPopularTours();
   }, []);
 
-  // Calculate average rating
-  const getAverageRating = (reviews: Review[]) => {
-    if (reviews.length === 0) return 0;
-    const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
-    return (sum / reviews.length).toFixed(1);
+  // Calculate average rating from all schedules' reviews
+  const getAverageRating = (tour: PopularToursType) => {
+    const allReviews = tour.schedules.flatMap(
+      (schedule) => schedule.reviews || []
+    );
+    if (allReviews.length === 0) return 0;
+    const sum = allReviews.reduce((acc, review) => acc + review.rating, 0);
+    return (sum / allReviews.length).toFixed(1);
+  };
+
+  // Get total reviews count
+  const getTotalReviews = (tour: PopularToursType) => {
+    return tour.schedules.reduce(
+      (total, schedule) => total + (schedule.reviews?.length || 0),
+      0
+    );
   };
 
   // Generate star rating display
@@ -93,26 +120,54 @@ const PopularTours = () => {
     return (
       <div className="flex items-center">
         {[...Array(5)].map((_, i) => (
-          <span key={i} className="text-yellow-400">
+          <span key={i} className="text-yellow-400 text-sm">
             {i < fullStars ? "★" : i === fullStars && hasHalfStar ? "★" : "☆"}
           </span>
         ))}
-        <span className="ml-1 text-gray-600">{rating}</span>
+        <span className="ml-1 text-gray-600 text-sm">{rating}</span>
       </div>
     );
   };
 
-  // Calculate discount percentage
+  // Calculate discount percentage based on tour category and season
   const calculateDiscount = (tour: PopularToursType) => {
-    // Mock discount calculation - you can adjust this based on your actual data
-    const discounts = [40, 20, 40]; // Based on the image example
-    return discounts[popularTours.indexOf(tour) % discounts.length] || 40;
+    // Mock discount calculation based on category and season
+    const discountMap: { [key: string]: number } = {
+      Luxury: 20,
+      Family: 40,
+      Budget: 30,
+      Adventure: 25,
+    };
+
+    return discountMap[tour.tourCategory] || discountMap[tour.tourType] || 30;
   };
 
   // Calculate original price based on discount
   const calculateOriginalPrice = (tour: PopularToursType) => {
     const discount = calculateDiscount(tour);
-    return (tour.pricePerPerson / (1 - discount / 100)).toFixed(2);
+    // Base price calculation based on duration and category
+    const basePrice = tour.duration * 100;
+    let categoryMultiplier = 1;
+
+    if (tour.tourCategory === "Luxury") categoryMultiplier = 2.5;
+    else if (tour.tourCategory === "Family") categoryMultiplier = 1.5;
+    else if (tour.tourCategory === "Budget") categoryMultiplier = 0.8;
+
+    const originalPrice = basePrice * categoryMultiplier;
+    const discountedPrice = originalPrice * (1 - discount / 100);
+
+    return {
+      original: originalPrice.toFixed(2),
+      discounted: discountedPrice.toFixed(2),
+    };
+  };
+
+  // Get destinations list for a tour
+  const getDestinations = (tour: PopularToursType) => {
+    const allDestinations = tour.schedules.flatMap((schedule) =>
+      schedule.destinations.map((dest) => dest.destinationName)
+    );
+    return [...new Set(allDestinations)]; // Remove duplicates
   };
 
   if (loading) {
@@ -145,17 +200,16 @@ const PopularTours = () => {
     return <div className="text-red-500 text-center py-12">{error}</div>;
 
   return (
-    <div className=" bg-gradient-to-r from-purple-100 to-amber-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="bg-gradient-to-r from-purple-100 to-amber-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
-
         <div className="text-center mb-10 sm:mb-12 md:mb-16 lg:mb-20">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-r from-[#A855F7] to-[#F59E0B] bg-clip-text text-transparent mb-3 sm:mb-4 md:mb-6 leading-tight">
             Most Popular Tours
           </h2>
           <p className="text-gray-700 max-w-2xl mx-auto text-sm sm:text-base md:text-lg">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore
+            Discover our most sought-after travel experiences with exceptional
+            reviews
           </p>
 
           <div className="mt-4 sm:mt-6 w-16 sm:w-20 md:w-24 lg:w-32 h-1 bg-gradient-to-r from-[#A855F7] to-[#F59E0B] mx-auto rounded-full"></div>
@@ -165,10 +219,10 @@ const PopularTours = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {popularTours.slice(0, 3).map((tour, index) => {
             const discount = calculateDiscount(tour);
-            const averageRating = getAverageRating(tour.reviews);
-            const mainImage =
-              tour.tourImages[0]?.imageUrl || "/default-tour.jpg";
-            const originalPrice = calculateOriginalPrice(tour);
+            const averageRating = getAverageRating(tour);
+            const totalReviews = getTotalReviews(tour);
+            const prices = calculateOriginalPrice(tour);
+            const destinations = getDestinations(tour);
 
             return (
               <div
@@ -177,11 +231,14 @@ const PopularTours = () => {
               >
                 {/* Tour Image */}
                 <div className="relative overflow-hidden rounded-t-2xl">
-                  <img
-                    src={mainImage}
-                    alt={tour.tourName}
-                    className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                  <div className="w-full h-64 bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center">
+                    <div className="text-white text-center">
+                      <div className="text-4xl mb-2">🏞️</div>
+                      <h3 className="text-xl font-bold px-4">
+                        {tour.tourName}
+                      </h3>
+                    </div>
+                  </div>
 
                   {/* Discount Badge */}
                   <div className="absolute top-4 left-4 bg-red-500 text-white px-4 py-2 rounded-full font-bold text-sm">
@@ -190,16 +247,24 @@ const PopularTours = () => {
 
                   {/* Duration Badge */}
                   <div className="absolute top-4 right-4 bg-black/70 text-white px-3 py-1 rounded-lg text-sm flex items-center">
-                    <span className="mr-1">🍟</span>
-                    {tour.durationDays} days
+                    <span className="mr-1">⏱️</span>
+                    {tour.duration} day{tour.duration !== 1 ? "s" : ""}
+                  </div>
+
+                  {/* Season Badge */}
+                  <div className="absolute bottom-4 left-4 bg-green-500/90 text-white px-3 py-1 rounded-lg text-sm">
+                    {tour.season} Season
                   </div>
                 </div>
 
                 {/* Tour Content */}
                 <div className="p-6">
-                  {/* Rating */}
-                  <div className="flex items-center mb-3">
+                  {/* Rating and Reviews */}
+                  <div className="flex items-center justify-between mb-3">
                     {renderStars(parseFloat(averageRating || "0"))}
+                    <span className="text-sm text-gray-500">
+                      {totalReviews} review{totalReviews !== 1 ? "s" : ""}
+                    </span>
                   </div>
 
                   {/* Tour Title */}
@@ -207,24 +272,73 @@ const PopularTours = () => {
                     {tour.tourName}
                   </h3>
 
-                  {/* Location */}
-                  <p className="text-gray-600 mb-4">{tour.startLocation}</p>
+                  {/* Tour Description */}
+                  <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                    {tour.tourDescription}
+                  </p>
+
+                  {/* Locations */}
+                  <div className="flex items-center text-sm text-gray-600 mb-3">
+                    <span className="mr-1">📍</span>
+                    <span>
+                      {tour.startLocation} → {tour.endLocation}
+                    </span>
+                  </div>
+
+                  {/* Destinations */}
+                  {destinations.length > 0 && (
+                    <div className="mb-4">
+                      <p className="text-sm text-gray-600 mb-1">
+                        <span className="font-medium">Visits:</span>{" "}
+                        {destinations.slice(0, 2).join(", ")}
+                        {destinations.length > 2 &&
+                          ` +${destinations.length - 2} more`}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Tour Type and Category */}
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                      {tour.tourType}
+                    </span>
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                      {tour.tourCategory}
+                    </span>
+                  </div>
 
                   {/* Pricing */}
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center space-x-2">
                       <span className="text-2xl font-bold text-gray-900">
-                        ${tour.pricePerPerson.toFixed(2)}
+                        ${prices.discounted}
                       </span>
                       <span className="text-lg text-gray-500 line-through">
-                        ${originalPrice}
+                        ${prices.original}
+                      </span>
+                      <span className="text-sm text-red-500 font-medium">
+                        Save $
+                        {(
+                          parseFloat(prices.original) -
+                          parseFloat(prices.discounted)
+                        ).toFixed(2)}
                       </span>
                     </div>
                   </div>
 
+                  {/* Schedules Info */}
+                  {tour.schedules.length > 0 && (
+                    <div className="mb-4 text-sm text-gray-600">
+                      <span className="font-medium">
+                        {tour.schedules.length} schedule
+                        {tour.schedules.length !== 1 ? "s" : ""} available
+                      </span>
+                    </div>
+                  )}
+
                   {/* Explore Button */}
                   <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300">
-                    Explore
+                    Explore Tour
                   </button>
                 </div>
               </div>
@@ -235,9 +349,18 @@ const PopularTours = () => {
         {/* View All Button (if you have more than 3 tours) */}
         {popularTours.length > 3 && (
           <div className="text-center mt-12">
-            <button className="bg-gray-900 text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors">
+            <button className="bg-gradient-to-r from-amber-600 to-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-amber-700 transform hover:scale-105 transition-all duration-300">
               View All Tours
             </button>
+          </div>
+        )}
+
+        {/* No tours message */}
+        {popularTours.length === 0 && !loading && (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">
+              No popular tours available at the moment.
+            </p>
           </div>
         )}
       </div>

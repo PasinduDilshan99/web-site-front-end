@@ -3,50 +3,57 @@ import { GET_TRENDING_DESTINATIONS } from "@/utils/frontEndConstant";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 
-// TypeScript interfaces based on your API response
+// Updated TypeScript interfaces based on new API response
 interface DestinationImage {
   imageId: number;
   imageName: string;
   imageDescription: string;
   imageUrl: string;
   imageStatus: string;
+  imageCreatedAt: string;
 }
 
-interface DestinationCategory {
-  categoryName: string;
-  categoryDescription: string;
-  categoryStatus: string;
-  categoryImageUrl: string | null;
-}
-
-interface DestinationType {
-  destinationId: number;
-  destinationName: string;
-  destinationDescription: string;
-  destinationStatus: string;
-  category: DestinationCategory;
-  location: string;
-  rating: number;
-  popularity: number;
-  createdAt: string;
-  createdBy: number;
-  updatedAt: string;
-  updatedBy: number;
-  terminatedAt: string | null;
-  terminatedBy: number;
-  images: DestinationImage[];
+interface Activity {
+  activityId: number;
+  activityName: string;
+  activityDescription: string;
+  activitiesCategory: string;
+  durationHours: number;
+  availableFrom: string;
+  availableTo: string;
+  priceLocal: number;
+  priceForeigners: number;
+  minParticipate: number;
+  maxParticipate: number;
+  season: string;
 }
 
 interface TrendingDestinationType {
-  trendingId: number;
-  trendingStatus: string;
-  trendingCreatedAt: string;
-  trendingCreatedBy: number;
-  trendingUpdatedAt: string | null;
-  trendingUpdatedBy: number;
-  trendingTerminatedAt: string | null;
-  trendingTerminatedBy: number;
-  destination: DestinationType;
+  popularId: number;
+  rating: number;
+  popularity: number;
+  popularCreatedAt: string;
+  destinationId: number;
+  destinationName: string;
+  destinationDescription: string;
+  location: string;
+  latitude: number;
+  longitude: number;
+  destinationStatus: string;
+  categoryId: number;
+  categoryName: string;
+  categoryDescription: string;
+  categoryStatus: string;
+  images: DestinationImage[];
+  activities: Activity[];
+}
+
+interface ApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: TrendingDestinationType[];
+  timestamp: string;
 }
 
 const TrendingDestinations = () => {
@@ -67,17 +74,17 @@ const TrendingDestinations = () => {
       try {
         setLoading(true);
         const response = await fetch(GET_TRENDING_DESTINATIONS);
-        const data = await response.json();
+        const data: ApiResponse = await response.json();
 
-        if (response.ok) {
+        if (response.ok && data.code === 200) {
           const items: TrendingDestinationType[] = data.data || [];
-          // Filter only active trending destinations that have valid images
+          // Filter only active destinations that have valid images
           const activeTrendingDestinations = items.filter(
             (item) =>
-              item.trendingStatus === "ACTIVE" &&
-              item.destination.images &&
-              item.destination.images.length > 0 &&
-              item.destination.images.some(
+              item.destinationStatus === "ACTIVE" &&
+              item.images &&
+              item.images.length > 0 &&
+              item.images.some(
                 (img) => img.imageUrl && img.imageUrl.trim() !== ""
               )
           );
@@ -87,8 +94,8 @@ const TrendingDestinations = () => {
           const initialIndexes: { [key: number]: number } = {};
           const initialTransitions: { [key: number]: boolean } = {};
           activeTrendingDestinations.forEach((item) => {
-            initialIndexes[item.destination.destinationId] = 0;
-            initialTransitions[item.destination.destinationId] = false;
+            initialIndexes[item.destinationId] = 0;
+            initialTransitions[item.destinationId] = false;
           });
           setCurrentImageIndexes(initialIndexes);
           setIsTransitioning(initialTransitions);
@@ -114,8 +121,8 @@ const TrendingDestinations = () => {
 
     const interval = setInterval(() => {
       trendingDestinations.forEach((trending) => {
-        const destinationId = trending.destination.destinationId;
-        const imageCount = trending.destination.images.length;
+        const destinationId = trending.destinationId;
+        const imageCount = trending.images.length;
 
         if (imageCount > 1) {
           // Start transition
@@ -156,10 +163,10 @@ const TrendingDestinations = () => {
   // Handle manual image change on hover
   const handleCardHover = (destinationId: number) => {
     const destination = trendingDestinations.find(
-      (t) => t.destination.destinationId === destinationId
+      (t) => t.destinationId === destinationId
     );
-    if (destination && destination.destination.images.length > 1) {
-      const imageCount = destination.destination.images.length;
+    if (destination && destination.images.length > 1) {
+      const imageCount = destination.images.length;
 
       // Start transition
       setIsTransitioning((prev) => ({ ...prev, [destinationId]: true }));
@@ -245,37 +252,31 @@ const TrendingDestinations = () => {
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-r from-[#A855F7] to-[#F59E0B] bg-clip-text text-transparent mb-3 sm:mb-4 md:mb-6 leading-tight">
             Trending Destinations
           </h2>
-          {/* <p className="text-gray-700 max-w-2xl mx-auto text-sm sm:text-base md:text-lg">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore
-          </p>
-          <div className="mt-4 sm:mt-6 w-16 sm:w-20 md:w-24 lg:w-32 h-1 bg-gradient-to-r from-[#A855F7] to-[#F59E0B] mx-auto rounded-full"></div> */}
         </div>
 
         {/* Full Background Image Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 xl:gap-6">
           {trendingDestinations.slice(0, 4).map((trending) => {
-            const destination = trending.destination;
             const currentImageIndex =
-              currentImageIndexes[destination.destinationId] || 0;
+              currentImageIndexes[trending.destinationId] || 0;
             const currentImage =
-              destination.images && destination.images.length > 0
-                ? destination.images[currentImageIndex]
+              trending.images && trending.images.length > 0
+                ? trending.images[currentImageIndex]
                 : null;
             const destinationExperts = Math.floor(Math.random() * 50) + 20;
             const isCardTransitioning =
-              isTransitioning[destination.destinationId] || false;
+              isTransitioning[trending.destinationId] || false;
 
             return (
               <div
-                key={trending.trendingId}
+                key={trending.popularId}
                 onClick={() =>
                   handleDestinationClick(
-                    destination.destinationId,
-                    destination.destinationName
+                    trending.destinationId,
+                    trending.destinationName
                   )
                 }
-                onMouseEnter={() => handleCardHover(destination.destinationId)}
+                onMouseEnter={() => handleCardHover(trending.destinationId)}
                 className="relative group cursor-pointer overflow-hidden rounded-xl lg:rounded-2xl shadow-lg hover:shadow-xl lg:hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 sm:hover:-translate-y-2 h-48 sm:h-56 lg:h-64 xl:h-72 2xl:h-80"
               >
                 {/* Full Background Image with Smooth Transition */}
@@ -286,7 +287,7 @@ const TrendingDestinations = () => {
                         src={currentImage.imageUrl}
                         alt={
                           currentImage.imageDescription ||
-                          destination.destinationName
+                          trending.destinationName
                         }
                         fill
                         className={`object-cover transition-all duration-500 ease-in-out ${
@@ -304,7 +305,7 @@ const TrendingDestinations = () => {
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center">
                       <span className="text-white font-semibold text-sm sm:text-base lg:text-lg text-center px-3 sm:px-4">
-                        {destination.destinationName}
+                        {trending.destinationName}
                       </span>
                     </div>
                   )}
@@ -314,9 +315,9 @@ const TrendingDestinations = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20"></div>
 
                 {/* Image Counter Dots */}
-                {destination.images.length > 1 && (
+                {trending.images.length > 1 && (
                   <div className="absolute top-2 sm:top-3 lg:top-4 left-2 sm:left-3 lg:left-4 flex space-x-1 sm:space-x-1.5">
-                    {destination.images.map((_, index) => (
+                    {trending.images.map((_, index) => (
                       <div
                         key={index}
                         className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all duration-500 ${
@@ -332,7 +333,7 @@ const TrendingDestinations = () => {
                 {/* Content Overlay */}
                 <div className="absolute inset-0 flex flex-col justify-between p-3 sm:p-4 lg:p-5 xl:p-6">
                   {/* Top Section - Rating */}
-                  {destination.rating && (
+                  {trending.rating && (
                     <div className="flex justify-end">
                       <div className="bg-black/50 backdrop-blur-sm rounded-full px-2 sm:px-2.5 lg:px-3 py-1 sm:py-1.5">
                         <div className="flex items-center space-x-1">
@@ -344,7 +345,7 @@ const TrendingDestinations = () => {
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                           </svg>
                           <span className="text-white text-xs sm:text-sm font-medium">
-                            {destination.rating}
+                            {trending.rating}
                           </span>
                         </div>
                       </div>
@@ -355,7 +356,7 @@ const TrendingDestinations = () => {
                   <div className="text-white">
                     {/* Destination Name */}
                     <h3 className="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold mb-1 sm:mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-300 group-hover:to-purple-300 transition-all duration-300 leading-tight">
-                      {destination.destinationName}
+                      {trending.destinationName}
                     </h3>
 
                     {/* Location with Icon */}
@@ -372,7 +373,7 @@ const TrendingDestinations = () => {
                         />
                       </svg>
                       <span className="text-xs sm:text-sm truncate">
-                        {destination.location}
+                        {trending.location}
                       </span>
                     </div>
 
@@ -389,20 +390,20 @@ const TrendingDestinations = () => {
                           </svg>
                         </div>
                         <span className="text-xs sm:text-sm text-white/90 truncate">
-                          100 + Experts
+                          {trending.activities.length} + Activities
                         </span>
                       </div>
 
                       {/* Category Badge */}
                       <div className="bg-white/25 backdrop-blur-sm rounded-full px-1.5 sm:px-2 py-0.5 sm:py-1 flex-shrink-0">
                         <span className="text-xs text-white font-medium truncate">
-                          {destination.category.categoryName}
+                          {trending.categoryName}
                         </span>
                       </div>
                     </div>
 
                     {/* Image Progress Bar */}
-                    {destination.images.length > 1 && (
+                    {trending.images.length > 1 && (
                       <div className="mt-2 sm:mt-3">
                         <div className="w-full bg-white/20 rounded-full h-0.5 sm:h-1">
                           <div
@@ -410,7 +411,7 @@ const TrendingDestinations = () => {
                             style={{
                               width: `${
                                 ((currentImageIndex + 1) /
-                                  destination.images.length) *
+                                  trending.images.length) *
                                 100
                               }%`,
                             }}
