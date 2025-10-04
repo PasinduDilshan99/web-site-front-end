@@ -122,14 +122,6 @@ const PackagesHome = () => {
     return () => clearInterval(interval);
   }, [activePackages]);
 
-  const formatDuration = (startDate: string, endDate: string) => {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const diffTime = Math.abs(end.getTime() - start.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return `${diffDays} days`;
-  };
-
   const getCurrentImageUrl = (pkg: ActivePackagesType) => {
     if (!pkg.images || pkg.images.length === 0) {
       return "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=500&h=500&fit=crop";
@@ -140,16 +132,21 @@ const PackagesHome = () => {
 
   const handleImageClick = (pkgId: number, event: React.MouseEvent) => {
     event.stopPropagation();
-    if (
-      activePackages.find((pkg) => pkg.packageId === pkgId)?.images?.length > 1
-    ) {
+    const pkg = activePackages.find((p) => p.packageId === pkgId);
+    if (pkg?.images && pkg.images.length > 1) {
       setCurrentImageIndexes((prev) => ({
         ...prev,
-        [pkgId]:
-          (prev[pkgId] + 1) %
-          activePackages.find((pkg) => pkg.packageId === pkgId)!.images.length,
+        [pkgId]: (prev[pkgId] + 1) % pkg.images.length,
       }));
     }
+  };
+
+  const handleDotClick = (pkgId: number, index: number, event: React.MouseEvent) => {
+    event.stopPropagation();
+    setCurrentImageIndexes((prev) => ({
+      ...prev,
+      [pkgId]: index,
+    }));
   };
 
   if (loading) {
@@ -213,41 +210,89 @@ const PackagesHome = () => {
                 className="relative h-40 sm:h-48 md:h-56 lg:h-52 xl:h-56 overflow-hidden cursor-pointer"
                 onClick={(e) => handleImageClick(pkg.packageId, e)}
               >
-                <Image
-                  src={pkg.images[0] || ""}
-                  alt={pkg.packageName}
-                  width={500}
-                  height={500}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  // priority={false}
-                />
+                {pkg.images && pkg.images.length > 0 && pkg.images.map((image, index) => (
+                  <div
+                    key={image.imageId}
+                    className="absolute inset-0 transition-opacity duration-700 ease-in-out"
+                    style={{
+                      opacity: index === currentImageIndexes[pkg.packageId] ? 1 : 0,
+                      zIndex: index === currentImageIndexes[pkg.packageId] ? 1 : 0,
+                    }}
+                  >
+                    <Image
+                      src={image.imageUrl}
+                      alt={`${pkg.packageName} - Image ${index + 1}`}
+                      width={500}
+                      height={500}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  </div>
+                ))}
 
                 {/* Image Dots Indicator */}
                 {pkg.images && pkg.images.length > 1 && (
-                  <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1 sm:space-x-2">
+                  <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1 sm:space-x-2 z-10">
                     {pkg.images.map((_, index) => (
-                      <div
+                      <button
                         key={index}
-                        className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all duration-300 ${
+                        onClick={(e) => handleDotClick(pkg.packageId, index, e)}
+                        className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all duration-300 hover:scale-125 ${
                           index === currentImageIndexes[pkg.packageId]
-                            ? "bg-white"
+                            ? "bg-white w-4 sm:w-6"
                             : "bg-white/50"
                         }`}
+                        aria-label={`View image ${index + 1}`}
                       />
                     ))}
                   </div>
                 )}
 
+                {/* Navigation Arrows - Show on hover */}
+                {pkg.images && pkg.images.length > 1 && (
+                  <>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCurrentImageIndexes((prev) => ({
+                          ...prev,
+                          [pkg.packageId]: prev[pkg.packageId] === 0 ? pkg.images.length - 1 : prev[pkg.packageId] - 1,
+                        }));
+                      }}
+                      className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1 sm:p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+                      aria-label="Previous image"
+                    >
+                      <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCurrentImageIndexes((prev) => ({
+                          ...prev,
+                          [pkg.packageId]: (prev[pkg.packageId] + 1) % pkg.images.length,
+                        }));
+                      }}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1 sm:p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+                      aria-label="Next image"
+                    >
+                      <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </>
+                )}
+
                 {/* Discount Badge */}
                 {pkg.discountPercentage > 0 && (
-                  <div className="absolute top-2 sm:top-3 right-2 sm:right-3 bg-red-500 text-white px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-bold shadow-lg">
+                  <div className="absolute top-2 sm:top-3 right-2 sm:right-3 bg-red-500 text-white px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-bold shadow-lg z-10">
                     {pkg.discountPercentage}% OFF
                   </div>
                 )}
 
                 {/* Image Count Badge */}
                 {pkg.images && pkg.images.length > 1 && (
-                  <div className="absolute top-2 sm:top-3 left-2 sm:left-3 bg-black/60 text-white px-2 py-1 rounded-full text-xs">
+                  <div className="absolute top-2 sm:top-3 left-2 sm:left-3 bg-black/60 text-white px-2 py-1 rounded-full text-xs z-10">
                     {currentImageIndexes[pkg.packageId] + 1}/{pkg.images.length}
                   </div>
                 )}
