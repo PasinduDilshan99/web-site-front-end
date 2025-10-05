@@ -6,20 +6,43 @@ import {
 } from "@/utils/frontEndConstant";
 import React, { useState, useEffect, useRef } from "react";
 
-// Define TypeScript interfaces
-interface Place {
+// Define TypeScript interfaces based on new API response
+interface DestinationImage {
   id: number;
   name: string;
-  category: string;
-  lat: number;
-  lng: number;
   description: string;
+  imageUrl: string;
+  status: string;
+}
+
+interface Destination {
+  destinationId: number;
+  destinationName: string;
+  destinationDescription: string;
+  destinationStatus: string;
+  destinationCategory: string;
+  destinationCategoryStatus: string;
+  destinationLocation: string;
+  destinationLatitude: number;
+  destinationLongitude: number;
+  destinationCreatedAt: string;
+  destinationCreatedBy: number;
+  destinationImagesForTourMapDtos: DestinationImage[];
+  destinationCategoryImageForTourMapDtos: DestinationImage[];
 }
 
 interface Category {
   id: string;
   name: string;
   color: string;
+}
+
+interface ApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: Destination[];
+  timestamp: string;
 }
 
 // Extend Window interface to include Leaflet
@@ -84,19 +107,18 @@ const TourMap: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
-
-  const [places, setPlaces] = useState<Place[]>([]);
+  const [destinations, setDestinations] = useState<Destination[]>([]);
 
   useEffect(() => {
     const fetchDestinationsLocations = async () => {
       try {
         setLoading(true);
         const response = await fetch(GET_ACTIVE_DESTINATIONS_LOCATIONS_FE);
-        const data = await response.json();
+        const data: ApiResponse = await response.json();
 
-        if (response.ok) {
-          const items: Place[] = data.data || [];
-          setPlaces(items);
+        if (response.ok && data.code === 200) {
+          const items: Destination[] = data.data || [];
+          setDestinations(items);
           setError(null);
         } else {
           setError(data.message || "Failed to fetch destinations locations");
@@ -120,14 +142,13 @@ const TourMap: React.FC = () => {
         if (response.ok) {
           const items: Category[] = data.data || [];
           setCategories((prev) => [...prev, ...items]);
-
           setError(null);
         } else {
-          setError(data.message || "Failed to fetch destinations locations");
+          setError(data.message || "Failed to fetch categories");
         }
       } catch (err) {
-        console.error("Error fetching destinations locations:", err);
-        setError("Something went wrong while fetching destinations locations");
+        console.error("Error fetching categories:", err);
+        setError("Something went wrong while fetching categories");
       } finally {
         setLoading(false);
       }
@@ -136,6 +157,18 @@ const TourMap: React.FC = () => {
     fetchDestinationsLocationsCategories();
     fetchDestinationsLocations();
   }, []);
+
+  // Transform destinations to the format expected by the existing code
+  const places = destinations.map(destination => ({
+    id: destination.destinationId,
+    name: destination.destinationName,
+    category: destination.destinationCategory,
+    lat: destination.destinationLatitude,
+    lng: destination.destinationLongitude,
+    description: destination.destinationDescription,
+    location: destination.destinationLocation,
+    images: destination.destinationImagesForTourMapDtos
+  }));
 
   const filteredPlaces =
     selectedCategory === "all"
@@ -196,7 +229,7 @@ const TourMap: React.FC = () => {
     mapInstanceRef.current = newMap;
   };
 
-  // Update markers when category changes
+  // Update markers when category changes or destinations update
   useEffect(() => {
     if (!map) return;
 
@@ -230,17 +263,25 @@ const TourMap: React.FC = () => {
         icon: createCustomIcon(currentCategory?.color || "#3b82f6"),
       }).addTo(map);
 
-      // Add popup
+      // Add popup with enhanced information
       marker.bindPopup(`
-        <div style="padding: 8px; max-width: 200px;">
+        <div style="padding: 8px; max-width: 250px;">
           <h3 style="margin: 0 0 6px 0; font-weight: bold; color: ${
             currentCategory?.color || "#3b82f6"
           };">
             ${place.name}
           </h3>
-          <p style="margin: 0; font-size: 13px; color: #666;">
+          <p style="margin: 0 0 4px 0; font-size: 13px; color: #666;">
             ${place.description}
           </p>
+          <p style="margin: 0; font-size: 12px; color: #888;">
+            <strong>Location:</strong> ${place.location}
+          </p>
+          ${place.images && place.images.length > 0 ? `
+          <p style="margin: 4px 0 0 0; font-size: 11px; color: #999;">
+            ${place.images.length} image${place.images.length !== 1 ? 's' : ''} available
+          </p>
+          ` : ''}
         </div>
       `);
 
@@ -263,7 +304,22 @@ const TourMap: React.FC = () => {
       const group = new window.L.featureGroup(newMarkers);
       map.fitBounds(group.getBounds().pad(0.1));
     }
-  }, [map, selectedCategory, filteredPlaces.length]);
+  }, [map, selectedCategory, filteredPlaces.length, destinations.length]);
+
+  // Get unique categories from destinations for dynamic category display
+  const uniqueCategoriesFromDestinations = Array.from(
+    new Set(destinations.map(d => d.destinationCategory))
+  ).map(category => ({
+    id: category,
+    name: category,
+    color: categories.find(c => c.name === category)?.color || "#3b82f6"
+  }));
+
+  // Combine predefined categories with dynamic ones from destinations
+  const allCategories = [
+    ...categories.filter(cat => cat.id === "all"),
+    ...uniqueCategoriesFromDestinations
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 p-3 sm:p-4 md:p-6 lg:p-8">
@@ -278,9 +334,26 @@ const TourMap: React.FC = () => {
           <div className="mt-4 sm:mt-6 w-16 sm:w-20 md:w-24 lg:w-32 h-1 bg-gradient-to-r from-[#A855F7] to-[#F59E0B] mx-auto rounded-full"></div>
         </div>
 
+        {loading && (
+          <div className="text-center py-8">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <p className="mt-2 text-gray-600">Loading destinations...</p>
+          </div>
+        )}
+
+        {error && (
+          <div className="text-center py-8 text-red-600 bg-red-50 rounded-lg mb-6">
+            {error}
+          </div>
+        )}
+
         {/* Category Selection - Desktop/Laptop (hidden on mobile/tablet) */}
         <div className="hidden lg:grid grid-cols-6 gap-4 mb-8">
-          {categories.map((cat) => {
+          {allCategories.map((cat) => {
+            const categoryCount = cat.id === "all" 
+              ? places.length 
+              : places.filter((p) => p.category === cat.id).length;
+
             return (
               <button
                 key={cat.id}
@@ -304,10 +377,7 @@ const TourMap: React.FC = () => {
                 ></div>
                 <p className="text-sm font-medium text-gray-700">{cat.name}</p>
                 <p className="text-xs text-gray-500 mt-1">
-                  {cat.id === "all"
-                    ? places.length
-                    : places.filter((p) => p.category === cat.id).length}{" "}
-                  places
+                  {categoryCount} place{categoryCount !== 1 ? 's' : ''}
                 </p>
               </button>
             );
@@ -330,15 +400,17 @@ const TourMap: React.FC = () => {
               paddingRight: "2.5rem",
             }}
           >
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name} (
-                {cat.id === "all"
-                  ? places.length
-                  : places.filter((p) => p.category === cat.id).length}{" "}
-                places)
-              </option>
-            ))}
+            {allCategories.map((cat) => {
+              const categoryCount = cat.id === "all" 
+                ? places.length 
+                : places.filter((p) => p.category === cat.id).length;
+
+              return (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name} ({categoryCount} place{categoryCount !== 1 ? 's' : ''})
+                </option>
+              );
+            })}
           </select>
         </div>
 
@@ -363,6 +435,9 @@ const TourMap: React.FC = () => {
                 {currentCategory?.name || "All Places"}
               </p>
             </div>
+            <p className="text-xs sm:text-sm text-gray-500">
+              Total destinations: {destinations.length}
+            </p>
           </div>
         </div>
       </div>
