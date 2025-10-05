@@ -35,6 +35,7 @@ interface Category {
   id: string;
   name: string;
   color: string;
+  image?: string;
 }
 
 interface ApiResponse {
@@ -52,48 +53,9 @@ declare global {
   }
 }
 
-// Simple icon components
-const MapPinIcon: React.FC = () => (
-  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-  </svg>
-);
-
-const PalmtreeIcon: React.FC = () => (
-  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M12 2L8 8h3v12h2V8h3l-4-6z" />
-    <path d="M7 7c-1 1-2 3-2 5h3c0-1 .5-2 1-3l-2-2z" />
-    <path d="M17 7l-2 2c.5 1 1 2 1 3h3c0-2-1-4-2-5z" />
-  </svg>
-);
-
-const BuildingIcon: React.FC = () => (
-  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M12 3L2 9v12h20V9l-10-6zM8 19H6v-2h2v2zm0-4H6v-2h2v2zm4 4h-2v-2h2v2zm0-4h-2v-2h2v2zm4 4h-2v-2h2v2zm0-4h-2v-2h2v2z" />
-  </svg>
-);
-
-const MountainIcon: React.FC = () => (
-  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M14 6l-3.75 5 2.85 3.8-1.6 1.2L9 12.5l-3 4L2 12l5-6.7L10 10l4-4z" />
-    <path d="M14 6l8 10h-6l-2-2.67z" />
-  </svg>
-);
-
-const CameraIcon: React.FC = () => (
-  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z" />
-  </svg>
-);
-
-const UtensilsIcon: React.FC = () => (
-  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M8.1 13.34l2.83-2.83L3.91 3.5c-1.56 1.56-1.56 4.09 0 5.66l4.19 4.18zm6.78-1.81c1.53.71 3.68.21 5.27-1.38 1.91-1.91 2.28-4.65.81-6.12-1.46-1.46-4.2-1.1-6.12.81-1.59 1.59-2.09 3.74-1.38 5.27L3.7 19.87l1.41 1.41L12 14.41l6.88 6.88 1.41-1.41L13.41 13l1.47-1.47z" />
-  </svg>
-);
-
+// Simple icon component
 const AllPlacesIcon: React.FC = () => (
-  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+  <svg className="w-8 h-8" fill="white" viewBox="0 0 24 24">
     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
   </svg>
 );
@@ -108,6 +70,8 @@ const TourMap: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [destinations, setDestinations] = useState<Destination[]>([]);
+  const [selectedDestination, setSelectedDestination] =
+    useState<Destination | null>(null);
 
   useEffect(() => {
     const fetchDestinationsLocations = async () => {
@@ -131,35 +95,35 @@ const TourMap: React.FC = () => {
       }
     };
 
-    const fetchDestinationsLocationsCategories = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(
-          GET_ACTIVE_DESTINATIONS_LOCATIONS_CATEGORIES_FE
-        );
-        const data = await response.json();
+    // const fetchDestinationsLocationsCategories = async () => {
+    //   try {
+    //     setLoading(true);
+    //     const response = await fetch(
+    //       GET_ACTIVE_DESTINATIONS_LOCATIONS_CATEGORIES_FE
+    //     );
+    //     const data = await response.json();
 
-        if (response.ok) {
-          const items: Category[] = data.data || [];
-          setCategories((prev) => [...prev, ...items]);
-          setError(null);
-        } else {
-          setError(data.message || "Failed to fetch categories");
-        }
-      } catch (err) {
-        console.error("Error fetching categories:", err);
-        setError("Something went wrong while fetching categories");
-      } finally {
-        setLoading(false);
-      }
-    };
+    //     if (response.ok) {
+    //       const items: Category[] = data.data || [];
+    //       setCategories((prev) => [...prev, ...items]);
+    //       setError(null);
+    //     } else {
+    //       setError(data.message || "Failed to fetch categories");
+    //     }
+    //   } catch (err) {
+    //     console.error("Error fetching categories:", err);
+    //     setError("Something went wrong while fetching categories");
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // };
 
-    fetchDestinationsLocationsCategories();
+    // fetchDestinationsLocationsCategories();
     fetchDestinationsLocations();
   }, []);
 
   // Transform destinations to the format expected by the existing code
-  const places = destinations.map(destination => ({
+  const places = destinations.map((destination) => ({
     id: destination.destinationId,
     name: destination.destinationName,
     category: destination.destinationCategory,
@@ -167,7 +131,7 @@ const TourMap: React.FC = () => {
     lng: destination.destinationLongitude,
     description: destination.destinationDescription,
     location: destination.destinationLocation,
-    images: destination.destinationImagesForTourMapDtos
+    images: destination.destinationImagesForTourMapDtos,
   }));
 
   const filteredPlaces =
@@ -277,15 +241,31 @@ const TourMap: React.FC = () => {
           <p style="margin: 0; font-size: 12px; color: #888;">
             <strong>Location:</strong> ${place.location}
           </p>
-          ${place.images && place.images.length > 0 ? `
+          ${
+            place.images && place.images.length > 0
+              ? `
           <p style="margin: 4px 0 0 0; font-size: 11px; color: #999;">
-            ${place.images.length} image${place.images.length !== 1 ? 's' : ''} available
+            ${place.images.length} image${
+                  place.images.length !== 1 ? "s" : ""
+                } available
           </p>
-          ` : ''}
+          `
+              : ""
+          }
         </div>
       `);
 
-      // Add hover effects
+      // Add click event
+      marker.on("click", function (this: any) {
+        const destination = destinations.find(
+          (d) => d.destinationId === place.id
+        );
+        if (destination) {
+          setSelectedDestination(destination);
+        }
+      });
+
+      // Add hover effects for popup only
       marker.on("mouseover", function (this: any) {
         this.openPopup();
       });
@@ -308,17 +288,34 @@ const TourMap: React.FC = () => {
 
   // Get unique categories from destinations for dynamic category display
   const uniqueCategoriesFromDestinations = Array.from(
-    new Set(destinations.map(d => d.destinationCategory))
-  ).map(category => ({
-    id: category,
-    name: category,
-    color: categories.find(c => c.name === category)?.color || "#3b82f6"
-  }));
+    new Set(destinations.map((d) => d.destinationCategory))
+  ).map((category) => {
+    const matchingCategory = categories.find((c) => c.name === category);
+    const categoryDestination = destinations.find(
+      (d) => d.destinationCategory === category
+    );
+    return {
+      id: category,
+      name: category,
+      color: matchingCategory?.color || "#3b82f6",
+      image:
+        categoryDestination?.destinationCategoryImageForTourMapDtos?.[0]
+          ?.imageUrl || "",
+    };
+  });
 
-  // Combine predefined categories with dynamic ones from destinations
+  // Create "All Destinations" category
+  const allDestinationsCategory = {
+    id: "all",
+    name: "All Destinations",
+    color: "#3b82f6",
+    image: "",
+  };
+
+  // Combine all categories
   const allCategories = [
-    ...categories.filter(cat => cat.id === "all"),
-    ...uniqueCategoriesFromDestinations
+    allDestinationsCategory,
+    ...uniqueCategoriesFromDestinations,
   ];
 
   return (
@@ -348,36 +345,60 @@ const TourMap: React.FC = () => {
         )}
 
         {/* Category Selection - Desktop/Laptop (hidden on mobile/tablet) */}
-        <div className="hidden lg:grid grid-cols-6 gap-4 mb-8">
+        <div className="hidden lg:grid grid-cols-6 gap-6 mb-8">
           {allCategories.map((cat) => {
-            const categoryCount = cat.id === "all" 
-              ? places.length 
-              : places.filter((p) => p.category === cat.id).length;
+            const categoryCount =
+              cat.id === "all"
+                ? places.length
+                : places.filter((p) => p.category === cat.id).length;
 
             return (
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
                 onMouseEnter={() => setSelectedCategory(cat.id)}
-                className={`p-4 rounded-xl transition-all duration-300 ${
-                  selectedCategory === cat.id
-                    ? "bg-white shadow-lg scale-105 ring-2"
-                    : "bg-white/70 hover:bg-white hover:shadow-md"
+                className={`flex flex-col items-center transition-all duration-300 ${
+                  selectedCategory === cat.id ? "scale-110" : "hover:scale-105"
                 }`}
-                style={
-                  {
-                    ringColor:
-                      selectedCategory === cat.id ? cat.color : "transparent",
-                  } as React.CSSProperties
-                }
               >
                 <div
-                  className="flex justify-center mb-2"
-                  style={{ color: cat.color }}
-                ></div>
-                <p className="text-sm font-medium text-gray-700">{cat.name}</p>
+                  className={`w-24 h-24 rounded-full overflow-hidden mb-3 transition-all duration-300 ${
+                    selectedCategory === cat.id
+                      ? "ring-4 shadow-xl"
+                      : "ring-2 ring-gray-200 hover:shadow-lg"
+                  }`}
+                  style={{
+                    border: "8px",
+                    borderColor:
+                      selectedCategory === cat.id ? cat.color : undefined,
+                  }}
+                >
+                  {cat.image ? (
+                    <img
+                      src={cat.image}
+                      alt={cat.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div
+                      className="w-full h-full flex items-center justify-center"
+                      style={{ backgroundColor: cat.color }}
+                    >
+                      <AllPlacesIcon />
+                    </div>
+                  )}
+                </div>
+                <p
+                  className={`text-sm font-medium transition-colors ${
+                    selectedCategory === cat.id
+                      ? "text-gray-900 font-bold"
+                      : "text-gray-700"
+                  }`}
+                >
+                  {cat.name}
+                </p>
                 <p className="text-xs text-gray-500 mt-1">
-                  {categoryCount} place{categoryCount !== 1 ? 's' : ''}
+                  {categoryCount} place{categoryCount !== 1 ? "s" : ""}
                 </p>
               </button>
             );
@@ -401,26 +422,241 @@ const TourMap: React.FC = () => {
             }}
           >
             {allCategories.map((cat) => {
-              const categoryCount = cat.id === "all" 
-                ? places.length 
-                : places.filter((p) => p.category === cat.id).length;
+              const categoryCount =
+                cat.id === "all"
+                  ? places.length
+                  : places.filter((p) => p.category === cat.id).length;
 
               return (
                 <option key={cat.id} value={cat.id}>
-                  {cat.name} ({categoryCount} place{categoryCount !== 1 ? 's' : ''})
+                  {cat.name} ({categoryCount} place
+                  {categoryCount !== 1 ? "s" : ""})
                 </option>
               );
             })}
           </select>
         </div>
 
-        {/* Map Container */}
+        {/* Map Container with Side Panel */}
         <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl p-3 sm:p-4 md:p-6 lg:p-8">
-          <div
-            ref={mapRef}
-            className="w-full h-[400px] sm:h-[500px] md:h-[550px] lg:h-[600px] rounded-lg sm:rounded-xl overflow-hidden"
-            style={{ minHeight: "400px" }}
-          />
+          <div className="flex gap-4">
+            {/* Map */}
+            <div className="flex-1">
+              <div
+                ref={mapRef}
+                className="w-full h-[400px] sm:h-[500px] md:h-[550px] lg:h-[600px] rounded-lg sm:rounded-xl overflow-hidden"
+                style={{ minHeight: "400px" }}
+              />
+            </div>
+
+            {/* Destination Details Card - Desktop Only (Side Panel) */}
+            {selectedDestination && (
+              <div className="hidden lg:block w-80 h-[600px] overflow-y-auto relative">
+                <div className="bg-gradient-to-br from-blue-50 to-white rounded-xl shadow-lg p-6">
+                  {/* Close button */}
+                  <button
+                    onClick={() => setSelectedDestination(null)}
+                    className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors z-10"
+                    aria-label="Close"
+                  >
+                    <svg
+                      className="w-5 h-5 text-gray-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+
+                  <h3
+                    className="text-2xl font-bold mb-2 pr-8"
+                    style={{ color: currentCategory?.color || "#3b82f6" }}
+                  >
+                    {selectedDestination.destinationName}
+                  </h3>
+
+                  <div className="mb-4">
+                    <span
+                      className="inline-block px-3 py-1 rounded-full text-xs font-semibold text-white"
+                      style={{
+                        backgroundColor: currentCategory?.color || "#3b82f6",
+                      }}
+                    >
+                      {selectedDestination.destinationCategory}
+                    </span>
+                  </div>
+
+                  {/* Images Gallery */}
+                  {selectedDestination.destinationImagesForTourMapDtos &&
+                    selectedDestination.destinationImagesForTourMapDtos.length >
+                      0 && (
+                      <div className="mb-4 space-y-2">
+                        {selectedDestination.destinationImagesForTourMapDtos.map(
+                          (img) => (
+                            <div
+                              key={img.id}
+                              className="rounded-lg overflow-hidden shadow-md"
+                            >
+                              <img
+                                src={img.imageUrl}
+                                alt={img.name}
+                                className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
+                              />
+                              {img.description && (
+                                <p className="text-xs text-gray-600 p-2 bg-gray-50">
+                                  {img.description}
+                                </p>
+                              )}
+                            </div>
+                          )
+                        )}
+                      </div>
+                    )}
+
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-sm font-semibold text-gray-700 mb-1">
+                        Description
+                      </p>
+                      <p className="text-sm text-gray-600 leading-relaxed">
+                        {selectedDestination.destinationDescription}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-sm font-semibold text-gray-700 mb-1">
+                        Location
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        {selectedDestination.destinationLocation}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-sm font-semibold text-gray-700 mb-1">
+                        Coordinates
+                      </p>
+                      <p className="text-xs text-gray-500 font-mono">
+                        Lat:{" "}
+                        {selectedDestination.destinationLatitude.toFixed(4)},
+                        Lng:{" "}
+                        {selectedDestination.destinationLongitude.toFixed(4)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Destination Details Card - Mobile & Tablet (Below Map) */}
+          {selectedDestination && (
+            <div className="lg:hidden mt-4">
+              <div className="bg-gradient-to-br from-blue-50 to-white rounded-xl shadow-lg p-4 sm:p-6 relative">
+                {/* Close button */}
+                <button
+                  onClick={() => setSelectedDestination(null)}
+                  className="absolute top-3 right-3 sm:top-4 sm:right-4 w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors z-10"
+                  aria-label="Close"
+                >
+                  <svg
+                    className="w-5 h-5 text-gray-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+
+                <h3
+                  className="text-xl sm:text-2xl font-bold mb-2 pr-10"
+                  style={{ color: currentCategory?.color || "#3b82f6" }}
+                >
+                  {selectedDestination.destinationName}
+                </h3>
+
+                <div className="mb-4">
+                  <span
+                    className="inline-block px-3 py-1 rounded-full text-xs font-semibold text-white"
+                    style={{
+                      backgroundColor: currentCategory?.color || "#3b82f6",
+                    }}
+                  >
+                    {selectedDestination.destinationCategory}
+                  </span>
+                </div>
+
+                {/* Images Gallery */}
+                {selectedDestination.destinationImagesForTourMapDtos &&
+                  selectedDestination.destinationImagesForTourMapDtos.length >
+                    0 && (
+                    <div className="mb-4 space-y-2">
+                      {selectedDestination.destinationImagesForTourMapDtos.map(
+                        (img) => (
+                          <div
+                            key={img.id}
+                            className="rounded-lg overflow-hidden shadow-md"
+                          >
+                            <img
+                              src={img.imageUrl}
+                              alt={img.name}
+                              className="w-full h-48 sm:h-56 object-cover"
+                            />
+                            {img.description && (
+                              <p className="text-xs text-gray-600 p-2 bg-gray-50">
+                                {img.description}
+                              </p>
+                            )}
+                          </div>
+                        )
+                      )}
+                    </div>
+                  )}
+
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-sm font-semibold text-gray-700 mb-1">
+                      Description
+                    </p>
+                    <p className="text-sm text-gray-600 leading-relaxed">
+                      {selectedDestination.destinationDescription}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-sm font-semibold text-gray-700 mb-1">
+                      Location
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {selectedDestination.destinationLocation}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-sm font-semibold text-gray-700 mb-1">
+                      Coordinates
+                    </p>
+                    <p className="text-xs text-gray-500 font-mono">
+                      Lat: {selectedDestination.destinationLatitude.toFixed(4)},
+                      Lng: {selectedDestination.destinationLongitude.toFixed(4)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Legend */}
           <div className="mt-3 sm:mt-4 md:mt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
@@ -432,7 +668,7 @@ const TourMap: React.FC = () => {
               <p className="text-xs sm:text-sm text-gray-600">
                 Showing{" "}
                 <span className="font-bold">{filteredPlaces.length}</span>{" "}
-                {currentCategory?.name || "All Places"}
+                {currentCategory?.name || "All Destinations"}
               </p>
             </div>
             <p className="text-xs sm:text-sm text-gray-500">

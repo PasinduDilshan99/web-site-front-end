@@ -92,9 +92,9 @@ export default function Home() {
       <div>
         <GalleryHome />
       </div>
-      {/* <div>
+      <div>
         <ReviewsHome />
-      </div> */}
+      </div>
       <div>
         <ActivitiesHome />
       </div>
@@ -107,18 +107,12 @@ export default function Home() {
       <div>
         <UserBenefitsHome />
       </div>
-      {/* <div>
-        <Inquire />
-      </div> */}
-
-      {/*
-
       <div>
         <PromotionsHome />
       </div>
-
-
-      */}
+      <div>
+        <Inquire />
+      </div>
       <div>
         <ActivityCategoriesHome />
       </div>

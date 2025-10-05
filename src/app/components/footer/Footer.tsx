@@ -136,8 +136,19 @@ const Footer = () => {
 
   if (loading) {
     return (
-      <footer className="bg-gray-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+      <footer 
+        className="relative bg-gray-900 text-white"
+        style={{
+          backgroundImage: "url('/images/common-images/footer-bg.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        {/* Dark overlay for better readability */}
+        <div className="absolute inset-0 bg-gray-900/80"></div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12">
             {[...Array(4)].map((_, i) => (
               <div key={i} className="space-y-4">
@@ -157,8 +168,19 @@ const Footer = () => {
 
   if (error || !footerData) {
     return (
-      <footer className="bg-gray-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
+      <footer 
+        className="relative bg-gray-900 text-white"
+        style={{
+          backgroundImage: "url('/images/common-images/footer-bg.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        {/* Dark overlay for better readability */}
+        <div className="absolute inset-0 bg-gray-900/80"></div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
           <p className="text-red-400">Failed to load footer data</p>
         </div>
       </footer>
@@ -166,9 +188,20 @@ const Footer = () => {
   }
 
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer 
+      className="relative bg-gray-900 text-white"
+      style={{
+        backgroundImage: "url('/images/common-images/footer-bg.png')",
+        backgroundSize: "cover",
+        // backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
+      {/* Dark overlay for better readability */}
+      <div className="absolute inset-0 bg-gray-900/80"></div>
+      
       {/* Main Footer Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Company Info - Left Column */}
           <div className="lg:col-span-1">
@@ -245,7 +278,7 @@ const Footer = () => {
       </div>
 
       {/* Copyright Section */}
-      <div className="border-t border-gray-800">
+      <div className="relative border-t border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
             {/* Copyright Text */}

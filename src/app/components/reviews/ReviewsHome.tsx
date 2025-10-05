@@ -3,57 +3,35 @@
 import { GET_ALL_ACTIVE_REVIEW_FE } from "@/utils/frontEndConstant";
 import React, { useEffect, useState } from "react";
 
-interface UserInfo {
-  userId: number;
-  username: string;
-  firstName?: string;
-  lastName?: string;
-  avatarUrl?: string;
-}
-
-interface TourInfo {
-  tourId: number;
-  name: string;
-}
-
-interface PackageInfo {
-  packageId: number;
-  name: string;
-}
-
 interface ReviewImage {
-  id: number;
+  imageId: number;
+  imageName: string;
+  imageDescription: string;
   imageUrl: string;
-}
-
-interface ReviewReaction {
-  id: number;
-  reactionType: string;
-  reactedByUserId: number;
-  reactedByUsername: string;
-}
-
-interface ReviewComment {
-  id: number;
-  commentText: string;
-  parentId?: number;
-  commentedBy: UserInfo;
-  createdAt: string;
 }
 
 interface ActiveReviewsType {
   reviewId: number;
+  reviewerName: string;
+  review: string;
   rating: number;
   reviewDescription: string;
-  reviewStatus: string;
+  numberOfParticipate: number;
   reviewCreatedAt: string;
-  reviewUpdatedAt: string;
-  reviewer: UserInfo;
-  tour?: TourInfo;
-  packageInfo?: PackageInfo;
+  scheduleId: number;
+  scheduleName: string;
+  assumeStartDate: string;
+  assumeEndDate: string;
+  tourId: number;
+  tourName: string;
+  tourDescription: string;
+  startLocation: string;
+  endLocation: string;
+  userId: number;
+  userFullName: string;
+  userEmail: string;
+  reviewStatus: string;
   images: ReviewImage[];
-  reactions: ReviewReaction[];
-  comments: ReviewComment[];
 }
 
 const ReviewsCarousel = () => {
@@ -135,7 +113,7 @@ const ReviewsCarousel = () => {
       <svg
         key={index}
         className={`w-5 h-5 ${
-          index < rating
+          index < Math.floor(rating)
             ? "fill-yellow-400 text-yellow-400"
             : "fill-gray-300 text-gray-300"
         }`}
@@ -144,32 +122,6 @@ const ReviewsCarousel = () => {
         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
       </svg>
     ));
-  };
-
-  const getReactionIcon = (reactionType: string) => {
-    const type = reactionType.trim().toLowerCase(); // normalize
-
-    switch (type) {
-      case "👍":
-      case "like":
-        return (
-          <svg className="w-4 h-4 fill-blue-500" viewBox="0 0 24 24">
-            <path d="M7.493 18.75c-.425 0-.82-.236-.975-.632A7.48 7.48 0 016 15.375c0-1.75.599-3.358 1.602-4.634.151-.192.373-.309.6-.397.473-.183.89-.514 1.212-.924a9.042 9.042 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a.75.75 0 01.75-.75 2.25 2.25 0 012.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729H14.23c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23h-.777zM2.331 10.977a11.969 11.969 0 00-.831 4.398 12 12 0 00.52 3.507c.26.85 1.084 1.368 1.973 1.368H4.9c.445 0 .72-.498.523-.898a8.963 8.963 0 01-.924-3.977c0-1.708.476-3.305 1.302-4.666.245-.403-.028-.959-.5-.959H4.25c-.832 0-1.612.453-1.918 1.227z" />
-          </svg>
-        );
-      case "❤️":
-      case "love":
-        return (
-          <svg
-            className="w-4 h-4 fill-red-500 text-red-500"
-            viewBox="0 0 24 24"
-          >
-            <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
-          </svg>
-        );
-      default:
-        return <span className="text-lg">{reactionType}</span>;
-    }
   };
 
   if (loading) {
@@ -272,8 +224,8 @@ const ReviewsCarousel = () => {
                 <div className="relative w-full h-full max-w-md max-h-80">
                   <img
                     src={currentImage?.imageUrl}
-                    alt="Review"
-                    className="w-full h-full object-contain rounded-lg"
+                    alt={currentImage?.imageDescription || "Review image"}
+                    className="w-full h-full object-contain rounded-lg cursor-pointer"
                     onClick={() => {
                       setSelectedImage(currentImage?.imageUrl);
                       setImageModalOpen(true);
@@ -346,7 +298,7 @@ const ReviewsCarousel = () => {
                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 max-w-full overflow-x-auto pb-2">
                   {currentReview.images.map((img, index) => (
                     <button
-                      key={img.id}
+                      key={img.imageId}
                       onClick={() => setCurrentImageIndex(index)}
                       className={`flex-shrink-0 w-12 h-12 rounded border-2 transition-all duration-300 ${
                         index === currentImageIndex
@@ -356,7 +308,7 @@ const ReviewsCarousel = () => {
                     >
                       <img
                         src={img.imageUrl}
-                        alt={`Thumbnail ${index + 1}`}
+                        alt={img.imageDescription || `Thumbnail ${index + 1}`}
                         className="w-full h-full object-cover rounded"
                       />
                     </button>
@@ -375,43 +327,43 @@ const ReviewsCarousel = () => {
             <div className="h-full flex flex-col justify-between">
               {/* Top Section - Review Content */}
               <div className="space-y-4">
-                {/* Review Text */}
+                {/* Review Title and Rating */}
                 <div className="text-center">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    {currentReview.reviewerName}
+                  </h3>
                   <div className="flex justify-center gap-1 mb-3">
                     {renderStars(currentReview.rating)}
+                    <span className="ml-2 text-sm text-gray-600 font-medium">
+                      {currentReview.rating.toFixed(1)}
+                    </span>
                   </div>
-                  <blockquote className="text-lg text-gray-800 italic leading-relaxed line-clamp-4">
-                    "{currentReview.reviewDescription}"
+                  <blockquote className="text-lg text-gray-800 italic leading-relaxed">
+                    {currentReview.review}
                   </blockquote>
+                  {currentReview.reviewDescription && (
+                    <p className="text-gray-600 mt-2 text-sm">
+                      {currentReview.reviewDescription}
+                    </p>
+                  )}
                 </div>
 
                 {/* Reviewer Info */}
                 <div className="flex items-center justify-center gap-3">
                   <div className="relative">
-                    {currentReview.reviewer.avatarUrl ? (
-                      <img
-                        src={currentReview.reviewer.avatarUrl}
-                        alt={currentReview.reviewer.username}
-                        className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm"
-                      />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center border-2 border-white shadow-sm">
-                        <svg
-                          className="w-5 h-5 text-white"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                        >
-                          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                        </svg>
-                      </div>
-                    )}
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center border-2 border-white shadow-sm">
+                      <svg
+                        className="w-5 h-5 text-white"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                      >
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                      </svg>
+                    </div>
                   </div>
                   <div className="text-center">
                     <h3 className="font-semibold text-gray-900 text-sm">
-                      {currentReview.reviewer.firstName &&
-                      currentReview.reviewer.lastName
-                        ? `${currentReview.reviewer.firstName} ${currentReview.reviewer.lastName}`
-                        : currentReview.reviewer.username}
+                      {currentReview.userFullName}
                     </h3>
                     <p className="text-gray-500 text-xs">
                       {new Date(
@@ -425,91 +377,87 @@ const ReviewsCarousel = () => {
                   </div>
                 </div>
 
-                {/* Tour/Package Info */}
-                {(currentReview.tour || currentReview.packageInfo) && (
-                  <div className="flex flex-wrap justify-center gap-2">
-                    {currentReview.tour && (
-                      <div className="flex items-center gap-1 bg-blue-50 text-blue-700 px-2 py-1 rounded-full text-xs">
-                        <svg
-                          className="w-3 h-3"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                        >
-                          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                        </svg>
-                        <span>{currentReview.tour.name}</span>
-                      </div>
-                    )}
-                    {currentReview.packageInfo && (
-                      <div className="flex items-center gap-1 bg-green-50 text-green-700 px-2 py-1 rounded-full text-xs">
-                        <svg
-                          className="w-3 h-3"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                        >
-                          <path d="M7.5 4A1.5 1.5 0 006 5.5v1.764a.75.75 0 00.344.63l4.606 3.004L7.53 14.72a.75.75 0 00-.186 1.093l1.72 2.293a.75.75 0 001.093.186l3.42-2.567 3.42 2.567a.75.75 0 001.093-.186l1.72-2.293a.75.75 0 00-.186-1.093l-3.42-3.822L20.656 7.894A.75.75 0 0021 7.264V5.5A1.5 1.5 0 0019.5 4h-12z" />
-                        </svg>
-                        <span>{currentReview.packageInfo.name}</span>
-                      </div>
-                    )}
+                {/* Tour and Schedule Info */}
+                <div className="flex flex-wrap justify-center gap-2">
+                  <div className="flex items-center gap-1 bg-blue-50 text-blue-700 px-2 py-1 rounded-full text-xs">
+                    <svg
+                      className="w-3 h-3"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                    </svg>
+                    <span>{currentReview.tourName}</span>
                   </div>
-                )}
-              </div>
-
-              {/* Bottom Section - Reactions and Comments */}
-              {(currentReview.reactions.length > 0 ||
-                currentReview.comments.length > 0) && (
-                <div className="border-t border-gray-200 pt-4 space-y-4 flex flex-col md:flex-row md:justify-between">
-                  {/* Reactions */}
-                  {currentReview.reactions.length > 0 && (
-                    <div className="flex flex-col">
-                      <h4 className="text-sm font-semibold text-gray-700 mb-2">
-                        Reactions
-                      </h4>
-                      <div className="flex flex-wrap gap-3">
-                        {/* Group reactions by type */}
-                        {Object.entries(
-                          currentReview.reactions.reduce((acc, reaction) => {
-                            acc[reaction.reactionType] =
-                              (acc[reaction.reactionType] || 0) + 1;
-                            return acc;
-                          }, {} as Record<string, number>)
-                        ).map(([reactionType, count]) => (
-                          <div
-                            key={reactionType}
-                            className="flex items-center gap-1 bg-blue-50 hover:bg-blue-100 transition-colors px-3 py-1 rounded-lg text-sm cursor-pointer"
-                            title={`${count} ${reactionType}${
-                              count > 1 ? "s" : ""
-                            }`}
-                          >
-                            {getReactionIcon(reactionType)}
-                            <span className="text-gray-700 font-medium">
-                              {count}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Comments */}
-                  {currentReview.comments.length > 0 && (
-                    <div className="flex items-center gap-2 mt-3 md:mt-0 text-sm text-gray-600">
+                  <div className="flex items-center gap-1 bg-green-50 text-green-700 px-2 py-1 rounded-full text-xs">
+                    <svg
+                      className="w-3 h-3"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19a2 2 0 002 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z" />
+                    </svg>
+                    <span>{currentReview.scheduleName}</span>
+                  </div>
+                  {currentReview.numberOfParticipate > 0 && (
+                    <div className="flex items-center gap-1 bg-purple-50 text-purple-700 px-2 py-1 rounded-full text-xs">
                       <svg
-                        className="w-4 h-4 text-gray-500"
+                        className="w-3 h-3"
                         viewBox="0 0 24 24"
                         fill="currentColor"
                       >
-                        <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
+                        <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
                       </svg>
-                      <span>
-                        {currentReview.comments.length} comment
-                        {currentReview.comments.length !== 1 ? "s" : ""}
-                      </span>
+                      <span>{currentReview.numberOfParticipate} travelers</span>
                     </div>
                   )}
                 </div>
-              )}
+
+                {/* Location Info */}
+                <div className="flex items-center justify-center gap-2 text-xs text-gray-600">
+                  <svg
+                    className="w-3 h-3"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                  </svg>
+                  <span>
+                    {currentReview.startLocation} → {currentReview.endLocation}
+                  </span>
+                </div>
+              </div>
+
+              {/* Schedule Dates */}
+              <div className="border-t border-gray-200 pt-4">
+                <div className="flex justify-center items-center gap-4 text-xs text-gray-600">
+                  <div className="text-center">
+                    <div className="font-semibold text-gray-700">Start Date</div>
+                    <div>
+                      {new Date(
+                        currentReview.assumeStartDate
+                      ).toLocaleDateString("en-US", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </div>
+                  </div>
+                  <div className="text-gray-400">→</div>
+                  <div className="text-center">
+                    <div className="font-semibold text-gray-700">End Date</div>
+                    <div>
+                      {new Date(
+                        currentReview.assumeEndDate
+                      ).toLocaleDateString("en-US", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
