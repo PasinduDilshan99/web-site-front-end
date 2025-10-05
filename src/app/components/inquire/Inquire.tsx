@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // Contact form data interface
 interface ContactFormData {
@@ -34,6 +34,15 @@ const Inquire = () => {
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState('');
+  const [mapLoaded, setMapLoaded] = useState(false);
+
+  // Coordinates for the location
+  const latitude = 6.9316342;
+  const longitude = 79.9771391;
+
+  useEffect(() => {
+    setMapLoaded(true);
+  }, []);
 
   // Handle input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -78,6 +87,9 @@ const Inquire = () => {
       setIsSubmitting(false);
     }
   };
+
+  // OpenStreetMap URL with the specified coordinates
+  const mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${longitude-0.01}%2C${latitude-0.01}%2C${longitude+0.01}%2C${latitude+0.01}&layer=mapnik&marker=${latitude}%2C${longitude}`;
 
   return (
     <section className="py-12 sm:py-16 lg:py-20 xl:py-24 bg-gray-50">
@@ -267,22 +279,40 @@ const Inquire = () => {
                   Our Location
                 </h3>
                 <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-                  Pretoria, Cross Street, Combe<br />
-                  Martin, EX34 0DH
+                  Colombo, Sri Lanka<br />
+                  Latitude: {latitude}, Longitude: {longitude}
                 </p>
               </div>
             </div>
 
-            {/* Decorative Map Background */}
-            <div className="hidden lg:block relative mt-8">
-              <div className="w-full h-48 bg-gray-200 rounded-xl overflow-hidden">
-                <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-200 opacity-50"></div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <svg className="w-16 h-16 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                  </svg>
-                </div>
+            {/* OpenStreetMap */}
+            <div className="mt-8">
+              <div className="w-full h-64 sm:h-72 lg:h-80 bg-gray-200 rounded-xl overflow-hidden shadow-lg">
+                {mapLoaded && (
+                  <iframe
+                    width="100%"
+                    height="100%"
+                    frameBorder="0"
+                    scrolling="no"
+                    marginHeight={0}
+                    marginWidth={0}
+                    src={mapUrl}
+                    title="Our Location"
+                    className="border-0"
+                  >
+                  </iframe>
+                )}
               </div>
+              {/* <div className="mt-3 text-center">
+                <a 
+                  href={`https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=15/${latitude}/${longitude}`} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors duration-200"
+                >
+                  View Larger Map
+                </a>
+              </div> */}
             </div>
           </div>
 

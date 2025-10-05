@@ -4,19 +4,25 @@ import { GET_ALL_DESTINATIONS_CATEGORIES } from "@/utils/frontEndConstant";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
+// Define the interface for image
+interface ImageType {
+  imageId: number;
+  imageName: string;
+  imageDescription: string;
+  imageUrl: string;
+  imageStatus: string;
+  imageCreatedAt: string;
+}
+
 // Define the interface for a single destination category
 interface DestinationCategoryType {
   categoryId: number;
-  categoryName: string;
+  category: string;
   categoryDescription: string;
-  imageUrl: string;
   categoryStatus: string;
   createdAt: string;
-  createdBy: number;
   updatedAt: string;
-  updatedBy?: number | null;
-  terminatedAt?: string | null;
-  terminatedBy?: number | null;
+  images: ImageType[];
 }
 
 const DestinationsCategories = () => {
@@ -132,22 +138,26 @@ const DestinationsCategories = () => {
         {/* Categories Grid */}
         <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           {destinationsCategories.map((category) => {
+            // Get the first active image or fallback
+            const activeImage = category.images?.find(
+              (img) => img.imageStatus === "ACTIVE"
+            );
+            const imageUrl = activeImage?.imageUrl || "/placeholder.jpg";
+            const imageAlt = activeImage?.imageDescription || category.category;
+
             return (
               <div
                 key={category.categoryId}
                 onClick={() =>
-                  handleCategoryClick(
-                    category.categoryId,
-                    category.categoryName
-                  )
+                  handleCategoryClick(category.categoryId, category.category)
                 }
                 className="group bg-white rounded-xl sm:rounded-2xl shadow-md sm:shadow-lg hover:shadow-xl sm:hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 sm:hover:-translate-y-2 overflow-hidden cursor-pointer"
               >
                 {/* Category Image */}
                 <div className="relative h-40 xs:h-48 sm:h-56 md:h-60 lg:h-64 overflow-hidden">
                   <Image
-                    src={category.imageUrl}
-                    alt={category.categoryName}
+                    src={imageUrl}
+                    alt={imageAlt}
                     width={500}
                     height={500}
                     className="w-full h-full object-cover group-hover:scale-105 sm:group-hover:scale-110 transition-transform duration-700"
@@ -159,7 +169,7 @@ const DestinationsCategories = () => {
                 {/* Category Content */}
                 <div className="p-4 sm:p-6">
                   <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 mb-2 sm:mb-3 group-hover:text-amber-600 transition-colors duration-300 line-clamp-1">
-                    {category.categoryName}
+                    {category.category}
                   </h3>
 
                   <p className="text-gray-600 text-xs sm:text-sm leading-relaxed line-clamp-2 sm:line-clamp-3">

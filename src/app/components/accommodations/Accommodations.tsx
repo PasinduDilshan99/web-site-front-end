@@ -468,7 +468,7 @@ const Accommodations = () => {
 
         {/* Call to Action */}
         <div className="text-center mt-8 sm:mt-12 md:mt-16 lg:mt-20">
-          <button className="px-4 sm:px-6 md:px-8 lg:px-10 py-2 sm:py-3 md:py-4 text-xs sm:text-sm md:text-base lg:text-lg bg-gradient-to-r from-amber-600 to-purple-600 text-white font-semibold rounded-full hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg">
+          <button className="px-4 sm:px-6 md:px-8 lg:px-10 py-2 sm:py-3 md:py-4 text-xs sm:text-sm md:text-base lg:text-lg bg-gradient-to-r from-amber-600 to-purple-600 text-white font-semibold rounded-full hover:from-purple-700 hover:to-amber-700 transform hover:scale-105 transition-all duration-300 shadow-lg">
             View All Accommodations
           </button>
         </div>

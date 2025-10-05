@@ -19,6 +19,7 @@ const USER_BENEFITS = "/user-benefits";
 const PROMOTIONS = "/promotions";
 const GALLERY = "/gallery";
 const ACTIVITIES = "/activities";
+const FOOTER = "/footer";
 
 
 export const GET_ALL_LINK_BAR_DATA = `${API}${LINK_BAR}`;
@@ -35,6 +36,8 @@ export const GET_ALL_DESTINATIONS_CATEGORIES = `${API}${DESTINATIONS}${CATEGORIE
 export const GET_POPULAR_DESTINATIONS = `${API}${DESTINATIONS}/popular-destinations`;
 export const GET_TRENDING_DESTINATIONS = `${API}${DESTINATIONS}/trending-destinations`;
 export const GET_NEW_DESTINATIONS = `${API}${DESTINATIONS}/new-destinations`;
+export const GET_ACTIVE_DESTINATIONS_LOCATIONS_FE = `${API}${DESTINATIONS}/locations-for-map`;
+export const GET_ACTIVE_DESTINATIONS_LOCATIONS_CATEGORIES_FE = `${API}${DESTINATIONS}/locations-categories`;
 export const GET_ALL_ACTIVE_BLOGS = `${API}${BLOGS}`;
 export const GET_ALL_ACTIVE_TOUR_FE = `${API}${TOUR}`;
 export const GET_POPULAR_TOUR_FE = `${API}${TOUR}/popular`;
@@ -47,3 +50,4 @@ export const GET_ALL_ACTIVE_PROMOTIONS_FE = `${API}${PROMOTIONS}`;
 export const GET_OPEN_GALLERY_FE = `${API}${GALLERY}`;
 export const GET_ACTIVE_ACTIVITIES_FE = `${API}${ACTIVITIES}`;
 export const GET_ACTIVE_ACTIVITIES_CATEGORIES_FE = `${API}${ACTIVITIES}/categories`;
+export const GET_ACTIVE_FOOTER_DATA = `${API}${FOOTER}`;

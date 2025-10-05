@@ -2,71 +2,42 @@
 import { GET_ALL_ACTIVE_TOUR_FE } from '@/utils/frontEndConstant';
 import React, { useEffect, useState } from 'react';
 
-// Interfaces for the API response (keep your existing interfaces)
-interface TourImage {
-  id: number;
-  name: string;
-  imageUrl: string;
-  description: string;
-  status: string;
+interface Schedule {
+  scheduleId: number;
+  scheduleName: string;
+  assumeStartDate: string;
+  assumeEndDate: string;
+  durationStart: number;
+  durationEnd: number;
+  specialNote: string;
+  scheduleDescription: string;
 }
 
-interface DestinationImage {
+interface TourImage {
   imageId: number;
   imageName: string;
   imageDescription: string;
   imageUrl: string;
-  imageStatus: string;
-}
-
-interface DestinationCategory {
-  categoryName: string;
-  categoryDescription: string;
-  categoryStatus: string;
-  categoryImageUrl: string | null;
-}
-
-interface Destination {
-  destinationId: number;
-  destinationName: string;
-  destinationDescription: string;
-  destinationStatus: string;
-  category: DestinationCategory;
-  location: string;
-  rating: number;
-  popularity: number;
-  createdAt: string;
-  createdBy: number;
-  updatedAt: string;
-  updatedBy: number | null;
-  terminatedAt: string | null;
-  terminatedBy: number | null;
-  images: DestinationImage[];
 }
 
 interface ActiveToursType {
   tourId: number;
   tourName: string;
   tourDescription: string;
-  tourType: string;
-  tourCategory: string;
-  durationDays: number;
-  startDate: string;
-  endDate: string;
+  duration: number;
+  latitude: number;
+  longitude: number;
   startLocation: string;
   endLocation: string;
-  maxPeople: number;
-  minPeople: number;
-  pricePerPerson: number;
-  tourStatus: string;
-  tourImages: TourImage[];
-  destinations: Destination[];
-  createdAt: string;
-  createdBy: number;
-  updatedAt: string;
-  updatedBy: number | null;
-  terminatedAt: string | null;
-  terminatedBy: number | null;
+  tourTypeName: string;
+  tourTypeDescription: string;
+  tourCategoryName: string;
+  tourCategoryDescription: string;
+  seasonName: string;
+  seasonDescription: string;
+  statusName: string;
+  schedules: Schedule[];
+  images: TourImage[];
 }
 
 const ActiveToursHome = () => {
@@ -134,11 +105,11 @@ const ActiveToursHome = () => {
         setCurrentIndex((prev) => {
           const maxIndex = activeTours.length - cardsToShow;
           if (prev >= maxIndex) {
-            return 0; // Loop back to start
+            return 0;
           }
           return prev + 1;
         });
-      }, 4000); // Increased to 4 seconds for better user experience
+      }, 4000);
       return () => clearInterval(timer);
     }
   }, [activeTours.length, cardsToShow, isTransitioning]);
@@ -152,7 +123,7 @@ const ActiveToursHome = () => {
       return prev >= maxIndex ? 0 : prev + 1;
     });
     
-    setTimeout(() => setIsTransitioning(false), 700); // Match transition duration
+    setTimeout(() => setIsTransitioning(false), 700);
   };
 
   const prevSlide = () => {
@@ -164,7 +135,7 @@ const ActiveToursHome = () => {
       return prev <= 0 ? maxIndex : prev - 1;
     });
     
-    setTimeout(() => setIsTransitioning(false), 700); // Match transition duration
+    setTimeout(() => setIsTransitioning(false), 700);
   };
 
   const goToSlide = (index: number) => {
@@ -175,10 +146,9 @@ const ActiveToursHome = () => {
     const validIndex = Math.min(Math.max(0, index), maxIndex);
     setCurrentIndex(validIndex);
     
-    setTimeout(() => setIsTransitioning(false), 700); // Match transition duration
+    setTimeout(() => setIsTransitioning(false), 700);
   };
 
-  // Get total number of possible slides
   const maxSlides = Math.max(0, activeTours.length - cardsToShow + 1);
 
   if (loading) {
@@ -250,67 +220,87 @@ const ActiveToursHome = () => {
               className="flex h-full transition-transform duration-700 ease-out"
               style={{ 
                 transform: `translateX(-${currentIndex * (100 / cardsToShow)}%)`,
-                width: `${activeTours.length * (50 / cardsToShow)}%`,
+                width: `${activeTours.length * (100 / cardsToShow)}%`,
                 transitionTimingFunction: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
               }}
             >
-              {activeTours.map((tour, index) => (
+              {activeTours.map((tour) => (
                 <div 
                   key={tour.tourId}
                   className="flex-shrink-0 h-full px-1 sm:px-2"
                   style={{ width: `${100 / cardsToShow}%` }}
                 >
-                  <div className="bg-white rounded-lg sm:rounded-xl shadow-md sm:shadow-lg overflow-hidden hover:shadow-lg sm:hover:shadow-xl transition-all duration-300 h-full flex flex-col"
-                >
-                  {/* Tour Image */}
-                  <div className="relative h-32 sm:h-40 md:h-48 lg:h-40 xl:h-44 overflow-hidden">
-                    <img 
-                      src={tour.tourImages[0]?.imageUrl || 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=300&fit=crop'} 
-                      alt={tour.tourName}
-                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                    />
-                    <div className="absolute top-1 sm:top-2 right-1 sm:right-2 bg-black/60 text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs backdrop-blur-sm">
-                      ${tour.pricePerPerson}
-                    </div>
-                    <div className="absolute bottom-1 sm:bottom-2 left-1 sm:left-2 bg-amber-600 text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium">
-                      {tour.durationDays} days
-                    </div>
-                  </div>
-                  
-                  {/* Tour Content */}
-                  <div className="p-2 sm:p-3 md:p-4 lg:p-3 xl:p-4 flex-1 flex flex-col">
-                    <h3 className="text-sm sm:text-base md:text-lg lg:text-sm xl:text-base font-bold text-gray-800 mb-1 sm:mb-2 line-clamp-2">
-                      {tour.tourName}
-                    </h3>
-                    <p className="text-gray-600 text-xs sm:text-sm md:text-base lg:text-xs xl:text-sm mb-2 sm:mb-3 flex-1 line-clamp-2">
-                      {tour.tourDescription}
-                    </p>
-                    
-                    {/* Tour Details */}
-                    <div className="space-y-1 mb-2 sm:mb-3">
-                      <div className="flex items-center text-xs sm:text-sm lg:text-xs xl:text-sm text-gray-500">
-                        <svg className="w-3 h-3 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        </svg>
-                        <span className="truncate">{tour.startLocation}</span>
+                  <div className="bg-white rounded-lg sm:rounded-xl shadow-md sm:shadow-lg overflow-hidden hover:shadow-lg sm:hover:shadow-xl transition-all duration-300 h-full flex flex-col">
+                    {/* Tour Image */}
+                    <div className="relative h-32 sm:h-40 md:h-48 lg:h-40 xl:h-44 overflow-hidden">
+                      <img 
+                        src={tour.images[0]?.imageUrl || 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=300&fit=crop'} 
+                        alt={tour.tourName}
+                        className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                      />
+                      
+                      {/* Tour Category Badge */}
+                      <div className="absolute top-1 sm:top-2 left-1 sm:left-2 bg-purple-600/90 text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs backdrop-blur-sm font-medium">
+                        {tour.tourCategoryName}
                       </div>
-                      <div className="flex items-center text-xs sm:text-sm lg:text-xs xl:text-sm text-gray-500">
-                        <svg className="w-3 h-3 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-                        </svg>
-                        Max {tour.maxPeople} people
+                      
+                      {/* Duration Badge */}
+                      <div className="absolute bottom-1 sm:bottom-2 left-1 sm:left-2 bg-amber-600 text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium">
+                        {tour.duration} {tour.duration === 1 ? 'day' : 'days'}
+                      </div>
+
+                      {/* Season Badge */}
+                      <div className="absolute top-1 sm:top-2 right-1 sm:right-2 bg-green-600/90 text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs backdrop-blur-sm">
+                        {tour.seasonName}
                       </div>
                     </div>
                     
-                    {/* Learn More Button */}
-                    <button className="w-full bg-gradient-to-r from-amber-600 to-purple-600 hover:from-purple-700 hover:to-amber-700 transition-colors text-white py-1.5 sm:py-2 px-2 sm:px-3 rounded-md sm:rounded-lg transition-colors duration-200 font-medium text-xs sm:text-sm lg:text-xs xl:text-sm flex items-center justify-center">
-                      Learn More
-                      <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </button>
+                    {/* Tour Content */}
+                    <div className="p-2 sm:p-3 md:p-4 lg:p-3 xl:p-4 flex-1 flex flex-col">
+                      <h3 className="text-sm sm:text-base md:text-lg lg:text-sm xl:text-base font-bold text-gray-800 mb-1 sm:mb-2 line-clamp-2">
+                        {tour.tourName}
+                      </h3>
+                      <p className="text-gray-600 text-xs sm:text-sm md:text-base lg:text-xs xl:text-sm mb-2 sm:mb-3 flex-1 line-clamp-2">
+                        {tour.tourDescription}
+                      </p>
+                      
+                      {/* Tour Details */}
+                      <div className="space-y-1 mb-2 sm:mb-3">
+                        <div className="flex items-center text-xs sm:text-sm lg:text-xs xl:text-sm text-gray-500">
+                          <svg className="w-3 h-3 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          </svg>
+                          <span className="truncate">{tour.startLocation} → {tour.endLocation}</span>
+                        </div>
+                        <div className="flex items-center text-xs sm:text-sm lg:text-xs xl:text-sm text-gray-500">
+                          <svg className="w-3 h-3 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                          </svg>
+                          {tour.tourTypeName}
+                        </div>
+                      </div>
+
+                      {/* Schedule Info */}
+                      {tour.schedules.length > 0 && (
+                        <div className="mb-2 sm:mb-3 bg-blue-50 rounded p-2">
+                          <div className="text-xs text-gray-700">
+                            <div className="font-semibold text-blue-700">{tour.schedules[0].scheduleName}</div>
+                            {tour.schedules[0].specialNote && (
+                              <div className="text-xs text-gray-600 mt-1">💡 {tour.schedules[0].specialNote}</div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Learn More Button */}
+                      <button className="w-full bg-gradient-to-r from-amber-600 to-purple-600 hover:from-purple-700 hover:to-amber-700 transition-colors text-white py-1.5 sm:py-2 px-2 sm:px-3 rounded-md sm:rounded-lg transition-colors duration-200 font-medium text-xs sm:text-sm lg:text-xs xl:text-sm flex items-center justify-center">
+                        Learn More
+                        <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
-                </div>
                 </div>
               ))}
             </div>
@@ -401,8 +391,6 @@ const ActiveToursHome = () => {
           </div>
         </div>
       </div>
-
-
     </div>
   );
 };
