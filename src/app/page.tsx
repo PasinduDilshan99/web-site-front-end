@@ -83,9 +83,9 @@ export default function Home() {
       <div>
         <PopularTours />
       </div>
-      {/* <div>
+      <div>
         <TourMap />
-      </div> */}
+      </div>
       <div>
         <PackagesHome />
       </div>
