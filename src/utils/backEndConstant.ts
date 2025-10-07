@@ -24,6 +24,7 @@ const PROMOTIONS = "/promotions";
 const GALLERY = "/gallery";
 const ACTIVITIES = "/activities";
 const FOOTER = "/footer";
+const PLAN_YOUR_TRIP = "/plan-your-trip";
 
 export const BASE_PATH = `${PROTOCOL}://${DOMAIN}:${PORT}/${CONTEXT_ROOT}`;
 export const GET_ALL_LINK_BAR_DATA = `${BASE_PATH}${VERSION}${API}${LINK_BAR}/all`;
@@ -56,4 +57,5 @@ export const GET_OPEN_GALLERY_BE = `${BASE_PATH}${API}${VERSION}${GALLERY}/open`
 export const GET_ACTIVE_ACTIVITIES_BE = `${BASE_PATH}${API}${VERSION}${ACTIVITIES}/active`;
 export const GET_ACTIVE_ACTIVITIES_CATEGORIES_BE = `${BASE_PATH}${API}${VERSION}${ACTIVITIES}/active-category`;
 export const GET_ACTIVE_FOOTER_DATA = `${BASE_PATH}${API}${VERSION}${FOOTER}/active`;
+export const GET_PLAN_YOUR_TRIP_ACTIVE_DESTINATIONS = `${BASE_PATH}${API}${VERSION}${PLAN_YOUR_TRIP}/active`;
 
