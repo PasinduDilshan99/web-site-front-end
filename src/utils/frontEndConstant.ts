@@ -20,6 +20,7 @@ const PROMOTIONS = "/promotions";
 const GALLERY = "/gallery";
 const ACTIVITIES = "/activities";
 const FOOTER = "/footer";
+const PLAN_YOUR_TRIP = "/plan-your-trip";
 
 
 export const GET_ALL_LINK_BAR_DATA = `${API}${LINK_BAR}`;
@@ -51,3 +52,5 @@ export const GET_OPEN_GALLERY_FE = `${API}${GALLERY}`;
 export const GET_ACTIVE_ACTIVITIES_FE = `${API}${ACTIVITIES}`;
 export const GET_ACTIVE_ACTIVITIES_CATEGORIES_FE = `${API}${ACTIVITIES}/categories`;
 export const GET_ACTIVE_FOOTER_DATA = `${API}${FOOTER}`;
+export const GET_PLAN_YOUR_TRIP_ACTIVE_DESTINATIONS_FE = `${API}${PLAN_YOUR_TRIP}`;
+export const GET_PLAN_YOUR_TRIP_DESTINATIONS_TOURS_FE = `${API}${PLAN_YOUR_TRIP}/map`;
