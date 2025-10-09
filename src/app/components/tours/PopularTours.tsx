@@ -3,6 +3,9 @@ import { GET_POPULAR_TOUR_FE } from "@/utils/frontEndConstant";
 import React, { useEffect, useState } from "react";
 import AnimatedButton from "../common/AnimatedButton";
 import SectionHeader from "../common/SectionHeader";
+import Loading from "../common/Loading";
+import { ErrorState } from "../common/ErrorState";
+import { EmptyState } from "../common/EmptyState";
 
 // Updated TypeScript interfaces based on new API response
 interface Review {
@@ -128,11 +131,11 @@ const PopularTours = () => {
     return (
       <div className="flex items-center">
         {[...Array(5)].map((_, i) => (
-          <span key={i} className="text-yellow-400 text-sm">
+          <span key={i} className="text-yellow-400 text-xs sm:text-sm">
             {i < fullStars ? "★" : i === fullStars && hasHalfStar ? "★" : "☆"}
           </span>
         ))}
-        <span className="ml-1 text-gray-600 text-sm">{rating}</span>
+        <span className="ml-1 text-gray-600 text-xs sm:text-sm">{rating}</span>
       </div>
     );
   };
@@ -178,40 +181,68 @@ const PopularTours = () => {
     return [...new Set(allDestinations)]; // Remove duplicates
   };
 
+  // Get first available image from API
+  const getTourImage = (tour: PopularToursType) => {
+    if (tour.images && tour.images.length > 0 && tour.images[0].imageUrl) {
+      return tour.images[0].imageUrl;
+    }
+    return null;
+  };
+
+  const handleRetry = () => {
+    setError(null);
+    setLoading(true);
+    window.location.reload();
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <div className="h-8 bg-gray-200 rounded w-64 mx-auto mb-4"></div>
-            <div className="h-4 bg-gray-200 rounded w-96 mx-auto"></div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[...Array(3)].map((_, i) => (
-              <div
-                key={i}
-                className="bg-gray-100 rounded-2xl p-6 animate-pulse"
-              >
-                <div className="h-48 bg-gray-300 rounded-xl mb-4"></div>
-                <div className="h-6 bg-gray-300 rounded w-3/4 mb-2"></div>
-                <div className="h-4 bg-gray-300 rounded w-full mb-4"></div>
-                <div className="h-8 bg-gray-300 rounded mb-4"></div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      <Loading
+        message="Loading popular tours..."
+        variant="spinner"
+        size="md"
+      />
     );
   }
 
-  if (error)
-    return <div className="text-red-500 text-center py-12">{error}</div>;
+  if (error) {
+    return (
+      <section className="py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+          <ErrorState
+            title="Failed to Load Content"
+            message={error}
+            icon="alert"
+            variant="error"
+            size="md"
+            actionLabel="Try Again"
+            onAction={handleRetry}
+          />
+        </div>
+      </section>
+    );
+  }
+
+  if (popularTours.length === 0) {
+    return (
+      <section className="py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+          <EmptyState
+            title="No Content Available"
+            message="We're preparing some amazing content for you. Please check back soon!"
+            icon="data"
+            size="md"
+          />
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <div className="bg-gradient-to-r from-purple-100 to-amber-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
+    <section className="py-8 sm:py-12 md:py-16 lg:py-20 xl:py-24 bg-gradient-to-r from-purple-50 to-amber-50">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10">
         {/* Header Section */}
-        <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8">
+        <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
           <SectionHeader
             subtitle="Popular tours"
             title="Popular Tours"
@@ -222,79 +253,95 @@ const PopularTours = () => {
         </div>
 
         {/* Tours Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5 md:gap-6 lg:gap-7 xl:gap-8">
           {popularTours.slice(0, 3).map((tour, index) => {
             const discount = calculateDiscount(tour);
             const averageRating = getAverageRating(tour);
             const totalReviews = getTotalReviews(tour);
             const prices = calculateOriginalPrice(tour);
             const destinations = getDestinations(tour);
+            const tourImage = getTourImage(tour);
 
             return (
               <div
                 key={tour.tourId}
-                className="group bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100"
+                className="group bg-white rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 sm:hover:-translate-y-2 border border-gray-100 overflow-hidden"
               >
                 {/* Tour Image */}
-                <div className="relative overflow-hidden rounded-t-2xl">
-                  <div className="w-full h-64 bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center">
-                    <div className="text-white text-center">
-                      <div className="text-4xl mb-2">🏞️</div>
-                      <h3 className="text-xl font-bold px-4">
+                <div className="relative overflow-hidden h-48 xs:h-52 sm:h-56 md:h-60 lg:h-64 xl:h-72">
+                  {tourImage ? (
+                    <img
+                      src={tourImage}
+                      alt={tour.tourName}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                  ) : null}
+                  
+                  {/* Fallback Gradient Background */}
+                  <div 
+                    className={`w-full h-full bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center ${tourImage ? 'hidden' : 'flex'}`}
+                  >
+                    <div className="text-white text-center px-3 sm:px-4">
+                      <div className="text-2xl sm:text-3xl md:text-4xl mb-2">🏞️</div>
+                      <h3 className="text-base sm:text-lg md:text-xl font-bold">
                         {tour.tourName}
                       </h3>
                     </div>
                   </div>
 
                   {/* Discount Badge */}
-                  <div className="absolute top-4 left-4 bg-red-500 text-white px-4 py-2 rounded-full font-bold text-sm">
+                  <div className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-red-500 text-white px-2 sm:px-3 py-1 sm:py-1.5 rounded-full font-bold text-xs sm:text-sm">
                     {discount}% Off
                   </div>
 
                   {/* Duration Badge */}
-                  <div className="absolute top-4 right-4 bg-black/70 text-white px-3 py-1 rounded-lg text-sm flex items-center">
+                  <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-black/70 text-white px-2 sm:px-3 py-1 rounded-lg text-xs sm:text-sm flex items-center">
                     <span className="mr-1">⏱️</span>
                     {tour.duration} day{tour.duration !== 1 ? "s" : ""}
                   </div>
 
                   {/* Season Badge */}
-                  <div className="absolute bottom-4 left-4 bg-green-500/90 text-white px-3 py-1 rounded-lg text-sm">
+                  <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 bg-green-500/90 text-white px-2 sm:px-3 py-1 rounded-lg text-xs sm:text-sm">
                     {tour.season} Season
                   </div>
                 </div>
 
                 {/* Tour Content */}
-                <div className="p-6">
+                <div className="p-4 sm:p-5 md:p-6">
                   {/* Rating and Reviews */}
-                  <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center justify-between mb-3 sm:mb-4">
                     {renderStars(parseFloat(averageRating || "0"))}
-                    <span className="text-sm text-gray-500">
+                    <span className="text-xs sm:text-sm text-gray-500">
                       {totalReviews} review{totalReviews !== 1 ? "s" : ""}
                     </span>
                   </div>
 
                   {/* Tour Title */}
-                  <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2">
+                  <h3 className="text-lg sm:text-xl md:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-3 line-clamp-2 leading-tight">
                     {tour.tourName}
                   </h3>
 
                   {/* Tour Description */}
-                  <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                  <p className="text-gray-600 text-sm sm:text-base mb-3 sm:mb-4 line-clamp-2 leading-relaxed">
                     {tour.tourDescription}
                   </p>
 
                   {/* Locations */}
-                  <div className="flex items-center text-sm text-gray-600 mb-3">
+                  <div className="flex items-center text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">
                     <span className="mr-1">📍</span>
-                    <span>
+                    <span className="truncate">
                       {tour.startLocation} → {tour.endLocation}
                     </span>
                   </div>
 
                   {/* Destinations */}
                   {destinations.length > 0 && (
-                    <div className="mb-4">
-                      <p className="text-sm text-gray-600 mb-1">
+                    <div className="mb-4 sm:mb-5">
+                      <p className="text-xs sm:text-sm text-gray-600 mb-1 leading-relaxed">
                         <span className="font-medium">Visits:</span>{" "}
                         {destinations.slice(0, 2).join(", ")}
                         {destinations.length > 2 &&
@@ -304,25 +351,25 @@ const PopularTours = () => {
                   )}
 
                   {/* Tour Type and Category */}
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                  <div className="flex flex-wrap gap-1 sm:gap-2 mb-4 sm:mb-5">
+                    <span className="inline-flex items-center px-2 sm:px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
                       {tour.tourType}
                     </span>
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                    <span className="inline-flex items-center px-2 sm:px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
                       {tour.tourCategory}
                     </span>
                   </div>
 
                   {/* Pricing */}
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-2xl font-bold text-gray-900">
+                  <div className="flex items-center justify-between mb-4 sm:mb-6">
+                    <div className="flex items-center space-x-1 sm:space-x-2 flex-wrap">
+                      <span className="text-xl sm:text-2xl md:text-2xl font-bold text-gray-900">
                         ${prices.discounted}
                       </span>
-                      <span className="text-lg text-gray-500 line-through">
+                      <span className="text-base sm:text-lg text-gray-500 line-through">
                         ${prices.original}
                       </span>
-                      <span className="text-sm text-red-500 font-medium">
+                      <span className="text-xs sm:text-sm text-red-500 font-medium">
                         Save $
                         {(
                           parseFloat(prices.original) -
@@ -334,7 +381,7 @@ const PopularTours = () => {
 
                   {/* Schedules Info */}
                   {tour.schedules.length > 0 && (
-                    <div className="mb-4 text-sm text-gray-600">
+                    <div className="mb-3 sm:mb-4 text-xs sm:text-sm text-gray-600">
                       <span className="font-medium">
                         {tour.schedules.length} schedule
                         {tour.schedules.length !== 1 ? "s" : ""} available
@@ -343,7 +390,7 @@ const PopularTours = () => {
                   )}
 
                   {/* Explore Button */}
-                  <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300">
+                  <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 sm:py-3 rounded-lg sm:rounded-xl font-semibold text-sm sm:text-base hover:from-blue-700 hover:to-purple-700 transition-all duration-300">
                     Explore Tour
                   </button>
                 </div>
@@ -354,23 +401,14 @@ const PopularTours = () => {
 
         {/* View All Button (if you have more than 3 tours) */}
         {popularTours.length > 3 && (
-          <div className="text-center mt-4 xs:mt-5 sm:mt-6 md:mt-8 lg:mt-10">
+          <div className="text-center mt-6 sm:mt-8 md:mt-10 lg:mt-12 xl:mt-16">
             <AnimatedButton onClick={() => console.log("Clicked!")}>
               More Tours
             </AnimatedButton>
           </div>
         )}
-
-        {/* No tours message */}
-        {popularTours.length === 0 && !loading && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">
-              No popular tours available at the moment.
-            </p>
-          </div>
-        )}
       </div>
-    </div>
+    </section>
   );
 };
 
