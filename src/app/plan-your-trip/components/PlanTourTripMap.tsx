@@ -1,378 +1,177 @@
 "use client";
 
+import { GET_PLAN_YOUR_TRIP_DESTINATIONS_TOURS_FE } from "@/utils/frontEndConstant";
 import React, { useState, useEffect, useRef } from "react";
 
+// Type Definitions
+interface Location {
+  id: number;
+  name: string;
+  category: string;
+  lat: number;
+  lng: number;
+  description: string;
+}
 
-const PlanYourTripMap = () => {
+interface Activity {
+  id: string;
+  destinationId: number;
+  name: string;
+  description: string;
+  category: string;
+  availableFrom: string;
+  availableTo: string;
+  duration: string;
+  priceLocal: string;
+  priceForeigners: string;
+  minParticipate: number;
+  maxParticipate: number;
+}
 
-  // LOCATION DATA - All available locations
-  const locations = [
-    {
-      id: 1,
-      name: "Colombo",
-      category: "beaches",
-      lat: 6.9271,
-      lng: 79.8612,
-      description: "Capital city",
-    },
-    {
-      id: 2,
-      name: "Negombo Beach",
-      category: "beaches",
-      lat: 7.2088,
-      lng: 79.8358,
-      description: "Beach close to airport",
-    },
-    {
-      id: 3,
-      name: "Sigiriya",
-      category: "history",
-      lat: 7.957,
-      lng: 80.7603,
-      description: "Ancient rock fortress",
-    },
-    {
-      id: 4,
-      name: "Kandy",
-      category: "history",
-      lat: 7.2936,
-      lng: 80.6411,
-      description: "Cultural capital",
-    },
-    {
-      id: 5,
-      name: "Nuwara Eliya",
-      category: "adventure",
-      lat: 6.9497,
-      lng: 80.7891,
-      description: "Tea country",
-    },
-    {
-      id: 6,
-      name: "Ella",
-      category: "adventure",
-      lat: 6.8667,
-      lng: 81.0467,
-      description: "Mountain paradise",
-    },
-    {
-      id: 7,
-      name: "Yala",
-      category: "wildlife",
-      lat: 6.3725,
-      lng: 81.5185,
-      description: "National park",
-    },
-    {
-      id: 8,
-      name: "Mirissa",
-      category: "beaches",
-      lat: 5.9469,
-      lng: 80.4563,
-      description: "Whale watching beach",
-    },
-    {
-      id: 9,
-      name: "Galle",
-      category: "history",
-      lat: 6.0269,
-      lng: 80.2168,
-      description: "Colonial fort city",
-    },
-    {
-      id: 10,
-      name: "Anuradhapura",
-      category: "history",
-      lat: 8.3114,
-      lng: 80.4037,
-      description: "Ancient capital",
-    },
-  ];
+interface NearbyLocationsMap {
+  [key: number]: number[];
+}
 
-  // ACTIVITIES DATA - Activities available at each location
-  const activities = [
-    // Colombo Activities
-    {
-      id: 101,
-      locationId: 1,
-      name: "Visit Galle Face Green",
-      duration: "2 hours",
-      price: "Free",
-    },
-    {
-      id: 102,
-      locationId: 1,
-      name: "National Museum Tour",
-      duration: "3 hours",
-      price: "$10",
-    },
-    {
-      id: 103,
-      locationId: 1,
-      name: "Shopping at Pettah Market",
-      duration: "2 hours",
-      price: "Free",
-    },
-    {
-      id: 104,
-      locationId: 1,
-      name: "Colombo City Food Tour",
-      duration: "4 hours",
-      price: "$50",
-    },
+interface APIDestination {
+  id: number;
+  name: string;
+  description: string;
+  category: string;
+  latitude: number;
+  longitude: number;
+}
 
-    // Negombo Activities
-    {
-      id: 201,
-      locationId: 2,
-      name: "Beach Relaxation",
-      duration: "3 hours",
-      price: "Free",
-    },
-    {
-      id: 202,
-      locationId: 2,
-      name: "Fishing Boat Tour",
-      duration: "2 hours",
-      price: "$25",
-    },
-    {
-      id: 203,
-      locationId: 2,
-      name: "Visit Dutch Fort",
-      duration: "1 hour",
-      price: "$5",
-    },
+interface APIActivity {
+  destinationId: number;
+  name: string | null;
+  description: string | null;
+  activitiesCategory: string | null;
+  availableFrom: string | null;
+  availableTo: string | null;
+  durationHours: number | null;
+  priceLocal: number | null;
+  priceForeigners: number | null;
+  minParticipate: number;
+  maxParticipate: number;
+}
 
-    // Sigiriya Activities
-    {
-      id: 301,
-      locationId: 3,
-      name: "Climb Sigiriya Rock",
-      duration: "4 hours",
-      price: "$30",
-    },
-    {
-      id: 302,
-      locationId: 3,
-      name: "Visit Pidurangala Rock",
-      duration: "3 hours",
-      price: "$5",
-    },
-    {
-      id: 303,
-      locationId: 3,
-      name: "Village Safari",
-      duration: "3 hours",
-      price: "$40",
-    },
+interface APINearbyDestinations {
+  destinationId: number;
+  nearbyDestinations: number[];
+}
 
-    // Kandy Activities
-    {
-      id: 401,
-      locationId: 4,
-      name: "Temple of the Tooth",
-      duration: "2 hours",
-      price: "$10",
-    },
-    {
-      id: 402,
-      locationId: 4,
-      name: "Kandy Lake Walk",
-      duration: "1 hour",
-      price: "Free",
-    },
-    {
-      id: 403,
-      locationId: 4,
-      name: "Cultural Dance Show",
-      duration: "1.5 hours",
-      price: "$15",
-    },
-    {
-      id: 404,
-      locationId: 4,
-      name: "Royal Botanical Gardens",
-      duration: "2 hours",
-      price: "$8",
-    },
-
-    // Nuwara Eliya Activities
-    {
-      id: 501,
-      locationId: 5,
-      name: "Tea Factory Tour",
-      duration: "2 hours",
-      price: "$20",
-    },
-    {
-      id: 502,
-      locationId: 5,
-      name: "Gregory Lake Boating",
-      duration: "1 hour",
-      price: "$10",
-    },
-    {
-      id: 503,
-      locationId: 5,
-      name: "Horton Plains Trek",
-      duration: "5 hours",
-      price: "$35",
-    },
-
-    // Ella Activities
-    {
-      id: 601,
-      locationId: 6,
-      name: "Nine Arch Bridge Visit",
-      duration: "2 hours",
-      price: "Free",
-    },
-    {
-      id: 602,
-      locationId: 6,
-      name: "Little Adams Peak Hike",
-      duration: "2 hours",
-      price: "Free",
-    },
-    {
-      id: 603,
-      locationId: 6,
-      name: "Ella Rock Trek",
-      duration: "4 hours",
-      price: "$5",
-    },
-    {
-      id: 604,
-      locationId: 6,
-      name: "Flying Ravana Zipline",
-      duration: "1 hour",
-      price: "$30",
-    },
-
-    // Yala Activities
-    {
-      id: 701,
-      locationId: 7,
-      name: "Safari - Morning",
-      duration: "4 hours",
-      price: "$50",
-    },
-    {
-      id: 702,
-      locationId: 7,
-      name: "Safari - Evening",
-      duration: "4 hours",
-      price: "$50",
-    },
-    {
-      id: 703,
-      locationId: 7,
-      name: "Full Day Safari",
-      duration: "8 hours",
-      price: "$90",
-    },
-
-    // Mirissa Activities
-    {
-      id: 801,
-      locationId: 8,
-      name: "Whale Watching",
-      duration: "4 hours",
-      price: "$45",
-    },
-    {
-      id: 802,
-      locationId: 8,
-      name: "Beach Activities",
-      duration: "3 hours",
-      price: "Free",
-    },
-    {
-      id: 803,
-      locationId: 8,
-      name: "Snorkeling Tour",
-      duration: "2 hours",
-      price: "$25",
-    },
-
-    // Galle Activities
-    {
-      id: 901,
-      locationId: 9,
-      name: "Fort Walk & Lighthouse",
-      duration: "2 hours",
-      price: "Free",
-    },
-    {
-      id: 902,
-      locationId: 9,
-      name: "Maritime Museum",
-      duration: "1 hour",
-      price: "$5",
-    },
-    {
-      id: 903,
-      locationId: 9,
-      name: "Dutch Reformed Church",
-      duration: "1 hour",
-      price: "$3",
-    },
-
-    // Anuradhapura Activities
-    {
-      id: 1001,
-      locationId: 10,
-      name: "Ancient City Tour",
-      duration: "5 hours",
-      price: "$25",
-    },
-    {
-      id: 1002,
-      locationId: 10,
-      name: "Sacred Bodhi Tree Visit",
-      duration: "1 hour",
-      price: "Free",
-    },
-    {
-      id: 1003,
-      locationId: 10,
-      name: "Cycling Temple Tour",
-      duration: "4 hours",
-      price: "$30",
-    },
-  ];
-
-  // NEARBY LOCATIONS MAP - Defines which locations are nearby each location
-  const nearbyLocationsMap = {
-    1: [2, 9, 3, 4, 5], // Colombo -> Negombo, Galle
-    2: [1, 3], // Negombo -> Colombo, Sigiriya
-    3: [2, 4, 10], // Sigiriya -> Negombo, Kandy, Anuradhapura
-    4: [3, 5], // Kandy -> Sigiriya, Nuwara Eliya
-    5: [4, 6], // Nuwara Eliya -> Kandy, Ella
-    6: [5, 7], // Ella -> Nuwara Eliya, Yala
-    7: [6, 8], // Yala -> Ella, Mirissa
-    8: [7, 9], // Mirissa -> Yala, Galle
-    9: [8, 1], // Galle -> Mirissa, Colombo
-    10: [3], // Anuradhapura -> Sigiriya
+interface APIResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: {
+    planYourTripDestinationDtos: APIDestination[];
+    planYourTripActivitiesDtos: APIActivity[];
+    planYourTripNearDestinationsDtos: APINearbyDestinations[];
   };
+  timestamp: string;
+}
 
+declare global {
+  interface Window {
+    L: any;
+    selectLocationFromMap: (locationId: number) => void;
+  }
+}
+
+const PlanYourTripMap: React.FC = () => {
   // STATE MANAGEMENT
-  const [selectedLocations, setSelectedLocations] = useState([]);
-  const [selectedActivities, setSelectedActivities] = useState([]);
-  const [availableLocations, setAvailableLocations] = useState(locations);
-  const [map, setMap] = useState(null);
-  const [markers, setMarkers] = useState([]);
-  const mapRef = useRef(null);
-  const mapInstanceRef = useRef(null);
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [nearbyLocationsMap, setNearbyLocationsMap] = useState<NearbyLocationsMap>({});
+  const [selectedLocations, setSelectedLocations] = useState<Location[]>([]);
+  const [selectedActivities, setSelectedActivities] = useState<Activity[]>([]);
+  const [availableLocations, setAvailableLocations] = useState<Location[]>([]);
+  const [map, setMap] = useState<any>(null);
+  const [markers, setMarkers] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [mapLoaded, setMapLoaded] = useState<boolean>(false);
+  
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<any>(null);
 
   const currentLocation = selectedLocations[selectedLocations.length - 1];
   const currentLocationActivities = currentLocation
-    ? activities.filter((a) => a.locationId === currentLocation.id)
+    ? activities.filter((a) => a.destinationId === currentLocation.id)
     : [];
+
+  // Fetch data from API
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(GET_PLAN_YOUR_TRIP_DESTINATIONS_TOURS_FE);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result: APIResponse = await response.json();
+        
+        if (result.code === 200 && result.data) {
+          // Transform destinations data
+          const transformedLocations: Location[] = result.data.planYourTripDestinationDtos.map(dest => ({
+            id: dest.id,
+            name: dest.name,
+            category: dest.category.toLowerCase(),
+            lat: parseFloat(dest.latitude.toString()),
+            lng: parseFloat(dest.longitude.toString()),
+            description: dest.description
+          }));
+
+          // Transform activities data - filter out null activities
+          const transformedActivities: Activity[] = result.data.planYourTripActivitiesDtos
+            .filter(act => act.name !== null)
+            .map((act, index) => ({
+              id: `${act.destinationId}-${index}`,
+              destinationId: act.destinationId,
+              name: act.name!,
+              description: act.description!,
+              category: act.activitiesCategory!,
+              availableFrom: act.availableFrom!,
+              availableTo: act.availableTo!,
+              duration: `${act.durationHours} hours`,
+              priceLocal: `LKR ${act.priceLocal}`,
+              priceForeigners: `USD ${act.priceForeigners}`,
+              minParticipate: act.minParticipate,
+              maxParticipate: act.maxParticipate
+            }));
+
+          // Transform nearby destinations data
+          const transformedNearbyMap: NearbyLocationsMap = {};
+          result.data.planYourTripNearDestinationsDtos.forEach(item => {
+            transformedNearbyMap[item.destinationId] = item.nearbyDestinations;
+          });
+
+          setLocations(transformedLocations);
+          setActivities(transformedActivities);
+          setNearbyLocationsMap(transformedNearbyMap);
+          setAvailableLocations(transformedLocations);
+          setError(null);
+        } else {
+          throw new Error(result.message || 'Failed to fetch data');
+        }
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        setError(err instanceof Error ? err.message : 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // Update available locations based on last selected location
   useEffect(() => {
+    if (locations.length === 0) return;
+
     if (selectedLocations.length === 0) {
       setAvailableLocations(locations);
     } else {
@@ -384,13 +183,13 @@ const PlanYourTripMap = () => {
       );
       setAvailableLocations(nearby);
     }
-  }, [selectedLocations]);
+  }, [selectedLocations, locations, nearbyLocationsMap]);
 
-  const selectLocation = (location) => {
+  const selectLocation = (location: Location) => {
     setSelectedLocations([...selectedLocations, location]);
   };
 
-  const removeLocation = (locationId) => {
+  const removeLocation = (locationId: number) => {
     const index = selectedLocations.findIndex((loc) => loc.id === locationId);
     if (index === -1) return;
 
@@ -400,13 +199,13 @@ const PlanYourTripMap = () => {
     const remainingLocationIds = newSelectedLocations.map((loc) => loc.id);
     const newActivities = selectedActivities.filter((act) =>
       remainingLocationIds.includes(
-        activities.find((a) => a.id === act.id)?.locationId
+        activities.find((a) => a.id === act.id)?.destinationId || 0
       )
     );
     setSelectedActivities(newActivities);
   };
 
-  const toggleActivity = (activity) => {
+  const toggleActivity = (activity: Activity) => {
     const exists = selectedActivities.find((a) => a.id === activity.id);
     if (exists) {
       setSelectedActivities(
@@ -417,12 +216,15 @@ const PlanYourTripMap = () => {
     }
   };
 
-  const isActivitySelected = (activityId) => {
+  const isActivitySelected = (activityId: string): boolean => {
     return selectedActivities.some((a) => a.id === activityId);
   };
 
   // Load Leaflet CSS and JS
   useEffect(() => {
+    // Check if Leaflet is already loaded
+    if (window.L && mapLoaded) return;
+
     const link = document.createElement("link");
     link.rel = "stylesheet";
     link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
@@ -435,41 +237,58 @@ const PlanYourTripMap = () => {
     script.integrity = "sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=";
     script.crossOrigin = "";
     script.onload = () => {
-      setTimeout(initMap, 100);
+      setMapLoaded(true);
     };
     document.head.appendChild(script);
 
     return () => {
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
       }
     };
   }, []);
 
-  const initMap = () => {
-    if (!mapRef.current || !window.L) return;
+  // Initialize map only after Leaflet is loaded and data is ready
+  useEffect(() => {
+    if (!mapLoaded || !window.L || !mapRef.current || locations.length === 0 || map) return;
 
-    const newMap = window.L.map(mapRef.current).setView([7.8731, 80.7718], 8);
+    const initMap = () => {
+      try {
+        const newMap = window.L.map(mapRef.current!).setView([7.8731, 80.7718], 8);
 
-    window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      maxZoom: 18,
-    }).addTo(newMap);
+        window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          maxZoom: 18,
+        }).addTo(newMap);
 
-    setMap(newMap);
-    mapInstanceRef.current = newMap;
-  };
+        setMap(newMap);
+        mapInstanceRef.current = newMap;
+      } catch (error) {
+        console.error('Error initializing map:', error);
+      }
+    };
+
+    // Small delay to ensure DOM is ready
+    const timer = setTimeout(initMap, 100);
+    return () => clearTimeout(timer);
+  }, [mapLoaded, locations, map]);
 
   // Update markers when available locations change
   useEffect(() => {
-    if (!map) return;
+    if (!map || !window.L || locations.length === 0) return;
 
+    // Clear existing markers
     markers.forEach((marker) => {
-      map.removeLayer(marker);
+      try {
+        map.removeLayer(marker);
+      } catch (e) {
+        console.error('Error removing marker:', e);
+      }
     });
 
-    const createCustomIcon = (isSelected) => {
+    const createCustomIcon = (isSelected: boolean) => {
       return window.L.divIcon({
         html: `
           <div style="
@@ -487,7 +306,10 @@ const PlanYourTripMap = () => {
       });
     };
 
-    const selectedMarkers = selectedLocations.map((place, index) => {
+    const newMarkers: any[] = [];
+
+    // Add selected location markers
+    selectedLocations.forEach((place, index) => {
       const marker = window.L.marker([place.lat, place.lng], {
         icon: createCustomIcon(true),
       }).addTo(map);
@@ -506,24 +328,26 @@ const PlanYourTripMap = () => {
         </div>
       `);
 
-      return marker;
+      newMarkers.push(marker);
     });
 
+    // Add route line if multiple locations selected
     if (selectedLocations.length > 1) {
       const routeCoordinates = selectedLocations.map((loc) => [
         loc.lat,
         loc.lng,
-      ]);
+      ] as [number, number]);
       const polyline = window.L.polyline(routeCoordinates, {
         color: "#ef4444",
         weight: 3,
         opacity: 0.7,
         dashArray: "10, 10",
       }).addTo(map);
-      selectedMarkers.push(polyline);
+      newMarkers.push(polyline);
     }
 
-    const availableMarkers = availableLocations.map((place) => {
+    // Add available location markers
+    availableLocations.forEach((place) => {
       const marker = window.L.marker([place.lat, place.lng], {
         icon: createCustomIcon(false),
       }).addTo(map);
@@ -533,6 +357,9 @@ const PlanYourTripMap = () => {
           <h3 style="margin: 0 0 6px 0; font-weight: bold; color: #3b82f6;">
             ${place.name}
           </h3>
+          <p style="margin: 0 0 4px 0; font-size: 12px; color: #999;">
+            ${place.category}
+          </p>
           <p style="margin: 0; font-size: 13px; color: #666;">
             ${place.description}
           </p>
@@ -547,6 +374,7 @@ const PlanYourTripMap = () => {
               border-radius: 4px;
               cursor: pointer;
               width: 100%;
+              font-size: 14px;
             "
           >
             Select Location
@@ -558,35 +386,73 @@ const PlanYourTripMap = () => {
         this.openPopup();
       });
 
-      return marker;
+      newMarkers.push(marker);
     });
 
-    const allMarkers = [...selectedMarkers, ...availableMarkers];
-    setMarkers(allMarkers);
+    setMarkers(newMarkers);
 
-    if (allMarkers.length > 0) {
-      const locationMarkers = allMarkers.filter(
+    // Fit map bounds to show all markers
+    if (newMarkers.length > 0) {
+      const locationMarkers = newMarkers.filter(
         (m) => m instanceof window.L.Marker
       );
       if (locationMarkers.length > 0) {
-        const group = new window.L.featureGroup(locationMarkers);
-        map.fitBounds(group.getBounds().pad(0.1));
+        try {
+          const group = new window.L.featureGroup(locationMarkers);
+          map.fitBounds(group.getBounds().pad(0.1));
+        } catch (e) {
+          console.error('Error fitting bounds:', e);
+        }
       }
     }
-  }, [map, availableLocations, selectedLocations]);
+  }, [map, availableLocations, selectedLocations, locations]);
 
   // Expose select function to window for popup button
   useEffect(() => {
-    window.selectLocationFromMap = (locationId) => {
+    if (locations.length === 0) return;
+
+    window.selectLocationFromMap = (locationId: number) => {
       const location = locations.find((loc) => loc.id === locationId);
       if (location) {
         selectLocation(location);
       }
     };
+
     return () => {
       delete window.selectLocationFromMap;
     };
-  }, [selectedLocations]);
+  }, [selectedLocations, locations]);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mb-4"></div>
+          <p className="text-xl text-gray-700">Loading tour destinations...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-xl shadow-lg p-8 max-w-md text-center">
+          <div className="text-red-500 text-5xl mb-4">⚠️</div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Error Loading Data</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 p-4">
@@ -623,9 +489,18 @@ const PlanYourTripMap = () => {
 
               <div
                 ref={mapRef}
-                className="w-full h-[500px] rounded-lg overflow-hidden"
+                className="w-full h-[500px] rounded-lg overflow-hidden bg-gray-100"
                 style={{ minHeight: "500px" }}
-              />
+              >
+                {!mapLoaded && (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-2"></div>
+                      <p className="text-gray-600">Loading map...</p>
+                    </div>
+                  </div>
+                )}
+              </div>
 
               <div className="mt-4 flex items-center gap-4">
                 <div className="flex items-center gap-2">
@@ -650,46 +525,60 @@ const PlanYourTripMap = () => {
                 <h2 className="text-xl font-bold text-gray-800 mb-4">
                   Activities in {currentLocation.name}
                 </h2>
-                <div className="space-y-3 max-h-[400px] overflow-y-auto">
-                  {currentLocationActivities.map((activity) => (
-                    <div
-                      key={activity.id}
-                      className={`p-3 border-2 rounded-lg cursor-pointer transition-all ${
-                        isActivitySelected(activity.id)
-                          ? "border-green-500 bg-green-50"
-                          : "border-gray-200 hover:border-blue-300"
-                      }`}
-                      onClick={() => toggleActivity(activity)}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-gray-800">
-                            {activity.name}
-                          </h3>
-                          <div className="flex gap-3 mt-1">
-                            <span className="text-xs text-gray-500">
-                              ⏱️ {activity.duration}
-                            </span>
-                            <span className="text-xs text-gray-500">
-                              💰 {activity.price}
-                            </span>
+                {currentLocationActivities.length > 0 ? (
+                  <div className="space-y-3 max-h-[400px] overflow-y-auto">
+                    {currentLocationActivities.map((activity) => (
+                      <div
+                        key={activity.id}
+                        className={`p-3 border-2 rounded-lg cursor-pointer transition-all ${
+                          isActivitySelected(activity.id)
+                            ? "border-green-500 bg-green-50"
+                            : "border-gray-200 hover:border-blue-300"
+                        }`}
+                        onClick={() => toggleActivity(activity)}
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-gray-800">
+                              {activity.name}
+                            </h3>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {activity.description}
+                            </p>
+                            <div className="flex gap-3 mt-2">
+                              <span className="text-xs text-gray-500">
+                                ⏱️ {activity.duration}
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                💰 {activity.priceForeigners}
+                              </span>
+                            </div>
+                            <div className="flex gap-3 mt-1">
+                              <span className="text-xs text-blue-600">
+                                👥 {activity.minParticipate}-{activity.maxParticipate} people
+                              </span>
+                            </div>
+                          </div>
+                          <div
+                            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                              isActivitySelected(activity.id)
+                                ? "border-green-500 bg-green-500"
+                                : "border-gray-300"
+                            }`}
+                          >
+                            {isActivitySelected(activity.id) && (
+                              <span className="text-white text-xs">✓</span>
+                            )}
                           </div>
                         </div>
-                        <div
-                          className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                            isActivitySelected(activity.id)
-                              ? "border-green-500 bg-green-500"
-                              : "border-gray-300"
-                          }`}
-                        >
-                          {isActivitySelected(activity.id) && (
-                            <span className="text-white text-xs">✓</span>
-                          )}
-                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <p>No activities available for this destination</p>
+                  </div>
+                )}
               </div>
             )}
 
@@ -720,7 +609,7 @@ const PlanYourTripMap = () => {
               {selectedLocations.map((location, index) => {
                 const locationActivities = selectedActivities.filter(
                   (act) =>
-                    activities.find((a) => a.id === act.id)?.locationId ===
+                    activities.find((a) => a.id === act.id)?.destinationId ===
                     location.id
                 );
 
@@ -738,6 +627,9 @@ const PlanYourTripMap = () => {
                           <h3 className="text-lg font-bold text-gray-800">
                             {location.name}
                           </h3>
+                          <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                            {location.category}
+                          </span>
                         </div>
                         <p className="text-sm text-gray-600 mt-1">
                           {location.description}
@@ -764,7 +656,7 @@ const PlanYourTripMap = () => {
                             <span className="text-green-500">✓</span>
                             <span>{activity.name}</span>
                             <span className="text-gray-400">
-                              ({activity.duration}, {activity.price})
+                              ({activity.duration}, {activity.priceForeigners})
                             </span>
                           </div>
                         ))}
