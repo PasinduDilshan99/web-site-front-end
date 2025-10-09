@@ -31,28 +31,21 @@ import WorkFlow from "./components/workFlow/WorkFlow";
 export default function Home() {
   return (
     <div>
-      {/* Header Section */}
       <div>
         <LinkBar />
       </div>
       <div>
         <NavBar />
       </div>
-
-      {/* Hero & Introduction */}
       <div>
         <HeroSection />
       </div>
-
-      {/* Trust & Credibility */}
       <div>
         <Partners />
       </div>
       <div>
         <WhyChooseUs />
       </div>
-
-      {/* Core Offerings */}
       <div>
         <OurServices />
       </div>
@@ -65,8 +58,6 @@ export default function Home() {
       <div>
         <NewDestinations />
       </div>
-
-      {/* Tours & Activities */}
       <div>
         <PopularTours />
       </div>

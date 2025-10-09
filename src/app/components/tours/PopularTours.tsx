@@ -1,6 +1,8 @@
 "use client";
 import { GET_POPULAR_TOUR_FE } from "@/utils/frontEndConstant";
 import React, { useEffect, useState } from "react";
+import AnimatedButton from "../common/AnimatedButton";
+import SectionHeader from "../common/SectionHeader";
 
 // Updated TypeScript interfaces based on new API response
 interface Review {
@@ -12,6 +14,11 @@ interface Review {
   numberOfParticipate: number;
   reviewStatus: string;
   reviewCreatedAt: string;
+}
+
+interface ImagesType {
+  imageName: string;
+  imageUrl: string;
 }
 
 interface Destination {
@@ -49,6 +56,7 @@ interface PopularToursType {
   tourCategory: string;
   season: string;
   tourStatus: string;
+  images: ImagesType[];
   schedules: Schedule[];
 }
 
@@ -203,16 +211,14 @@ const PopularTours = () => {
     <div className="bg-gradient-to-r from-purple-100 to-amber-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
-        <div className="text-center mb-10 sm:mb-12 md:mb-16 lg:mb-20">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-r from-[#A855F7] to-[#F59E0B] bg-clip-text text-transparent mb-3 sm:mb-4 md:mb-6 leading-tight">
-            Most Popular Tours
-          </h2>
-          <p className="text-gray-700 max-w-2xl mx-auto text-sm sm:text-base md:text-lg">
-            Discover our most sought-after travel experiences with exceptional
-            reviews
-          </p>
-
-          <div className="mt-4 sm:mt-6 w-16 sm:w-20 md:w-24 lg:w-32 h-1 bg-gradient-to-r from-[#A855F7] to-[#F59E0B] mx-auto rounded-full"></div>
+        <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8">
+          <SectionHeader
+            subtitle="Popular tours"
+            title="Popular Tours"
+            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore."
+            fromColor="#A855F7"
+            toColor="#F59E0B"
+          />
         </div>
 
         {/* Tours Grid */}
@@ -348,10 +354,10 @@ const PopularTours = () => {
 
         {/* View All Button (if you have more than 3 tours) */}
         {popularTours.length > 3 && (
-          <div className="text-center mt-12">
-            <button className="bg-gradient-to-r from-amber-600 to-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-amber-700 transform hover:scale-105 transition-all duration-300">
-              View All Tours
-            </button>
+          <div className="text-center mt-4 xs:mt-5 sm:mt-6 md:mt-8 lg:mt-10">
+            <AnimatedButton onClick={() => console.log("Clicked!")}>
+              More Tours
+            </AnimatedButton>
           </div>
         )}
 

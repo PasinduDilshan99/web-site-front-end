@@ -2,6 +2,11 @@
 import { GET_TRENDING_DESTINATIONS } from "@/utils/frontEndConstant";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import Loading from "../common/Loading";
+import { ErrorState } from "../common/ErrorState";
+import { EmptyState } from "../common/EmptyState";
+import SectionHeader from "../common/SectionHeader";
+import AnimatedButton from "../common/AnimatedButton";
 
 // Updated TypeScript interfaces based on new API response
 interface DestinationImage {
@@ -186,76 +191,70 @@ const TrendingDestinations = () => {
     }
   };
 
-  // Loading state
-  if (loading)
-    return (
-      <section className="py-8 sm:py-12 lg:py-16 xl:py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">
-            <div className="animate-pulse">
-              <div className="h-6 sm:h-7 lg:h-8 bg-gray-300 rounded w-48 sm:w-56 lg:w-64 mb-2"></div>
-            </div>
-            <div className="h-8 sm:h-9 lg:h-10 bg-gray-300 rounded-full w-24 sm:w-28 lg:w-32 animate-pulse"></div>
-          </div>
+  const handleRetry = () => {
+    setError(null);
+    setLoading(true);
+    window.location.reload();
+  };
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 xl:gap-6">
-            {[...Array(4)].map((_, index) => (
-              <div key={index} className="animate-pulse">
-                <div className="bg-gray-300 rounded-xl h-48 sm:h-56 lg:h-64 xl:h-72"></div>
-              </div>
-            ))}
-          </div>
+  if (loading) {
+    return (
+      <Loading
+        message="Loading trending destinations..."
+        variant="spinner"
+        size="md"
+      />
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+          <ErrorState
+            title="Failed to Load Content"
+            message={error}
+            icon="alert"
+            variant="error"
+            size="md"
+            actionLabel="Try Again"
+            onAction={handleRetry}
+          />
         </div>
       </section>
     );
+  }
 
-  // Error state
-  if (error)
+  if (trendingDestinations.length === 0) {
     return (
-      <section className="py-8 sm:py-12 lg:py-16 xl:py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8 text-center">
-          <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 lg:p-8">
-            <p className="text-red-500 text-base sm:text-lg mb-4">{error}</p>
-            <button
-              onClick={() => window.location.reload()}
-              className="px-4 sm:px-5 lg:px-6 py-2 sm:py-2.5 lg:py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 text-sm sm:text-base"
-            >
-              Try Again
-            </button>
-          </div>
+      <section className="py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+          <EmptyState
+            title="No Content Available"
+            message="We're preparing some amazing content for you. Please check back soon!"
+            icon="data"
+            size="md"
+          />
         </div>
       </section>
     );
-
-  // No data state
-  if (trendingDestinations.length === 0)
-    return (
-      <section className="py-8 sm:py-12 lg:py-16 xl:py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8 text-center">
-          <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 lg:p-8">
-            <p className="text-gray-500 text-base sm:text-lg">
-              No trending destinations found
-            </p>
-          </div>
-        </div>
-      </section>
-    );
+  }
 
   return (
-    <section className="py-8 sm:py-12 lg:py-16 xl:py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8">
-        {/* Header with Explore More button */}
-        <div className="text-center mb-10 sm:mb-12 md:mb-16 lg:mb-20">
-          <p className="text-gray-700 max-w-2xl mx-auto text-sm sm:text-base md:text-lg">
-            Explore our destinations
-          </p>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-r from-[#A855F7] to-[#F59E0B] bg-clip-text text-transparent mb-3 sm:mb-4 md:mb-6 leading-tight">
-            Trending Destinations
-          </h2>
+    <section className="py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20 bg-white">
+      <div className=" mx-auto px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10 2xl:px-12">
+        <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8">
+          <SectionHeader
+            subtitle="Trending destinations"
+            title="Trending Destinations"
+            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore."
+            fromColor="#A855F7"
+            toColor="#F59E0B"
+          />
         </div>
 
         {/* Full Background Image Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 xl:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6 xl:gap-7 2xl:gap-8">
           {trendingDestinations.slice(0, 4).map((trending) => {
             const currentImageIndex =
               currentImageIndexes[trending.destinationId] || 0;
@@ -263,7 +262,6 @@ const TrendingDestinations = () => {
               trending.images && trending.images.length > 0
                 ? trending.images[currentImageIndex]
                 : null;
-            const destinationExperts = Math.floor(Math.random() * 50) + 20;
             const isCardTransitioning =
               isTransitioning[trending.destinationId] || false;
 
@@ -277,7 +275,7 @@ const TrendingDestinations = () => {
                   )
                 }
                 onMouseEnter={() => handleCardHover(trending.destinationId)}
-                className="relative group cursor-pointer overflow-hidden rounded-xl lg:rounded-2xl shadow-lg hover:shadow-xl lg:hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 sm:hover:-translate-y-2 h-48 sm:h-56 lg:h-64 xl:h-72 2xl:h-80"
+                className="relative group cursor-pointer overflow-hidden rounded-lg sm:rounded-xl md:rounded-2xl shadow-md hover:shadow-lg sm:hover:shadow-xl lg:hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 sm:hover:-translate-y-2 h-40 xs:h-44 sm:h-52 md:h-60 lg:h-64 xl:h-72 2xl:h-80"
               >
                 {/* Full Background Image with Smooth Transition */}
                 <div className="absolute inset-0">
@@ -298,13 +296,13 @@ const TrendingDestinations = () => {
                         onError={(e) => {
                           e.currentTarget.src = "/api/placeholder/400/320";
                         }}
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+                        sizes="(max-width: 480px) 100vw, (max-width: 640px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 25vw"
                         priority={currentImageIndex === 0}
                       />
                     </div>
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center">
-                      <span className="text-white font-semibold text-sm sm:text-base lg:text-lg text-center px-3 sm:px-4">
+                      <span className="text-white font-semibold text-xs sm:text-sm md:text-base lg:text-lg text-center px-2 sm:px-3 md:px-4">
                         {trending.destinationName}
                       </span>
                     </div>
@@ -316,11 +314,11 @@ const TrendingDestinations = () => {
 
                 {/* Image Counter Dots */}
                 {trending.images.length > 1 && (
-                  <div className="absolute top-2 sm:top-3 lg:top-4 left-2 sm:left-3 lg:left-4 flex space-x-1 sm:space-x-1.5">
+                  <div className="absolute top-2 xs:top-2.5 sm:top-3 md:top-4 left-2 xs:left-2.5 sm:left-3 md:left-4 flex space-x-1 sm:space-x-1.5">
                     {trending.images.map((_, index) => (
                       <div
                         key={index}
-                        className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all duration-500 ${
+                        className={`w-1.5 h-1.5 xs:w-1.5 xs:h-1.5 sm:w-2 sm:h-2 rounded-full transition-all duration-500 ${
                           index === currentImageIndex
                             ? "bg-white shadow-lg"
                             : "bg-white/50"
@@ -331,20 +329,20 @@ const TrendingDestinations = () => {
                 )}
 
                 {/* Content Overlay */}
-                <div className="absolute inset-0 flex flex-col justify-between p-3 sm:p-4 lg:p-5 xl:p-6">
+                <div className="absolute inset-0 flex flex-col justify-between p-2 xs:p-2.5 sm:p-3 md:p-4 lg:p-5 xl:p-6">
                   {/* Top Section - Rating */}
                   {trending.rating && (
                     <div className="flex justify-end">
-                      <div className="bg-black/50 backdrop-blur-sm rounded-full px-2 sm:px-2.5 lg:px-3 py-1 sm:py-1.5">
-                        <div className="flex items-center space-x-1">
+                      <div className="bg-black/50 backdrop-blur-sm rounded-full px-1.5 xs:px-2 sm:px-2.5 md:px-3 py-0.5 xs:py-1 sm:py-1.5">
+                        <div className="flex items-center space-x-0.5 xs:space-x-1 sm:space-x-1">
                           <svg
-                            className="w-3 h-3 sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4 text-yellow-400"
+                            className="w-2.5 h-2.5 xs:w-3 xs:h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 text-yellow-400"
                             fill="currentColor"
                             viewBox="0 0 20 20"
                           >
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                           </svg>
-                          <span className="text-white text-xs sm:text-sm font-medium">
+                          <span className="text-white text-xs xs:text-xs sm:text-sm font-medium">
                             {trending.rating}
                           </span>
                         </div>
@@ -355,14 +353,14 @@ const TrendingDestinations = () => {
                   {/* Bottom Section - Destination Info */}
                   <div className="text-white">
                     {/* Destination Name */}
-                    <h3 className="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold mb-1 sm:mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-300 group-hover:to-purple-300 transition-all duration-300 leading-tight">
+                    <h3 className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-2xl font-bold mb-0.5 xs:mb-1 sm:mb-1.5 md:mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-300 group-hover:to-purple-300 transition-all duration-300 leading-tight">
                       {trending.destinationName}
                     </h3>
 
                     {/* Location with Icon */}
-                    <div className="flex items-center mb-2 sm:mb-3 opacity-90">
+                    <div className="flex items-center mb-1 xs:mb-1.5 sm:mb-2 md:mb-3 opacity-90">
                       <svg
-                        className="w-3 h-3 sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4 text-white/80 mr-1 sm:mr-1.5 flex-shrink-0"
+                        className="w-2.5 h-2.5 xs:w-3 xs:h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 text-white/80 mr-1 xs:mr-1 sm:mr-1.5 flex-shrink-0"
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
@@ -372,31 +370,31 @@ const TrendingDestinations = () => {
                           clipRule="evenodd"
                         />
                       </svg>
-                      <span className="text-xs sm:text-sm truncate">
+                      <span className="text-xs xs:text-xs sm:text-sm md:text-sm truncate">
                         {trending.location}
                       </span>
                     </div>
 
                     {/* Experts Count and Category */}
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center space-x-1 sm:space-x-2 min-w-0 flex-1">
-                        <div className="bg-white/20 backdrop-blur-sm rounded-full p-1 sm:p-1.5 flex-shrink-0">
+                    <div className="flex items-center justify-between gap-1 xs:gap-1.5 sm:gap-2 md:gap-2 min-w-0">
+                      <div className="flex items-center space-x-0.5 xs:space-x-1 sm:space-x-1.5 md:space-x-2 min-w-0 flex-1">
+                        <div className="bg-white/20 backdrop-blur-sm rounded-full p-0.5 xs:p-1 sm:p-1.5 flex-shrink-0">
                           <svg
-                            className="w-2 h-2 sm:w-2.5 sm:h-2.5 lg:w-3 lg:h-3 text-white"
+                            className="w-1.5 h-1.5 xs:w-2 xs:h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 text-white"
                             fill="currentColor"
                             viewBox="0 0 20 20"
                           >
                             <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
                           </svg>
                         </div>
-                        <span className="text-xs sm:text-sm text-white/90 truncate">
+                        <span className="text-xs xs:text-xs sm:text-sm md:text-sm text-white/90 truncate">
                           {trending.activities.length} + Activities
                         </span>
                       </div>
 
                       {/* Category Badge */}
-                      <div className="bg-white/25 backdrop-blur-sm rounded-full px-1.5 sm:px-2 py-0.5 sm:py-1 flex-shrink-0">
-                        <span className="text-xs text-white font-medium truncate">
+                      <div className="bg-white/25 backdrop-blur-sm rounded-full px-1 xs:px-1.5 sm:px-2 md:px-2 py-0.5 xs:py-0.5 sm:py-1 flex-shrink-0">
+                        <span className="text-xs xs:text-xs sm:text-xs md:text-sm text-white font-medium truncate">
                           {trending.categoryName}
                         </span>
                       </div>
@@ -404,10 +402,10 @@ const TrendingDestinations = () => {
 
                     {/* Image Progress Bar */}
                     {trending.images.length > 1 && (
-                      <div className="mt-2 sm:mt-3">
-                        <div className="w-full bg-white/20 rounded-full h-0.5 sm:h-1">
+                      <div className="mt-1 xs:mt-1.5 sm:mt-2 md:mt-3">
+                        <div className="w-full bg-white/20 rounded-full h-0.5 xs:h-0.5 sm:h-1 md:h-1">
                           <div
-                            className="bg-white h-0.5 sm:h-1 rounded-full transition-all duration-500 ease-linear"
+                            className="bg-white h-0.5 xs:h-0.5 sm:h-1 md:h-1 rounded-full transition-all duration-500 ease-linear"
                             style={{
                               width: `${
                                 ((currentImageIndex + 1) /
@@ -423,17 +421,17 @@ const TrendingDestinations = () => {
                 </div>
 
                 {/* Hover Effect Border */}
-                <div className="absolute inset-0 border-2 border-transparent group-hover:border-blue-400 rounded-xl lg:rounded-2xl transition-all duration-300 opacity-0 group-hover:opacity-100"></div>
+                <div className="absolute inset-0 border-2 border-transparent group-hover:border-blue-400 rounded-lg sm:rounded-xl md:rounded-2xl transition-all duration-300 opacity-0 group-hover:opacity-100"></div>
               </div>
             );
           })}
         </div>
 
         {/* View All Button */}
-        <div className="text-center mt-8 sm:mt-12 md:mt-16">
-          <button className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-amber-600 to-purple-600 text-white font-semibold rounded-full hover:from-purple-700 hover:to-amber-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl text-sm sm:text-base">
-            View All Destinations
-          </button>
+        <div className="text-center mt-4 xs:mt-5 sm:mt-6 md:mt-8 lg:mt-10">
+          <AnimatedButton onClick={() => console.log("Clicked!")}>
+            More Destinations
+          </AnimatedButton>
         </div>
       </div>
     </section>
