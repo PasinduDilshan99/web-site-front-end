@@ -5,6 +5,7 @@ import Loading from "../common/Loading";
 import { ErrorState } from "../common/ErrorState";
 import { EmptyState } from "../common/EmptyState";
 import SectionHeader from "../common/SectionHeader";
+import AnimatedButton from "../common/AnimatedButton";
 
 // Updated Interfaces for the new API response
 interface TourImage {
@@ -473,23 +474,20 @@ const ActiveToursHomeGrid = () => {
 
             {/* Show More Button - Only show if there are more tours to display */}
             {activeTours.length > displayCount && (
-              <div className="text-center mt-8 sm:mt-12 md:mt-16">
-                <button
-                  onClick={() => setDisplayCount(activeTours.length)}
-                  className="px-8 sm:px-10 md:px-12 py-3 sm:py-4 bg-gradient-to-r from-amber-600 to-purple-600 text-white font-semibold rounded-full hover:from-purple-700 hover:to-amber-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl text-base sm:text-lg md:text-xl"
-                >
-                  Show All {activeTours.length} Tours
-                </button>
+              <div className="text-center mt-6 sm:mt-8 md:mt-10 lg:mt-12 xl:mt-16">
+                <AnimatedButton onClick={() => console.log("Clicked!")}>
+                  More Tours
+                </AnimatedButton>
               </div>
             )}
 
             {/* View All Tours Button - Show when all tours are displayed */}
             {displayedTours.length === activeTours.length &&
               activeTours.length > 0 && (
-                <div className="text-center mt-8 sm:mt-12 md:mt-16">
-                  <button className="px-8 sm:px-10 md:px-12 py-3 sm:py-4 bg-gradient-to-r from-amber-600 to-purple-600 text-white font-semibold rounded-full hover:from-purple-700 hover:to-amber-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl text-base sm:text-lg md:text-xl">
-                    View All Tours
-                  </button>
+                <div className="text-center mt-6 sm:mt-8 md:mt-10 lg:mt-12 xl:mt-16">
+                  <AnimatedButton onClick={() => console.log("Clicked!")}>
+                    More Tours
+                  </AnimatedButton>
                 </div>
               )}
           </>

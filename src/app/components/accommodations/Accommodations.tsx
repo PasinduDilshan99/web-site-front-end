@@ -2,6 +2,8 @@
 import { GET_AVAILABLE_ACCOMMODATION } from "@/utils/frontEndConstant";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import SectionHeader from "../common/SectionHeader";
+import AnimatedButton from "../common/AnimatedButton";
 
 // Interface for accommodation based on your API response
 interface AccommodationsType {
@@ -232,14 +234,14 @@ const Accommodations = () => {
     <section className="py-8 sm:py-12 md:py-16 lg:py-20 xl:py-24 bg-white">
       <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
         {/* Section Header */}
-        <div className="text-center mb-8 sm:mb-12 md:mb-16 lg:mb-20">
-          <p className="text-gray-700 max-w-2xl mx-auto text-xs sm:text-sm md:text-base lg:text-lg px-4">
-            Lets plan your next home or holiday
-          </p>
-          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold bg-gradient-to-r from-[#A855F7] to-[#F59E0B] bg-clip-text text-transparent mb-2 sm:mb-3 md:mb-4 lg:mb-6 leading-tight px-4">
-            ACCOMMODATION
-          </h2>
-          <div className="mt-2 sm:mt-4 md:mt-6 w-12 sm:w-16 md:w-20 lg:w-24 xl:w-32 h-0.5 sm:h-1 bg-gradient-to-r from-[#A855F7] to-[#F59E0B] mx-auto rounded-full"></div>
+        <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
+          <SectionHeader
+            subtitle="Lets plan your next home or holiday"
+            title="ACCOMMODATION"
+            description="Explore our diverse range of activity categories and find your perfect adventure"
+            fromColor="#A855F7"
+            toColor="#F59E0B"
+          />
         </div>
 
         {/* Carousel Container */}
@@ -315,7 +317,7 @@ const Accommodations = () => {
                               border border-gray-200 relative cursor-pointer 
                               hover:-translate-y-1 sm:hover:-translate-y-2 hover:shadow-xl hover:scale-105
                               flex-1 
-                              max-w-[240px] sm:max-w-[280px] md:max-w-[320px]
+                              max-w-[420px] sm:max-w-[280px] md:max-w-[320px]
                               overflow-hidden
                             `}
                   style={{
@@ -467,11 +469,11 @@ const Accommodations = () => {
         )}
 
         {/* Call to Action */}
-        <div className="text-center mt-8 sm:mt-12 md:mt-16 lg:mt-20">
-          <button className="px-4 sm:px-6 md:px-8 lg:px-10 py-2 sm:py-3 md:py-4 text-xs sm:text-sm md:text-base lg:text-lg bg-gradient-to-r from-amber-600 to-purple-600 text-white font-semibold rounded-full hover:from-purple-700 hover:to-amber-700 transform hover:scale-105 transition-all duration-300 shadow-lg">
-            View All Accommodations
-          </button>
-        </div>
+          <div className="text-center mt-6 sm:mt-8 md:mt-10 lg:mt-12 xl:mt-16">
+            <AnimatedButton onClick={() => console.log("View all clicked")}>
+              View All Accommodations
+            </AnimatedButton>
+          </div>
       </div>
     </section>
   );

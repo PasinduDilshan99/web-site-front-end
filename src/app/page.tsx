@@ -77,15 +77,12 @@ export default function Home() {
         <ActivityCategoriesHome />
       </div>
 
-      {/* Packages & Accommodations */}
       <div>
         <PackagesHome />
       </div>
       <div>
         <Accommodations />
       </div>
-
-      {/* Destinations Exploration */}
       <div>
         <DestinationsCategories />
       </div>
