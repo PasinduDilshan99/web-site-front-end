@@ -85,7 +85,6 @@ const PopularTours = () => {
 
         if (response.ok && data.code === 200) {
           const items: PopularToursType[] = data.data || [];
-          // Filter only active tours
           const activeTours = items.filter(
             (tour) => tour.tourStatus === "ACTIVE"
           );
@@ -240,7 +239,7 @@ const PopularTours = () => {
 
   return (
     <section className="py-8 sm:py-12 md:py-16 lg:py-20 xl:py-24 bg-gradient-to-r from-purple-50 to-amber-50">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10">
+      <div className=" mx-auto px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10">
         {/* Header Section */}
         <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
           <SectionHeader
@@ -321,7 +320,7 @@ const PopularTours = () => {
                   </div>
 
                   {/* Tour Title */}
-                  <h3 className="text-lg sm:text-xl md:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-3 line-clamp-2 leading-tight">
+                  <h3 className="text-md sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-3 line-clamp-2 leading-tight">
                     {tour.tourName}
                   </h3>
 

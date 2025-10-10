@@ -5,6 +5,7 @@ import {
   GET_ACTIVE_DESTINATIONS_LOCATIONS_FE,
 } from "@/utils/frontEndConstant";
 import React, { useState, useEffect, useRef } from "react";
+import SectionHeader from "../common/SectionHeader";
 
 // Define TypeScript interfaces based on new API response
 interface DestinationImage {
@@ -319,16 +320,16 @@ const TourMap: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 p-3 sm:p-4 md:p-6 lg:p-8">
+    <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-3 sm:p-4 md:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-10 sm:mb-12 md:mb-16 lg:mb-20">
-          <p className="text-gray-700 max-w-2xl mx-auto text-sm sm:text-base md:text-lg">
-            Explore the pearl of the Indian Ocean
-          </p>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-r from-[#A855F7] to-[#F59E0B] bg-clip-text text-transparent mb-3 sm:mb-4 md:mb-6 leading-tight">
-            Discover Sri Lanka
-          </h2>
-          <div className="mt-4 sm:mt-6 w-16 sm:w-20 md:w-24 lg:w-32 h-1 bg-gradient-to-r from-[#A855F7] to-[#F59E0B] mx-auto rounded-full"></div>
+        <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
+          <SectionHeader
+            subtitle="Explore the pearl of the Indian Ocean"
+            title="Discover Sri Lanka"
+            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore."
+            fromColor="#A855F7"
+            toColor="#F59E0B"
+          />
         </div>
 
         {loading && (

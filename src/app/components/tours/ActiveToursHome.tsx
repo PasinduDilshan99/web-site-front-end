@@ -1,6 +1,9 @@
-"use client"
-import { GET_ALL_ACTIVE_TOUR_FE } from '@/utils/frontEndConstant';
-import React, { useEffect, useState } from 'react';
+"use client";
+import { GET_ALL_ACTIVE_TOUR_FE } from "@/utils/frontEndConstant";
+import React, { useEffect, useState } from "react";
+import Loading from "../common/Loading";
+import { ErrorState } from "../common/ErrorState";
+import { EmptyState } from "../common/EmptyState";
 
 interface Schedule {
   scheduleId: number;
@@ -48,24 +51,26 @@ const ActiveToursHome = () => {
   const [cardsToShow, setCardsToShow] = useState(1);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  // Update cards to show based on screen size
+  // Responsive cards configuration
   useEffect(() => {
     const updateCardsToShow = () => {
       const width = window.innerWidth;
-      if (width < 768) {
-        setCardsToShow(1); // Mobile: 1 card
-      } else if (width < 1024) {
-        setCardsToShow(2); // Tablet: 2 cards
-      } else if (width < 1280) {
-        setCardsToShow(3); // Laptop: 3 cards
-      } else {
-        setCardsToShow(4); // PC: 4 cards
+      if (width < 640) { // Mobile: 1 card
+        setCardsToShow(1);
+      } else if (width < 768) { // Small mobile: 1 card
+        setCardsToShow(1);
+      } else if (width < 1024) { // Tablet: 2 cards
+        setCardsToShow(1);
+      } else if (width < 1800) { // Laptop: 3 cards
+        setCardsToShow(2);
+      } else { // PC and large screens: 4 cards
+        setCardsToShow(3);
       }
     };
 
     updateCardsToShow();
-    window.addEventListener('resize', updateCardsToShow);
-    return () => window.removeEventListener('resize', updateCardsToShow);
+    window.addEventListener("resize", updateCardsToShow);
+    return () => window.removeEventListener("resize", updateCardsToShow);
   }, []);
 
   // Reset currentIndex when cardsToShow changes
@@ -103,11 +108,8 @@ const ActiveToursHome = () => {
     if (activeTours.length > cardsToShow && !isTransitioning) {
       const timer = setInterval(() => {
         setCurrentIndex((prev) => {
-          const maxIndex = activeTours.length - cardsToShow;
-          if (prev >= maxIndex) {
-            return 0;
-          }
-          return prev + 1;
+          const maxIndex = Math.max(0, activeTours.length - cardsToShow);
+          return prev >= maxIndex ? 0 : prev + 1;
         });
       }, 4000);
       return () => clearInterval(timer);
@@ -116,278 +118,397 @@ const ActiveToursHome = () => {
 
   const nextSlide = () => {
     if (isTransitioning || activeTours.length <= cardsToShow) return;
-    
+
     setIsTransitioning(true);
     setCurrentIndex((prev) => {
-      const maxIndex = activeTours.length - cardsToShow;
+      const maxIndex = Math.max(0, activeTours.length - cardsToShow);
       return prev >= maxIndex ? 0 : prev + 1;
     });
-    
-    setTimeout(() => setIsTransitioning(false), 700);
+
+    setTimeout(() => setIsTransitioning(false), 500);
   };
 
   const prevSlide = () => {
     if (isTransitioning || activeTours.length <= cardsToShow) return;
-    
+
     setIsTransitioning(true);
     setCurrentIndex((prev) => {
-      const maxIndex = activeTours.length - cardsToShow;
+      const maxIndex = Math.max(0, activeTours.length - cardsToShow);
       return prev <= 0 ? maxIndex : prev - 1;
     });
-    
-    setTimeout(() => setIsTransitioning(false), 700);
+
+    setTimeout(() => setIsTransitioning(false), 500);
   };
 
   const goToSlide = (index: number) => {
     if (isTransitioning || activeTours.length <= cardsToShow) return;
-    
+
     setIsTransitioning(true);
-    const maxIndex = activeTours.length - cardsToShow;
+    const maxIndex = Math.max(0, activeTours.length - cardsToShow);
     const validIndex = Math.min(Math.max(0, index), maxIndex);
     setCurrentIndex(validIndex);
-    
-    setTimeout(() => setIsTransitioning(false), 700);
+
+    setTimeout(() => setIsTransitioning(false), 500);
   };
 
   const maxSlides = Math.max(0, activeTours.length - cardsToShow + 1);
 
+  const handleRetry = () => {
+    setError(null);
+    setLoading(true);
+    window.location.reload();
+  };
+
   if (loading) {
     return (
-      <div className="relative w-full h-64 sm:h-80 md:h-96 bg-gray-200 rounded-lg animate-pulse flex items-center justify-center">
-        <div className="text-gray-500 text-sm sm:text-base md:text-lg">Loading amazing tours...</div>
+      <div className="min-h-96 flex items-center justify-center">
+        <Loading message="Loading popular tours..." variant="spinner" size="md" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="relative w-full h-64 sm:h-80 md:h-96 bg-red-50 rounded-lg flex items-center justify-center">
-        <div className="text-red-500 text-center">
-          <h3 className="font-semibold mb-2 text-sm sm:text-base md:text-lg">Error Loading Tours</h3>
-          <p className="text-xs sm:text-sm md:text-base">{error}</p>
+      <section className="py-8 md:py-12 lg:py-16 xl:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ErrorState
+            title="Failed to Load Content"
+            message={error}
+            icon="alert"
+            variant="error"
+            size="md"
+            actionLabel="Try Again"
+            onAction={handleRetry}
+          />
         </div>
-      </div>
+      </section>
     );
   }
 
   if (activeTours.length === 0) {
     return (
-      <div className="relative w-full h-64 sm:h-80 md:h-96 bg-gray-100 rounded-lg flex items-center justify-center">
-        <div className="text-gray-500 text-sm sm:text-base md:text-lg">No tours available</div>
-      </div>
+      <section className="py-8 md:py-12 lg:py-16 xl:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <EmptyState
+            title="No Content Available"
+            message="We're preparing some amazing content for you. Please check back soon!"
+            icon="data"
+            size="md"
+          />
+        </div>
+      </section>
     );
   }
 
   return (
-    <div className="relative mx-auto bg-white overflow-hidden py-6 sm:py-8 md:py-12">
-      <div className="flex h-auto">
-        
-        {/* Left Panel - Hidden on Mobile & Tablet, Visible on Laptop & PC */}
-        <div className="hidden lg:flex w-2/5 bg-gradient-to-br from-amber-600 to-purple-800 text-white p-6 xl:p-12 flex-col justify-between min-h-80 xl:min-h-96">
-          <div>
-            <p className="text-amber-200 text-xs xl:text-sm uppercase tracking-wide mb-2 xl:mb-3">
-              DISCOVER YOUR UNIQUE
-            </p>
-            <h1 className="text-3xl xl:text-5xl font-bold mb-3 xl:mb-4">TOURS</h1>
-            <p className="text-amber-100 text-base xl:text-lg leading-relaxed max-w-sm mb-4 xl:mb-6">
-              A magical escape into paradise awaits the passionate explorer.
-            </p>
-          </div>
-          
-          <div className="text-amber-200 text-sm font-medium">
-            ALL TOURS
-          </div>
-        </div>
+    <div className="w-full bg-white overflow-hidden py-8 md:py-12 lg:py-16">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+          {/* Left Panel - Hidden on mobile, visible on lg and above */}
+          <div className="hidden lg:flex lg:w-2/5 xl:w-2/5 bg-gradient-to-br from-amber-600 to-purple-800 text-white p-8 xl:p-12 rounded-2xl flex-col justify-between min-h-96 xl:min-h-[480px]">
+            <div>
+              <p className="text-amber-200 text-sm xl:text-base uppercase tracking-wider mb-3 xl:mb-4 font-semibold">
+                DISCOVER YOUR UNIQUE
+              </p>
+              <h1 className="text-4xl xl:text-5xl 2xl:text-6xl font-bold mb-4 xl:mb-6 leading-tight">
+                TOURS
+              </h1>
+              <p className="text-amber-100 text-lg xl:text-xl 2xl:text-2xl leading-relaxed max-w-md mb-6 xl:mb-8">
+                A magical escape into paradise awaits the passionate explorer.
+              </p>
+            </div>
 
-        {/* Right Panel - Full width on Mobile & Tablet, 3/5 width on Laptop & PC */}
-        <div className="w-full lg:w-3/5 bg-white p-3 sm:p-4 md:p-6 lg:p-8 min-h-64 sm:min-h-80 lg:min-h-96 relative">
-          
-          {/* Mobile & Tablet Header */}
-          <div className="lg:hidden mb-4 sm:mb-6 text-center">
-            <p className="text-amber-600 text-xs sm:text-sm uppercase tracking-wide mb-1 sm:mb-2">
-              DISCOVER YOUR UNIQUE
-            </p>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-2 sm:mb-3">TOURS</h1>
-            <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-              A magical escape into paradise awaits the passionate explorer.
-            </p>
+            <div className="text-amber-200 text-base xl:text-lg font-semibold tracking-wide">
+              ALL TOURS
+            </div>
           </div>
 
-          {/* Carousel Container */}
-          <div className="relative h-full overflow-hidden">
-            {/* Cards Container */}
-            <div 
-              className="flex h-full transition-transform duration-700 ease-out"
-              style={{ 
-                transform: `translateX(-${currentIndex * (100 / cardsToShow)}%)`,
-                width: `${activeTours.length * (100 / cardsToShow)}%`,
-                transitionTimingFunction: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-              }}
-            >
-              {activeTours.map((tour) => (
-                <div 
-                  key={tour.tourId}
-                  className="flex-shrink-0 h-full px-1 sm:px-2"
-                  style={{ width: `${100 / cardsToShow}%` }}
+          {/* Right Panel - Carousel */}
+          <div className="w-full lg:w-3/5 xl:w-3/5 bg-white rounded-2xl p-4 sm:p-6 lg:p-8 min-h-80 lg:min-h-96 relative">
+            {/* Mobile & Tablet Header */}
+            <div className="lg:hidden mb-6 sm:mb-8 text-center">
+              <p className="text-amber-600 text-sm sm:text-base uppercase tracking-wider mb-2 sm:mb-3 font-medium">
+                DISCOVER YOUR UNIQUE
+              </p>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-3 sm:mb-4">
+                TOURS
+              </h1>
+              <p className="text-gray-600 text-base sm:text-lg md:text-xl leading-relaxed max-w-2xl mx-auto">
+                A magical escape into paradise awaits the passionate explorer.
+              </p>
+            </div>
+
+            {/* Carousel Container */}
+            <div className="relative">
+              {/* Cards Container */}
+              <div className="overflow-hidden">
+                <div
+                  className="flex transition-transform duration-500 ease-out gap-4 sm:gap-6"
+                  style={{
+                    transform: `translateX(-${currentIndex * (100 / cardsToShow)}%)`,
+                    transitionTimingFunction: "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+                  }}
                 >
-                  <div className="bg-white rounded-lg sm:rounded-xl shadow-md sm:shadow-lg overflow-hidden hover:shadow-lg sm:hover:shadow-xl transition-all duration-300 h-full flex flex-col">
-                    {/* Tour Image */}
-                    <div className="relative h-32 sm:h-40 md:h-48 lg:h-40 xl:h-44 overflow-hidden">
-                      <img 
-                        src={tour.images[0]?.imageUrl || 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=300&fit=crop'} 
-                        alt={tour.tourName}
-                        className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                      />
-                      
-                      {/* Tour Category Badge */}
-                      <div className="absolute top-1 sm:top-2 left-1 sm:left-2 bg-purple-600/90 text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs backdrop-blur-sm font-medium">
-                        {tour.tourCategoryName}
-                      </div>
-                      
-                      {/* Duration Badge */}
-                      <div className="absolute bottom-1 sm:bottom-2 left-1 sm:left-2 bg-amber-600 text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium">
-                        {tour.duration} {tour.duration === 1 ? 'day' : 'days'}
-                      </div>
+                  {activeTours.map((tour) => (
+                    <div
+                      key={tour.tourId}
+                      className="flex-shrink-0"
+                      style={{ width: `calc(${100 / cardsToShow}% - ${(cardsToShow - 1) * 16 / cardsToShow}px)` }}
+                    >
+                      <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 h-full flex flex-col border border-gray-100 overflow-hidden group">
+                        {/* Tour Image */}
+                        <div className="relative h-48 sm:h-56 md:h-64 lg:h-52 xl:h-56 2xl:h-60 overflow-hidden">
+                          <img
+                            src={
+                              tour.images[0]?.imageUrl ||
+                              "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=300&fit=crop"
+                            }
+                            alt={tour.tourName}
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          />
 
-                      {/* Season Badge */}
-                      <div className="absolute top-1 sm:top-2 right-1 sm:right-2 bg-green-600/90 text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs backdrop-blur-sm">
-                        {tour.seasonName}
-                      </div>
-                    </div>
-                    
-                    {/* Tour Content */}
-                    <div className="p-2 sm:p-3 md:p-4 lg:p-3 xl:p-4 flex-1 flex flex-col">
-                      <h3 className="text-sm sm:text-base md:text-lg lg:text-sm xl:text-base font-bold text-gray-800 mb-1 sm:mb-2 line-clamp-2">
-                        {tour.tourName}
-                      </h3>
-                      <p className="text-gray-600 text-xs sm:text-sm md:text-base lg:text-xs xl:text-sm mb-2 sm:mb-3 flex-1 line-clamp-2">
-                        {tour.tourDescription}
-                      </p>
-                      
-                      {/* Tour Details */}
-                      <div className="space-y-1 mb-2 sm:mb-3">
-                        <div className="flex items-center text-xs sm:text-sm lg:text-xs xl:text-sm text-gray-500">
-                          <svg className="w-3 h-3 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          </svg>
-                          <span className="truncate">{tour.startLocation} → {tour.endLocation}</span>
-                        </div>
-                        <div className="flex items-center text-xs sm:text-sm lg:text-xs xl:text-sm text-gray-500">
-                          <svg className="w-3 h-3 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                          </svg>
-                          {tour.tourTypeName}
-                        </div>
-                      </div>
+                          {/* Tour Category Badge */}
+                          <div className="absolute top-3 left-3 bg-purple-600/90 text-white px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold backdrop-blur-sm">
+                            {tour.tourCategoryName}
+                          </div>
 
-                      {/* Schedule Info */}
-                      {tour.schedules.length > 0 && (
-                        <div className="mb-2 sm:mb-3 bg-blue-50 rounded p-2">
-                          <div className="text-xs text-gray-700">
-                            <div className="font-semibold text-blue-700">{tour.schedules[0].scheduleName}</div>
-                            {tour.schedules[0].specialNote && (
-                              <div className="text-xs text-gray-600 mt-1">💡 {tour.schedules[0].specialNote}</div>
-                            )}
+                          {/* Duration Badge */}
+                          <div className="absolute bottom-3 left-3 bg-amber-600 text-white px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold">
+                            {tour.duration} {tour.duration === 1 ? "day" : "days"}
+                          </div>
+
+                          {/* Season Badge */}
+                          <div className="absolute top-3 right-3 bg-green-600/90 text-white px-3 py-1.5 rounded-full text-xs sm:text-sm backdrop-blur-sm">
+                            {tour.seasonName}
                           </div>
                         </div>
-                      )}
-                      
-                      {/* Learn More Button */}
-                      <button className="w-full bg-gradient-to-r from-amber-600 to-purple-600 hover:from-purple-700 hover:to-amber-700 transition-colors text-white py-1.5 sm:py-2 px-2 sm:px-3 rounded-md sm:rounded-lg transition-colors duration-200 font-medium text-xs sm:text-sm lg:text-xs xl:text-sm flex items-center justify-center">
-                        Learn More
-                        <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </button>
+
+                        {/* Tour Content */}
+                        <div className="p-4 sm:p-6 flex-1 flex flex-col">
+                          <h3 className="text-lg sm:text-xl lg:text-lg xl:text-xl font-bold text-gray-900 mb-2 sm:mb-3 line-clamp-2 leading-tight">
+                            {tour.tourName}
+                          </h3>
+                          <p className="text-gray-600 text-sm sm:text-base lg:text-sm xl:text-base mb-3 sm:mb-4 flex-1 line-clamp-3 leading-relaxed">
+                            {tour.tourDescription}
+                          </p>
+
+                          {/* Tour Details */}
+                          <div className="space-y-2 mb-3 sm:mb-4">
+                            <div className="flex items-center text-sm sm:text-base lg:text-sm xl:text-base text-gray-600">
+                              <svg
+                                className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0 text-gray-400"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                                />
+                              </svg>
+                              <span className="truncate">
+                                {tour.startLocation} → {tour.endLocation}
+                              </span>
+                            </div>
+                            <div className="flex items-center text-sm sm:text-base lg:text-sm xl:text-base text-gray-600">
+                              <svg
+                                className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0 text-gray-400"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                                />
+                              </svg>
+                              {tour.tourTypeName}
+                            </div>
+                          </div>
+
+                          {/* Schedule Info */}
+                          {tour.schedules.length > 0 && (
+                            <div className="mb-3 sm:mb-4 bg-blue-50 rounded-lg p-3 border border-blue-100">
+                              <div className="text-sm text-gray-700">
+                                <div className="font-semibold text-blue-700 text-base sm:text-lg">
+                                  {tour.schedules[0].scheduleName}
+                                </div>
+                                {tour.schedules[0].specialNote && (
+                                  <div className="text-sm text-gray-600 mt-2 flex items-start">
+                                    <span className="text-amber-500 mr-2">💡</span>
+                                    {tour.schedules[0].specialNote}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Learn More Button */}
+                          <button className="w-full bg-gradient-to-r from-amber-600 to-purple-600 hover:from-purple-700 hover:to-amber-700 text-white py-3 px-4 rounded-xl font-semibold text-sm sm:text-base transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center group/btn shadow-lg hover:shadow-xl">
+                            Learn More
+                            <svg
+                              className="w-4 h-4 sm:w-5 sm:h-5 ml-2 transition-transform duration-200 group-hover/btn:translate-x-1"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M9 5l7 7-7 7"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
+              </div>
 
-          {/* Navigation Arrows - Desktop & Laptop Only */}
-          {activeTours.length > cardsToShow && (
-            <div className="hidden lg:block">
-              <button 
-                onClick={prevSlide}
-                disabled={isTransitioning}
-                className={`absolute left-1 lg:left-2 top-1/2 transform -translate-y-1/2 w-8 h-8 xl:w-10 xl:h-10 rounded-full bg-white shadow-lg hover:bg-gray-100 hover:shadow-2xl transition-all duration-300 flex items-center justify-center border border-gray-200 z-10 ${
-                  isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'
-                }`}
-                aria-label="Previous tour"
-              >
-                <svg className="w-4 h-4 xl:w-5 xl:h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              <button 
-                onClick={nextSlide}
-                disabled={isTransitioning}
-                className={`absolute right-1 lg:right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 xl:w-10 xl:h-10 rounded-full bg-white shadow-lg hover:bg-gray-100 hover:shadow-2xl transition-all duration-300 flex items-center justify-center border border-gray-200 z-10 ${
-                  isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'
-                }`}
-                aria-label="Next tour"
-              >
-                <svg className="w-4 h-4 xl:w-5 xl:h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            </div>
-          )}
+              {/* Navigation Arrows - Desktop & Laptop Only */}
+              {activeTours.length > cardsToShow && (
+                <div className="hidden lg:block">
+                  <button
+                    onClick={prevSlide}
+                    disabled={isTransitioning}
+                    className={`absolute -left-4 xl:-left-6 top-1/2 transform -translate-y-1/2 w-10 h-10 xl:w-12 xl:h-12 rounded-full bg-white shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center border border-gray-200 z-10 ${
+                      isTransitioning
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:scale-110 hover:bg-gray-50"
+                    }`}
+                    aria-label="Previous tour"
+                  >
+                    <svg
+                      className="w-5 h-5 xl:w-6 xl:h-6 text-gray-700"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 19l-7-7 7-7"
+                      />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={nextSlide}
+                    disabled={isTransitioning}
+                    className={`absolute -right-4 xl:-right-6 top-1/2 transform -translate-y-1/2 w-10 h-10 xl:w-12 xl:h-12 rounded-full bg-white shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center border border-gray-200 z-10 ${
+                      isTransitioning
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:scale-110 hover:bg-gray-50"
+                    }`}
+                    aria-label="Next tour"
+                  >
+                    <svg
+                      className="w-5 h-5 xl:w-6 xl:h-6 text-gray-700"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              )}
 
-          {/* Mobile & Tablet Navigation */}
-          {activeTours.length > cardsToShow && (
-            <div className="lg:hidden flex justify-center space-x-3 sm:space-x-4 mt-3 sm:mt-4">
-              <button 
-                onClick={prevSlide}
-                disabled={isTransitioning}
-                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-amber-600 hover:bg-amber-700 transition-all duration-300 flex items-center justify-center text-white shadow-lg ${
-                  isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 hover:shadow-2xl'
-                }`}
-                aria-label="Previous tour"
-              >
-                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              <button 
-                onClick={nextSlide}
-                disabled={isTransitioning}
-                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-amber-600 hover:bg-amber-700 transition-all duration-300 flex items-center justify-center text-white shadow-lg ${
-                  isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 hover:shadow-2xl'
-                }`}
-                aria-label="Next tour"
-              >
-                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            </div>
-          )}
+              {/* Mobile & Tablet Navigation */}
+              {activeTours.length > cardsToShow && (
+                <div className="lg:hidden flex justify-center space-x-4 sm:space-x-6 mt-6 sm:mt-8">
+                  <button
+                    onClick={prevSlide}
+                    disabled={isTransitioning}
+                    className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-amber-600 hover:bg-amber-700 transition-all duration-300 flex items-center justify-center text-white shadow-lg ${
+                      isTransitioning
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:scale-110 hover:shadow-xl active:scale-105"
+                    }`}
+                    aria-label="Previous tour"
+                  >
+                    <svg
+                      className="w-5 h-5 sm:w-6 sm:h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 19l-7-7 7-7"
+                      />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={nextSlide}
+                    disabled={isTransitioning}
+                    className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-amber-600 hover:bg-amber-700 transition-all duration-300 flex items-center justify-center text-white shadow-lg ${
+                      isTransitioning
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:scale-110 hover:shadow-xl active:scale-105"
+                    }`}
+                    aria-label="Next tour"
+                  >
+                    <svg
+                      className="w-5 h-5 sm:w-6 sm:h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              )}
 
-          {/* Slide Indicators */}
-          {maxSlides > 1 && (
-            <div className="absolute bottom-1 sm:bottom-1 lg:bottom-1 left-1/2 transform -translate-x-1/2 flex space-x-1 sm:space-x-2">
-              {Array.from({ length: maxSlides }, (_, index) => (
-                <button
-                  key={index}
-                  onClick={() => goToSlide(index)}
-                  disabled={isTransitioning}
-                  className={`w-1.5 h-1.5 sm:w-2 sm:h-2 lg:w-3 lg:h-3 rounded-full transition-all duration-300 ${
-                    index === currentIndex 
-                      ? 'bg-purple-600 scale-110 shadow-lg' 
-                      : 'bg-gray-300 hover:bg-gray-400'
-                  } ${isTransitioning ? 'cursor-not-allowed' : 'cursor-pointer hover:scale-105'}`}
-                  aria-label={`Go to slide ${index + 1}`}
-                />
-              ))}
-            </div>
-          )}
+              {/* Slide Indicators */}
+              {maxSlides > 1 && (
+                <div className="flex justify-center space-x-2 sm:space-x-3 mt-6">
+                  {Array.from({ length: maxSlides }, (_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => goToSlide(index)}
+                      disabled={isTransitioning}
+                      className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${
+                        index === currentIndex
+                          ? "bg-purple-600 scale-125 shadow-lg"
+                          : "bg-gray-300 hover:bg-gray-400"
+                      } ${
+                        isTransitioning
+                          ? "cursor-not-allowed"
+                          : "cursor-pointer hover:scale-110"
+                      }`}
+                      aria-label={`Go to slide ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
 
-          {/* Tour Counter */}
-          <div className="absolute top-1 sm:top-2 lg:top-4 right-1 sm:right-2 lg:right-4 bg-white/80 backdrop-blur-sm text-gray-700 px-1.5 sm:px-2 lg:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm border border-gray-200">
-            {currentIndex + 1}-{Math.min(currentIndex + cardsToShow, activeTours.length)} of {activeTours.length}
+              {/* Tour Counter */}
+              <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-gray-700 px-3 py-2 rounded-xl text-sm font-medium border border-gray-200 shadow-lg">
+                {currentIndex + 1}-
+                {Math.min(currentIndex + cardsToShow, activeTours.length)} of{" "}
+                {activeTours.length}
+              </div>
+            </div>
           </div>
         </div>
       </div>
