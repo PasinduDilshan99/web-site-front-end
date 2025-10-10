@@ -112,7 +112,7 @@ const ReviewsCarousel = () => {
     return Array.from({ length: 5 }, (_, index) => (
       <svg
         key={index}
-        className={`w-5 h-5 ${
+        className={`w-4 h-4 sm:w-5 sm:h-5 ${
           index < Math.floor(rating)
             ? "fill-yellow-400 text-yellow-400"
             : "fill-gray-300 text-gray-300"
@@ -124,12 +124,20 @@ const ReviewsCarousel = () => {
     ));
   };
 
+  const handleRetry = () => {
+    setError(null);
+    setLoading(true);
+    window.location.reload();
+  };
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-[500px] bg-white rounded-lg">
+      <div className="flex items-center justify-center min-h-[400px] sm:min-h-[500px] bg-white rounded-lg">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading amazing reviews...</p>
+          <div className="animate-spin rounded-full h-8 w-8 sm:h-12 sm:w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-3 sm:mt-4 text-sm sm:text-base text-gray-600">
+            Loading amazing reviews...
+          </p>
         </div>
       </div>
     );
@@ -137,15 +145,17 @@ const ReviewsCarousel = () => {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-[500px] bg-white rounded-lg border border-gray-200">
-        <div className="text-center p-8">
-          <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-red-600 text-xl">⚠️</span>
+      <div className="flex items-center justify-center min-h-[400px] sm:min-h-[500px] bg-white rounded-lg border border-gray-200">
+        <div className="text-center p-4 sm:p-8">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+            <span className="text-red-600 text-lg sm:text-xl">⚠️</span>
           </div>
-          <p className="text-red-600 font-medium">{error}</p>
+          <p className="text-red-600 font-medium text-sm sm:text-base">
+            {error}
+          </p>
           <button
-            onClick={() => window.location.reload()}
-            className="mt-4 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+            onClick={handleRetry}
+            className="mt-3 sm:mt-4 px-4 sm:px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm sm:text-base"
           >
             Try Again
           </button>
@@ -156,10 +166,12 @@ const ReviewsCarousel = () => {
 
   if (activeReviews.length === 0) {
     return (
-      <div className="flex items-center justify-center h-[500px] bg-white rounded-lg border border-gray-200">
-        <div className="text-center p-8">
-          <p className="text-gray-600">No reviews available yet</p>
-          <p className="text-gray-500 text-sm mt-2">
+      <div className="flex items-center justify-center min-h-[400px] sm:min-h-[500px] bg-white rounded-lg border border-gray-200">
+        <div className="text-center p-4 sm:p-8">
+          <p className="text-gray-600 text-sm sm:text-base">
+            No reviews available yet
+          </p>
+          <p className="text-gray-500 text-xs sm:text-sm mt-1 sm:mt-2">
             Be the first to leave a review!
           </p>
         </div>
@@ -171,28 +183,28 @@ const ReviewsCarousel = () => {
   const currentImage = currentReview.images[currentImageIndex];
 
   return (
-    <div className="w-full mx-auto p-6 bg-gradient-to-r from-purple-100 to-amber-100">
-      <div className="relative bg-gradient-to-r from-amber-50 to-purple-50 rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-[500px] flex flex-col">
+    <div className="w-full mx-auto p-3 sm:p-4 lg:p-6 bg-gradient-to-r from-purple-100 to-amber-100">
+      <div className="relative bg-gradient-to-r from-amber-50 to-purple-50 rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 overflow-hidden min-h-[400px] sm:min-h-[500px] flex flex-col">
         {/* Header - Fixed height */}
-        <div className="p-6 border-b border-gray-100 flex-shrink-0">
-          <div className="flex justify-between items-center">
+        <div className="p-4 sm:p-6 border-b border-gray-100 flex-shrink-0">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0">
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-1">
+              <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 mb-1">
                 REVIEWS
               </h2>
-              <p className="text-gray-500 text-sm">
+              <p className="text-gray-500 text-xs sm:text-sm">
                 What our travelers are saying
               </p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <button
                 onClick={() => setIsAutoPlaying(!isAutoPlaying)}
-                className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                className="p-1.5 sm:p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
                 title={isAutoPlaying ? "Pause autoplay" : "Start autoplay"}
               >
                 {isAutoPlaying ? (
                   <svg
-                    className="w-4 h-4 text-gray-600"
+                    className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600"
                     viewBox="0 0 24 24"
                     fill="currentColor"
                   >
@@ -200,7 +212,7 @@ const ReviewsCarousel = () => {
                   </svg>
                 ) : (
                   <svg
-                    className="w-4 h-4 text-gray-600"
+                    className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600"
                     viewBox="0 0 24 24"
                     fill="currentColor"
                   >
@@ -208,20 +220,20 @@ const ReviewsCarousel = () => {
                   </svg>
                 )}
               </button>
-              <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+              <span className="text-xs sm:text-sm text-gray-500 bg-gray-100 px-2 sm:px-3 py-1 rounded-full">
                 {currentIndex + 1} / {activeReviews.length}
               </span>
             </div>
           </div>
         </div>
 
-        {/* Main Content - Split layout */}
-        <div className="flex-1 flex overflow-hidden">
-          {/* Left Side - Image Carousel */}
+        {/* Main Content - Responsive layout */}
+        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+          {/* Image Carousel Section */}
           {currentReview.images.length > 0 && (
-            <div className="w-2/5 border-r border-gray-100 relative">
-              <div className="absolute inset-0 flex items-center justify-center p-6">
-                <div className="relative w-full h-full max-w-md max-h-80">
+            <div className="lg:w-2/5 border-b lg:border-b-0 lg:border-r border-gray-100 relative min-h-[200px] sm:min-h-[250px] lg:min-h-auto">
+              <div className="absolute inset-0 flex items-center justify-center p-3 sm:p-4 lg:p-6">
+                <div className="relative w-full h-full max-w-xs sm:max-w-sm lg:max-w-md max-h-48 sm:max-h-64 lg:max-h-80">
                   <img
                     src={currentImage?.imageUrl}
                     alt={currentImage?.imageDescription || "Review image"}
@@ -240,10 +252,10 @@ const ReviewsCarousel = () => {
                           e.stopPropagation();
                           prevImage();
                         }}
-                        className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 hover:bg-white rounded-full shadow-sm flex items-center justify-center transition-all duration-300 border border-gray-200 z-10"
+                        className="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 bg-white/90 hover:bg-white rounded-full shadow-sm flex items-center justify-center transition-all duration-300 border border-gray-200 z-10"
                       >
                         <svg
-                          className="w-4 h-4 text-gray-600"
+                          className="w-3 h-3 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-gray-600"
                           viewBox="0 0 24 24"
                           fill="currentColor"
                         >
@@ -255,10 +267,10 @@ const ReviewsCarousel = () => {
                           e.stopPropagation();
                           nextImage();
                         }}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 hover:bg-white rounded-full shadow-sm flex items-center justify-center transition-all duration-300 border border-gray-200 z-10"
+                        className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 bg-white/90 hover:bg-white rounded-full shadow-sm flex items-center justify-center transition-all duration-300 border border-gray-200 z-10"
                       >
                         <svg
-                          className="w-4 h-4 text-gray-600"
+                          className="w-3 h-3 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-gray-600"
                           viewBox="0 0 24 24"
                           fill="currentColor"
                         >
@@ -267,7 +279,7 @@ const ReviewsCarousel = () => {
                       </button>
 
                       {/* Image Pagination Dots */}
-                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                      <div className="absolute bottom-2 sm:bottom-3 lg:bottom-4 left-1/2 -translate-x-1/2 flex gap-1 sm:gap-2 z-10">
                         {currentReview.images.map((_, index) => (
                           <button
                             key={index}
@@ -275,9 +287,9 @@ const ReviewsCarousel = () => {
                               e.stopPropagation();
                               setCurrentImageIndex(index);
                             }}
-                            className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                            className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all duration-300 ${
                               index === currentImageIndex
-                                ? "bg-blue-600 w-4"
+                                ? "bg-blue-600 w-3 sm:w-4"
                                 : "bg-white/80 hover:bg-white"
                             }`}
                           />
@@ -287,7 +299,7 @@ const ReviewsCarousel = () => {
                   )}
 
                   {/* Image Counter */}
-                  <div className="absolute top-4 right-4 bg-black/50 text-white px-2 py-1 rounded-full text-sm">
+                  <div className="absolute top-2 sm:top-3 lg:top-4 right-2 sm:right-3 lg:right-4 bg-black/50 text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm">
                     {currentImageIndex + 1} / {currentReview.images.length}
                   </div>
                 </div>
@@ -295,12 +307,12 @@ const ReviewsCarousel = () => {
 
               {/* Thumbnail Strip */}
               {currentReview.images.length > 1 && (
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 max-w-full overflow-x-auto pb-2">
+                <div className="absolute bottom-1 sm:bottom-2 lg:bottom-4 left-1/2 -translate-x-1/2 flex gap-1 sm:gap-2 max-w-full overflow-x-auto pb-1 sm:pb-2 px-2">
                   {currentReview.images.map((img, index) => (
                     <button
                       key={img.imageId}
                       onClick={() => setCurrentImageIndex(index)}
-                      className={`flex-shrink-0 w-12 h-12 rounded border-2 transition-all duration-300 ${
+                      className={`flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded border-2 transition-all duration-300 ${
                         index === currentImageIndex
                           ? "border-blue-500 scale-110"
                           : "border-transparent hover:border-gray-300"
@@ -318,42 +330,42 @@ const ReviewsCarousel = () => {
             </div>
           )}
 
-          {/* Right Side - Review Details */}
+          {/* Review Details Section */}
           <div
             className={`${
-              currentReview.images.length > 0 ? "w-3/5" : "w-full"
-            } p-6`}
+              currentReview.images.length > 0 ? "lg:w-3/5" : "w-full"
+            } p-3 sm:p-4 lg:p-6`}
           >
             <div className="h-full flex flex-col justify-between">
               {/* Top Section - Review Content */}
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {/* Review Title and Rating */}
                 <div className="text-center">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mb-1 sm:mb-2">
                     {currentReview.reviewerName}
                   </h3>
-                  <div className="flex justify-center gap-1 mb-3">
+                  <div className="flex justify-center gap-1 mb-2 sm:mb-3">
                     {renderStars(currentReview.rating)}
-                    <span className="ml-2 text-sm text-gray-600 font-medium">
+                    <span className="ml-1 sm:ml-2 text-xs sm:text-sm text-gray-600 font-medium">
                       {currentReview.rating.toFixed(1)}
                     </span>
                   </div>
-                  <blockquote className="text-lg text-gray-800 italic leading-relaxed">
+                  <blockquote className="text-sm sm:text-base lg:text-lg text-gray-800 italic leading-relaxed">
                     {currentReview.review}
                   </blockquote>
                   {currentReview.reviewDescription && (
-                    <p className="text-gray-600 mt-2 text-sm">
+                    <p className="text-gray-600 mt-1 sm:mt-2 text-xs sm:text-sm">
                       {currentReview.reviewDescription}
                     </p>
                   )}
                 </div>
 
                 {/* Reviewer Info */}
-                <div className="flex items-center justify-center gap-3">
+                <div className="flex items-center justify-center gap-2 sm:gap-3">
                   <div className="relative">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center border-2 border-white shadow-sm">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center border-2 border-white shadow-sm">
                       <svg
-                        className="w-5 h-5 text-white"
+                        className="w-4 h-4 sm:w-5 sm:h-5 text-white"
                         viewBox="0 0 24 24"
                         fill="currentColor"
                       >
@@ -362,7 +374,7 @@ const ReviewsCarousel = () => {
                     </div>
                   </div>
                   <div className="text-center">
-                    <h3 className="font-semibold text-gray-900 text-sm">
+                    <h3 className="font-semibold text-gray-900 text-xs sm:text-sm">
                       {currentReview.userFullName}
                     </h3>
                     <p className="text-gray-500 text-xs">
@@ -378,31 +390,35 @@ const ReviewsCarousel = () => {
                 </div>
 
                 {/* Tour and Schedule Info */}
-                <div className="flex flex-wrap justify-center gap-2">
-                  <div className="flex items-center gap-1 bg-blue-50 text-blue-700 px-2 py-1 rounded-full text-xs">
+                <div className="flex flex-wrap justify-center gap-1 sm:gap-2">
+                  <div className="flex items-center gap-1 bg-blue-50 text-blue-700 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs">
                     <svg
-                      className="w-3 h-3"
+                      className="w-2.5 h-2.5 sm:w-3 sm:h-3"
                       viewBox="0 0 24 24"
                       fill="currentColor"
                     >
                       <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                     </svg>
-                    <span>{currentReview.tourName}</span>
+                    <span className="truncate max-w-[80px] sm:max-w-none">
+                      {currentReview.tourName}
+                    </span>
                   </div>
-                  <div className="flex items-center gap-1 bg-green-50 text-green-700 px-2 py-1 rounded-full text-xs">
+                  <div className="flex items-center gap-1 bg-green-50 text-green-700 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs">
                     <svg
-                      className="w-3 h-3"
+                      className="w-2.5 h-2.5 sm:w-3 sm:h-3"
                       viewBox="0 0 24 24"
                       fill="currentColor"
                     >
                       <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19a2 2 0 002 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z" />
                     </svg>
-                    <span>{currentReview.scheduleName}</span>
+                    <span className="truncate max-w-[80px] sm:max-w-none">
+                      {currentReview.scheduleName}
+                    </span>
                   </div>
                   {currentReview.numberOfParticipate > 0 && (
-                    <div className="flex items-center gap-1 bg-purple-50 text-purple-700 px-2 py-1 rounded-full text-xs">
+                    <div className="flex items-center gap-1 bg-purple-50 text-purple-700 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs">
                       <svg
-                        className="w-3 h-3"
+                        className="w-2.5 h-2.5 sm:w-3 sm:h-3"
                         viewBox="0 0 24 24"
                         fill="currentColor"
                       >
@@ -414,26 +430,28 @@ const ReviewsCarousel = () => {
                 </div>
 
                 {/* Location Info */}
-                <div className="flex items-center justify-center gap-2 text-xs text-gray-600">
+                <div className="flex items-center justify-center gap-1 sm:gap-2 text-xs text-gray-600">
                   <svg
-                    className="w-3 h-3"
+                    className="w-2.5 h-2.5 sm:w-3 sm:h-3"
                     viewBox="0 0 24 24"
                     fill="currentColor"
                   >
                     <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                   </svg>
-                  <span>
+                  <span className="text-xs sm:text-sm">
                     {currentReview.startLocation} → {currentReview.endLocation}
                   </span>
                 </div>
               </div>
 
               {/* Schedule Dates */}
-              <div className="border-t border-gray-200 pt-4">
-                <div className="flex justify-center items-center gap-4 text-xs text-gray-600">
+              <div className="border-t border-gray-200 pt-2 sm:pt-3 lg:pt-4 mt-2 sm:mt-3">
+                <div className="flex justify-center items-center gap-2 sm:gap-3 lg:gap-4 text-xs text-gray-600">
                   <div className="text-center">
-                    <div className="font-semibold text-gray-700">Start Date</div>
-                    <div>
+                    <div className="font-semibold text-gray-700 text-xs sm:text-sm">
+                      Start Date
+                    </div>
+                    <div className="text-xs">
                       {new Date(
                         currentReview.assumeStartDate
                       ).toLocaleDateString("en-US", {
@@ -443,17 +461,20 @@ const ReviewsCarousel = () => {
                       })}
                     </div>
                   </div>
-                  <div className="text-gray-400">→</div>
+                  <div className="text-gray-400 text-xs">→</div>
                   <div className="text-center">
-                    <div className="font-semibold text-gray-700">End Date</div>
-                    <div>
-                      {new Date(
-                        currentReview.assumeEndDate
-                      ).toLocaleDateString("en-US", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}
+                    <div className="font-semibold text-gray-700 text-xs sm:text-sm">
+                      End Date
+                    </div>
+                    <div className="text-xs">
+                      {new Date(currentReview.assumeEndDate).toLocaleDateString(
+                        "en-US",
+                        {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        }
+                      )}
                     </div>
                   </div>
                 </div>
@@ -467,10 +488,10 @@ const ReviewsCarousel = () => {
           <>
             <button
               onClick={prevReview}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/80 hover:bg-white rounded-full shadow-sm flex items-center justify-center transition-all duration-300 border border-gray-200 z-10"
+              className="absolute left-1 sm:left-2 lg:left-4 top-1/2 -translate-y-1/2 w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 bg-white/80 hover:bg-white rounded-full shadow-sm flex items-center justify-center transition-all duration-300 border border-gray-200 z-10"
             >
               <svg
-                className="w-4 h-4 text-gray-600"
+                className="w-3 h-3 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-gray-600"
                 viewBox="0 0 24 24"
                 fill="currentColor"
               >
@@ -479,10 +500,10 @@ const ReviewsCarousel = () => {
             </button>
             <button
               onClick={nextReview}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/80 hover:bg-white rounded-full shadow-sm flex items-center justify-center transition-all duration-300 border border-gray-200 z-10"
+              className="absolute right-1 sm:right-2 lg:right-4 top-1/2 -translate-y-1/2 w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 bg-white/80 hover:bg-white rounded-full shadow-sm flex items-center justify-center transition-all duration-300 border border-gray-200 z-10"
             >
               <svg
-                className="w-4 h-4 text-gray-600"
+                className="w-3 h-3 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-gray-600"
                 viewBox="0 0 24 24"
                 fill="currentColor"
               >
@@ -494,14 +515,14 @@ const ReviewsCarousel = () => {
 
         {/* Review Pagination Dots */}
         {activeReviews.length > 1 && (
-          <div className="flex justify-center gap-1 pb-4 flex-shrink-0">
+          <div className="flex justify-center gap-1 pb-3 sm:pb-4 flex-shrink-0">
             {activeReviews.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentIndex(index)}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all duration-300 ${
                   index === currentIndex
-                    ? "bg-blue-600 w-4"
+                    ? "bg-blue-600 w-3 sm:w-4"
                     : "bg-gray-300 hover:bg-gray-400"
                 }`}
               />
@@ -513,7 +534,7 @@ const ReviewsCarousel = () => {
       {/* Image Modal */}
       {imageModalOpen && (
         <div
-          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-2 sm:p-4"
           onClick={() => setImageModalOpen(false)}
         >
           <div className="relative max-w-4xl max-h-full">
@@ -524,7 +545,7 @@ const ReviewsCarousel = () => {
             />
             <button
               onClick={() => setImageModalOpen(false)}
-              className="absolute top-4 right-4 w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center text-white font-bold transition-colors"
+              className="absolute top-2 sm:top-4 right-2 sm:right-4 w-6 h-6 sm:w-8 sm:h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center text-white font-bold text-sm sm:text-base transition-colors"
             >
               ×
             </button>
