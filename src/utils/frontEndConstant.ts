@@ -35,6 +35,7 @@ export const GET_ACTIVE_WORK_FLOW_STEPS = `${API}${WORK_FLOW}`;
 export const GET_AVAILABLE_ACCOMMODATION = `${API}${ACCOMMODATION}`;
 export const GET_ALL_DESTINATIONS_CATEGORIES = `${API}${DESTINATIONS}${CATEGORIES}`;
 export const GET_POPULAR_DESTINATIONS = `${API}${DESTINATIONS}/popular-destinations`;
+export const GET_ACTIVE_DESTINATIONS_FE = `${API}${DESTINATIONS}`;
 export const GET_TRENDING_DESTINATIONS = `${API}${DESTINATIONS}/trending-destinations`;
 export const GET_NEW_DESTINATIONS = `${API}${DESTINATIONS}/new-destinations`;
 export const GET_ACTIVE_DESTINATIONS_LOCATIONS_FE = `${API}${DESTINATIONS}/locations-for-map`;

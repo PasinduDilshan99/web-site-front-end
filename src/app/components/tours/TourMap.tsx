@@ -7,7 +7,6 @@ import {
 import React, { useState, useEffect, useRef } from "react";
 import SectionHeader from "../common/SectionHeader";
 
-// Define TypeScript interfaces based on new API response
 interface DestinationImage {
   id: number;
   name: string;
@@ -47,14 +46,12 @@ interface ApiResponse {
   timestamp: string;
 }
 
-// Extend Window interface to include Leaflet
 declare global {
   interface Window {
     L: any;
   }
 }
 
-// Simple icon component
 const AllPlacesIcon: React.FC = () => (
   <svg className="w-8 h-8" fill="white" viewBox="0 0 24 24">
     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
@@ -67,6 +64,7 @@ const TourMap: React.FC = () => {
   const [markers, setMarkers] = useState<any[]>([]);
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
+  const leafletLoadedRef = useRef(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -96,34 +94,9 @@ const TourMap: React.FC = () => {
       }
     };
 
-    // const fetchDestinationsLocationsCategories = async () => {
-    //   try {
-    //     setLoading(true);
-    //     const response = await fetch(
-    //       GET_ACTIVE_DESTINATIONS_LOCATIONS_CATEGORIES_FE
-    //     );
-    //     const data = await response.json();
-
-    //     if (response.ok) {
-    //       const items: Category[] = data.data || [];
-    //       setCategories((prev) => [...prev, ...items]);
-    //       setError(null);
-    //     } else {
-    //       setError(data.message || "Failed to fetch categories");
-    //     }
-    //   } catch (err) {
-    //     console.error("Error fetching categories:", err);
-    //     setError("Something went wrong while fetching categories");
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // };
-
-    // fetchDestinationsLocationsCategories();
     fetchDestinationsLocations();
   }, []);
 
-  // Transform destinations to the format expected by the existing code
   const places = destinations.map((destination) => ({
     id: destination.destinationId,
     name: destination.destinationName,
@@ -142,15 +115,12 @@ const TourMap: React.FC = () => {
 
   const currentCategory = categories.find((c) => c.id === selectedCategory);
 
-  // Load Leaflet CSS and JS
+  // Load Leaflet CSS and JS - Only once
   useEffect(() => {
-    // Check if Leaflet is already loaded
-    if (window.L) {
-      initMap();
+    if (leafletLoadedRef.current || window.L) {
       return;
     }
 
-    // Load Leaflet CSS
     const link = document.createElement("link");
     link.rel = "stylesheet";
     link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
@@ -158,41 +128,65 @@ const TourMap: React.FC = () => {
     link.crossOrigin = "";
     document.head.appendChild(link);
 
-    // Load Leaflet JS
     const script = document.createElement("script");
     script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
     script.integrity = "sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=";
     script.crossOrigin = "";
     script.onload = () => {
-      // Initialize map after Leaflet is loaded
-      setTimeout(initMap, 100);
+      leafletLoadedRef.current = true;
     };
     document.head.appendChild(script);
 
     return () => {
-      // Cleanup
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
-      }
+      // Don't remove scripts - keep them loaded for reuse
+      leafletLoadedRef.current = false;
     };
   }, []);
 
   const initMap = (): void => {
     if (!mapRef.current || !window.L) return;
 
-    // Initialize the map
-    const newMap = window.L.map(mapRef.current).setView([7.8731, 80.7718], 8);
+    // Check if map already exists in the container
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.remove();
+      mapInstanceRef.current = null;
+    }
 
-    // Add OpenStreetMap tiles
-    window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      maxZoom: 18,
-    }).addTo(newMap);
+    // Clear the container
+    if (mapRef.current._leaflet_id) {
+      delete mapRef.current._leaflet_id;
+    }
 
-    setMap(newMap);
-    mapInstanceRef.current = newMap;
+    try {
+      const newMap = window.L.map(mapRef.current).setView([7.8731, 80.7718], 8);
+
+      window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 18,
+      }).addTo(newMap);
+
+      setMap(newMap);
+      mapInstanceRef.current = newMap;
+    } catch (err) {
+      console.error("Error initializing map:", err);
+      setError("Failed to initialize map");
+    }
   };
+
+  // Initialize map when Leaflet is loaded and mapRef is ready
+  useEffect(() => {
+    if (!window.L || !mapRef.current) return;
+
+    // Small delay to ensure everything is ready
+    const timer = setTimeout(() => {
+      initMap();
+    }, 100);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
 
   // Update markers when category changes or destinations update
   useEffect(() => {
@@ -203,7 +197,6 @@ const TourMap: React.FC = () => {
       map.removeLayer(marker);
     });
 
-    // Create custom icon
     const createCustomIcon = (color: string) => {
       return window.L.divIcon({
         html: `
@@ -222,13 +215,11 @@ const TourMap: React.FC = () => {
       });
     };
 
-    // Create new markers
     const newMarkers = filteredPlaces.map((place) => {
       const marker = window.L.marker([place.lat, place.lng], {
         icon: createCustomIcon(currentCategory?.color || "#3b82f6"),
       }).addTo(map);
 
-      // Add popup with enhanced information
       marker.bindPopup(`
         <div style="padding: 8px; max-width: 250px;">
           <h3 style="margin: 0 0 6px 0; font-weight: bold; color: ${
@@ -256,7 +247,6 @@ const TourMap: React.FC = () => {
         </div>
       `);
 
-      // Add click event
       marker.on("click", function (this: any) {
         const destination = destinations.find(
           (d) => d.destinationId === place.id
@@ -266,7 +256,6 @@ const TourMap: React.FC = () => {
         }
       });
 
-      // Add hover effects for popup only
       marker.on("mouseover", function (this: any) {
         this.openPopup();
       });
@@ -280,14 +269,22 @@ const TourMap: React.FC = () => {
 
     setMarkers(newMarkers);
 
-    // Adjust map bounds to fit all markers
     if (newMarkers.length > 0) {
       const group = new window.L.featureGroup(newMarkers);
       map.fitBounds(group.getBounds().pad(0.1));
     }
   }, [map, selectedCategory, filteredPlaces.length, destinations.length]);
 
-  // Get unique categories from destinations for dynamic category display
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, []);
+
   const uniqueCategoriesFromDestinations = Array.from(
     new Set(destinations.map((d) => d.destinationCategory))
   ).map((category) => {
@@ -305,7 +302,6 @@ const TourMap: React.FC = () => {
     };
   });
 
-  // Create "All Destinations" category
   const allDestinationsCategory = {
     id: "all",
     name: "All Destinations",
@@ -313,7 +309,6 @@ const TourMap: React.FC = () => {
     image: "",
   };
 
-  // Combine all categories
   const allCategories = [
     allDestinationsCategory,
     ...uniqueCategoriesFromDestinations,
@@ -345,7 +340,7 @@ const TourMap: React.FC = () => {
           </div>
         )}
 
-        {/* Category Selection - Desktop/Laptop (hidden on mobile/tablet) */}
+        {/* Category Selection - Desktop/Laptop */}
         <div className="hidden lg:grid grid-cols-6 gap-6 mb-8">
           {allCategories.map((cat) => {
             const categoryCount =
@@ -450,11 +445,10 @@ const TourMap: React.FC = () => {
               />
             </div>
 
-            {/* Destination Details Card - Desktop Only (Side Panel) */}
+            {/* Destination Details Card - Desktop Only */}
             {selectedDestination && (
               <div className="hidden lg:block w-80 h-[600px] overflow-y-auto relative">
                 <div className="bg-gradient-to-br from-blue-50 to-white rounded-xl shadow-lg p-6">
-                  {/* Close button */}
                   <button
                     onClick={() => setSelectedDestination(null)}
                     className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors z-10"
@@ -493,7 +487,6 @@ const TourMap: React.FC = () => {
                     </span>
                   </div>
 
-                  {/* Images Gallery */}
                   {selectedDestination.destinationImagesForTourMapDtos &&
                     selectedDestination.destinationImagesForTourMapDtos.length >
                       0 && (
@@ -556,11 +549,10 @@ const TourMap: React.FC = () => {
             )}
           </div>
 
-          {/* Destination Details Card - Mobile & Tablet (Below Map) */}
+          {/* Destination Details Card - Mobile & Tablet */}
           {selectedDestination && (
             <div className="lg:hidden mt-4">
               <div className="bg-gradient-to-br from-blue-50 to-white rounded-xl shadow-lg p-4 sm:p-6 relative">
-                {/* Close button */}
                 <button
                   onClick={() => setSelectedDestination(null)}
                   className="absolute top-3 right-3 sm:top-4 sm:right-4 w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors z-10"
@@ -599,7 +591,6 @@ const TourMap: React.FC = () => {
                   </span>
                 </div>
 
-                {/* Images Gallery */}
                 {selectedDestination.destinationImagesForTourMapDtos &&
                   selectedDestination.destinationImagesForTourMapDtos.length >
                     0 && (
@@ -650,8 +641,10 @@ const TourMap: React.FC = () => {
                       Coordinates
                     </p>
                     <p className="text-xs text-gray-500 font-mono">
-                      Lat: {selectedDestination.destinationLatitude.toFixed(4)},
-                      Lng: {selectedDestination.destinationLongitude.toFixed(4)}
+                      Lat:{" "}
+                      {selectedDestination.destinationLatitude.toFixed(4)},
+                      Lng:{" "}
+                      {selectedDestination.destinationLongitude.toFixed(4)}
                     </p>
                   </div>
                 </div>
