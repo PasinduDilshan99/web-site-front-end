@@ -1,3 +1,4 @@
+import LinkBar from "@/components/common-components/linkBar/LinkBar";
 import Accommodations from "./components/accommodations/Accommodations";
 import ActivitiesHome from "./components/activities/ActivitiesHome";
 import ActivityCategoriesHome from "./components/activities/categories/ActivityCategoriesHome";
@@ -11,10 +12,8 @@ import Footer from "./components/footer/Footer";
 import GalleryHome from "./components/gallery/GalleryHome";
 import HeroSection from "./components/heroSection/HeroSection";
 import Inquire from "./components/inquire/Inquire";
-import LinkBar from "./components/linkBar/LinkBar";
-import NavBar from "./components/navBar/NavBar";
 import OurServices from "./components/ourServices/OurServices";
-import PackagesHome from "./components/packages/PackagesHome";
+import PackagesHome from "../components/packages-components/PackagesHome";
 import Partners from "./components/partners/Partners";
 import PromotionsHome from "./components/promotions/PromotionsHome";
 import ReviewsHome from "./components/reviews/ReviewsHome";
@@ -27,6 +26,7 @@ import { UserLevelsWithBenefitsHome } from "./components/user-levels/benefits/Us
 import UserLevelsHome from "./components/user-levels/UserLevelsHome";
 import WhyChooseUs from "./components/whyChooseUs/WhyChooseUs";
 import WorkFlow from "./components/workFlow/WorkFlow";
+import NavBar from "@/components/common-components/navBar/NavBar";
 
 export default function Home() {
   return (

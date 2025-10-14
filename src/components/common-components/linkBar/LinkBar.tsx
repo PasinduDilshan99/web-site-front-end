@@ -6,7 +6,7 @@ import { GET_ALL_LINK_BAR_DATA } from "@/utils/frontEndConstant";
 import { LinkBarItem } from "@/types/link-bar-types";
 import { DEFAULT_ICON_URL } from "@/utils/constant";
 import { FULL, ICON_ONLY } from "../../../../public/data/link-bar-data";
-import Loading from "../loading/Loading";
+import Loading from "../initial-loading/InitialLoading";
 
 const LinkBar = () => {
   const [loading, setLoading] = useState(true);

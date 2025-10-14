@@ -6,11 +6,11 @@ import Slider from "react-slick";
 // Import Slick CSS files
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import SectionHeader from "../common/SectionHeader";
-import Loading from "../common/Loading";
-import { ErrorState } from "../common/ErrorState";
-import { EmptyState } from "../common/EmptyState";
-import AnimatedButton from "../common/AnimatedButton";
+import SectionHeader from "../../../components/common-components/section-header/SectionHeader";
+import Loading from "../../../components/common-components/loading/Loading";
+import { ErrorState } from "../../../components/common-components/error-state/ErrorState";
+import { EmptyState } from "../../../components/common-components/empty-state/EmptyState";
+import AnimatedButton from "../../../components/common-components/buttons/AnimatedButton";
 
 // TypeScript interfaces based on your updated API response
 interface DestinationImage {

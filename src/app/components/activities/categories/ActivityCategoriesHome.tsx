@@ -1,8 +1,8 @@
 "use client";
 import { GET_ACTIVE_ACTIVITIES_CATEGORIES_FE } from "@/utils/frontEndConstant";
 import React, { useEffect, useState } from "react";
-import AnimatedButton from "../../common/AnimatedButton";
-import SectionHeader from "../../common/SectionHeader";
+import AnimatedButton from "../../../../components/common-components/buttons/AnimatedButton";
+import SectionHeader from "../../../../components/common-components/section-header/SectionHeader";
 
 // Updated interfaces based on new API response
 interface CategoryImage {

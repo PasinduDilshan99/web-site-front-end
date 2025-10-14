@@ -24,27 +24,47 @@ const PLAN_YOUR_TRIP = "/plan-your-trip";
 
 
 export const GET_ALL_LINK_BAR_DATA = `${API}${LINK_BAR}`;
+
 export const GET_ALL_NAV_BAR_DATA = `${API}${NAV_BAR}`;
+
 export const GET_ALL_HERO_SECTION_DATA = `${API}${HERO_SECTION}`;
+
 export const GET_ALL_WHY_CHOOSE_US_DATA = `${API}${WHY_CHOOSE_US}`;
+
 export const GET_ALL_FAQ_DATA = `${API}${FAQ}`;
+
 export const UPDATE_FAQ_VIEW_COUNT = `${API}${FAQ}/update-view-count`;
+
 export const GET_ALL_PARTNERS = `${API}${PARTNERS}`;
+
 export const GET_ALL_OUR_SERVICES = `${API}${OUR_SERVICES}`;
+
 export const GET_ACTIVE_WORK_FLOW_STEPS = `${API}${WORK_FLOW}`;
+
 export const GET_AVAILABLE_ACCOMMODATION = `${API}${ACCOMMODATION}`;
+
 export const GET_ALL_DESTINATIONS_CATEGORIES = `${API}${DESTINATIONS}${CATEGORIES}`;
 export const GET_POPULAR_DESTINATIONS = `${API}${DESTINATIONS}/popular-destinations`;
 export const GET_ACTIVE_DESTINATIONS_FE = `${API}${DESTINATIONS}`;
 export const GET_TRENDING_DESTINATIONS = `${API}${DESTINATIONS}/trending-destinations`;
 export const GET_NEW_DESTINATIONS = `${API}${DESTINATIONS}/new-destinations`;
+export const GET_DESTINATIONS_DETAILS_BY_TOUR_ID_FE =  `${API}${DESTINATIONS}/destinations-by-tour-id`;
+
 export const GET_ACTIVE_DESTINATIONS_LOCATIONS_FE = `${API}${DESTINATIONS}/locations-for-map`;
 export const GET_ACTIVE_DESTINATIONS_LOCATIONS_CATEGORIES_FE = `${API}${DESTINATIONS}/locations-categories`;
+
 export const GET_ALL_ACTIVE_BLOGS = `${API}${BLOGS}`;
+
 export const GET_ALL_ACTIVE_TOUR_FE = `${API}${TOUR}`;
+
 export const GET_POPULAR_TOUR_FE = `${API}${TOUR}/popular`;
+export const GET_TOUR_DETAILS_BY_ID_FE = `${API}${TOUR}/details-by-id`;
+
 export const GET_ALL_ACTIVE_PACKAGES_FE = `${API}${PACKAGES}`;
+export const GET_PACKAGE_DETAILS_BY_ID_FE = `${API}${PACKAGES}`;
+
 export const GET_ALL_ACTIVE_REVIEW_FE = `${API}${REVIEW}`;
+
 export const GET_ALL_ACTIVE_USER_LEVEL_FE = `${API}${USER_LEVEL}`;
 export const GET_ALL_ACTIVE_USER_LEVEL_WITH_BENEFITS_FE = `${API}${USER_LEVEL}/benefits`;
 export const GET_ALL_ACTIVE_USER_BENEFITS_FE = `${API}${USER_BENEFITS}`;

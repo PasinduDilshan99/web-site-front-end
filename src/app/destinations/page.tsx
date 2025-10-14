@@ -12,7 +12,7 @@ import {
 import NavBar from "../components/navBar/NavBar";
 import Footer from "../components/footer/Footer";
 import { GET_ACTIVE_DESTINATIONS_FE } from "@/utils/frontEndConstant";
-import AnimatedButton from "../components/common/AnimatedButton";
+import AnimatedButton from "../../components/common-components/buttons/AnimatedButton";
 
 interface Activity {
   activityId: number;

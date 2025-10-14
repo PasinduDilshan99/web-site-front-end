@@ -5,7 +5,7 @@ import { GET_ALL_NAV_BAR_DATA } from "@/utils/frontEndConstant";
 import Link from "next/link";
 import { COMPANY_NAME } from "@/utils/constant";
 import Image from "next/image";
-import Loading from "../loading/Loading";
+import Loading from "../initial-loading/InitialLoading";
 
 interface User {
   id: string;

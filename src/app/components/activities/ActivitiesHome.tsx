@@ -1,11 +1,11 @@
 "use client";
 import { GET_ACTIVE_ACTIVITIES_FE } from "@/utils/frontEndConstant";
 import React, { useEffect, useState } from "react";
-import { EmptyState } from "../common/EmptyState";
-import { ErrorState } from "../common/ErrorState";
-import Loading from "../common/Loading";
-import AnimatedButton from "../common/AnimatedButton";
-import SectionHeader from "../common/SectionHeader";
+import { EmptyState } from "../../../components/common-components/empty-state/EmptyState";
+import { ErrorState } from "../../../components/common-components/error-state/ErrorState";
+import Loading from "../../../components/common-components/loading/Loading";
+import AnimatedButton from "../../../components/common-components/buttons/AnimatedButton";
+import SectionHeader from "../../../components/common-components/section-header/SectionHeader";
 
 interface Schedule {
   id: number;

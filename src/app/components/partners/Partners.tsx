@@ -2,9 +2,9 @@
 import { GET_ALL_PARTNERS } from "@/utils/frontEndConstant";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import Loading from "../common/Loading";
-import { ErrorState } from "../common/ErrorState";
-import { EmptyState } from "../common/EmptyState";
+import Loading from "../../../components/common-components/loading/Loading";
+import { ErrorState } from "../../../components/common-components/error-state/ErrorState";
+import { EmptyState } from "../../../components/common-components/empty-state/EmptyState";
 
 interface PartnerType {
   partnerId: number;

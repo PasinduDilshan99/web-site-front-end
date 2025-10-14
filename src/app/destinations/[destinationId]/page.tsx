@@ -1,4 +1,4 @@
-import UnderConstructionPage from "@/app/components/under-construction/UnderConstruction";
+import UnderConstructionPage from "@/components/common-components/under-construction/UnderConstruction";
 import React from "react";
 
 const page = () => {

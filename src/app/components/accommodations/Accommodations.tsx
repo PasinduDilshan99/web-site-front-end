@@ -2,8 +2,8 @@
 import { GET_AVAILABLE_ACCOMMODATION } from "@/utils/frontEndConstant";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import SectionHeader from "../common/SectionHeader";
-import AnimatedButton from "../common/AnimatedButton";
+import SectionHeader from "../../../components/common-components/section-header/SectionHeader";
+import AnimatedButton from "../../../components/common-components/buttons/AnimatedButton";
 
 // Interface for accommodation based on your API response
 interface AccommodationsType {

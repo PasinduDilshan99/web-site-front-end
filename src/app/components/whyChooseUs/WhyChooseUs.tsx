@@ -3,10 +3,10 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { WhyChooseUsCardAPI } from "@/types/why-choose-us-types";
 import { GET_ALL_WHY_CHOOSE_US_DATA } from "@/utils/frontEndConstant";
-import { ErrorState } from "../common/ErrorState";
-import { EmptyState } from "../common/EmptyState";
-import Loading from "../common/Loading";
-import AnimatedButton from "../common/AnimatedButton";
+import { ErrorState } from "../../../components/common-components/error-state/ErrorState";
+import { EmptyState } from "../../../components/common-components/empty-state/EmptyState";
+import Loading from "../../../components/common-components/loading/Loading";
+import AnimatedButton from "../../../components/common-components/buttons/AnimatedButton";
 
 // Import state components
 
