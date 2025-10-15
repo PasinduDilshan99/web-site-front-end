@@ -121,6 +121,11 @@ export interface Activity {
   season: string;
 }
 
+// Add this extended interface
+export interface ExtendedActivity extends Activity {
+  destinationName: string;
+  destinationId: number;
+}
 export interface DestinationImage {
   imageId: number;
   imageName: string;
@@ -140,4 +145,75 @@ export interface Destination {
   statusName: string;
   activities: Activity[];
   images: DestinationImage[];
+}
+
+export interface ReviewImage {
+  id: number;
+  name: string;
+  description: string;
+  imageUrl: string;
+  status: string;
+  createdBy: number;
+  createdAt: string;
+}
+
+export interface ReviewReaction {
+  id: number;
+  packageReviewId: number;
+  userId: number;
+  userName: string;
+  reactionType: string;
+  status: string;
+  createdAt: string;
+}
+
+export interface CommentReaction {
+  id: number;
+  commentId: number;
+  userId: number;
+  userName: string;
+  reactionType: string;
+  status: string;
+  createdBy: number;
+  createdAt: string;
+}
+
+export interface ReviewComment {
+  id: number;
+  packageReviewId: number;
+  userId: number;
+  userName: string;
+  parentCommentId: number;
+  comment: string;
+  status: string;
+  createdAt: string;
+  createdBy: number;
+  reactions: CommentReaction[];
+}
+
+export interface PackageReview {
+  reviewId: number;
+  packageId: number;
+  packageScheduleId: number;
+  name: string;
+  review: string;
+  rating: number;
+  description: string;
+  status: string;
+  numberOfParticipate: number;
+  createdBy: number;
+  createdAt: string;
+  updatedBy: number;
+  updatedAt: string;
+  images: ReviewImage[];
+  reactions: ReviewReaction[];
+  comments: ReviewComment[];
+}
+
+export interface ReviewsResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: PackageReview[];
+  timestamp: string;
 }

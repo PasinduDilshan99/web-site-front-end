@@ -1,25 +1,32 @@
 "use client";
 
+import Footer from "@/app/components/footer/Footer";
 import { EmptyState } from "@/components/common-components/empty-state/EmptyState";
 import { ErrorState } from "@/components/common-components/error-state/ErrorState";
 import Loading from "@/components/common-components/loading/Loading";
+import NavBar from "@/components/common-components/navBar/NavBar";
+import ActivitiesSection from "@/components/packages-components/ActivitiesSection";
 import BookingSection from "@/components/packages-components/BookingSection";
 import DestinationsSection from "@/components/packages-components/DestinationsSection";
 import PackageGallery from "@/components/packages-components/PackageGallery";
 import PackageHeader from "@/components/packages-components/PackageHeader";
 import PackageInfo from "@/components/packages-components/PackageInfo";
+import ReviewsSection from "@/components/packages-components/ReviewsSection";
 import TourDetailsSection from "@/components/packages-components/TourDetailsSection";
 import {
   Destination,
   TourDetails,
   ActivePackagesType,
   ApiResponse,
+  ExtendedActivity,
+  PackageReview,
+  ReviewsResponse, // Import ExtendedActivity instead of Activity
 } from "@/types/packages-types";
 import {
-  GET_DESTINATIONS_DETAILS_BY_TOUR_ID_FE,
-  GET_PACKAGE_DETAILS_BY_ID_FE,
-  GET_TOUR_DETAILS_BY_ID_FE,
-} from "@/utils/frontEndConstant";
+  GET_DESTINATIONS_DETAILS_BY_TOUR_ID_BE,
+  GET_PACKAGE_DETAILS_BY_ID_BE,
+  GET_TOUR_DETAILS_BY_ID_BE,
+} from "@/utils/backEndConstant";
 import { useParams } from "next/navigation";
 import React, { useState, useEffect } from "react";
 
@@ -32,11 +39,16 @@ const PackagePage = () => {
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [reviews, setReviews] = useState<PackageReview[]>([]); // New state for reviews
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [allActivities, setAllActivities] = useState<ExtendedActivity[]>([]); // Change to ExtendedActivity[]
+  const [reviewsLoading, setReviewsLoading] = useState<boolean>(false); // Separate loading for reviews
+  const [reviewsError, setReviewsError] = useState<string | null>(null);
 
   useEffect(() => {
     if (packageId) {
       fetchPackageData();
+      fetchReviews(); // Fetch reviews when component mounts
     }
   }, [packageId]);
 
@@ -45,25 +57,12 @@ const PackagePage = () => {
       setLoading(true);
       setError(null);
 
-      // Fetch package details using POST
-      const packageResponse = await fetch(GET_PACKAGE_DETAILS_BY_ID_FE, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ packageId })
-      });
-      
-      console.log('Package API Response status:', packageResponse.status);
-      
-      if (!packageResponse.ok) {
-        throw new Error(`HTTP error! status: ${packageResponse.status}`);
-      }
-      
+      // Fetch package details
+      const packageResponse = await fetch(
+        `${GET_PACKAGE_DETAILS_BY_ID_BE}/${packageId}`
+      );
       const packageResult: ApiResponse<ActivePackagesType> =
         await packageResponse.json();
-
-      console.log('Package API Response:', packageResult);
 
       if (packageResult.code !== 200) {
         throw new Error(
@@ -71,66 +70,38 @@ const PackagePage = () => {
         );
       }
 
-      if (!packageResult.data) {
-        throw new Error("No package data received");
-      }
-
-      console.log('Package Data:', packageResult.data);
-      console.log('Tour ID from package:', packageResult.data.tourId);
-
       setPackageData(packageResult.data);
 
-      // Check if tourId exists and is valid
-      if (!packageResult.data.tourId) {
-        console.warn('No tourId found in package data');
-        return;
-      }
-
-      // Fetch tour details using POST
-      const tourResponse = await fetch(GET_TOUR_DETAILS_BY_ID_FE, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ tourId: packageResult.data.tourId })
-      });
-      
-      console.log('Tour API Response status:', tourResponse.status);
-      
-      if (!tourResponse.ok) {
-        throw new Error(`HTTP error! status: ${tourResponse.status}`);
-      }
-      
+      // Fetch tour details using tourId from package
+      const tourResponse = await fetch(
+        `${GET_TOUR_DETAILS_BY_ID_BE}/${packageResult.data.tourId}`
+      );
       const tourResult: ApiResponse<TourDetails> = await tourResponse.json();
-
-      console.log('Tour API Response:', tourResult);
 
       if (tourResult.code === 200) {
         setTourData(tourResult.data);
       }
 
-      // Fetch destinations using POST
-      const destinationsResponse = await fetch(GET_DESTINATIONS_DETAILS_BY_TOUR_ID_FE, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ tourId: packageResult.data.tourId })
-      });
-      
-      console.log('Destinations API Response status:', destinationsResponse.status);
-      
-      if (!destinationsResponse.ok) {
-        throw new Error(`HTTP error! status: ${destinationsResponse.status}`);
-      }
-      
+      // Fetch destinations for the tour
+      const destinationsResponse = await fetch(
+        `${GET_DESTINATIONS_DETAILS_BY_TOUR_ID_BE}/${packageResult.data.tourId}`
+      );
       const destinationsResult: ApiResponse<Destination[]> =
         await destinationsResponse.json();
 
-      console.log('Destinations API Response:', destinationsResult);
-
       if (destinationsResult.code === 200) {
         setDestinations(destinationsResult.data);
+
+        // Create ExtendedActivity objects with destination information
+        const activities: ExtendedActivity[] = destinationsResult.data.flatMap(
+          (destination) =>
+            destination.activities.map((activity) => ({
+              ...activity,
+              destinationName: destination.destinationName,
+              destinationId: destination.destinationId,
+            }))
+        );
+        setAllActivities(activities);
       }
     } catch (err) {
       console.error("Error fetching package data:", err);
@@ -144,8 +115,41 @@ const PackagePage = () => {
     }
   };
 
+  const handleReviewsRetry = () => {
+    setReviewsError(null);
+    fetchReviews();
+  };
+
+  const fetchReviews = async (): Promise<void> => {
+    try {
+      setReviewsLoading(true);
+      setReviewsError(null);
+
+      const response = await fetch(
+        `http://localhost:8080/felicita/v0/api/package/reviews/${packageId}`
+      );
+      const result: ReviewsResponse = await response.json();
+
+      if (result.code === 200) {
+        setReviews(result.data);
+      } else {
+        throw new Error(result.message);
+      }
+    } catch (err) {
+      setReviewsError(
+        err instanceof Error
+          ? err.message
+          : "An error occurred while fetching reviews"
+      );
+    } finally {
+      setReviewsLoading(false);
+    }
+  };
+
   const handleRetry = () => {
-    fetchPackageData();
+    setError(null);
+    setLoading(true);
+    window.location.reload();
   };
 
   if (loading) {
@@ -199,40 +203,57 @@ const PackagePage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header Section */}
-      <PackageHeader packageData={packageData} />
+    <>
+      <NavBar />
+      <div className="min-h-screen bg-gray-50">
+        {/* Header Section */}
+        <PackageHeader packageData={packageData} />
 
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Gallery and Info */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Image Gallery */}
-            <PackageGallery
-              images={allImages}
-              selectedImageIndex={selectedImageIndex}
-              onImageSelect={setSelectedImageIndex}
-            />
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left Column - Gallery and Info */}
+            <div className="lg:col-span-2 space-y-8">
+              {/* Image Gallery */}
+              <PackageGallery
+                images={allImages}
+                selectedImageIndex={selectedImageIndex}
+                onImageSelect={setSelectedImageIndex}
+              />
 
-            {/* Package Information */}
-            <PackageInfo packageData={packageData} />
+              {/* Package Information */}
+              <PackageInfo packageData={packageData} />
 
-            {/* Tour Details */}
-            {tourData && <TourDetailsSection tourData={tourData} />}
+              {/* Activities Section */}
+              {/* {allActivities.length > 0 && (
+              <ActivitiesSection activities={allActivities} />
+            )} */}
 
-            {/* Destinations */}
-            {destinations.length > 0 && (
-              <DestinationsSection destinations={destinations} />
-            )}
+              {/* Tour Details */}
+              {tourData && <TourDetailsSection tourData={tourData} />}
+
+              {/* Destinations */}
+              {destinations.length > 0 && (
+                <DestinationsSection destinations={destinations} />
+              )}
+            </div>
+
+            {/* Right Column - Booking Card */}
+            <div className="lg:col-span-1">
+              <BookingSection packageData={packageData} />
+            </div>
           </div>
-
-          {/* Right Column - Booking Card */}
-          <div className="lg:col-span-1">
-            <BookingSection packageData={packageData} />
+          <div className="mt-8">
+            <ReviewsSection
+              reviews={reviews}
+              loading={reviewsLoading}
+              error={reviewsError}
+              onRetry={handleReviewsRetry}
+            />
           </div>
         </div>
       </div>
-    </div>
+      <Footer />
+    </>
   );
 };
 

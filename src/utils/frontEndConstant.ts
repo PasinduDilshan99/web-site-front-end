@@ -62,6 +62,7 @@ export const GET_TOUR_DETAILS_BY_ID_FE = `${API}${TOUR}/details-by-id`;
 
 export const GET_ALL_ACTIVE_PACKAGES_FE = `${API}${PACKAGES}`;
 export const GET_PACKAGE_DETAILS_BY_ID_FE = `${API}${PACKAGES}`;
+export const GET_PACKAGE_REVIEWS_FE = `${API}${PACKAGES}/reviews`;
 
 export const GET_ALL_ACTIVE_REVIEW_FE = `${API}${REVIEW}`;
 

@@ -9,10 +9,10 @@ import {
   DollarSign,
   X,
 } from "lucide-react";
-import NavBar from "../components/navBar/NavBar";
 import Footer from "../components/footer/Footer";
 import { GET_ACTIVE_DESTINATIONS_FE } from "@/utils/frontEndConstant";
 import AnimatedButton from "../../components/common-components/buttons/AnimatedButton";
+import NavBar from "@/components/common-components/navBar/NavBar";
 
 interface Activity {
   activityId: number;

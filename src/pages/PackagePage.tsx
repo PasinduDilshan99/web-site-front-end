@@ -5,19 +5,27 @@ import {
   ActivePackagesType,
   ApiResponse,
   Filters,
+  PackageReview,
+  ReviewsResponse,
 } from "@/types/packages-types";
 import Loading from "@/components/common-components/loading/Loading";
 import { ErrorState } from "@/components/common-components/error-state/ErrorState";
 import FilterSection from "@/components/packages-components/FilterSection";
 import PackageGrid from "@/components/packages-components/PackageGrid";
+import ReviewsSection from "@/components/packages-components/ReviewsSection"; // New component
+import NavBar from "@/components/common-components/navBar/NavBar";
+import Footer from "@/app/components/footer/Footer";
 
 const PackagePage: React.FC = () => {
   const [packages, setPackages] = useState<ActivePackagesType[]>([]);
   const [filteredPackages, setFilteredPackages] = useState<
     ActivePackagesType[]
   >([]);
+  const [reviews, setReviews] = useState<PackageReview[]>([]); // New state for reviews
   const [loading, setLoading] = useState<boolean>(true);
+  const [reviewsLoading, setReviewsLoading] = useState<boolean>(false); // Separate loading for reviews
   const [error, setError] = useState<string | null>(null);
+  const [reviewsError, setReviewsError] = useState<string | null>(null); // Separate error for reviews
 
   // Filter states
   const [filters, setFilters] = useState<Filters>({
@@ -41,6 +49,7 @@ const PackagePage: React.FC = () => {
 
   useEffect(() => {
     fetchPackages();
+    fetchReviews(); // Fetch reviews when component mounts
   }, []);
 
   useEffect(() => {
@@ -61,6 +70,32 @@ const PackagePage: React.FC = () => {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchReviews = async (): Promise<void> => {
+    try {
+      setReviewsLoading(true);
+      setReviewsError(null);
+
+      const response = await fetch(
+        "http://localhost:8080/felicita/v0/api/package/reviews"
+      );
+      const result: ReviewsResponse = await response.json();
+
+      if (result.code === 200) {
+        setReviews(result.data);
+      } else {
+        throw new Error(result.message);
+      }
+    } catch (err) {
+      setReviewsError(
+        err instanceof Error
+          ? err.message
+          : "An error occurred while fetching reviews"
+      );
+    } finally {
+      setReviewsLoading(false);
     }
   };
 
@@ -156,6 +191,11 @@ const PackagePage: React.FC = () => {
     window.location.reload();
   };
 
+  const handleReviewsRetry = () => {
+    setReviewsError(null);
+    fetchReviews();
+  };
+
   if (loading) {
     return (
       <Loading
@@ -185,46 +225,60 @@ const PackagePage: React.FC = () => {
   }
 
   return (
-    <div className="mx-auto px-4 py-8 bg-gradient-to-br from-purple-100 via-purple-100 to-amber-100">
-      {/* Page Header */}
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Tour Packages</h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Discover amazing travel experiences tailored for you
-        </p>
-      </div>
-
-      {/* Filters Section */}
-      <FilterSection
-        filters={filters}
-        onFilterChange={handleFilterChange}
-        onResetFilters={resetFilters}
-        packageTypes={packageTypes}
-        locations={locations}
-        durations={durations}
-      />
-
-      {/* Results Section */}
-      <div className="mb-8">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-2xl font-semibold text-gray-900">
-            {filteredPackages.length} Package
-            {filteredPackages.length !== 1 ? "s" : ""} Found
-          </h3>
+    <>
+      <NavBar />
+      <div className="mx-auto px-4 py-8 bg-gradient-to-br from-purple-100 via-purple-100 to-amber-100">
+        {/* Page Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Tour Packages
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Discover amazing travel experiences tailored for you
+          </p>
         </div>
 
-        {/* Packages Grid */}
-        {filteredPackages.length > 0 ? (
-          <PackageGrid
-            packages={filteredPackages}
-            displayCount={filteredPackages.length}
-            showViewDetails={true}
-          />
-        ) : (
-          <NoResults onResetFilters={resetFilters} />
-        )}
+        {/* Filters Section */}
+        <FilterSection
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          onResetFilters={resetFilters}
+          packageTypes={packageTypes}
+          locations={locations}
+          durations={durations}
+        />
+
+        {/* Results Section */}
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-2xl font-semibold text-gray-900">
+              {filteredPackages.length} Package
+              {filteredPackages.length !== 1 ? "s" : ""} Found
+            </h3>
+          </div>
+
+          {/* Packages Grid */}
+          {filteredPackages.length > 0 ? (
+            <PackageGrid
+              packages={filteredPackages}
+              displayCount={filteredPackages.length}
+              showViewDetails={true}
+            />
+          ) : (
+            <NoResults onResetFilters={resetFilters} />
+          )}
+        </div>
+
+        {/* Reviews Section */}
+        <ReviewsSection
+          reviews={reviews}
+          loading={reviewsLoading}
+          error={reviewsError}
+          onRetry={handleReviewsRetry}
+        />
       </div>
-    </div>
+      <Footer />
+    </>
   );
 };
 

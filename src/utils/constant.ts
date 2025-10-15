@@ -14,3 +14,7 @@ export const PACKAGES_HEADER_SECTION_DESCRIPTION =
   "Discover amazing travel experiences with our carefully curated packages.";
 
 export const PACKAGES_IMAGES_TIME_INTERVAL = 3000;
+export const REVIEWS_SECTION_SUB_TITLE = "CUSTOMER FEEDBACK";
+export const REVIEWS_SECTION_TITLE = "What Our Travelers Say";
+export const REVIEWS_SECTION_DESCRIPTION =
+  "Read genuine reviews from travelers who have experienced our packages firsthand";

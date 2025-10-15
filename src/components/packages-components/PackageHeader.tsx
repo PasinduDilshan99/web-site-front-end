@@ -21,7 +21,7 @@ const PackageHeader: React.FC<PackageHeaderProps> = ({ packageData }) => {
     <div 
       className="bg-gradient-to-r from-purple-600 to-amber-600 text-white py-12"
       style={{
-        background: `linear-gradient(135deg, ${packageData.color}20, ${packageData.hoverColor}20)`,
+        background: `linear-gradient(135deg, ${packageData.color}60, ${packageData.hoverColor}60)`,
       }}
     >
       <div className="container mx-auto px-4 max-w-7xl">
