@@ -1,6 +1,6 @@
 import React from "react";
 import { EnhancedDestination } from "@/types/destinations-types";
-import DestinationCard from "../DestinationCard";
+import DestinationCard from "./DestinationCard";
 
 interface DestinationsGridProps {
   destinations: EnhancedDestination[];
