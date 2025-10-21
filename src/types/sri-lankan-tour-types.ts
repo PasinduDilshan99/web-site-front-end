@@ -53,3 +53,79 @@ export interface TourFilters {
   season: string;
   location: string;
 }
+
+
+// types/sri-lankan-tour-types.ts
+export interface ReviewImage {
+  imageId: number;
+  imageName: string;
+  imageDescription: string;
+  imageUrl: string;
+  imageStatus: string;
+  imageCreatedBy: number;
+  imageCreatedAt: string;
+  isPrimary?: boolean;
+}
+
+export interface ReviewReaction {
+  reviewReactionId: number;
+  reactionReviewId: number;
+  reactionUserId: number;
+  reactionUserName: string;
+  reactionType: string;
+  reviewReactionStatus: string;
+  reactionCreatedAt: string;
+}
+
+export interface CommentReaction {
+  commentReactionId: number;
+  commentReactionCommentId: number;
+  commentReactionUserId: number;
+  commentReactionUserName: string;
+  commentReactionType: string;
+  commentReactionStatus: string;
+  commentReactionCreatedBy: number;
+  commentReactionCreatedAt: string;
+}
+
+export interface ReviewComment {
+  commentId: number;
+  commentReviewId: number;
+  commentUserId: number;
+  commentUserName: string;
+  parentCommentId: number | null;
+  comment: string;
+  commentStatus: string;
+  commentCreatedAt: string;
+  commentCreatedBy: number;
+  commentReactions: CommentReaction[];
+}
+
+export interface TourReview {
+  reviewId: number;
+  tourScheduleId: number;
+  tourId: number;
+  tourName: string;
+  reviewName: string;
+  review: string;
+  rating: number;
+  reviewDescription: string;
+  reviewStatus: string;
+  numberOfParticipate: number;
+  reviewCreatedBy: number;
+  reviewCreatedUser: string;
+  reviewCreatedAt: string;
+  reviewUpdatedBy: number | null;
+  reviewUpdatedAt: string;
+  images: ReviewImage[];
+  reactions: ReviewReaction[];
+  comments: ReviewComment[];
+}
+
+export interface ReviewsResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: TourReview[];
+  timestamp: string;
+}

@@ -1,5 +1,6 @@
 import { EnhancedDestination } from "@/types/destinations-types";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface DestinationCardProps {
   destination: EnhancedDestination;
@@ -7,6 +8,7 @@ interface DestinationCardProps {
 
 const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const router = useRouter();
 
   const discount = getDiscountPercentage(destination.destinationId);
   const duration = getTourDuration(destination.destinationId);
@@ -15,6 +17,10 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
 
   const handleImageSwitch = (imageIndex: number) => {
     setActiveImageIndex(imageIndex);
+  };
+
+  const handleExploreClick = () => {
+    router.push(`/destinations/${destination.destinationId}`);
   };
 
   return (
@@ -187,7 +193,10 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
             </span>
           </div>
 
-          <button className="bg-purple-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
+          <button
+            onClick={handleExploreClick}
+            className="bg-purple-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+          >
             Explore
           </button>
         </div>

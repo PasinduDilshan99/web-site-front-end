@@ -10,14 +10,83 @@ import ActivitiesGrid from "@/components/activities-components/ActivitiesGrid";
 import NavBar from "@/components/common-components/navBar/NavBar";
 import Footer from "@/app/components/footer/Footer";
 import FilterSection from "@/components/activities-components/FilterSection";
+import ReviewsSection from "@/components/activities-components/ReviewsSection";
+
+// Review types (move these to a types file if needed)
+interface CommentReaction {
+  commentReactionId: number;
+  commentReactionCommentId: number;
+  userId: number;
+  userName: string;
+  commentReactionType: string;
+  commentReactionStatus: string;
+  commentReactionCreatedBy: number;
+  commentReactionCreatedAt: string;
+}
+
+interface Comment {
+  commentId: number;
+  commentReviewId: number;
+  userId: number;
+  userName: string;
+  parentCommentId: number | null;
+  comment: string;
+  commentStatus: string;
+  commentCreatedAt: string;
+  commentCreatedBy: number;
+  commentReactions: CommentReaction[];
+}
+
+interface Reaction {
+  reviewReactionId: number;
+  reactionReviewId: number;
+  userId: number;
+  userName: string;
+  reactionType: string;
+  reviewReactionStatus: string;
+  reactionCreatedAt: string;
+}
+
+interface ReviewImage {
+  imageId: number;
+  imageName: string;
+  imageDescription: string;
+  imageUrl: string;
+  imageStatus: string;
+  imageCreatedBy: number;
+  imageCreatedAt: string;
+}
+
+export interface Review {
+  reviewId: number;
+  activityScheduleId: number;
+  activityId: number;
+  activityName: string;
+  reviewName: string;
+  review: string;
+  rating: number;
+  description: string;
+  reviewStatus: string;
+  numberOfParticipate: number;
+  reviewCreatedBy: number;
+  reviewCreatedAt: string;
+  reviewUpdatedBy: number | null;
+  reviewUpdatedAt: string;
+  images: ReviewImage[];
+  reactions: Reaction[];
+  comments: Comment[];
+}
 
 const ActivityPage: React.FC = () => {
   const [activities, setActivities] = useState<ActiveActivitiesType[]>([]);
   const [filteredActivities, setFilteredActivities] = useState<
     ActiveActivitiesType[]
   >([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [reviewsLoading, setReviewsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [reviewsError, setReviewsError] = useState<string | null>(null);
 
   // Filter states
   const [filters, setFilters] = useState<ActivityFilters>({
@@ -57,6 +126,7 @@ const ActivityPage: React.FC = () => {
 
   useEffect(() => {
     fetchActivities();
+    fetchReviews();
   }, []);
 
   useEffect(() => {
@@ -79,6 +149,27 @@ const ActivityPage: React.FC = () => {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchReviews = async (): Promise<void> => {
+    try {
+      const response = await fetch(
+        "http://localhost:8080/felicita/api/v0/activities/reviews"
+      );
+      const result = await response.json();
+
+      if (result.code === 200) {
+        setReviews(result.data);
+      } else {
+        throw new Error(result.message);
+      }
+    } catch (err) {
+      setReviewsError(
+        err instanceof Error ? err.message : "Failed to load reviews"
+      );
+    } finally {
+      setReviewsLoading(false);
     }
   };
 
@@ -245,8 +336,12 @@ const ActivityPage: React.FC = () => {
           )}
         </div>
 
-        {/* Reviews Section - To be implemented later */}
-        {/* <ReviewsSection /> */}
+        {/* Reviews Section */}
+        <ReviewsSection
+          reviews={reviews}
+          loading={reviewsLoading}
+          error={reviewsError}
+        />
       </div>
       <Footer />
     </>

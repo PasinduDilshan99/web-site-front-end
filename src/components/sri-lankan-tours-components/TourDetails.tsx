@@ -1,6 +1,7 @@
 // components/TourDetails.tsx
 import { ActiveToursType } from "@/types/sri-lankan-tour-types";
 import React from "react";
+import Link from "next/link";
 
 interface TourDetailsProps {
   tour: ActiveToursType;
@@ -82,9 +83,12 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
             ${price}
           </span>
         </div>
-        <button className="bg-gradient-to-r from-amber-600 to-purple-600 hover:from-purple-700 hover:to-amber-700 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg">
+        <Link
+          href={`/sri-lankan-tours/${tour.tourId}`}
+          className="bg-gradient-to-r from-amber-600 to-purple-600 hover:from-purple-700 hover:to-amber-700 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
+        >
           BOOK NOW
-        </button>
+        </Link>
       </div>
 
       {/* Tour Type and Category Badges */}

@@ -2,12 +2,14 @@
 import React from "react";
 import ActivityImageSlideshow from "./ActivityImageSlideshow";
 import { ActiveActivitiesType } from "@/types/activities-types";
+import { useRouter } from "next/navigation";
 
 interface ActivityCardProps {
   activity: ActiveActivitiesType;
 }
 
 const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
+  const router = useRouter();
   // Format date
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -29,6 +31,10 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
       colors[status as keyof typeof colors] ||
       "bg-gray-100 text-gray-800 border border-gray-200"
     );
+  };
+
+  const handleBookNow = () => {
+    router.push(`/activities/${activity.id}`);
   };
 
   // Parse seasons
@@ -265,7 +271,10 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
         </div>
 
         {/* Action Button */}
-        <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 sm:py-3 rounded-lg sm:rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 text-sm sm:text-base">
+        <button
+          onClick={handleBookNow}
+          className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 sm:py-3 rounded-lg sm:rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 text-sm sm:text-base"
+        >
           Book Now
         </button>
       </div>

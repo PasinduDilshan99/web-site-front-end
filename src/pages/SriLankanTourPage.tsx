@@ -7,6 +7,7 @@ import NavBar from "@/components/common-components/navBar/NavBar";
 import Footer from "@/app/components/footer/Footer";
 import FilterSection from "@/components/sri-lankan-tours-components/FilterSection";
 import ToursGrid from "@/components/sri-lankan-tours-components/ToursGrid";
+import ReviewsSection from "@/components/sri-lankan-tours-components/ReviewsSection";
 
 const SriLankanTourPage: React.FC = () => {
   const [tours, setTours] = useState<ActiveToursType[]>([]);
@@ -236,7 +237,7 @@ const SriLankanTourPage: React.FC = () => {
         </div>
 
         {/* Reviews Section - To be implemented later */}
-        {/* <ReviewsSection /> */}
+         <ReviewsSection />
       </div>
       <Footer />
     </>

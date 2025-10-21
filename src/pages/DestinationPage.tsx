@@ -11,14 +11,81 @@ import NavBar from "@/components/common-components/navBar/NavBar";
 import Footer from "@/app/components/footer/Footer";
 import FilterSection from "@/components/destinations-components/active-destinations/FilterSection";
 import DestinationsGrid from "@/components/destinations-components/active-destinations/DestinationsGrid";
+import ReviewsSection from "@/components/destinations-components/ReviewsSection";
+
+// Review types (move these to a types file if needed)
+interface Image {
+  imageId: number;
+  imageName: string;
+  imageDescription: string;
+  imageUrl: string;
+  imageStatus: string;
+  imageCreatedBy: number;
+  imageCreatedAt: string;
+}
+
+interface ReviewReaction {
+  reviewReactionId: number;
+  reactionReviewId: number;
+  reactionUserId: number;
+  reactionUserName: string;
+  reactionType: string;
+  reviewReactionStatus: string;
+  reactionCreatedAt: string;
+}
+
+interface CommentReaction {
+  commentReactionId: number;
+  commentReactionCommentId: number;
+  commentReactionUserId: number;
+  commentReactionUserName: string;
+  commentReactionType: string;
+  commentReactionStatus: string;
+  commentReactionCreatedBy: number;
+  commentReactionCreatedAt: string;
+}
+
+interface Comment {
+  commentId: number;
+  commentReviewId: number;
+  commentUserId: number;
+  commentUserName: string;
+  parentCommentId: number | null;
+  commentText: string;
+  commentStatus: string;
+  commentCreatedAt: string;
+  commentCreatedBy: number;
+  commentReactions: CommentReaction[];
+}
+
+export interface Review {
+  reviewId: number;
+  destinationId: number;
+  destinationName: string;
+  reviewUserId: number;
+  reviewUserName: string;
+  reviewText: string;
+  reviewRating: number;
+  reviewStatus: string;
+  reviewCreatedBy: number;
+  reviewCreatedAt: string;
+  reviewUpdatedBy: number;
+  reviewUpdatedAt: string;
+  images: Image[];
+  reactions: ReviewReaction[];
+  comments: Comment[];
+}
 
 const DestinationPage: React.FC = () => {
   const [destinations, setDestinations] = useState<EnhancedDestination[]>([]);
   const [filteredDestinations, setFilteredDestinations] = useState<
     EnhancedDestination[]
   >([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [reviewsLoading, setReviewsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [reviewsError, setReviewsError] = useState<string | null>(null);
 
   // Filter states
   const [filters, setFilters] = useState<Filters>({
@@ -51,6 +118,7 @@ const DestinationPage: React.FC = () => {
 
   useEffect(() => {
     fetchDestinations();
+    fetchReviews();
   }, []);
 
   useEffect(() => {
@@ -81,6 +149,25 @@ const DestinationPage: React.FC = () => {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchReviews = async (): Promise<void> => {
+    try {
+      const response = await fetch(
+        "http://localhost:8080/felicita/v0/api/destination/reviews"
+      );
+      const result = await response.json();
+
+      if (result.code === 200) {
+        setReviews(result.data);
+      } else {
+        throw new Error(result.message);
+      }
+    } catch (err) {
+      setReviewsError(err instanceof Error ? err.message : "Failed to load reviews");
+    } finally {
+      setReviewsLoading(false);
     }
   };
 
@@ -247,8 +334,12 @@ const DestinationPage: React.FC = () => {
           )}
         </div>
 
-        {/* Reviews Section - To be implemented later */}
-        {/* <ReviewsSection /> */}
+        {/* Reviews Section */}
+        <ReviewsSection 
+          reviews={reviews}
+          loading={reviewsLoading}
+          error={reviewsError}
+        />
       </div>
       <Footer />
     </>
