@@ -2,11 +2,11 @@
 import { GET_TRENDING_DESTINATIONS } from "@/utils/frontEndConstant";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import Loading from "../common/Loading";
-import { ErrorState } from "../common/ErrorState";
-import { EmptyState } from "../common/EmptyState";
-import SectionHeader from "../common/SectionHeader";
-import AnimatedButton from "../common/AnimatedButton";
+import Loading from "../../../components/common-components/loading/Loading";
+import { ErrorState } from "../../../components/common-components/error-state/ErrorState";
+import { EmptyState } from "../../../components/common-components/empty-state/EmptyState";
+import SectionHeader from "../../../components/common-components/section-header/SectionHeader";
+import AnimatedButton from "../../../components/common-components/buttons/AnimatedButton";
 
 // Updated TypeScript interfaces based on new API response
 interface DestinationImage {

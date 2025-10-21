@@ -27,28 +27,49 @@ const FOOTER = "/footer";
 const PLAN_YOUR_TRIP = "/plan-your-trip";
 
 export const BASE_PATH = `${PROTOCOL}://${DOMAIN}:${PORT}/${CONTEXT_ROOT}`;
+
 export const GET_ALL_LINK_BAR_DATA = `${BASE_PATH}${VERSION}${API}${LINK_BAR}/all`;
+
 export const GET_VISIBLE_LINK_BAR_DATA = `${BASE_PATH}${VERSION}${API}${LINK_BAR}/visible`;
+
 export const GET_VISIBLE_NAV_BAR_DATA = `${BASE_PATH}${VERSION}${API}${NAV_BAR}/visible`;
+
 export const GET_VISIBLE_HERO_SECTION_DATA = `${BASE_PATH}${VERSION}${API}${HERO_SECTION}/visible`;
+
 export const GET_VISIBLE_WHY_CHOOSE_US_DATA = `${BASE_PATH}${VERSION}${API}${WHY_CHOOSE_US}/visible`;
+
 export const GET_VISIBLE_FAQ_DATA = `${BASE_PATH}${VERSION}${API}${FAQ}/visible`;
+
 export const UPDATE_FAQ_VIEW_COUNT = `${BASE_PATH}${VERSION}${API}${FAQ}/view-count`;
+
 export const GET_VISIBLE_PARTNERS = `${BASE_PATH}${VERSION}${API}${PARTNERS}/visible`;
+
 export const GET_VISIBLE_OUR_SERVICES = `${BASE_PATH}${VERSION}${API}${OUR_SERVICES}/visible`;
+
 export const GET_ACTIVE_WORK_FLOW = `${BASE_PATH}${VERSION}${API}${WORK_FLOW}/active`;
+
 export const GET_AVAILABLE_ACCOMMODATION = `${BASE_PATH}${VERSION}${API}${ACCOMMODATION}/available`;
+
 export const GET_ALL_DESTINATIONS_CATEGORIES = `${BASE_PATH}${VERSION}${API}${DESTINATIONS}/active-categories`;
 export const GET_ACTIVE_DESTINATIONS= `${BASE_PATH}${VERSION}${API}${DESTINATIONS}/active-destinations`;
 export const GET_POPULAR_DESTINATIONS = `${BASE_PATH}${VERSION}${API}${DESTINATIONS}/popular-destinations`;
 export const GET_TRENDING_DESTINATIONS = `${BASE_PATH}${VERSION}${API}${DESTINATIONS}/trending-destinations`;
 export const GET_NEW_DESTINATIONS = `${BASE_PATH}${VERSION}${API}${DESTINATIONS}/new-destinations`;
+export const GET_DESTINATIONS_DETAILS_BY_TOUR_ID_BE = `${BASE_PATH}${VERSION}${API}${DESTINATIONS}/tour-id`;
+
 export const GET_ACTIVE_DESTINATIONS_LOCATIONS = `${BASE_PATH}${VERSION}${API}${DESTINATIONS}/tour-map`;
 export const GET_ACTIVE_DESTINATIONS_LOCATIONS_CATEGORIES = `${BASE_PATH}${VERSION}${API}${DESTINATIONS}/active-locations-categories`;
+
 export const GET_ALL_ACTIVE_BLOGS = `${BASE_PATH}${VERSION}${API}${BLOG}/active`;
+
 export const GET_ALL_ACTIVE_TOURS_BE = `${BASE_PATH}${VERSION}${API}${TOUR}/active`;
 export const GET_ALL_ACTIVE_POPULAR_TOURS_BE = `${BASE_PATH}${VERSION}${API}${TOUR}/popular`;
+export const GET_TOUR_DETAILS_BY_ID_BE = `${BASE_PATH}${VERSION}${API}${TOUR}`;
+
 export const GET_ALL_ACTIVE_PACKAGE_BE = `${BASE_PATH}${VERSION}${API}${PACKAGE}/active`;
+export const GET_PACKAGE_DETAILS_BY_ID_BE = `${BASE_PATH}${VERSION}${API}${PACKAGE}`;
+export const GET_PACKAGE_REVIEWS_BE = `${BASE_PATH}${VERSION}${API}${PACKAGE}/reviews`;
+
 export const GET_ALL_ACTIVE_REVIEW_BE = `${BASE_PATH}${VERSION}${API}${REVIEW}/active`;
 export const GET_ALL_ACTIVE_USER_LEVEL_BE = `${BASE_PATH}${API}${VERSION}${USER_LEVEL}/active`;
 export const GET_ALL_ACTIVE_USER_LEVEL_WITH_BENEFITS_BE = `${BASE_PATH}${API}${VERSION}${USER_LEVEL}/active-with-benefits`;

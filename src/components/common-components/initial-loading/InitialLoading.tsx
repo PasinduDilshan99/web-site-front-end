@@ -1,7 +1,7 @@
 'use client'
 import React from "react";
 
-const Loading = () => {
+const InitialLoading = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 px-4">
       <div className="text-center w-full max-w-lg">
@@ -205,4 +205,4 @@ const Loading = () => {
   );
 };
 
-export default Loading;
+export default InitialLoading;

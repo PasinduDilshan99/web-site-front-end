@@ -5,7 +5,7 @@ import {
   GET_ACTIVE_DESTINATIONS_LOCATIONS_FE,
 } from "@/utils/frontEndConstant";
 import React, { useState, useEffect, useRef } from "react";
-import SectionHeader from "../common/SectionHeader";
+import SectionHeader from "../../../components/common-components/section-header/SectionHeader";
 
 // Define TypeScript interfaces based on new API response
 interface DestinationImage {
@@ -177,22 +177,37 @@ const TourMap: React.FC = () => {
     };
   }, []);
 
-  const initMap = (): void => {
-    if (!mapRef.current || !window.L) return;
+const initMap = (): void => {
+  if (!mapRef.current || !window.L) return;
 
-    // Initialize the map
-    const newMap = window.L.map(mapRef.current).setView([7.8731, 80.7718], 8);
+  // 🧹 FIX: Check if a map already exists on this container and remove it
+  if (mapInstanceRef.current) {
+    mapInstanceRef.current.remove();
+    mapInstanceRef.current = null;
+  }
 
-    // Add OpenStreetMap tiles
-    window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      maxZoom: 18,
-    }).addTo(newMap);
+  // Leaflet sometimes attaches the map instance to the DOM element
+  if (mapRef.current._leaflet_id) {
+    try {
+      mapRef.current._leaflet_id = null;
+    } catch (e) {
+      console.warn("Failed to reset Leaflet ID:", e);
+    }
+  }
 
-    setMap(newMap);
-    mapInstanceRef.current = newMap;
-  };
+  // ✅ Initialize the map safely
+  const newMap = window.L.map(mapRef.current).setView([7.8731, 80.7718], 8);
+
+  window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    maxZoom: 18,
+  }).addTo(newMap);
+
+  setMap(newMap);
+  mapInstanceRef.current = newMap;
+};
+
 
   // Update markers when category changes or destinations update
   useEffect(() => {

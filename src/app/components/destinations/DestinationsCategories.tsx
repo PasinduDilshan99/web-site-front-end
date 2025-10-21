@@ -3,7 +3,7 @@
 import { GET_ALL_DESTINATIONS_CATEGORIES } from "@/utils/frontEndConstant";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import AnimatedButton from "../common/AnimatedButton";
+import AnimatedButton from "../../../components/common-components/buttons/AnimatedButton";
 
 // Define the interface for image
 interface ImageType {

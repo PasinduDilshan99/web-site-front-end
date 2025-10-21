@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    console.log("GET_ACTIVE_DESTINATIONS =", GET_ACTIVE_DESTINATIONS);
     const response = await fetch(GET_ACTIVE_DESTINATIONS, {
       method: "GET",
       headers: {

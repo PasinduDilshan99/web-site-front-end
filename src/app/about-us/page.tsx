@@ -1,5 +1,5 @@
 import React from "react";
-import UnderConstruction from "../components/under-construction/UnderConstruction";
+import UnderConstruction from "../../components/common-components/under-construction/UnderConstruction";
 
 const page = () => {
   return (

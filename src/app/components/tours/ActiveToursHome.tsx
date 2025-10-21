@@ -1,9 +1,9 @@
 "use client";
 import { GET_ALL_ACTIVE_TOUR_FE } from "@/utils/frontEndConstant";
 import React, { useEffect, useState } from "react";
-import Loading from "../common/Loading";
-import { ErrorState } from "../common/ErrorState";
-import { EmptyState } from "../common/EmptyState";
+import Loading from "../../../components/common-components/loading/Loading";
+import { ErrorState } from "../../../components/common-components/error-state/ErrorState";
+import { EmptyState } from "../../../components/common-components/empty-state/EmptyState";
 
 interface Schedule {
   scheduleId: number;
