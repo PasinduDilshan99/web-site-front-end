@@ -1,6 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { ActiveToursType, TourFilters } from "@/types/sri-lankan-tour-types";
+import {
+  ActiveToursType,
+  TourFilters,
+  TourReview,
+} from "@/types/sri-lankan-tour-types";
 import Loading from "@/components/common-components/loading/Loading";
 import { ErrorState } from "@/components/common-components/error-state/ErrorState";
 import NavBar from "@/components/common-components/navBar/NavBar";
@@ -12,8 +16,11 @@ import ReviewsSection from "@/components/sri-lankan-tours-components/ReviewsSect
 const SriLankanTourPage: React.FC = () => {
   const [tours, setTours] = useState<ActiveToursType[]>([]);
   const [filteredTours, setFilteredTours] = useState<ActiveToursType[]>([]);
+  const [reviews, setReviews] = useState<TourReview[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [reviewsLoading, setReviewsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [reviewsError, setReviewsError] = useState<string | null>(null);
 
   // Filter states
   const [filters, setFilters] = useState<TourFilters>({
@@ -41,6 +48,7 @@ const SriLankanTourPage: React.FC = () => {
 
   useEffect(() => {
     fetchTours();
+    fetchReviews();
   }, []);
 
   useEffect(() => {
@@ -63,6 +71,27 @@ const SriLankanTourPage: React.FC = () => {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchReviews = async (): Promise<void> => {
+    try {
+      const response = await fetch(
+        "http://localhost:8080/felicita/v0/api/tour/reviews"
+      );
+      const result = await response.json();
+
+      if (result.code === 200) {
+        setReviews(result.data);
+      } else {
+        throw new Error(result.message);
+      }
+    } catch (err) {
+      setReviewsError(
+        err instanceof Error ? err.message : "Failed to load reviews"
+      );
+    } finally {
+      setReviewsLoading(false);
     }
   };
 
@@ -164,8 +193,11 @@ const SriLankanTourPage: React.FC = () => {
 
   const handleRetry = () => {
     setError(null);
+    setReviewsError(null);
     setLoading(true);
+    setReviewsLoading(true);
     fetchTours();
+    fetchReviews();
   };
 
   if (loading) {
@@ -236,8 +268,13 @@ const SriLankanTourPage: React.FC = () => {
           )}
         </div>
 
-        {/* Reviews Section - To be implemented later */}
-         <ReviewsSection />
+        {/* Reviews Section */}
+        <ReviewsSection
+          reviews={reviews}
+          loading={reviewsLoading}
+          error={reviewsError}
+          onRetry={fetchReviews}
+        />
       </div>
       <Footer />
     </>

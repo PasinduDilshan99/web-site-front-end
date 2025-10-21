@@ -1,6 +1,8 @@
-"use client"
+"use client";
 import React from "react";
 import { useParams } from "next/navigation";
+import ReviewsSection from "@/components/sri-lankan-tours-components/ReviewsSection";
+import { TourReview } from "@/types/sri-lankan-tour-types";
 
 interface Schedule {
   scheduleId: number;
@@ -48,17 +50,28 @@ interface ApiResponse {
   timestamp: string;
 }
 
+interface ReviewsApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: TourReview[];
+  timestamp: string;
+}
+
 const SriLankanTourDetailsPage = () => {
   const { sriLankanTourId } = useParams();
   const [tour, setTour] = React.useState<TourDetails | null>(null);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
+  const [reviews, setReviews] = React.useState<TourReview[]>([]);
+  const [tourLoading, setTourLoading] = React.useState(true);
+  const [reviewsLoading, setReviewsLoading] = React.useState(true);
+  const [tourError, setTourError] = React.useState<string | null>(null);
+  const [reviewsError, setReviewsError] = React.useState<string | null>(null);
   const [selectedImageIndex, setSelectedImageIndex] = React.useState(0);
 
   React.useEffect(() => {
     const fetchTourDetails = async () => {
       try {
-        setLoading(true);
+        setTourLoading(true);
         const response = await fetch(
           `http://localhost:8080/felicita/v0/api/tour/${sriLankanTourId}`
         );
@@ -70,14 +83,37 @@ const SriLankanTourDetailsPage = () => {
         const data: ApiResponse = await response.json();
         setTour(data.data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
+        setTourError(err instanceof Error ? err.message : "An error occurred");
       } finally {
-        setLoading(false);
+        setTourLoading(false);
+      }
+    };
+
+    const fetchTourReviews = async () => {
+      try {
+        setReviewsLoading(true);
+        const response = await fetch(
+          `http://localhost:8080/felicita/v0/api/tour/reviews/${sriLankanTourId}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch tour reviews");
+        }
+
+        const data: ReviewsApiResponse = await response.json();
+        setReviews(data.data);
+      } catch (err) {
+        setReviewsError(
+          err instanceof Error ? err.message : "An error occurred"
+        );
+      } finally {
+        setReviewsLoading(false);
       }
     };
 
     if (sriLankanTourId) {
       fetchTourDetails();
+      fetchTourReviews();
     }
   }, [sriLankanTourId]);
 
@@ -96,7 +132,32 @@ const SriLankanTourDetailsPage = () => {
     } Nights`;
   };
 
-  if (loading) {
+  const handleRetryReviews = () => {
+    if (tourId) {
+      setReviewsLoading(true);
+      setReviewsError(null);
+      fetch(`http://localhost:8080/felicita/v0/api/tour/reviews/${tourId}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to fetch tour reviews");
+          }
+          return response.json();
+        })
+        .then((data: ReviewsApiResponse) => {
+          setReviews(data.data);
+        })
+        .catch((err) => {
+          setReviewsError(
+            err instanceof Error ? err.message : "An error occurred"
+          );
+        })
+        .finally(() => {
+          setReviewsLoading(false);
+        });
+    }
+  };
+
+  if (tourLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-purple-50 flex items-center justify-center">
         <div className="text-center">
@@ -107,7 +168,7 @@ const SriLankanTourDetailsPage = () => {
     );
   }
 
-  if (error) {
+  if (tourError) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-purple-50 flex items-center justify-center">
         <div className="text-center">
@@ -129,7 +190,7 @@ const SriLankanTourDetailsPage = () => {
           <h3 className="text-lg font-semibold text-gray-800 mb-2">
             Error Loading Tour
           </h3>
-          <p className="text-gray-600">{error}</p>
+          <p className="text-gray-600">{tourError}</p>
         </div>
       </div>
     );
@@ -473,6 +534,14 @@ const SriLankanTourDetailsPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Reviews Section */}
+      <ReviewsSection
+        reviews={reviews}
+        loading={reviewsLoading}
+        error={reviewsError}
+        onRetry={handleRetryReviews}
+      />
     </div>
   );
 };

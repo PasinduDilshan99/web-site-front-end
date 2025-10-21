@@ -1,21 +1,26 @@
 // components/sri-lankan-tours-components/ReviewsSection.tsx
 import React, { useState, useEffect, useCallback, JSX } from "react";
-import { TourReview, ReviewsResponse } from "@/types/sri-lankan-tour-types";
+import { TourReview } from "@/types/sri-lankan-tour-types";
 
-const ReviewsSection: React.FC = () => {
-  const [reviews, setReviews] = useState<TourReview[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+interface ReviewsSectionProps {
+  reviews: TourReview[];
+  loading: boolean;
+  error: string | null;
+  onRetry: () => void;
+}
+
+const ReviewsSection: React.FC<ReviewsSectionProps> = ({
+  reviews,
+  loading,
+  error,
+  onRetry,
+}) => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isAutoPlay, setIsAutoPlay] = useState<boolean>(true);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
 
   // Auto-play interval (5 seconds)
   const AUTO_PLAY_INTERVAL = 5000;
-
-  useEffect(() => {
-    fetchReviews();
-  }, []);
 
   // Auto-play functionality
   useEffect(() => {
@@ -27,25 +32,6 @@ const ReviewsSection: React.FC = () => {
 
     return () => clearInterval(interval);
   }, [isAutoPlay, reviews.length, currentIndex]);
-
-  const fetchReviews = async (): Promise<void> => {
-    try {
-      const response = await fetch(
-        "http://localhost:8080/felicita/v0/api/tour/reviews"
-      );
-      const result: ReviewsResponse = await response.json();
-
-      if (result.code === 200) {
-        setReviews(result.data);
-      } else {
-        throw new Error(result.message);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load reviews");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const nextReview = useCallback((): void => {
     setCurrentIndex((prevIndex) =>
@@ -156,7 +142,7 @@ const ReviewsSection: React.FC = () => {
           <div className="text-center text-red-600">
             <p className="text-lg mb-4">Error loading reviews: {error}</p>
             <button
-              onClick={fetchReviews}
+              onClick={onRetry}
               className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
             >
               Try Again
@@ -209,8 +195,18 @@ const ReviewsSection: React.FC = () => {
                 className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 z-10"
                 aria-label="Previous review"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
                 </svg>
               </button>
               <button
@@ -218,8 +214,18 @@ const ReviewsSection: React.FC = () => {
                 className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 z-10"
                 aria-label="Next review"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
                 </svg>
               </button>
             </>
@@ -256,7 +262,7 @@ const ReviewsSection: React.FC = () => {
                       className="w-full h-80 object-cover rounded-xl"
                     />
                   </div>
-                  
+
                   {/* Image Navigation Arrows */}
                   {currentReview.images.length > 1 && (
                     <>
@@ -265,8 +271,18 @@ const ReviewsSection: React.FC = () => {
                         className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-all duration-300"
                         aria-label="Previous image"
                       >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 19l-7-7 7-7"
+                          />
                         </svg>
                       </button>
                       <button
@@ -274,8 +290,18 @@ const ReviewsSection: React.FC = () => {
                         className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-all duration-300"
                         aria-label="Next image"
                       >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
                         </svg>
                       </button>
                     </>
@@ -291,8 +317,18 @@ const ReviewsSection: React.FC = () => {
               ) : (
                 <div className="aspect-w-16 aspect-h-12 bg-gray-100 rounded-xl flex items-center justify-center">
                   <div className="text-center text-gray-400">
-                    <svg className="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    <svg
+                      className="w-16 h-16 mx-auto mb-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
                     </svg>
                     <p>No images available</p>
                   </div>
@@ -340,7 +376,9 @@ const ReviewsSection: React.FC = () => {
                 </div>
 
                 <div className="flex items-center space-x-4 text-sm text-gray-500">
-                  <span>👥 {currentReview.numberOfParticipate} participants</span>
+                  <span>
+                    👥 {currentReview.numberOfParticipate} participants
+                  </span>
                   <span>•</span>
                   <span>{formatDate(currentReview.reviewCreatedAt)}</span>
                   <span>•</span>
@@ -351,7 +389,7 @@ const ReviewsSection: React.FC = () => {
               {/* Review Content */}
               <div className="space-y-4">
                 <p className="text-lg text-gray-700 leading-relaxed">
-                  "{currentReview.review}"
+                  {currentReview.review}
                 </p>
                 {currentReview.reviewDescription && (
                   <p className="text-gray-600 italic border-l-4 border-purple-500 pl-4 py-1">
@@ -363,7 +401,9 @@ const ReviewsSection: React.FC = () => {
               {/* Reactions */}
               {currentReview.reactions.length > 0 && (
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-gray-900 mb-2">Reactions</h4>
+                  <h4 className="font-semibold text-gray-900 mb-2">
+                    Reactions
+                  </h4>
                   <div className="flex flex-wrap gap-2">
                     {currentReview.reactions.map((reaction) => (
                       <div
@@ -372,7 +412,9 @@ const ReviewsSection: React.FC = () => {
                         title={`${reaction.reactionUserName} - ${reaction.reactionType}`}
                       >
                         <span>{getReactionIcon(reaction.reactionType)}</span>
-                        <span className="text-gray-700">{reaction.reactionUserName}</span>
+                        <span className="text-gray-700">
+                          {reaction.reactionUserName}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -397,7 +439,9 @@ const ReviewsSection: React.FC = () => {
                               {comment.commentUserName}
                             </span>
                           </div>
-                          <p className="text-gray-700 truncate">{comment.comment}</p>
+                          <p className="text-gray-700 truncate">
+                            {comment.comment}
+                          </p>
                         </div>
                       ))}
                   </div>
