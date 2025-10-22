@@ -6,7 +6,7 @@ import ErrorState from "./ErrorState";
 import EmptyState from "./EmptyState";
 import TourControls from "./TourControls";
 import TestMap from "./TestMap";
-
+import SectionHeader from "@/components/common-components/section-header/SectionHeader";
 
 type Image = {
   id: number;
@@ -89,15 +89,16 @@ export default function TourMapContainer({ tourId }: TourMapContainerProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="p-3 sm:p-4 md:p-5 lg:p-6 max-w-7xl mx-auto">
-        <div className="mb-4 sm:mb-5 md:mb-6">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-1 sm:mb-2">
-            🗺️ Advanced Trip Planner
-          </h1>
-          <p className="text-sm sm:text-base text-gray-600">
-            Explore destinations with detailed information and image galleries
-          </p>
+    <div className="bg-gray-50">
+      <div className="p-3 sm:p-4 md:p-5 lg:p-6 mx-auto">
+        <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
+          <SectionHeader
+            subtitle=""
+            title="Advanced Trip Planner"
+            description="Explore destinations with detailed information and image galleries"
+            fromColor="#A855F7"
+            toColor="#F59E0B"
+          />
         </div>
 
         <TourControls
