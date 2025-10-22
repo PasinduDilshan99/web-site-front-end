@@ -193,3 +193,27 @@ export interface TourHistoryResponse {
   data: TourHistory[];
   timestamp: string;
 }
+
+
+export interface TourHistoryImage {
+  imageId: number;
+  name: string;
+  description: string;
+  imageUrl: string;
+  color: string;
+  status: string;
+  createdAt: string;
+  createdBy: number;
+  updatedAt: string;
+  updatedBy: number | null;
+  terminatedAt: string | null;
+  terminatedBy: number | null;
+}
+
+export interface TourHistoryImagesResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: TourHistoryImage[];
+  timestamp: string;
+}

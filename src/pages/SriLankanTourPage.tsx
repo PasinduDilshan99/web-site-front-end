@@ -4,6 +4,7 @@ import {
   ActiveToursType,
   TourFilters,
   TourHistory,
+  TourHistoryImage,
   TourReview,
 } from "@/types/sri-lankan-tour-types";
 import Loading from "@/components/common-components/loading/Loading";
@@ -15,6 +16,7 @@ import ToursGrid from "@/components/sri-lankan-tours-components/ToursGrid";
 import ReviewsSection from "@/components/sri-lankan-tours-components/ReviewsSection";
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";
 import TourHistorySection from "@/components/sri-lankan-tours-components/TourHistorySection";
+import TourHistoryGallery from "@/components/sri-lankan-tours-components/TourHistoryGallery";
 
 const SriLankanTourPage: React.FC = () => {
   const [tours, setTours] = useState<ActiveToursType[]>([]);
@@ -27,6 +29,9 @@ const SriLankanTourPage: React.FC = () => {
   const [histories, setHistories] = useState<TourHistory[]>([]); // Add this state
   const [historyLoading, setHistoryLoading] = useState<boolean>(true); // Add this state
   const [historyError, setHistoryError] = useState<string | null>(null); // Add this state
+  const [galleryImages, setGalleryImages] = useState<TourHistoryImage[]>([]);
+  const [galleryLoading, setGalleryLoading] = useState<boolean>(true);
+  const [galleryError, setGalleryError] = useState<string | null>(null);
 
   // Filter states
   const [filters, setFilters] = useState<TourFilters>({
@@ -60,6 +65,7 @@ const SriLankanTourPage: React.FC = () => {
     fetchTours();
     fetchReviews();
     fetchTourHistory();
+    fetchTourHistoryImages();
   }, []);
 
   useEffect(() => {
@@ -135,6 +141,27 @@ const SriLankanTourPage: React.FC = () => {
       );
     } finally {
       setHistoryLoading(false);
+    }
+  };
+
+  const fetchTourHistoryImages = async (): Promise<void> => {
+    try {
+      const response = await fetch(
+        "http://localhost:8080/felicita/v0/api/tour/history-images"
+      );
+      const result = await response.json();
+
+      if (result.code === 200) {
+        setGalleryImages(result.data);
+      } else {
+        throw new Error(result.message);
+      }
+    } catch (err) {
+      setGalleryError(
+        err instanceof Error ? err.message : "Failed to load tour images"
+      );
+    } finally {
+      setGalleryLoading(false);
     }
   };
 
@@ -259,12 +286,15 @@ const SriLankanTourPage: React.FC = () => {
     setError(null);
     setReviewsError(null);
     setHistoryError(null);
+    setGalleryError(null);
     setLoading(true);
     setReviewsLoading(true);
     setHistoryLoading(true);
+    setGalleryLoading(true);
     fetchTours();
     fetchReviews();
     fetchTourHistory();
+    fetchTourHistoryImages();
   };
 
   // Pagination calculations
@@ -412,6 +442,12 @@ const SriLankanTourPage: React.FC = () => {
           loading={historyLoading}
           error={historyError}
           onRetry={fetchTourHistory}
+        />
+        <TourHistoryGallery
+          images={galleryImages}
+          loading={galleryLoading}
+          error={galleryError}
+          onRetry={fetchTourHistoryImages}
         />
       </div>
       <Footer />
