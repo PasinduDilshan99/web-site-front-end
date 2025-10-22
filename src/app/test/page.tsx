@@ -1,10 +1,11 @@
+import TourMapContainer from "@/components/sri-lankan-tours-components/tour-map-components/TourMapContainer";
 import TourPageMap from "@/components/sri-lankan-tours-components/tour-map-components/TourPageMap";
 import React from "react";
 
 const page = () => {
   return (
     <div>
-      <TourPageMap />
+      <TourMapContainer tourId={5} />{" "}
     </div>
   );
 };

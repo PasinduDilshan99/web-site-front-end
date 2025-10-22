@@ -3,6 +3,7 @@ import React from "react";
 import { useParams } from "next/navigation";
 import ReviewsSection from "@/components/sri-lankan-tours-components/ReviewsSection";
 import { TourReview } from "@/types/sri-lankan-tour-types";
+import TourMapContainer from "@/components/sri-lankan-tours-components/tour-map-components/TourMapContainer";
 
 interface Schedule {
   scheduleId: number;
@@ -542,6 +543,7 @@ const SriLankanTourDetailsPage = () => {
         error={reviewsError}
         onRetry={handleRetryReviews}
       />
+      <TourMapContainer tourId={sriLankanTourId} />
     </div>
   );
 };

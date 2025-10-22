@@ -129,3 +129,67 @@ export interface ReviewsResponse {
   data: TourReview[];
   timestamp: string;
 }
+
+export interface TourHistoryImage {
+  imageId: number;
+  imageName: string;
+  imageDescription: string;
+  imageUrl: string;
+  imageColor: string;
+  imageStatus: number;
+}
+
+export interface TourScheduleTour {
+  tourId: number;
+  tourName: string;
+  tourDescription: string;
+  tourDuration: number;
+  latitude: number;
+  longitude: number;
+  startLocation: string;
+  endLocation: string;
+  tourStatus: number;
+  tourType: number;
+  tourCategory: number;
+  season: number;
+}
+
+export interface TourSchedule {
+  scheduleId: number;
+  scheduleName: string;
+  assumeStartDate: string;
+  assumeEndDate: string;
+  durationStart: number;
+  durationEnd: number;
+  specialNote: string;
+  scheduleDescription: string;
+  scheduleStatus: number;
+  tour: TourScheduleTour;
+  images: TourHistoryImage[];
+}
+
+export interface TourHistory {
+  historyId: number;
+  historyName: string;
+  historyDescription: string;
+  numberOfParticipate: number;
+  rating: number;
+  historyDuration: number;
+  startDate: string;
+  endDate: string;
+  vehicleNumber: string;
+  driverId: number;
+  guideId: number;
+  historyColor: string;
+  hoverColor: string;
+  historyStatus: number;
+  tourSchedule: TourSchedule;
+}
+
+export interface TourHistoryResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: TourHistory[];
+  timestamp: string;
+}

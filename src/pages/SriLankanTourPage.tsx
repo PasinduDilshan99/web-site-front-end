@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import {
   ActiveToursType,
   TourFilters,
+  TourHistory,
   TourReview,
 } from "@/types/sri-lankan-tour-types";
 import Loading from "@/components/common-components/loading/Loading";
@@ -12,6 +13,8 @@ import Footer from "@/app/components/footer/Footer";
 import FilterSection from "@/components/sri-lankan-tours-components/FilterSection";
 import ToursGrid from "@/components/sri-lankan-tours-components/ToursGrid";
 import ReviewsSection from "@/components/sri-lankan-tours-components/ReviewsSection";
+import SectionHeader from "@/components/common-components/section-header/SectionHeader";
+import TourHistorySection from "@/components/sri-lankan-tours-components/TourHistorySection";
 
 const SriLankanTourPage: React.FC = () => {
   const [tours, setTours] = useState<ActiveToursType[]>([]);
@@ -21,6 +24,9 @@ const SriLankanTourPage: React.FC = () => {
   const [reviewsLoading, setReviewsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [reviewsError, setReviewsError] = useState<string | null>(null);
+  const [histories, setHistories] = useState<TourHistory[]>([]); // Add this state
+  const [historyLoading, setHistoryLoading] = useState<boolean>(true); // Add this state
+  const [historyError, setHistoryError] = useState<string | null>(null); // Add this state
 
   // Filter states
   const [filters, setFilters] = useState<TourFilters>({
@@ -32,6 +38,10 @@ const SriLankanTourPage: React.FC = () => {
     season: "",
     location: "",
   });
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [itemsPerPage, setItemsPerPage] = useState<number>(6); // Default for mobile
 
   // Extract unique values for filter options from actual data
   const tourTypes = [...new Set(tours.map((tour) => tour.tourTypeName))];
@@ -49,11 +59,44 @@ const SriLankanTourPage: React.FC = () => {
   useEffect(() => {
     fetchTours();
     fetchReviews();
+    fetchTourHistory();
   }, []);
 
   useEffect(() => {
     applyFilters();
   }, [filters, tours]);
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters]);
+
+  // Responsive items per page
+  useEffect(() => {
+    const handleResize = () => {
+      if (typeof window !== "undefined") {
+        const width = window.innerWidth;
+        if (width < 768) {
+          setItemsPerPage(6); // Mobile
+        } else if (width < 1024) {
+          setItemsPerPage(8); // Tablet
+        } else if (width < 1280) {
+          setItemsPerPage(9); // Laptop
+        } else if (width < 1536) {
+          setItemsPerPage(12); // PC
+        } else {
+          setItemsPerPage(16); // Large screens
+        }
+      }
+    };
+
+    handleResize(); // Set initial value
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   const fetchTours = async (): Promise<void> => {
     try {
@@ -71,6 +114,27 @@ const SriLankanTourPage: React.FC = () => {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchTourHistory = async (): Promise<void> => {
+    try {
+      const response = await fetch(
+        "http://localhost:8080/felicita/v0/api/tour/history"
+      );
+      const result = await response.json();
+
+      if (result.code === 200) {
+        setHistories(result.data);
+      } else {
+        throw new Error(result.message);
+      }
+    } catch (err) {
+      setHistoryError(
+        err instanceof Error ? err.message : "Failed to load tour history"
+      );
+    } finally {
+      setHistoryLoading(false);
     }
   };
 
@@ -171,7 +235,7 @@ const SriLankanTourPage: React.FC = () => {
 
   const handleFilterChange = (
     filterName: keyof TourFilters,
-    value: any
+    value: unknown
   ): void => {
     setFilters((prev) => ({
       ...prev,
@@ -194,10 +258,33 @@ const SriLankanTourPage: React.FC = () => {
   const handleRetry = () => {
     setError(null);
     setReviewsError(null);
+    setHistoryError(null);
     setLoading(true);
     setReviewsLoading(true);
+    setHistoryLoading(true);
     fetchTours();
     fetchReviews();
+    fetchTourHistory();
+  };
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredTours.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentTours = filteredTours.slice(startIndex, endIndex);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // Scroll to top of results section
+    const resultsSection = document.getElementById("results-section");
+    if (resultsSection) {
+      resultsSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const handleItemsPerPageChange = (value: number) => {
+    setItemsPerPage(value);
+    setCurrentPage(1); // Reset to first page when changing items per page
   };
 
   if (loading) {
@@ -227,13 +314,14 @@ const SriLankanTourPage: React.FC = () => {
       <NavBar />
       <div className="mx-auto px-4 py-8 bg-gradient-to-br from-amber-50 via-purple-50 to-blue-50 min-h-screen">
         {/* Page Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Sri Lankan Tours
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Discover the beauty of Sri Lanka with our curated tour experiences
-          </p>
+        <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
+          <SectionHeader
+            subtitle=""
+            title="Sri Lankan Tours"
+            description="Discover the beauty of Sri Lanka with our curated tour experiences"
+            fromColor="#A855F7"
+            toColor="#F59E0B"
+          />
         </div>
 
         {/* Filters Section */}
@@ -249,20 +337,64 @@ const SriLankanTourPage: React.FC = () => {
         />
 
         {/* Results Section */}
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-6">
+        <div id="results-section" className="mb-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <h3 className="text-2xl font-semibold text-gray-900">
-              {filteredTours.length} Tour
-              {filteredTours.length !== 1 ? "s" : ""} Found
+              {filteredTours.length} Tour{filteredTours.length !== 1 ? "s" : ""}{" "}
+              Found
             </h3>
+
+            {/* Items Per Page Selector */}
+            <div className="flex items-center gap-3">
+              <label
+                htmlFor="itemsPerPage"
+                className="text-sm font-medium text-gray-700 whitespace-nowrap"
+              >
+                Show:
+              </label>
+              <select
+                id="itemsPerPage"
+                value={itemsPerPage}
+                onChange={(e) =>
+                  handleItemsPerPageChange(Number(e.target.value))
+                }
+                className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              >
+                <option value={6}>6</option>
+                <option value={8}>8</option>
+                <option value={9}>9</option>
+                <option value={12}>12</option>
+                <option value={16}>16</option>
+                <option value={24}>24</option>
+                <option value={32}>32</option>
+              </select>
+              <span className="text-sm text-gray-500 whitespace-nowrap">
+                per page
+              </span>
+            </div>
           </div>
 
           {/* Tours Grid */}
-          {filteredTours.length > 0 ? (
-            <ToursGrid
-              tours={filteredTours}
-              displayCount={filteredTours.length}
-            />
+          {currentTours.length > 0 ? (
+            <>
+              <ToursGrid
+                tours={currentTours}
+                displayCount={currentTours.length}
+              />
+
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                  totalItems={filteredTours.length}
+                  itemsPerPage={itemsPerPage}
+                  startIndex={startIndex}
+                  endIndex={Math.min(endIndex, filteredTours.length)}
+                />
+              )}
+            </>
           ) : (
             <NoResults onResetFilters={resetFilters} />
           )}
@@ -274,6 +406,12 @@ const SriLankanTourPage: React.FC = () => {
           loading={reviewsLoading}
           error={reviewsError}
           onRetry={fetchReviews}
+        />
+        <TourHistorySection
+          histories={histories}
+          loading={historyLoading}
+          error={historyError}
+          onRetry={fetchTourHistory}
         />
       </div>
       <Footer />
@@ -299,3 +437,91 @@ const NoResults: React.FC<{ onResetFilters: () => void }> = ({
     </button>
   </div>
 );
+
+// Pagination Component
+interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  totalItems: number;
+  itemsPerPage: number;
+  startIndex: number;
+  endIndex: number;
+}
+
+const Pagination: React.FC<PaginationProps> = ({
+  currentPage,
+  totalPages,
+  onPageChange,
+  totalItems,
+  itemsPerPage,
+  startIndex,
+  endIndex,
+}) => {
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisiblePages = 5;
+
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      const startPage = Math.max(1, currentPage - 2);
+      const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+    }
+
+    return pages;
+  };
+
+  return (
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 pt-6 border-t border-gray-200">
+      {/* Results info */}
+      <div className="text-sm text-gray-600">
+        Showing {startIndex + 1} to {endIndex} of {totalItems} results
+      </div>
+
+      {/* Pagination buttons */}
+      <div className="flex items-center gap-2">
+        {/* Previous button */}
+        <button
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          Previous
+        </button>
+
+        {/* Page numbers */}
+        <div className="flex gap-1">
+          {getPageNumbers().map((page) => (
+            <button
+              key={page}
+              onClick={() => onPageChange(page)}
+              className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                currentPage === page
+                  ? "bg-gradient-to-r from-amber-600 to-purple-600 text-white"
+                  : "text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700"
+              }`}
+            >
+              {page}
+            </button>
+          ))}
+        </div>
+
+        {/* Next button */}
+        <button
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  );
+};
