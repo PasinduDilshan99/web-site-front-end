@@ -13,6 +13,8 @@ import PackageHeader from "@/components/packages-components/PackageHeader";
 import PackageInfo from "@/components/packages-components/PackageInfo";
 import ReviewsSection from "@/components/packages-components/ReviewsSection";
 import TourDetailsSection from "@/components/packages-components/TourDetailsSection";
+import HistoryCarousel from "@/components/packages-components/HistoryCarousel";
+import PackageHistoryGallery from "@/components/packages-components/PackageHistoryGallery";
 import {
   Destination,
   TourDetails,
@@ -20,7 +22,10 @@ import {
   ApiResponse,
   ExtendedActivity,
   PackageReview,
-  ReviewsResponse, // Import ExtendedActivity instead of Activity
+  ReviewsResponse,
+  PackageHistory,
+  PackageHistoryResponse,
+  PackageHistoryImage,
 } from "@/types/packages-types";
 import {
   GET_DESTINATIONS_DETAILS_BY_TOUR_ID_BE,
@@ -29,6 +34,15 @@ import {
 } from "@/utils/backEndConstant";
 import { useParams } from "next/navigation";
 import React, { useState, useEffect } from "react";
+
+// Add these interfaces for the API responses
+interface PackageHistoryImagesResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: PackageHistoryImage[];
+  timestamp: string;
+}
 
 const PackagePage = () => {
   const { packageId } = useParams();
@@ -39,16 +53,29 @@ const PackagePage = () => {
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [reviews, setReviews] = useState<PackageReview[]>([]); // New state for reviews
+  const [reviews, setReviews] = useState<PackageReview[]>([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [allActivities, setAllActivities] = useState<ExtendedActivity[]>([]); // Change to ExtendedActivity[]
-  const [reviewsLoading, setReviewsLoading] = useState<boolean>(false); // Separate loading for reviews
+  const [allActivities, setAllActivities] = useState<ExtendedActivity[]>([]);
+  const [reviewsLoading, setReviewsLoading] = useState<boolean>(false);
   const [reviewsError, setReviewsError] = useState<string | null>(null);
+
+  // New states for history and history images
+  const [history, setHistory] = useState<PackageHistory[]>([]);
+  const [historyImages, setHistoryImages] = useState<PackageHistoryImage[]>([]);
+  const [historyLoading, setHistoryLoading] = useState<boolean>(false);
+  const [historyImagesLoading, setHistoryImagesLoading] =
+    useState<boolean>(false);
+  const [historyError, setHistoryError] = useState<string | null>(null);
+  const [historyImagesError, setHistoryImagesError] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     if (packageId) {
       fetchPackageData();
-      fetchReviews(); // Fetch reviews when component mounts
+      fetchReviews();
+      fetchHistory(); // Fetch history when component mounts
+      fetchHistoryImages(); // Fetch history images when component mounts
     }
   }, [packageId]);
 
@@ -115,11 +142,6 @@ const PackagePage = () => {
     }
   };
 
-  const handleReviewsRetry = () => {
-    setReviewsError(null);
-    fetchReviews();
-  };
-
   const fetchReviews = async (): Promise<void> => {
     try {
       setReviewsLoading(true);
@@ -146,10 +168,77 @@ const PackagePage = () => {
     }
   };
 
+  const fetchHistory = async (): Promise<void> => {
+    try {
+      setHistoryLoading(true);
+      setHistoryError(null);
+
+      const response = await fetch(
+        `http://localhost:8080/felicita/v0/api/package/history/${packageId}`
+      );
+      const result: PackageHistoryResponse = await response.json();
+
+      if (result.code === 200) {
+        setHistory(result.data);
+      } else {
+        throw new Error(result.message);
+      }
+    } catch (err) {
+      setHistoryError(
+        err instanceof Error
+          ? err.message
+          : "An error occurred while fetching package history"
+      );
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
+  const fetchHistoryImages = async (): Promise<void> => {
+    try {
+      setHistoryImagesLoading(true);
+      setHistoryImagesError(null);
+
+      const response = await fetch(
+        `http://localhost:8080/felicita/v0/api/package/history-images/${packageId}`
+      );
+      const result: PackageHistoryImagesResponse = await response.json();
+
+      if (result.code === 200) {
+        setHistoryImages(result.data);
+      } else {
+        throw new Error(result.message);
+      }
+    } catch (err) {
+      setHistoryImagesError(
+        err instanceof Error
+          ? err.message
+          : "An error occurred while fetching package history images"
+      );
+    } finally {
+      setHistoryImagesLoading(false);
+    }
+  };
+
   const handleRetry = () => {
     setError(null);
     setLoading(true);
     window.location.reload();
+  };
+
+  const handleReviewsRetry = () => {
+    setReviewsError(null);
+    fetchReviews();
+  };
+
+  const handleHistoryRetry = () => {
+    setHistoryError(null);
+    fetchHistory();
+  };
+
+  const handleHistoryImagesRetry = () => {
+    setHistoryImagesError(null);
+    fetchHistoryImages();
   };
 
   if (loading) {
@@ -235,6 +324,22 @@ const PackagePage = () => {
               {destinations.length > 0 && (
                 <DestinationsSection destinations={destinations} />
               )}
+
+              {/* History Section */}
+              <HistoryCarousel
+                historyData={history}
+                loading={historyLoading}
+                error={historyError}
+                onRetry={handleHistoryRetry}
+              />
+
+              {/* Package History Gallery Section */}
+              <PackageHistoryGallery
+                imagesData={historyImages}
+                loading={historyImagesLoading}
+                error={historyImagesError}
+                onRetry={handleHistoryImagesRetry}
+              />
             </div>
 
             {/* Right Column - Booking Card */}

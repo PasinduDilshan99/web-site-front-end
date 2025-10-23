@@ -1,3 +1,4 @@
+// Update your PackagePage component
 "use client";
 import React, { useState, useEffect } from "react";
 import { GET_ALL_ACTIVE_PACKAGES_FE } from "@/utils/frontEndConstant";
@@ -7,25 +8,48 @@ import {
   Filters,
   PackageReview,
   ReviewsResponse,
+  PackageHistory,
+  PackageHistoryResponse,
+  PackageHistoryImage,
 } from "@/types/packages-types";
 import Loading from "@/components/common-components/loading/Loading";
 import { ErrorState } from "@/components/common-components/error-state/ErrorState";
 import FilterSection from "@/components/packages-components/FilterSection";
 import PackageGrid from "@/components/packages-components/PackageGrid";
-import ReviewsSection from "@/components/packages-components/ReviewsSection"; // New component
+import ReviewsSection from "@/components/packages-components/ReviewsSection";
+import HistoryCarousel from "@/components/packages-components/HistoryCarousel";
+import PackageHistoryGallery from "@/components/packages-components/PackageHistoryGallery"; // New import
 import NavBar from "@/components/common-components/navBar/NavBar";
 import Footer from "@/app/components/footer/Footer";
+import SectionHeader from "@/components/common-components/section-header/SectionHeader";
+
+interface PackageHistoryImagesResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: PackageHistoryImage[];
+  timestamp: string;
+}
 
 const PackagePage: React.FC = () => {
   const [packages, setPackages] = useState<ActivePackagesType[]>([]);
   const [filteredPackages, setFilteredPackages] = useState<
     ActivePackagesType[]
   >([]);
-  const [reviews, setReviews] = useState<PackageReview[]>([]); // New state for reviews
+  const [reviews, setReviews] = useState<PackageReview[]>([]);
+  const [history, setHistory] = useState<PackageHistory[]>([]);
+  const [historyImages, setHistoryImages] = useState<PackageHistoryImage[]>([]); // New state for history images
   const [loading, setLoading] = useState<boolean>(true);
-  const [reviewsLoading, setReviewsLoading] = useState<boolean>(false); // Separate loading for reviews
+  const [reviewsLoading, setReviewsLoading] = useState<boolean>(false);
+  const [historyLoading, setHistoryLoading] = useState<boolean>(false);
+  const [historyImagesLoading, setHistoryImagesLoading] =
+    useState<boolean>(false); // New loading state for history images
   const [error, setError] = useState<string | null>(null);
-  const [reviewsError, setReviewsError] = useState<string | null>(null); // Separate error for reviews
+  const [reviewsError, setReviewsError] = useState<string | null>(null);
+  const [historyError, setHistoryError] = useState<string | null>(null);
+  const [historyImagesError, setHistoryImagesError] = useState<string | null>(
+    null
+  ); // New error state for history images
 
   // Filter states
   const [filters, setFilters] = useState<Filters>({
@@ -49,7 +73,9 @@ const PackagePage: React.FC = () => {
 
   useEffect(() => {
     fetchPackages();
-    fetchReviews(); // Fetch reviews when component mounts
+    fetchReviews();
+    fetchHistory();
+    fetchHistoryImages(); // Fetch history images when component mounts
   }, []);
 
   useEffect(() => {
@@ -96,6 +122,58 @@ const PackagePage: React.FC = () => {
       );
     } finally {
       setReviewsLoading(false);
+    }
+  };
+
+  const fetchHistory = async (): Promise<void> => {
+    try {
+      setHistoryLoading(true);
+      setHistoryError(null);
+
+      const response = await fetch(
+        "http://localhost:8080/felicita/v0/api/package/history"
+      );
+      const result: PackageHistoryResponse = await response.json();
+
+      if (result.code === 200) {
+        setHistory(result.data);
+      } else {
+        throw new Error(result.message);
+      }
+    } catch (err) {
+      setHistoryError(
+        err instanceof Error
+          ? err.message
+          : "An error occurred while fetching package history"
+      );
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
+  const fetchHistoryImages = async (): Promise<void> => {
+    try {
+      setHistoryImagesLoading(true);
+      setHistoryImagesError(null);
+
+      const response = await fetch(
+        "http://localhost:8080/felicita/v0/api/package/history-images"
+      );
+      const result: PackageHistoryImagesResponse = await response.json();
+
+      if (result.code === 200) {
+        setHistoryImages(result.data);
+      } else {
+        throw new Error(result.message);
+      }
+    } catch (err) {
+      setHistoryImagesError(
+        err instanceof Error
+          ? err.message
+          : "An error occurred while fetching package history images"
+      );
+    } finally {
+      setHistoryImagesLoading(false);
     }
   };
 
@@ -196,6 +274,16 @@ const PackagePage: React.FC = () => {
     fetchReviews();
   };
 
+  const handleHistoryRetry = () => {
+    setHistoryError(null);
+    fetchHistory();
+  };
+
+  const handleHistoryImagesRetry = () => {
+    setHistoryImagesError(null);
+    fetchHistoryImages();
+  };
+
   if (loading) {
     return (
       <Loading
@@ -229,13 +317,14 @@ const PackagePage: React.FC = () => {
       <NavBar />
       <div className="mx-auto px-4 py-8 bg-gradient-to-br from-purple-100 via-purple-100 to-amber-100">
         {/* Page Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Tour Packages
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Discover amazing travel experiences tailored for you
-          </p>
+        <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
+          <SectionHeader
+            subtitle=""
+            title="Tour Packages"
+            description="Discover amazing travel experiences tailored for you"
+            fromColor="#A855F7"
+            toColor="#F59E0B"
+          />
         </div>
 
         {/* Filters Section */}
@@ -275,6 +364,22 @@ const PackagePage: React.FC = () => {
           loading={reviewsLoading}
           error={reviewsError}
           onRetry={handleReviewsRetry}
+        />
+
+        {/* History Section */}
+        <HistoryCarousel
+          historyData={history}
+          loading={historyLoading}
+          error={historyError}
+          onRetry={handleHistoryRetry}
+        />
+
+        {/* Package History Gallery Section */}
+        <PackageHistoryGallery
+          imagesData={historyImages}
+          loading={historyImagesLoading}
+          error={historyImagesError}
+          onRetry={handleHistoryImagesRetry}
         />
       </div>
       <Footer />
