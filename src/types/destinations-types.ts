@@ -84,3 +84,106 @@ export interface EnhancedDestination extends PopularDestinationsType {
   rating: number;
   popularity: number;
 }
+
+// Add to existing types in destinations-types.ts
+
+export interface User {
+  userId: number;
+  username: string;
+}
+
+export interface Status {
+  id: number;
+  name: string;
+}
+
+export interface HistoryImage {
+  imageId: number;
+  name: string;
+  description: string;
+  imageUrl: string;
+  imageStatus: Status;
+  createdBy: User;
+  updatedBy: User | null;
+  terminatedBy: User | null;
+  createdAt: string;
+  updatedAt: string;
+  terminatedAt: string | null;
+}
+
+export interface DestinationHistoryType {
+  historyId: number;
+  destination: {
+    destinationId: number;
+    name: string;
+    description: string;
+    location: string;
+    latitude: number;
+    longitude: number;
+  };
+  title: string;
+  description: string;
+  eventDate: string;
+  historyStatus: Status;
+  createdBy: User;
+  updatedBy: User | null;
+  terminatedBy: User | null;
+  createdAt: string;
+  updatedAt: string;
+  terminatedAt: string | null;
+  images: HistoryImage[];
+}
+
+export interface HistoryApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: DestinationHistoryType[];
+  timestamp: string;
+}
+
+// Add to existing types in destinations-types.ts
+
+export interface HistoryImageUser {
+  username: string;
+}
+
+export interface HistoryImageHistory {
+  historyId: number;
+  title: string;
+  description: string;
+  eventDate: string;
+  historyStatusName: string;
+}
+
+export interface HistoryImageDestination {
+  destinationId: number;
+  name: string;
+  location: string;
+  latitude: number;
+  longitude: number;
+}
+
+export interface DestinationHistoryImage {
+  imageId: number;
+  imageName: string;
+  imageDescription: string;
+  imageUrl: string;
+  imageStatusName: string;
+  imageCreatedAt: string;
+  imageUpdatedAt: string;
+  imageTerminatedAt: string | null;
+  imageCreatedBy: HistoryImageUser;
+  imageUpdatedBy: HistoryImageUser | null;
+  imageTerminatedBy: HistoryImageUser | null;
+  history: HistoryImageHistory;
+  destination: HistoryImageDestination;
+}
+
+export interface HistoryImagesApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: DestinationHistoryImage[];
+  timestamp: string;
+}
