@@ -324,22 +324,6 @@ const PackagePage = () => {
               {destinations.length > 0 && (
                 <DestinationsSection destinations={destinations} />
               )}
-
-              {/* History Section */}
-              <HistoryCarousel
-                historyData={history}
-                loading={historyLoading}
-                error={historyError}
-                onRetry={handleHistoryRetry}
-              />
-
-              {/* Package History Gallery Section */}
-              <PackageHistoryGallery
-                imagesData={historyImages}
-                loading={historyImagesLoading}
-                error={historyImagesError}
-                onRetry={handleHistoryImagesRetry}
-              />
             </div>
 
             {/* Right Column - Booking Card */}
@@ -355,6 +339,21 @@ const PackagePage = () => {
               onRetry={handleReviewsRetry}
             />
           </div>
+          {/* History Section */}
+          <HistoryCarousel
+            historyData={history}
+            loading={historyLoading}
+            error={historyError}
+            onRetry={handleHistoryRetry}
+          />
+
+          {/* Package History Gallery Section */}
+          <PackageHistoryGallery
+            imagesData={historyImages}
+            loading={historyImagesLoading}
+            error={historyImagesError}
+            onRetry={handleHistoryImagesRetry}
+          />
         </div>
       </div>
       <Footer />

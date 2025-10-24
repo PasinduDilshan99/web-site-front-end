@@ -1,4 +1,3 @@
-// components/packages-components/PackageHistoryGallery.tsx
 "use client";
 import React, { useState, useEffect, useMemo } from "react";
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";
@@ -12,35 +11,60 @@ import {
   MapPin,
   ArrowLeft,
   ArrowRight,
-  Package,
+  Activity,
   Users,
+  Star,
+  Clock,
 } from "lucide-react";
 
-interface PackageHistoryImage {
+interface ActivityHistoryImage {
   imageId: number;
   imageName: string;
   imageDescription: string;
   imageUrl: string;
-  color: string;
   imageStatusName: string;
-  createdAt: string;
-  packageSchedule: {
-    packageScheduleId: number;
-    packageScheduleName: string;
+  imageCreatedByUsername: string;
+  imageUpdatedByUsername: string | null;
+  imageTerminatedByUsername: string | null;
+  imageCreatedAt: string;
+  imageUpdatedAt: string;
+  imageTerminatedAt: string | null;
+  history: {
+    historyId: number;
+    historyName: string;
+    historyDescription: string;
+    numberOfParticipate: number;
+    activityStart: string;
+    activityEnd: string;
+    rating: number;
+    historySpecialNote: string;
+    historyStatusName: string;
   };
-  packageInfo: {
-    packageId: number;
-    packageName: string;
-    tourId: number;
+  schedule: {
+    scheduleId: number;
+    scheduleName: string;
+    scheduleDescription: string;
+    assumeStartDate: string;
+    assumeEndDate: string;
+    durationHoursStart: number;
+    durationHoursEnd: number;
+    scheduleSpecialNote: string;
   };
-  createdByUser: {
-    fullName: string;
-    imageUrl: string | null;
+  activity: {
+    activityId: number;
+    activityName: string;
+    activityDescription: string;
+    activityCategory: string;
+    durationHours: number;
+    priceLocal: number;
+    priceForeigners: number;
+    minParticipate: number;
+    maxParticipate: number;
   };
 }
 
-interface PackageHistoryGalleryProps {
-  imagesData?: PackageHistoryImage[];
+interface ActivityHistoryGalleryProps {
+  imagesData?: ActivityHistoryImage[];
   title?: string;
   description?: string;
   showHeader?: boolean;
@@ -49,20 +73,20 @@ interface PackageHistoryGalleryProps {
   onRetry?: () => void;
 }
 
-const PackageHistoryGallery: React.FC<PackageHistoryGalleryProps> = ({
+const ActivityHistoryGallery: React.FC<ActivityHistoryGalleryProps> = ({
   imagesData = [],
-  title = "Package Memories Gallery",
-  description = "Relive the amazing moments and experiences from our past package tours",
+  title = "Activity Memories Gallery",
+  description = "Relive the amazing moments and experiences from our past adventure activities",
   showHeader = true,
   loading = false,
   error = null,
   onRetry,
 }) => {
-  const [images, setImages] = useState<PackageHistoryImage[]>([]);
+  const [images, setImages] = useState<ActivityHistoryImage[]>([]);
   const [selectedImage, setSelectedImage] =
-    useState<PackageHistoryImage | null>(null);
+    useState<ActivityHistoryImage | null>(null);
   const [duplicatedImages, setDuplicatedImages] = useState<
-    PackageHistoryImage[]
+    ActivityHistoryImage[]
   >([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -74,9 +98,6 @@ const PackageHistoryGallery: React.FC<PackageHistoryGalleryProps> = ({
   }, [imagesData]);
 
   // Filter out duplicate images (same imageId) and null imageUrls
-
-  // Duplicate images if less than 30 to create continuous flow
-  // Option 1: Use useMemo (Recommended)
   const uniqueImages = useMemo(
     () =>
       images.filter(
@@ -89,13 +110,13 @@ const PackageHistoryGallery: React.FC<PackageHistoryGalleryProps> = ({
 
   useEffect(() => {
     if (uniqueImages.length > 0) {
-      let result: PackageHistoryImage[] = [...uniqueImages];
+      let result: ActivityHistoryImage[] = [...uniqueImages];
       while (result.length < 30) {
         result = [...result, ...uniqueImages];
       }
       setDuplicatedImages(result.slice(0, 30));
     }
-  }, [uniqueImages]); // Now uniqueImages only changes when images changes
+  }, [uniqueImages]);
 
   // Format date
   const formatDate = (dateString: string): string => {
@@ -103,6 +124,14 @@ const PackageHistoryGallery: React.FC<PackageHistoryGalleryProps> = ({
       year: "numeric",
       month: "long",
       day: "numeric",
+    });
+  };
+
+  // Format time
+  const formatTime = (dateString: string): string => {
+    return new Date(dateString).toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -119,28 +148,24 @@ const PackageHistoryGallery: React.FC<PackageHistoryGalleryProps> = ({
     return rowIndex % 2 === 0 ? rowImages : [...rowImages].reverse();
   };
 
-  // Generate consistent color based on image ID or use provided color
-  const getImageColor = (image: PackageHistoryImage): string => {
-    if (image.color && image.color !== "#000000") {
-      return image.color;
-    }
-
+  // Generate consistent color based on image ID
+  const getImageColor = (image: ActivityHistoryImage): string => {
     const colors = [
-      "#8B5CF6",
-      "#3B82F6",
-      "#10B981",
-      "#F59E0B",
-      "#EF4444",
-      "#EC4899",
-      "#6366F1",
-      "#14B8A6",
-      "#F97316",
-      "#06B6D4",
+      "#3B82F6", // Blue
+      "#8B5CF6", // Purple
+      "#10B981", // Green
+      "#F59E0B", // Amber
+      "#EF4444", // Red
+      "#EC4899", // Pink
+      "#6366F1", // Indigo
+      "#14B8A6", // Teal
+      "#F97316", // Orange
+      "#06B6D4", // Cyan
     ];
     return colors[image.imageId % colors.length];
   };
 
-  const openModal = (image: PackageHistoryImage, index: number) => {
+  const openModal = (image: ActivityHistoryImage, index: number) => {
     setSelectedImage(image);
     setCurrentIndex(
       duplicatedImages.findIndex((img) => img.imageId === image.imageId)
@@ -183,10 +208,10 @@ const PackageHistoryGallery: React.FC<PackageHistoryGalleryProps> = ({
 
   if (loading) {
     return (
-      <section className="py-8 sm:py-10 md:py-12 lg:py-16 bg-gradient-to-br from-purple-50 to-amber-50">
+      <section className="py-8 sm:py-10 md:py-12 lg:py-16 bg-gradient-to-br from-blue-50 to-purple-50">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           <Loading
-            message="Loading package memories..."
+            message="Loading activity memories..."
             variant="spinner"
             size="md"
           />
@@ -197,10 +222,10 @@ const PackageHistoryGallery: React.FC<PackageHistoryGalleryProps> = ({
 
   if (error) {
     return (
-      <section className="py-8 sm:py-10 md:py-12 lg:py-16 bg-gradient-to-br from-purple-50 to-amber-50">
+      <section className="py-8 sm:py-10 md:py-12 lg:py-16 bg-gradient-to-br from-blue-50 to-purple-50">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           <ErrorState
-            title="Failed to Load Package Memories"
+            title="Failed to Load Activity Memories"
             message={error}
             icon="alert"
             variant="error"
@@ -215,23 +240,23 @@ const PackageHistoryGallery: React.FC<PackageHistoryGalleryProps> = ({
 
   if (uniqueImages.length === 0) {
     return (
-      <section className="py-8 sm:py-10 md:py-12 lg:py-16 bg-gradient-to-br from-purple-50 to-amber-50">
+      <section className="py-8 sm:py-10 md:py-12 lg:py-16 bg-gradient-to-br from-blue-50 to-purple-50">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           {showHeader && (
             <SectionHeader
               subtitle="Memories"
               title={title}
               description={description}
-              fromColor="#A855F7"
-              toColor="#F59E0B"
+              fromColor="#3B82F6"
+              toColor="#8B5CF6"
             />
           )}
           <div className="text-center py-8 sm:py-10 md:py-12">
             <div className="text-gray-500 text-base sm:text-lg md:text-xl mb-3 sm:mb-4">
-              No package memories available yet.
+              No activity memories available yet.
             </div>
             <div className="text-gray-400 text-sm sm:text-base">
-              Check back later to see photos from our package tours.
+              Check back later to see photos from our adventure activities.
             </div>
           </div>
         </div>
@@ -241,15 +266,15 @@ const PackageHistoryGallery: React.FC<PackageHistoryGalleryProps> = ({
 
   return (
     <>
-      <section className="py-8 sm:py-10 md:py-12 lg:py-16 bg-gradient-to-br from-purple-50 to-amber-50 overflow-hidden">
+      <section className="py-8 sm:py-10 md:py-12 lg:py-16 bg-gradient-to-br from-blue-50 to-purple-50 overflow-hidden">
         <div className="mx-auto">
           {showHeader && (
             <SectionHeader
               subtitle="Memories"
               title={title}
               description={description}
-              fromColor="#A855F7"
-              toColor="#F59E0B"
+              fromColor="#3B82F6"
+              toColor="#8B5CF6"
             />
           )}
 
@@ -298,8 +323,14 @@ const PackageHistoryGallery: React.FC<PackageHistoryGalleryProps> = ({
                                 {image.imageName}
                               </p>
                               <p className="truncate">
-                                {image.packageInfo.packageName}
+                                {image.activity.activityName}
                               </p>
+                              <div className="flex items-center mt-1">
+                                <Star className="w-3 h-3 fill-yellow-400 text-yellow-400 mr-1" />
+                                <span className="text-xs">
+                                  {image.history.rating}
+                                </span>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -315,28 +346,40 @@ const PackageHistoryGallery: React.FC<PackageHistoryGalleryProps> = ({
           <div className="mt-8 sm:mt-10 md:mt-12 lg:mt-16 text-center">
             <div className="inline-flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 text-sm sm:text-base md:text-lg">
               <div className="bg-white/80 backdrop-blur-sm rounded-lg px-4 sm:px-6 py-2 sm:py-3 shadow-lg">
-                <span className="font-bold text-purple-600">
+                <span className="font-bold text-blue-600">
                   {duplicatedImages.length}
                 </span>
-                <span className="text-gray-600 ml-2">Package Memories</span>
+                <span className="text-gray-600 ml-2">Activity Memories</span>
               </div>
               <div className="bg-white/80 backdrop-blur-sm rounded-lg px-4 sm:px-6 py-2 sm:py-3 shadow-lg">
-                <span className="font-bold text-amber-600">
+                <span className="font-bold text-purple-600">
                   {uniqueImages.length}
                 </span>
                 <span className="text-gray-600 ml-2">Unique Photos</span>
+              </div>
+              <div className="bg-white/80 backdrop-blur-sm rounded-lg px-4 sm:px-6 py-2 sm:py-3 shadow-lg">
+                <span className="font-bold text-blue-600">
+                  {
+                    [
+                      ...new Set(
+                        uniqueImages.map((img) => img.activity.activityId)
+                      ),
+                    ].length
+                  }
+                </span>
+                <span className="text-gray-600 ml-2">Activities</span>
               </div>
               <div className="bg-white/80 backdrop-blur-sm rounded-lg px-4 sm:px-6 py-2 sm:py-3 shadow-lg">
                 <span className="font-bold text-purple-600">
                   {
                     [
                       ...new Set(
-                        uniqueImages.map((img) => img.packageInfo.packageId)
+                        uniqueImages.map((img) => img.history.historyId)
                       ),
                     ].length
                   }
                 </span>
-                <span className="text-gray-600 ml-2">Packages</span>
+                <span className="text-gray-600 ml-2">Sessions</span>
               </div>
             </div>
           </div>
@@ -415,37 +458,88 @@ const PackageHistoryGallery: React.FC<PackageHistoryGalleryProps> = ({
             {/* Footer Info */}
             <div className="p-4 sm:p-6 border-t border-gray-200">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 text-sm sm:text-base">
+                {/* Activity Info */}
                 <div className="flex items-start text-gray-600">
-                  <Package className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 flex-shrink-0 mt-0.5" />
+                  <Activity className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 flex-shrink-0 mt-0.5" />
                   <div>
                     <p className="font-semibold">
-                      {selectedImage.packageInfo.packageName}
+                      {selectedImage.activity.activityName}
                     </p>
-                    <p className="text-gray-500 text-xs sm:text-sm">
-                      Schedule:{" "}
-                      {selectedImage.packageSchedule.packageScheduleName}
+                    <p className="text-gray-500 text-xs sm:text-sm capitalize">
+                      {selectedImage.activity.activityCategory.toLowerCase()}
                     </p>
                   </div>
                 </div>
+
+                {/* Schedule Info */}
                 <div className="flex items-start text-gray-600">
                   <Calendar className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-semibold">Upload Date</p>
+                    <p className="font-semibold">
+                      {selectedImage.schedule.scheduleName}
+                    </p>
                     <p className="text-gray-500 text-xs sm:text-sm">
-                      {formatDate(selectedImage.createdAt)}
+                      {formatDate(selectedImage.history.activityStart)}
                     </p>
                   </div>
                 </div>
+
+                {/* Rating Info */}
+                <div className="flex items-start text-gray-600">
+                  <Star className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold">Rating</p>
+                    <p className="text-gray-500 text-xs sm:text-sm flex items-center">
+                      <Star className="w-3 h-3 sm:w-4 sm:h-4 fill-yellow-400 text-yellow-400 mr-1" />
+                      {selectedImage.history.rating}/5.0
+                    </p>
+                  </div>
+                </div>
+
+                {/* Participants Info */}
+                <div className="flex items-start text-gray-600">
+                  <Users className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold">Participants</p>
+                    <p className="text-gray-500 text-xs sm:text-sm">
+                      {selectedImage.history.numberOfParticipate} people
+                    </p>
+                  </div>
+                </div>
+
+                {/* Time Info */}
+                <div className="flex items-start text-gray-600">
+                  <Clock className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold">Session Time</p>
+                    <p className="text-gray-500 text-xs sm:text-sm">
+                      {formatTime(selectedImage.history.activityStart)} -{" "}
+                      {formatTime(selectedImage.history.activityEnd)}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Upload Info */}
                 <div className="flex items-start text-gray-600">
                   <User className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 flex-shrink-0 mt-0.5" />
                   <div>
                     <p className="font-semibold">Uploaded by</p>
                     <p className="text-gray-500 text-xs sm:text-sm">
-                      {selectedImage.createdByUser.fullName}
+                      {selectedImage.imageCreatedByUsername}
                     </p>
                   </div>
                 </div>
               </div>
+
+              {/* Special Note */}
+              {selectedImage.history.historySpecialNote && (
+                <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
+                  <p className="text-sm text-blue-800">
+                    <span className="font-medium">Special Note: </span>
+                    {selectedImage.history.historySpecialNote}
+                  </p>
+                </div>
+              )}
 
               {/* Status Badge */}
               <div className="mt-4 flex items-center justify-between">
@@ -498,4 +592,4 @@ const PackageHistoryGallery: React.FC<PackageHistoryGalleryProps> = ({
   );
 };
 
-export default PackageHistoryGallery;
+export default ActivityHistoryGallery;

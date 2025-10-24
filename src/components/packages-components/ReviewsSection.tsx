@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
+import Image from "next/image";
 
 interface ReviewImage {
   id: number;
@@ -241,13 +242,14 @@ const ReviewsSection: React.FC<ReviewsSectionProps> = ({ reviews }) => {
               <div className="mb-4 sm:mb-6 lg:mb-8">
                 {/* Main Image */}
                 <div className="relative h-32 sm:h-48 md:h-64 lg:h-80 xl:h-96 rounded-lg sm:rounded-xl lg:rounded-2xl overflow-hidden bg-gradient-to-br from-purple-100 to-amber-100 mb-2 sm:mb-3 shadow-md">
-                  <img
+                  <Image
                     src={currentReview.images[selectedImageIndex].imageUrl}
                     alt={
                       currentReview.images[selectedImageIndex].description ||
                       currentReview.images[selectedImageIndex].name
                     }
-                    className="w-full h-full object-cover"
+                    width={2000}
+                    height={2000}
                     onError={(e) => {
                       e.currentTarget.src =
                         "https://via.placeholder.com/800x600?text=Image+Not+Available";
