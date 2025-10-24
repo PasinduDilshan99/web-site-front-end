@@ -1,10 +1,10 @@
-import UnderConstructionPage from "@/components/common-components/under-construction/UnderConstruction";
+import FaqPage from "@/pages/FaqPage";
 import React from "react";
 
 const page = () => {
   return (
     <div>
-      <UnderConstructionPage />
+      <FaqPage/>
     </div>
   );
 };
