@@ -7,7 +7,6 @@ import DestinationsCategories from "./components/destinations/DestinationsCatego
 import NewDestinations from "./components/destinations/NewDestinations";
 import PopularDestinations from "../components/destinations-components/popular-destinations/PopularDestinations";
 import TrendingDestinations from "./components/destinations/TrendingDestinations";
-import Faq from "./components/faq/Faq";
 import Footer from "./components/footer/Footer";
 import GalleryHome from "./components/gallery/GalleryHome";
 import HeroSection from "./components/heroSection/HeroSection";
@@ -27,6 +26,7 @@ import UserLevelsHome from "./components/user-levels/UserLevelsHome";
 import WhyChooseUs from "./components/whyChooseUs/WhyChooseUs";
 import WorkFlow from "./components/workFlow/WorkFlow";
 import NavBar from "@/components/common-components/navBar/NavBar";
+import Faq from "@/components/faq-components/Faq";
 
 export default function Home() {
   return (
