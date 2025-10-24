@@ -217,3 +217,61 @@ export interface ReviewsResponse {
   data: PackageReview[];
   timestamp: string;
 }
+
+export interface PackageHistory {
+  packageHistoryId: number;
+  packageScheduleId: number;
+  packageScheduleName: string;
+  assumeStartDate: string;
+  assumeEndDate: string;
+  durationStart: number;
+  durationEnd: number;
+  packageInfo: {
+    packageId: number;
+    packageName: string;
+    tourId: number;
+  };
+
+  numberOfParticipate: number;
+  rating: number;
+  duration: number;
+  historyDescription: string;
+  color: string;
+  hoverColor: string;
+  startDate: string;
+  endDate: string;
+  historyCreatedAt: string;
+  createdByUser: {
+    fullName: string;
+    imageUrl: string | null;
+  };
+  historyUpdatedAt: string;
+  updatedByUser: {
+    fullName: string | null;
+    imageUrl: string | null;
+  };
+  historyTerminatedAt: string | null;
+  terminatedByUser: {
+    fullName: string | null;
+    imageUrl: string | null;
+  };
+  images: PackageHistoryImage[];
+}
+
+export interface PackageHistoryImage {
+  imageId: number | null;
+  name: string | null;
+  description: string | null;
+  imageUrl: string | null;
+  color: string | null;
+}
+
+export interface PackageHistoryResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: PackageHistory[];
+  timestamp: string;
+}
+
+// Add to packages-types.ts

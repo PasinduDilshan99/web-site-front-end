@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Loading from "../../../components/common-components/loading/Loading";
 import { ErrorState } from "../../../components/common-components/error-state/ErrorState";
 import { EmptyState } from "../../../components/common-components/empty-state/EmptyState";
+import { useRouter } from "next/navigation";
 
 interface Schedule {
   scheduleId: number;
@@ -44,6 +45,11 @@ interface ActiveToursType {
 }
 
 const ActiveToursHome = () => {
+  const router = useRouter();
+
+  const handleClick = (tourId) => {
+    router.push(`/sri-lankan-tours/${tourId}`);
+  };
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTours, setActiveTours] = useState<ActiveToursType[]>([]);
@@ -55,15 +61,20 @@ const ActiveToursHome = () => {
   useEffect(() => {
     const updateCardsToShow = () => {
       const width = window.innerWidth;
-      if (width < 640) { // Mobile: 1 card
+      if (width < 640) {
+        // Mobile: 1 card
         setCardsToShow(1);
-      } else if (width < 768) { // Small mobile: 1 card
+      } else if (width < 768) {
+        // Small mobile: 1 card
         setCardsToShow(1);
-      } else if (width < 1024) { // Tablet: 2 cards
+      } else if (width < 1024) {
+        // Tablet: 2 cards
         setCardsToShow(1);
-      } else if (width < 1800) { // Laptop: 3 cards
+      } else if (width < 1800) {
+        // Laptop: 3 cards
         setCardsToShow(2);
-      } else { // PC and large screens: 4 cards
+      } else {
+        // PC and large screens: 4 cards
         setCardsToShow(3);
       }
     };
@@ -162,7 +173,11 @@ const ActiveToursHome = () => {
   if (loading) {
     return (
       <div className="min-h-96 flex items-center justify-center">
-        <Loading message="Loading popular tours..." variant="spinner" size="md" />
+        <Loading
+          message="Loading popular tours..."
+          variant="spinner"
+          size="md"
+        />
       </div>
     );
   }
@@ -245,15 +260,22 @@ const ActiveToursHome = () => {
                 <div
                   className="flex transition-transform duration-500 ease-out gap-4 sm:gap-6"
                   style={{
-                    transform: `translateX(-${currentIndex * (100 / cardsToShow)}%)`,
-                    transitionTimingFunction: "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+                    transform: `translateX(-${
+                      currentIndex * (100 / cardsToShow)
+                    }%)`,
+                    transitionTimingFunction:
+                      "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
                   }}
                 >
                   {activeTours.map((tour) => (
                     <div
                       key={tour.tourId}
                       className="flex-shrink-0"
-                      style={{ width: `calc(${100 / cardsToShow}% - ${(cardsToShow - 1) * 16 / cardsToShow}px)` }}
+                      style={{
+                        width: `calc(${100 / cardsToShow}% - ${
+                          ((cardsToShow - 1) * 16) / cardsToShow
+                        }px)`,
+                      }}
                     >
                       <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 h-full flex flex-col border border-gray-100 overflow-hidden group">
                         {/* Tour Image */}
@@ -274,7 +296,8 @@ const ActiveToursHome = () => {
 
                           {/* Duration Badge */}
                           <div className="absolute bottom-3 left-3 bg-amber-600 text-white px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold">
-                            {tour.duration} {tour.duration === 1 ? "day" : "days"}
+                            {tour.duration}{" "}
+                            {tour.duration === 1 ? "day" : "days"}
                           </div>
 
                           {/* Season Badge */}
@@ -339,7 +362,9 @@ const ActiveToursHome = () => {
                                 </div>
                                 {tour.schedules[0].specialNote && (
                                   <div className="text-sm text-gray-600 mt-2 flex items-start">
-                                    <span className="text-amber-500 mr-2">💡</span>
+                                    <span className="text-amber-500 mr-2">
+                                      💡
+                                    </span>
                                     {tour.schedules[0].specialNote}
                                   </div>
                                 )}
@@ -348,7 +373,10 @@ const ActiveToursHome = () => {
                           )}
 
                           {/* Learn More Button */}
-                          <button className="w-full bg-gradient-to-r from-amber-600 to-purple-600 hover:from-purple-700 hover:to-amber-700 text-white py-3 px-4 rounded-xl font-semibold text-sm sm:text-base transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center group/btn shadow-lg hover:shadow-xl">
+                          <button
+                            onClick={() => handleClick(tour.tourId)}
+                            className="w-full bg-gradient-to-r from-amber-600 to-purple-600 hover:from-purple-700 hover:to-amber-700 text-white py-3 px-4 rounded-xl font-semibold text-sm sm:text-base transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center group/btn shadow-lg hover:shadow-xl"
+                          >
                             Learn More
                             <svg
                               className="w-4 h-4 sm:w-5 sm:h-5 ml-2 transition-transform duration-200 group-hover/btn:translate-x-1"

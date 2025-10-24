@@ -25,6 +25,9 @@ const PackageContent: React.FC<PackageContentProps> = ({
   };
 
   const handleButtonClick = () => {
+    console.log('=================clicked===================');
+    console.log(pkg.packageId);
+    console.log('====================================');
     router.push(`/packages/${pkg.packageId}`);
   };
 

@@ -22,6 +22,49 @@ const NavBar = () => {
   const [isScrolledMenuOpen, setIsScrolledMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false);
+  const [isScrolledMoreDropdownOpen, setIsScrolledMoreDropdownOpen] =
+    useState(false);
+  const [screenSize, setScreenSize] = useState<
+    "mobile" | "tablet" | "laptop" | "desktop" | "large"
+  >("desktop");
+
+  // Dynamic max visible items based on screen size
+  const getMaxVisibleItems = () => {
+    switch (screenSize) {
+      case "laptop":
+        return 6;
+      case "desktop":
+        return 9;
+      case "large":
+        return 10;
+      default:
+        return 6; // mobile/tablet will use mobile menu
+    }
+  };
+
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      if (width < 768) {
+        setScreenSize("mobile");
+      } else if (width >= 768 && width < 1024) {
+        setScreenSize("tablet");
+      } else if (width >= 1024 && width < 1280) {
+        setScreenSize("laptop");
+      } else if (width >= 1280 && width < 1536) {
+        setScreenSize("desktop");
+      } else {
+        setScreenSize("large");
+      }
+    };
+
+    // Initial check
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const fetchNavBarItems = async () => {
@@ -54,6 +97,8 @@ const NavBar = () => {
       if (newIsScrolled !== isScrolled) {
         setIsMenuOpen(false);
         setIsScrolledMenuOpen(false);
+        setIsMoreDropdownOpen(false);
+        setIsScrolledMoreDropdownOpen(false);
       }
 
       setIsScrolled(newIsScrolled);
@@ -62,6 +107,16 @@ const NavBar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isScrolled]);
+
+  // Separate visible items and items for "More" dropdown based on screen size
+  const maxVisibleItems = getMaxVisibleItems();
+  const visibleItems = navBarData
+    .filter((item) => item.status === "VISIBLE")
+    .slice(0, maxVisibleItems);
+
+  const moreItems = navBarData
+    .filter((item) => item.status === "VISIBLE")
+    .slice(maxVisibleItems);
 
   // Temporary login/logout functions for demo
   const handleLogin = () => {
@@ -98,7 +153,8 @@ const NavBar = () => {
                 href="/"
                 className="text-xl font-bold bg-clip-text text-transparent hover:transition-all duration-300"
                 style={{
-                  backgroundImage: "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
+                  backgroundImage:
+                    "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundImage =
@@ -113,36 +169,119 @@ const NavBar = () => {
               </Link>
             </div>
 
-            {/* Desktop Menu */}
-            <div className="hidden md:flex items-center space-x-8">
-              {navBarData.map(
-                (item) =>
-                  item.status === "VISIBLE" && (
-                    <Link
-                      key={item.name}
-                      href={item.linkUrl}
-                      className="relative font-medium transition-colors duration-300 group px-3 py-2 rounded-lg"
-                      style={{
-                        color: "#5A4D75",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.color = "#8B5FBF";
-                        e.currentTarget.style.backgroundColor = "rgba(139, 95, 191, 0.08)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.color = "#5A4D75";
-                        e.currentTarget.style.backgroundColor = "transparent";
-                      }}
+            {/* Desktop Menu - Hidden on mobile/tablet */}
+            <div className="hidden lg:flex items-center space-x-4">
+              {visibleItems.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.linkUrl}
+                  className="relative font-medium transition-colors duration-300 group px-3 py-2 rounded-lg"
+                  style={{
+                    color: "#5A4D75",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = "#8B5FBF";
+                    e.currentTarget.style.backgroundColor =
+                      "rgba(139, 95, 191, 0.08)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = "#5A4D75";
+                    e.currentTarget.style.backgroundColor = "transparent";
+                  }}
+                >
+                  {item.name}
+                  <span
+                    className="absolute left-0 -bottom-1 w-0 h-0.5 transition-all duration-300 group-hover:w-full rounded-full"
+                    style={{
+                      background:
+                        "linear-gradient(90deg, #8B5FBF 0%, #E9B949 100%)",
+                    }}
+                  ></span>
+                </Link>
+              ))}
+
+              {/* More Dropdown */}
+              {moreItems.length > 0 && (
+                <div className="relative group">
+                  <button
+                    className="relative font-medium transition-colors duration-300 group px-3 py-2 rounded-lg flex items-center space-x-1"
+                    style={{
+                      color: "#5A4D75",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = "#8B5FBF";
+                      e.currentTarget.style.backgroundColor =
+                        "rgba(139, 95, 191, 0.08)";
+                      setIsMoreDropdownOpen(true);
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = "#5A4D75";
+                      e.currentTarget.style.backgroundColor = "transparent";
+                    }}
+                  >
+                    <span>More</span>
+                    <svg
+                      className={`w-4 h-4 transition-transform duration-200 ${
+                        isMoreDropdownOpen ? "rotate-180" : ""
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
                     >
-                      {item.name}
-                      <span
-                        className="absolute left-0 -bottom-1 w-0 h-0.5 transition-all duration-300 group-hover:w-full rounded-full"
-                        style={{
-                          background: "linear-gradient(90deg, #8B5FBF 0%, #E9B949 100%)",
-                        }}
-                      ></span>
-                    </Link>
-                  )
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                    <span
+                      className="absolute left-0 -bottom-1 w-0 h-0.5 transition-all duration-300 group-hover:w-full rounded-full"
+                      style={{
+                        background:
+                          "linear-gradient(90deg, #8B5FBF 0%, #E9B949 100%)",
+                      }}
+                    ></span>
+                  </button>
+
+                  {/* More Dropdown Menu */}
+                  {isMoreDropdownOpen && (
+                    <div
+                      className="absolute right-0 top-full mt-2 w-48 rounded-lg shadow-xl border backdrop-blur-sm"
+                      style={{
+                        backgroundColor: "rgba(255, 251, 250, 0.98)",
+                        borderColor: "rgba(139, 95, 191, 0.3)",
+                      }}
+                      onMouseEnter={() => setIsMoreDropdownOpen(true)}
+                      onMouseLeave={() => setIsMoreDropdownOpen(false)}
+                    >
+                      <div className="py-2">
+                        {moreItems.map((item) => (
+                          <Link
+                            key={item.name}
+                            href={item.linkUrl}
+                            className="block px-4 py-2 transition-colors duration-300"
+                            style={{
+                              color: "#5A4D75",
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.color = "#8B5FBF";
+                              e.currentTarget.style.backgroundColor =
+                                "rgba(139, 95, 191, 0.08)";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.color = "#5A4D75";
+                              e.currentTarget.style.backgroundColor =
+                                "transparent";
+                            }}
+                          >
+                            {item.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
 
@@ -157,7 +296,8 @@ const NavBar = () => {
                         backgroundColor: "transparent",
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = "rgba(139, 95, 191, 0.08)";
+                        e.currentTarget.style.backgroundColor =
+                          "rgba(139, 95, 191, 0.08)";
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.backgroundColor = "transparent";
@@ -166,7 +306,8 @@ const NavBar = () => {
                       <div
                         className="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden"
                         style={{
-                          background: "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
+                          background:
+                            "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
                           border: "2px solid rgba(139, 95, 191, 0.3)",
                         }}
                       >
@@ -230,11 +371,13 @@ const NavBar = () => {
                           }}
                           onMouseEnter={(e) => {
                             e.currentTarget.style.color = "#8B5FBF";
-                            e.currentTarget.style.backgroundColor = "rgba(139, 95, 191, 0.08)";
+                            e.currentTarget.style.backgroundColor =
+                              "rgba(139, 95, 191, 0.08)";
                           }}
                           onMouseLeave={(e) => {
                             e.currentTarget.style.color = "#5A4D75";
-                            e.currentTarget.style.backgroundColor = "transparent";
+                            e.currentTarget.style.backgroundColor =
+                              "transparent";
                           }}
                         >
                           Profile
@@ -247,11 +390,13 @@ const NavBar = () => {
                           }}
                           onMouseEnter={(e) => {
                             e.currentTarget.style.color = "#8B5FBF";
-                            e.currentTarget.style.backgroundColor = "rgba(139, 95, 191, 0.08)";
+                            e.currentTarget.style.backgroundColor =
+                              "rgba(139, 95, 191, 0.08)";
                           }}
                           onMouseLeave={(e) => {
                             e.currentTarget.style.color = "#5A4D75";
-                            e.currentTarget.style.backgroundColor = "transparent";
+                            e.currentTarget.style.backgroundColor =
+                              "transparent";
                           }}
                         >
                           Settings
@@ -265,11 +410,13 @@ const NavBar = () => {
                           }}
                           onMouseEnter={(e) => {
                             e.currentTarget.style.color = "#E97777";
-                            e.currentTarget.style.backgroundColor = "rgba(209, 77, 114, 0.08)";
+                            e.currentTarget.style.backgroundColor =
+                              "rgba(209, 77, 114, 0.08)";
                           }}
                           onMouseLeave={(e) => {
                             e.currentTarget.style.color = "#D14D72";
-                            e.currentTarget.style.backgroundColor = "transparent";
+                            e.currentTarget.style.backgroundColor =
+                              "transparent";
                           }}
                         >
                           Sign Out
@@ -284,7 +431,8 @@ const NavBar = () => {
                     href="/login"
                     className="px-4 py-2 rounded-lg font-medium transition-all duration-300"
                     style={{
-                      background: "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
+                      background:
+                        "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
                       color: "#FFFFFF",
                     }}
                     onMouseEnter={(e) => {
@@ -305,7 +453,7 @@ const NavBar = () => {
             </div>
 
             {/* Mobile Menu Button */}
-            <div className="flex items-center md:hidden">
+            <div className="flex items-center lg:hidden">
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="inline-flex items-center justify-center p-2 rounded-lg transition-all duration-300"
@@ -314,7 +462,8 @@ const NavBar = () => {
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.color = "#8B5FBF";
-                  e.currentTarget.style.backgroundColor = "rgba(139, 95, 191, 0.08)";
+                  e.currentTarget.style.backgroundColor =
+                    "rgba(139, 95, 191, 0.08)";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.color = "#5A4D75";
@@ -350,7 +499,7 @@ const NavBar = () => {
 
         {/* Mobile Menu */}
         <div
-          className={`md:hidden fixed left-0 right-0 top-16 z-40 overflow-hidden transition-all duration-300 ease-in-out ${
+          className={`lg:hidden fixed left-0 right-0 top-16 z-40 overflow-hidden transition-all duration-300 ease-in-out ${
             isMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
           }`}
         >
@@ -364,30 +513,31 @@ const NavBar = () => {
             }}
           >
             <div className="px-4 pt-4 pb-6 space-y-2">
-              {navBarData.map(
-                (item) =>
-                  item.status === "VISIBLE" && (
-                    <Link
-                      key={item.name}
-                      href={item.linkUrl}
-                      className="block px-4 py-3 rounded-lg font-medium transition-all duration-300 border border-transparent backdrop-blur-sm"
-                      style={{ color: "#5A4D75" }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.color = "#8B5FBF";
-                        e.currentTarget.style.backgroundColor = "rgba(139, 95, 191, 0.08)";
-                        e.currentTarget.style.borderColor = "rgba(139, 95, 191, 0.3)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.color = "#5A4D75";
-                        e.currentTarget.style.backgroundColor = "transparent";
-                        e.currentTarget.style.borderColor = "transparent";
-                      }}
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      {item.name}
-                    </Link>
-                  )
-              )}
+              {navBarData
+                .filter((item) => item.status === "VISIBLE")
+                .map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.linkUrl}
+                    className="block px-4 py-3 rounded-lg font-medium transition-all duration-300 border border-transparent backdrop-blur-sm"
+                    style={{ color: "#5A4D75" }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = "#8B5FBF";
+                      e.currentTarget.style.backgroundColor =
+                        "rgba(139, 95, 191, 0.08)";
+                      e.currentTarget.style.borderColor =
+                        "rgba(139, 95, 191, 0.3)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = "#5A4D75";
+                      e.currentTarget.style.backgroundColor = "transparent";
+                      e.currentTarget.style.borderColor = "transparent";
+                    }}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
 
               {/* Mobile Auth Links */}
               <div
@@ -400,7 +550,8 @@ const NavBar = () => {
                       <div
                         className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden"
                         style={{
-                          background: "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
+                          background:
+                            "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
                           border: "2px solid rgba(139, 95, 191, 0.3)",
                         }}
                       >
@@ -419,13 +570,13 @@ const NavBar = () => {
                         )}
                       </div>
                       <div>
-                        <div style={{ color: "#5A4D75" }} className="font-medium">
+                        <div
+                          style={{ color: "#5A4D75" }}
+                          className="font-medium"
+                        >
                           {user.name}
                         </div>
-                        <div
-                          style={{ color: "#7A6F8F" }}
-                          className="text-sm"
-                        >
+                        <div style={{ color: "#7A6F8F" }} className="text-sm">
                           {user.email}
                         </div>
                       </div>
@@ -436,7 +587,8 @@ const NavBar = () => {
                       style={{ color: "#5A4D75" }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.color = "#8B5FBF";
-                        e.currentTarget.style.backgroundColor = "rgba(139, 95, 191, 0.08)";
+                        e.currentTarget.style.backgroundColor =
+                          "rgba(139, 95, 191, 0.08)";
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.color = "#5A4D75";
@@ -455,7 +607,8 @@ const NavBar = () => {
                       style={{ color: "#D14D72" }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.color = "#E97777";
-                        e.currentTarget.style.backgroundColor = "rgba(209, 77, 114, 0.08)";
+                        e.currentTarget.style.backgroundColor =
+                          "rgba(209, 77, 114, 0.08)";
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.color = "#D14D72";
@@ -481,7 +634,8 @@ const NavBar = () => {
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.color = "#8B5FBF";
-                        e.currentTarget.style.backgroundColor = "rgba(139, 95, 191, 0.05)";
+                        e.currentTarget.style.backgroundColor =
+                          "rgba(139, 95, 191, 0.05)";
                       }}
                       onClick={() => setIsMenuOpen(false)}
                     >
@@ -491,7 +645,8 @@ const NavBar = () => {
                       href="/signup"
                       className="block px-4 py-3 rounded-lg font-medium transition-all duration-300 border border-transparent backdrop-blur-sm text-center"
                       style={{
-                        background: "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
+                        background:
+                          "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
                         color: "#FFFFFF",
                       }}
                       onMouseEnter={(e) => {
@@ -536,7 +691,8 @@ const NavBar = () => {
                 href="/"
                 className="text-lg font-bold bg-clip-text text-transparent hover:transition-all duration-300"
                 style={{
-                  backgroundImage: "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
+                  backgroundImage:
+                    "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundImage =
@@ -552,36 +708,111 @@ const NavBar = () => {
             </div>
 
             {/* Compact Desktop Menu */}
-            <div className="hidden md:flex items-center space-x-6">
-              {navBarData.map(
-                (item) =>
-                  item.status === "VISIBLE" && (
-                    <Link
-                      key={item.name}
-                      href={item.linkUrl}
-                      className="relative font-medium transition-colors duration-300 group px-2 py-1 rounded-md text-sm"
-                      style={{
-                        color: "#5A4D75",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.color = "#8B5FBF";
-                        e.currentTarget.style.backgroundColor = "rgba(139, 95, 191, 0.08)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.color = "#5A4D75";
-                        e.currentTarget.style.backgroundColor = "transparent";
-                      }}
+            <div className="hidden lg:flex items-center space-x-3">
+              {visibleItems.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.linkUrl}
+                  className="relative font-medium transition-colors duration-300 group px-2 py-1 rounded-md text-sm"
+                  style={{
+                    color: "#5A4D75",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = "#8B5FBF";
+                    e.currentTarget.style.backgroundColor =
+                      "rgba(139, 95, 191, 0.08)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = "#5A4D75";
+                    e.currentTarget.style.backgroundColor = "transparent";
+                  }}
+                >
+                  {item.name}
+                  <span
+                    className="absolute left-0 -bottom-1 w-0 h-0.5 transition-all duration-300 group-hover:w-full rounded-full"
+                    style={{
+                      background:
+                        "linear-gradient(90deg, #8B5FBF 0%, #E9B949 100%)",
+                    }}
+                  ></span>
+                </Link>
+              ))}
+
+              {/* More Dropdown for Scrolled Nav */}
+              {moreItems.length > 0 && (
+                <div className="relative group">
+                  <button
+                    className="relative font-medium transition-colors duration-300 group px-2 py-1 rounded-md text-sm flex items-center space-x-1"
+                    style={{
+                      color: "#5A4D75",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = "#8B5FBF";
+                      e.currentTarget.style.backgroundColor =
+                        "rgba(139, 95, 191, 0.08)";
+                      setIsScrolledMoreDropdownOpen(true);
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = "#5A4D75";
+                      e.currentTarget.style.backgroundColor = "transparent";
+                    }}
+                  >
+                    <span>More</span>
+                    <svg
+                      className={`w-3 h-3 transition-transform duration-200 ${
+                        isScrolledMoreDropdownOpen ? "rotate-180" : ""
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
                     >
-                      {item.name}
-                      {/* Gradient underline animation */}
-                      <span
-                        className="absolute left-0 -bottom-1 w-0 h-0.5 transition-all duration-300 group-hover:w-full rounded-full"
-                        style={{
-                          background: "linear-gradient(90deg, #8B5FBF 0%, #E9B949 100%)",
-                        }}
-                      ></span>
-                    </Link>
-                  )
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+
+                  {/* More Dropdown Menu for Scrolled Nav */}
+                  {isScrolledMoreDropdownOpen && (
+                    <div
+                      className="absolute right-0 top-full mt-1 w-40 rounded-lg shadow-xl border backdrop-blur-sm z-50"
+                      style={{
+                        backgroundColor: "rgba(255, 251, 250, 0.98)",
+                        borderColor: "rgba(139, 95, 191, 0.3)",
+                      }}
+                      onMouseEnter={() => setIsScrolledMoreDropdownOpen(true)}
+                      onMouseLeave={() => setIsScrolledMoreDropdownOpen(false)}
+                    >
+                      <div className="py-1">
+                        {moreItems.map((item) => (
+                          <Link
+                            key={item.name}
+                            href={item.linkUrl}
+                            className="block px-3 py-2 transition-colors duration-300 text-sm"
+                            style={{
+                              color: "#5A4D75",
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.color = "#8B5FBF";
+                              e.currentTarget.style.backgroundColor =
+                                "rgba(139, 95, 191, 0.08)";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.color = "#5A4D75";
+                              e.currentTarget.style.backgroundColor =
+                                "transparent";
+                            }}
+                          >
+                            {item.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
 
@@ -589,10 +820,11 @@ const NavBar = () => {
             <div className="hidden md:flex items-center space-x-3">
               {user ? (
                 <div className="flex items-center space-x-2">
-                  <div 
+                  <div
                     className="w-7 h-7 rounded-full flex items-center justify-center overflow-hidden border-2"
                     style={{
-                      background: "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
+                      background:
+                        "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
                       borderColor: "rgba(255, 255, 255, 0.3)",
                     }}
                   >
@@ -629,7 +861,8 @@ const NavBar = () => {
                     onMouseLeave={(e) => {
                       e.currentTarget.style.color = "#8B5FBF";
                       e.currentTarget.style.backgroundColor = "transparent";
-                      e.currentTarget.style.borderColor = "rgba(139, 95, 191, 0.3)";
+                      e.currentTarget.style.borderColor =
+                        "rgba(139, 95, 191, 0.3)";
                     }}
                   >
                     Login
@@ -638,7 +871,8 @@ const NavBar = () => {
                     href="/signup"
                     className="px-3 py-1.5 rounded-md font-medium transition-all duration-300 text-xs"
                     style={{
-                      background: "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
+                      background:
+                        "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
                       color: "#FFFFFF",
                     }}
                     onMouseEnter={(e) => {
@@ -657,7 +891,7 @@ const NavBar = () => {
             </div>
 
             {/* Compact Mobile Menu Button */}
-            <div className="flex items-center md:hidden">
+            <div className="flex items-center lg:hidden">
               <button
                 onClick={() => setIsScrolledMenuOpen(!isScrolledMenuOpen)}
                 className="inline-flex items-center justify-center p-1.5 rounded-md transition-all duration-300"
@@ -666,7 +900,8 @@ const NavBar = () => {
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.color = "#8B5FBF";
-                  e.currentTarget.style.backgroundColor = "rgba(139, 95, 191, 0.08)";
+                  e.currentTarget.style.backgroundColor =
+                    "rgba(139, 95, 191, 0.08)";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.color = "#5A4D75";
@@ -703,7 +938,7 @@ const NavBar = () => {
 
         {/* Compact Mobile Menu */}
         <div
-          className={`md:hidden fixed left-0 right-0 top-14 z-40 overflow-hidden transition-all duration-300 ease-in-out ${
+          className={`lg:hidden fixed left-0 right-0 top-14 z-40 overflow-hidden transition-all duration-300 ease-in-out ${
             isScrolledMenuOpen
               ? "max-h-screen opacity-100"
               : "max-h-0 opacity-0"
@@ -719,45 +954,47 @@ const NavBar = () => {
             }}
           >
             <div className="px-4 pt-3 pb-4 space-y-1">
-              {navBarData.map(
-                (item) =>
-                  item.status === "VISIBLE" && (
-                    <Link
-                      key={item.name}
-                      href={item.linkUrl}
-                      className="block px-3 py-2 rounded-md font-medium transition-all duration-300 border border-transparent backdrop-blur-sm text-sm"
-                      style={{
-                        color: "#5A4D75",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.color = "#8B5FBF";
-                        e.currentTarget.style.backgroundColor = "rgba(139, 95, 191, 0.08)";
-                        e.currentTarget.style.borderColor = "rgba(139, 95, 191, 0.3)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.color = "#5A4D75";
-                        e.currentTarget.style.backgroundColor = "transparent";
-                        e.currentTarget.style.borderColor = "transparent";
-                      }}
-                      onClick={() => setIsScrolledMenuOpen(false)}
-                    >
-                      {item.name}
-                    </Link>
-                  )
-              )}
+              {navBarData
+                .filter((item) => item.status === "VISIBLE")
+                .map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.linkUrl}
+                    className="block px-3 py-2 rounded-md font-medium transition-all duration-300 border border-transparent backdrop-blur-sm text-sm"
+                    style={{
+                      color: "#5A4D75",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = "#8B5FBF";
+                      e.currentTarget.style.backgroundColor =
+                        "rgba(139, 95, 191, 0.08)";
+                      e.currentTarget.style.borderColor =
+                        "rgba(139, 95, 191, 0.3)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = "#5A4D75";
+                      e.currentTarget.style.backgroundColor = "transparent";
+                      e.currentTarget.style.borderColor = "transparent";
+                    }}
+                    onClick={() => setIsScrolledMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
 
               {/* Compact Mobile Auth Links */}
-              <div 
+              <div
                 className="border-t pt-3 mt-3"
                 style={{ borderColor: "rgba(139, 95, 191, 0.2)" }}
               >
                 {user ? (
                   <>
                     <div className="flex items-center space-x-2 px-3 py-2 mb-2">
-                      <div 
+                      <div
                         className="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden border-2"
                         style={{
-                          background: "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
+                          background:
+                            "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
                           borderColor: "rgba(255, 255, 255, 0.3)",
                         }}
                       >
@@ -776,7 +1013,10 @@ const NavBar = () => {
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div style={{ color: "#5A4D75" }} className="font-medium text-sm truncate">
+                        <div
+                          style={{ color: "#5A4D75" }}
+                          className="font-medium text-sm truncate"
+                        >
                           {user.name}
                         </div>
                       </div>
@@ -790,7 +1030,8 @@ const NavBar = () => {
                       style={{ color: "#D14D72" }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.color = "#E97777";
-                        e.currentTarget.style.backgroundColor = "rgba(209, 77, 114, 0.08)";
+                        e.currentTarget.style.backgroundColor =
+                          "rgba(209, 77, 114, 0.08)";
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.color = "#D14D72";
@@ -825,7 +1066,8 @@ const NavBar = () => {
                       href="/signup"
                       className="block px-3 py-2 rounded-md font-medium transition-all duration-300 border border-transparent backdrop-blur-sm text-center text-sm"
                       style={{
-                        background: "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
+                        background:
+                          "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
                         color: "#FFFFFF",
                       }}
                       onClick={() => setIsScrolledMenuOpen(false)}
