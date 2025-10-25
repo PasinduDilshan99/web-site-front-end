@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { NavBarItem } from "@/types/nav-bar-types";
+import { NavBarItem, NavBarSubmenuItem } from "@/types/nav-bar-types";
 import { GET_ALL_NAV_BAR_DATA } from "@/utils/frontEndConstant";
 import Link from "next/link";
 import { COMPANY_NAME } from "@/utils/constant";
@@ -14,6 +14,456 @@ interface User {
   avatar?: string;
 }
 
+// Mobile menu item component to handle individual state
+interface MobileMenuItemProps {
+  item: NavBarItem;
+  onClose: () => void;
+}
+
+const MobileMenuItem: React.FC<MobileMenuItemProps> = ({ item, onClose }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const visibleSubmenus = getVisibleSubmenus(item);
+  const hasSubmenu = visibleSubmenus.length > 0;
+
+  if (hasSubmenu) {
+    return (
+      <div className="border-b border-gray-100 last:border-b-0">
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="flex items-center justify-between w-full px-4 py-3 rounded-lg font-medium transition-all duration-300 border border-transparent backdrop-blur-sm"
+          style={{ color: "#5A4D75" }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = "#8B5FBF";
+            e.currentTarget.style.backgroundColor = "rgba(139, 95, 191, 0.08)";
+            e.currentTarget.style.borderColor = "rgba(139, 95, 191, 0.3)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = "#5A4D75";
+            e.currentTarget.style.backgroundColor = "transparent";
+            e.currentTarget.style.borderColor = "transparent";
+          }}
+        >
+          <span>{item.name}</span>
+          <svg
+            className={`w-4 h-4 transition-transform duration-200 ${
+              isExpanded ? "rotate-180" : ""
+            }`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </button>
+
+        {/* Mobile Submenu Items */}
+        {isExpanded && (
+          <div className="pl-6 mt-2 space-y-1">
+            {visibleSubmenus.map((submenu) => (
+              <Link
+                key={submenu.id}
+                href={submenu.linkUrl}
+                className="flex items-center space-x-3 px-4 py-2 rounded-lg font-medium transition-all duration-300 border border-transparent backdrop-blur-sm text-sm"
+                style={{ color: "#5A4D75" }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "#8B5FBF";
+                  e.currentTarget.style.backgroundColor =
+                    "rgba(139, 95, 191, 0.08)";
+                  e.currentTarget.style.borderColor = "rgba(139, 95, 191, 0.3)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "#5A4D75";
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.borderColor = "transparent";
+                }}
+                onClick={() => {
+                  onClose();
+                  setIsExpanded(false);
+                }}
+              >
+                {submenu.iconClass && (
+                  <i className={`${submenu.iconClass} w-3 h-3`}></i>
+                )}
+                <div>
+                  <div>{submenu.name}</div>
+                  {submenu.description && (
+                    <div className="text-xs opacity-70 mt-1">
+                      {submenu.description}
+                    </div>
+                  )}
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="border-b border-gray-100 last:border-b-0">
+      <Link
+        href={item.linkUrl}
+        className="block px-4 py-3 rounded-lg font-medium transition-all duration-300 border border-transparent backdrop-blur-sm"
+        style={{ color: "#5A4D75" }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.color = "#8B5FBF";
+          e.currentTarget.style.backgroundColor = "rgba(139, 95, 191, 0.08)";
+          e.currentTarget.style.borderColor = "rgba(139, 95, 191, 0.3)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.color = "#5A4D75";
+          e.currentTarget.style.backgroundColor = "transparent";
+          e.currentTarget.style.borderColor = "transparent";
+        }}
+        onClick={onClose}
+      >
+        {item.name}
+      </Link>
+    </div>
+  );
+};
+
+// Scrolled mobile menu item component
+interface ScrolledMobileMenuItemProps {
+  item: NavBarItem;
+  onClose: () => void;
+}
+
+const ScrolledMobileMenuItem: React.FC<ScrolledMobileMenuItemProps> = ({
+  item,
+  onClose,
+}) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const visibleSubmenus = getVisibleSubmenus(item);
+  const hasSubmenu = visibleSubmenus.length > 0;
+
+  if (hasSubmenu) {
+    return (
+      <div className="border-b border-gray-100 last:border-b-0">
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="flex items-center justify-between w-full px-3 py-2 rounded-md font-medium transition-all duration-300 border border-transparent backdrop-blur-sm text-sm"
+          style={{ color: "#5A4D75" }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = "#8B5FBF";
+            e.currentTarget.style.backgroundColor = "rgba(139, 95, 191, 0.08)";
+            e.currentTarget.style.borderColor = "rgba(139, 95, 191, 0.3)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = "#5A4D75";
+            e.currentTarget.style.backgroundColor = "transparent";
+            e.currentTarget.style.borderColor = "transparent";
+          }}
+        >
+          <span>{item.name}</span>
+          <svg
+            className={`w-3 h-3 transition-transform duration-200 ${
+              isExpanded ? "rotate-180" : ""
+            }`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </button>
+
+        {/* Mobile Submenu Items */}
+        {isExpanded && (
+          <div className="pl-4 mt-1 space-y-1">
+            {visibleSubmenus.map((submenu) => (
+              <Link
+                key={submenu.id}
+                href={submenu.linkUrl}
+                className="flex items-center space-x-2 px-3 py-1.5 rounded-md font-medium transition-all duration-300 border border-transparent backdrop-blur-sm text-xs"
+                style={{ color: "#5A4D75" }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "#8B5FBF";
+                  e.currentTarget.style.backgroundColor =
+                    "rgba(139, 95, 191, 0.08)";
+                  e.currentTarget.style.borderColor = "rgba(139, 95, 191, 0.3)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "#5A4D75";
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.borderColor = "transparent";
+                }}
+                onClick={() => {
+                  onClose();
+                  setIsExpanded(false);
+                }}
+              >
+                {submenu.iconClass && (
+                  <i className={`${submenu.iconClass} w-3 h-3`}></i>
+                )}
+                <span>{submenu.name}</span>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="border-b border-gray-100 last:border-b-0">
+      <Link
+        href={item.linkUrl}
+        className="block px-3 py-2 rounded-md font-medium transition-all duration-300 border border-transparent backdrop-blur-sm text-sm"
+        style={{ color: "#5A4D75" }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.color = "#8B5FBF";
+          e.currentTarget.style.backgroundColor = "rgba(139, 95, 191, 0.08)";
+          e.currentTarget.style.borderColor = "rgba(139, 95, 191, 0.3)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.color = "#5A4D75";
+          e.currentTarget.style.backgroundColor = "transparent";
+          e.currentTarget.style.borderColor = "transparent";
+        }}
+        onClick={onClose}
+      >
+        {item.name}
+      </Link>
+    </div>
+  );
+};
+
+// Desktop dropdown component
+interface DesktopDropdownProps {
+  item: NavBarItem;
+  isOpen: boolean;
+  onToggle: () => void;
+  onClose: () => void;
+}
+
+const DesktopDropdown: React.FC<DesktopDropdownProps> = ({
+  item,
+  isOpen,
+  onToggle,
+  onClose,
+}) => {
+  const visibleSubmenus = getVisibleSubmenus(item);
+
+  return (
+    <div className="relative group">
+      <button
+        onClick={onToggle}
+        className="relative font-medium transition-colors duration-300 group px-3 py-2 rounded-lg flex items-center space-x-1"
+        style={{
+          color: "#5A4D75",
+          backgroundColor: isOpen ? "rgba(139, 95, 191, 0.08)" : "transparent",
+        }}
+        onMouseEnter={(e) => {
+          if (!isOpen) {
+            e.currentTarget.style.color = "#8B5FBF";
+            e.currentTarget.style.backgroundColor = "rgba(139, 95, 191, 0.08)";
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!isOpen) {
+            e.currentTarget.style.color = "#5A4D75";
+            e.currentTarget.style.backgroundColor = "transparent";
+          }
+        }}
+      >
+        <span>{item.name}</span>
+        <svg
+          className={`w-4 h-4 transition-transform duration-200 ${
+            isOpen ? "rotate-180" : ""
+          }`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+        <span
+          className="absolute left-0 -bottom-1 w-0 h-0.5 transition-all duration-300 group-hover:w-full rounded-full"
+          style={{
+            background: "linear-gradient(90deg, #8B5FBF 0%, #E9B949 100%)",
+          }}
+        ></span>
+      </button>
+
+      {/* Dropdown Submenu */}
+      {isOpen && (
+        <div
+          className="absolute left-0 top-full mt-2 w-56 rounded-lg shadow-xl border backdrop-blur-sm z-50"
+          style={{
+            backgroundColor: "rgba(255, 251, 250, 0.98)",
+            borderColor: "rgba(139, 95, 191, 0.3)",
+          }}
+        >
+          <div className="py-2">
+            {visibleSubmenus.map((submenu) => (
+              <Link
+                key={submenu.id}
+                href={submenu.linkUrl}
+                className="flex items-center space-x-3 px-4 py-3 transition-colors duration-300 group"
+                style={{
+                  color: "#5A4D75",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "#8B5FBF";
+                  e.currentTarget.style.backgroundColor =
+                    "rgba(139, 95, 191, 0.08)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "#5A4D75";
+                  e.currentTarget.style.backgroundColor = "transparent";
+                }}
+                onClick={onClose}
+              >
+                {submenu.iconClass && (
+                  <i
+                    className={`${submenu.iconClass} w-4 h-4 text-current`}
+                  ></i>
+                )}
+                <div className="flex-1">
+                  <div className="font-medium">{submenu.name}</div>
+                  {submenu.description && (
+                    <div className="text-xs opacity-70 mt-1">
+                      {submenu.description}
+                    </div>
+                  )}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Scrolled desktop dropdown component
+interface ScrolledDesktopDropdownProps {
+  item: NavBarItem;
+  isOpen: boolean;
+  onToggle: () => void;
+  onClose: () => void;
+}
+
+const ScrolledDesktopDropdown: React.FC<ScrolledDesktopDropdownProps> = ({
+  item,
+  isOpen,
+  onToggle,
+  onClose,
+}) => {
+  const visibleSubmenus = getVisibleSubmenus(item);
+
+  return (
+    <div className="relative group">
+      <button
+        onClick={onToggle}
+        className="relative font-medium transition-colors duration-300 group px-2 py-1 rounded-md text-sm flex items-center space-x-1"
+        style={{
+          color: "#5A4D75",
+          backgroundColor: isOpen ? "rgba(139, 95, 191, 0.08)" : "transparent",
+        }}
+        onMouseEnter={(e) => {
+          if (!isOpen) {
+            e.currentTarget.style.color = "#8B5FBF";
+            e.currentTarget.style.backgroundColor = "rgba(139, 95, 191, 0.08)";
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!isOpen) {
+            e.currentTarget.style.color = "#5A4D75";
+            e.currentTarget.style.backgroundColor = "transparent";
+          }
+        }}
+      >
+        <span>{item.name}</span>
+        <svg
+          className={`w-3 h-3 transition-transform duration-200 ${
+            isOpen ? "rotate-180" : ""
+          }`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+      </button>
+
+      {/* Dropdown Submenu for Scrolled Nav */}
+      {isOpen && (
+        <div
+          className="absolute left-0 top-full mt-1 w-48 rounded-lg shadow-xl border backdrop-blur-sm z-50"
+          style={{
+            backgroundColor: "rgba(255, 251, 250, 0.98)",
+            borderColor: "rgba(139, 95, 191, 0.3)",
+          }}
+        >
+          <div className="py-1">
+            {visibleSubmenus.map((submenu) => (
+              <Link
+                key={submenu.id}
+                href={submenu.linkUrl}
+                className="flex items-center space-x-2 px-3 py-2 transition-colors duration-300 text-sm"
+                style={{
+                  color: "#5A4D75",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "#8B5FBF";
+                  e.currentTarget.style.backgroundColor =
+                    "rgba(139, 95, 191, 0.08)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "#5A4D75";
+                  e.currentTarget.style.backgroundColor = "transparent";
+                }}
+                onClick={onClose}
+              >
+                {submenu.iconClass && (
+                  <i className={`${submenu.iconClass} w-3 h-3`}></i>
+                )}
+                <span>{submenu.name}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Helper function to get visible submenus
+const getVisibleSubmenus = (item: NavBarItem): NavBarSubmenuItem[] => {
+  if (!item.submenus) return [];
+  return item.submenus
+    .filter((submenu) => submenu.status === "VISIBLE")
+    .sort((a, b) => a.sortOrder - b.sortOrder);
+};
+
+// Helper function to check if item has submenus
+const hasSubmenus = (item: NavBarItem) => {
+  return item.submenus && item.submenus.length > 0;
+};
+
 const NavBar = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,6 +475,10 @@ const NavBar = () => {
   const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false);
   const [isScrolledMoreDropdownOpen, setIsScrolledMoreDropdownOpen] =
     useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
+  const [activeScrolledDropdown, setActiveScrolledDropdown] = useState<
+    number | null
+  >(null);
   const [screenSize, setScreenSize] = useState<
     "mobile" | "tablet" | "laptop" | "desktop" | "large"
   >("desktop");
@@ -35,7 +489,7 @@ const NavBar = () => {
       case "laptop":
         return 6;
       case "desktop":
-        return 9;
+        return 8;
       case "large":
         return 10;
       default:
@@ -99,6 +553,8 @@ const NavBar = () => {
         setIsScrolledMenuOpen(false);
         setIsMoreDropdownOpen(false);
         setIsScrolledMoreDropdownOpen(false);
+        setActiveDropdown(null);
+        setActiveScrolledDropdown(null);
       }
 
       setIsScrolled(newIsScrolled);
@@ -108,15 +564,50 @@ const NavBar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isScrolled]);
 
+  // Close all dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest(".nav-dropdown")) {
+        setActiveDropdown(null);
+        setActiveScrolledDropdown(null);
+        setIsMoreDropdownOpen(false);
+        setIsScrolledMoreDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Filter only visible items
+  const visibleNavBarItems = navBarData.filter(
+    (item) => item.status === "VISIBLE"
+  );
+
   // Separate visible items and items for "More" dropdown based on screen size
   const maxVisibleItems = getMaxVisibleItems();
-  const visibleItems = navBarData
-    .filter((item) => item.status === "VISIBLE")
-    .slice(0, maxVisibleItems);
+  const visibleItems = visibleNavBarItems.slice(0, maxVisibleItems);
+  const moreItems = visibleNavBarItems.slice(maxVisibleItems);
 
-  const moreItems = navBarData
-    .filter((item) => item.status === "VISIBLE")
-    .slice(maxVisibleItems);
+  // Handle dropdown toggle
+  const handleDropdownToggle = (itemId: number) => {
+    setActiveDropdown(activeDropdown === itemId ? null : itemId);
+  };
+
+  const handleScrolledDropdownToggle = (itemId: number) => {
+    setActiveScrolledDropdown(
+      activeScrolledDropdown === itemId ? null : itemId
+    );
+  };
+
+  // Close all dropdowns
+  const closeAllDropdowns = () => {
+    setActiveDropdown(null);
+    setActiveScrolledDropdown(null);
+    setIsMoreDropdownOpen(false);
+    setIsScrolledMoreDropdownOpen(false);
+  };
 
   // Temporary login/logout functions for demo
   const handleLogin = () => {
@@ -164,47 +655,35 @@ const NavBar = () => {
                   e.currentTarget.style.backgroundImage =
                     "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)";
                 }}
+                onClick={closeAllDropdowns}
               >
                 {COMPANY_NAME}
               </Link>
             </div>
 
             {/* Desktop Menu - Hidden on mobile/tablet */}
-            <div className="hidden lg:flex items-center space-x-4">
-              {visibleItems.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.linkUrl}
-                  className="relative font-medium transition-colors duration-300 group px-3 py-2 rounded-lg"
-                  style={{
-                    color: "#5A4D75",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = "#8B5FBF";
-                    e.currentTarget.style.backgroundColor =
-                      "rgba(139, 95, 191, 0.08)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = "#5A4D75";
-                    e.currentTarget.style.backgroundColor = "transparent";
-                  }}
-                >
-                  {item.name}
-                  <span
-                    className="absolute left-0 -bottom-1 w-0 h-0.5 transition-all duration-300 group-hover:w-full rounded-full"
-                    style={{
-                      background:
-                        "linear-gradient(90deg, #8B5FBF 0%, #E9B949 100%)",
-                    }}
-                  ></span>
-                </Link>
-              ))}
+            <div className="hidden lg:flex items-center space-x-1 nav-dropdown">
+              {visibleItems.map((item) => {
+                const visibleSubmenus = getVisibleSubmenus(item);
+                const hasSubmenu = visibleSubmenus.length > 0;
 
-              {/* More Dropdown */}
-              {moreItems.length > 0 && (
-                <div className="relative group">
-                  <button
-                    className="relative font-medium transition-colors duration-300 group px-3 py-2 rounded-lg flex items-center space-x-1"
+                if (hasSubmenu) {
+                  return (
+                    <DesktopDropdown
+                      key={item.id}
+                      item={item}
+                      isOpen={activeDropdown === item.id}
+                      onToggle={() => handleDropdownToggle(item.id)}
+                      onClose={closeAllDropdowns}
+                    />
+                  );
+                }
+
+                return (
+                  <Link
+                    key={item.id}
+                    href={item.linkUrl}
+                    className="relative font-medium transition-colors duration-300 group px-3 py-2 rounded-lg"
                     style={{
                       color: "#5A4D75",
                     }}
@@ -212,11 +691,49 @@ const NavBar = () => {
                       e.currentTarget.style.color = "#8B5FBF";
                       e.currentTarget.style.backgroundColor =
                         "rgba(139, 95, 191, 0.08)";
-                      setIsMoreDropdownOpen(true);
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.color = "#5A4D75";
                       e.currentTarget.style.backgroundColor = "transparent";
+                    }}
+                    onClick={closeAllDropdowns}
+                  >
+                    {item.name}
+                    <span
+                      className="absolute left-0 -bottom-1 w-0 h-0.5 transition-all duration-300 group-hover:w-full rounded-full"
+                      style={{
+                        background:
+                          "linear-gradient(90deg, #8B5FBF 0%, #E9B949 100%)",
+                      }}
+                    ></span>
+                  </Link>
+                );
+              })}
+
+              {/* More Dropdown */}
+              {moreItems.length > 0 && (
+                <div className="relative group nav-dropdown">
+                  <button
+                    onClick={() => setIsMoreDropdownOpen(!isMoreDropdownOpen)}
+                    className="relative font-medium transition-colors duration-300 group px-3 py-2 rounded-lg flex items-center space-x-1"
+                    style={{
+                      color: "#5A4D75",
+                      backgroundColor: isMoreDropdownOpen
+                        ? "rgba(139, 95, 191, 0.08)"
+                        : "transparent",
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isMoreDropdownOpen) {
+                        e.currentTarget.style.color = "#8B5FBF";
+                        e.currentTarget.style.backgroundColor =
+                          "rgba(139, 95, 191, 0.08)";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isMoreDropdownOpen) {
+                        e.currentTarget.style.color = "#5A4D75";
+                        e.currentTarget.style.backgroundColor = "transparent";
+                      }
                     }}
                   >
                     <span>More</span>
@@ -247,37 +764,120 @@ const NavBar = () => {
                   {/* More Dropdown Menu */}
                   {isMoreDropdownOpen && (
                     <div
-                      className="absolute right-0 top-full mt-2 w-48 rounded-lg shadow-xl border backdrop-blur-sm"
+                      className="absolute right-0 top-full mt-2 w-48 rounded-lg shadow-xl border backdrop-blur-sm z-50"
                       style={{
                         backgroundColor: "rgba(255, 251, 250, 0.98)",
                         borderColor: "rgba(139, 95, 191, 0.3)",
                       }}
-                      onMouseEnter={() => setIsMoreDropdownOpen(true)}
-                      onMouseLeave={() => setIsMoreDropdownOpen(false)}
                     >
                       <div className="py-2">
-                        {moreItems.map((item) => (
-                          <Link
-                            key={item.name}
-                            href={item.linkUrl}
-                            className="block px-4 py-2 transition-colors duration-300"
-                            style={{
-                              color: "#5A4D75",
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.color = "#8B5FBF";
-                              e.currentTarget.style.backgroundColor =
-                                "rgba(139, 95, 191, 0.08)";
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.color = "#5A4D75";
-                              e.currentTarget.style.backgroundColor =
-                                "transparent";
-                            }}
-                          >
-                            {item.name}
-                          </Link>
-                        ))}
+                        {moreItems.map((item) => {
+                          const hasSubmenu = hasSubmenus(item);
+
+                          if (hasSubmenu) {
+                            return (
+                              <div key={item.id} className="relative group">
+                                <button
+                                  onClick={() => handleDropdownToggle(item.id)}
+                                  className="flex items-center justify-between w-full px-4 py-2 transition-colors duration-300 group"
+                                  style={{
+                                    color: "#5A4D75",
+                                    backgroundColor:
+                                      activeDropdown === item.id
+                                        ? "rgba(139, 95, 191, 0.08)"
+                                        : "transparent",
+                                  }}
+                                >
+                                  <span>{item.name}</span>
+                                  <svg
+                                    className="w-3 h-3"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M9 5l7 7-7 7"
+                                    />
+                                  </svg>
+                                </button>
+
+                                {/* Nested submenu in More dropdown */}
+                                {activeDropdown === item.id && (
+                                  <div
+                                    className="absolute left-full top-0 ml-1 w-48 rounded-lg shadow-xl border backdrop-blur-sm z-50"
+                                    style={{
+                                      backgroundColor:
+                                        "rgba(255, 251, 250, 0.98)",
+                                      borderColor: "rgba(139, 95, 191, 0.3)",
+                                    }}
+                                  >
+                                    <div className="py-2">
+                                      {getVisibleSubmenus(item).map(
+                                        (submenu) => (
+                                          <Link
+                                            key={submenu.id}
+                                            href={submenu.linkUrl}
+                                            className="flex items-center space-x-2 px-4 py-2 transition-colors duration-300"
+                                            style={{
+                                              color: "#5A4D75",
+                                            }}
+                                            onMouseEnter={(e) => {
+                                              e.currentTarget.style.color =
+                                                "#8B5FBF";
+                                              e.currentTarget.style.backgroundColor =
+                                                "rgba(139, 95, 191, 0.08)";
+                                            }}
+                                            onMouseLeave={(e) => {
+                                              e.currentTarget.style.color =
+                                                "#5A4D75";
+                                              e.currentTarget.style.backgroundColor =
+                                                "transparent";
+                                            }}
+                                            onClick={closeAllDropdowns}
+                                          >
+                                            {submenu.iconClass && (
+                                              <i
+                                                className={`${submenu.iconClass} w-3 h-3`}
+                                              ></i>
+                                            )}
+                                            <span>{submenu.name}</span>
+                                          </Link>
+                                        )
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          }
+
+                          return (
+                            <Link
+                              key={item.id}
+                              href={item.linkUrl}
+                              className="block px-4 py-2 transition-colors duration-300"
+                              style={{
+                                color: "#5A4D75",
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.color = "#8B5FBF";
+                                e.currentTarget.style.backgroundColor =
+                                  "rgba(139, 95, 191, 0.08)";
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.color = "#5A4D75";
+                                e.currentTarget.style.backgroundColor =
+                                  "transparent";
+                              }}
+                              onClick={closeAllDropdowns}
+                            >
+                              {item.name}
+                            </Link>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
@@ -338,7 +938,7 @@ const NavBar = () => {
 
                     {/* Dropdown Menu */}
                     <div
-                      className="absolute right-0 top-full mt-2 w-48 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0"
+                      className="absolute right-0 top-full mt-2 w-48 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50"
                       style={{
                         backgroundColor: "rgba(255, 251, 250, 0.98)",
                         border: "1px solid rgba(139, 95, 191, 0.2)",
@@ -379,6 +979,7 @@ const NavBar = () => {
                             e.currentTarget.style.backgroundColor =
                               "transparent";
                           }}
+                          onClick={closeAllDropdowns}
                         >
                           Profile
                         </Link>
@@ -398,11 +999,15 @@ const NavBar = () => {
                             e.currentTarget.style.backgroundColor =
                               "transparent";
                           }}
+                          onClick={closeAllDropdowns}
                         >
                           Settings
                         </Link>
                         <button
-                          onClick={handleLogout}
+                          onClick={() => {
+                            handleLogout();
+                            closeAllDropdowns();
+                          }}
                           className="block w-full text-left px-3 py-2 rounded-md transition-colors duration-300 mt-2 border-t pt-2"
                           style={{
                             color: "#D14D72",
@@ -445,6 +1050,7 @@ const NavBar = () => {
                         "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)";
                       e.currentTarget.style.color = "#FFFFFF";
                     }}
+                    onClick={closeAllDropdowns}
                   >
                     Login
                   </Link>
@@ -513,31 +1119,13 @@ const NavBar = () => {
             }}
           >
             <div className="px-4 pt-4 pb-6 space-y-2">
-              {navBarData
-                .filter((item) => item.status === "VISIBLE")
-                .map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.linkUrl}
-                    className="block px-4 py-3 rounded-lg font-medium transition-all duration-300 border border-transparent backdrop-blur-sm"
-                    style={{ color: "#5A4D75" }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.color = "#8B5FBF";
-                      e.currentTarget.style.backgroundColor =
-                        "rgba(139, 95, 191, 0.08)";
-                      e.currentTarget.style.borderColor =
-                        "rgba(139, 95, 191, 0.3)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.color = "#5A4D75";
-                      e.currentTarget.style.backgroundColor = "transparent";
-                      e.currentTarget.style.borderColor = "transparent";
-                    }}
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {item.name}
-                  </Link>
-                ))}
+              {visibleNavBarItems.map((item) => (
+                <MobileMenuItem
+                  key={item.id}
+                  item={item}
+                  onClose={() => setIsMenuOpen(false)}
+                />
+              ))}
 
               {/* Mobile Auth Links */}
               <div
@@ -702,47 +1290,35 @@ const NavBar = () => {
                   e.currentTarget.style.backgroundImage =
                     "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)";
                 }}
+                onClick={closeAllDropdowns}
               >
                 {COMPANY_NAME}
               </Link>
             </div>
 
             {/* Compact Desktop Menu */}
-            <div className="hidden lg:flex items-center space-x-3">
-              {visibleItems.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.linkUrl}
-                  className="relative font-medium transition-colors duration-300 group px-2 py-1 rounded-md text-sm"
-                  style={{
-                    color: "#5A4D75",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = "#8B5FBF";
-                    e.currentTarget.style.backgroundColor =
-                      "rgba(139, 95, 191, 0.08)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = "#5A4D75";
-                    e.currentTarget.style.backgroundColor = "transparent";
-                  }}
-                >
-                  {item.name}
-                  <span
-                    className="absolute left-0 -bottom-1 w-0 h-0.5 transition-all duration-300 group-hover:w-full rounded-full"
-                    style={{
-                      background:
-                        "linear-gradient(90deg, #8B5FBF 0%, #E9B949 100%)",
-                    }}
-                  ></span>
-                </Link>
-              ))}
+            <div className="hidden lg:flex items-center space-x-2 nav-dropdown">
+              {visibleItems.map((item) => {
+                const visibleSubmenus = getVisibleSubmenus(item);
+                const hasSubmenu = visibleSubmenus.length > 0;
 
-              {/* More Dropdown for Scrolled Nav */}
-              {moreItems.length > 0 && (
-                <div className="relative group">
-                  <button
-                    className="relative font-medium transition-colors duration-300 group px-2 py-1 rounded-md text-sm flex items-center space-x-1"
+                if (hasSubmenu) {
+                  return (
+                    <ScrolledDesktopDropdown
+                      key={item.id}
+                      item={item}
+                      isOpen={activeScrolledDropdown === item.id}
+                      onToggle={() => handleScrolledDropdownToggle(item.id)}
+                      onClose={closeAllDropdowns}
+                    />
+                  );
+                }
+
+                return (
+                  <Link
+                    key={item.id}
+                    href={item.linkUrl}
+                    className="relative font-medium transition-colors duration-300 group px-2 py-1 rounded-md text-sm"
                     style={{
                       color: "#5A4D75",
                     }}
@@ -750,11 +1326,44 @@ const NavBar = () => {
                       e.currentTarget.style.color = "#8B5FBF";
                       e.currentTarget.style.backgroundColor =
                         "rgba(139, 95, 191, 0.08)";
-                      setIsScrolledMoreDropdownOpen(true);
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.color = "#5A4D75";
                       e.currentTarget.style.backgroundColor = "transparent";
+                    }}
+                    onClick={closeAllDropdowns}
+                  >
+                    {item.name}
+                  </Link>
+                );
+              })}
+
+              {/* More Dropdown for Scrolled Nav */}
+              {moreItems.length > 0 && (
+                <div className="relative group nav-dropdown">
+                  <button
+                    onClick={() =>
+                      setIsScrolledMoreDropdownOpen(!isScrolledMoreDropdownOpen)
+                    }
+                    className="relative font-medium transition-colors duration-300 group px-2 py-1 rounded-md text-sm flex items-center space-x-1"
+                    style={{
+                      color: "#5A4D75",
+                      backgroundColor: isScrolledMoreDropdownOpen
+                        ? "rgba(139, 95, 191, 0.08)"
+                        : "transparent",
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isScrolledMoreDropdownOpen) {
+                        e.currentTarget.style.color = "#8B5FBF";
+                        e.currentTarget.style.backgroundColor =
+                          "rgba(139, 95, 191, 0.08)";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isScrolledMoreDropdownOpen) {
+                        e.currentTarget.style.color = "#5A4D75";
+                        e.currentTarget.style.backgroundColor = "transparent";
+                      }
                     }}
                   >
                     <span>More</span>
@@ -783,32 +1392,117 @@ const NavBar = () => {
                         backgroundColor: "rgba(255, 251, 250, 0.98)",
                         borderColor: "rgba(139, 95, 191, 0.3)",
                       }}
-                      onMouseEnter={() => setIsScrolledMoreDropdownOpen(true)}
-                      onMouseLeave={() => setIsScrolledMoreDropdownOpen(false)}
                     >
                       <div className="py-1">
-                        {moreItems.map((item) => (
-                          <Link
-                            key={item.name}
-                            href={item.linkUrl}
-                            className="block px-3 py-2 transition-colors duration-300 text-sm"
-                            style={{
-                              color: "#5A4D75",
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.color = "#8B5FBF";
-                              e.currentTarget.style.backgroundColor =
-                                "rgba(139, 95, 191, 0.08)";
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.color = "#5A4D75";
-                              e.currentTarget.style.backgroundColor =
-                                "transparent";
-                            }}
-                          >
-                            {item.name}
-                          </Link>
-                        ))}
+                        {moreItems.map((item) => {
+                          const hasSubmenu = hasSubmenus(item);
+
+                          if (hasSubmenu) {
+                            return (
+                              <div key={item.id} className="relative group">
+                                <button
+                                  onClick={() =>
+                                    handleScrolledDropdownToggle(item.id)
+                                  }
+                                  className="flex items-center justify-between w-full px-3 py-2 transition-colors duration-300 text-sm"
+                                  style={{
+                                    color: "#5A4D75",
+                                    backgroundColor:
+                                      activeScrolledDropdown === item.id
+                                        ? "rgba(139, 95, 191, 0.08)"
+                                        : "transparent",
+                                  }}
+                                >
+                                  <span>{item.name}</span>
+                                  <svg
+                                    className="w-2 h-2"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M9 5l7 7-7 7"
+                                    />
+                                  </svg>
+                                </button>
+
+                                {/* Nested submenu in More dropdown */}
+                                {activeScrolledDropdown === item.id && (
+                                  <div
+                                    className="absolute left-full top-0 ml-1 w-40 rounded-lg shadow-xl border backdrop-blur-sm z-50"
+                                    style={{
+                                      backgroundColor:
+                                        "rgba(255, 251, 250, 0.98)",
+                                      borderColor: "rgba(139, 95, 191, 0.3)",
+                                    }}
+                                  >
+                                    <div className="py-1">
+                                      {getVisibleSubmenus(item).map(
+                                        (submenu) => (
+                                          <Link
+                                            key={submenu.id}
+                                            href={submenu.linkUrl}
+                                            className="flex items-center space-x-2 px-3 py-2 transition-colors duration-300 text-sm"
+                                            style={{
+                                              color: "#5A4D75",
+                                            }}
+                                            onMouseEnter={(e) => {
+                                              e.currentTarget.style.color =
+                                                "#8B5FBF";
+                                              e.currentTarget.style.backgroundColor =
+                                                "rgba(139, 95, 191, 0.08)";
+                                            }}
+                                            onMouseLeave={(e) => {
+                                              e.currentTarget.style.color =
+                                                "#5A4D75";
+                                              e.currentTarget.style.backgroundColor =
+                                                "transparent";
+                                            }}
+                                            onClick={closeAllDropdowns}
+                                          >
+                                            {submenu.iconClass && (
+                                              <i
+                                                className={`${submenu.iconClass} w-3 h-3`}
+                                              ></i>
+                                            )}
+                                            <span>{submenu.name}</span>
+                                          </Link>
+                                        )
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          }
+
+                          return (
+                            <Link
+                              key={item.id}
+                              href={item.linkUrl}
+                              className="block px-3 py-2 transition-colors duration-300 text-sm"
+                              style={{
+                                color: "#5A4D75",
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.color = "#8B5FBF";
+                                e.currentTarget.style.backgroundColor =
+                                  "rgba(139, 95, 191, 0.08)";
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.color = "#5A4D75";
+                                e.currentTarget.style.backgroundColor =
+                                  "transparent";
+                              }}
+                              onClick={closeAllDropdowns}
+                            >
+                              {item.name}
+                            </Link>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
@@ -864,6 +1558,7 @@ const NavBar = () => {
                       e.currentTarget.style.borderColor =
                         "rgba(139, 95, 191, 0.3)";
                     }}
+                    onClick={closeAllDropdowns}
                   >
                     Login
                   </Link>
@@ -883,6 +1578,7 @@ const NavBar = () => {
                       e.currentTarget.style.background =
                         "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)";
                     }}
+                    onClick={closeAllDropdowns}
                   >
                     Sign Up
                   </Link>
@@ -954,33 +1650,13 @@ const NavBar = () => {
             }}
           >
             <div className="px-4 pt-3 pb-4 space-y-1">
-              {navBarData
-                .filter((item) => item.status === "VISIBLE")
-                .map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.linkUrl}
-                    className="block px-3 py-2 rounded-md font-medium transition-all duration-300 border border-transparent backdrop-blur-sm text-sm"
-                    style={{
-                      color: "#5A4D75",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.color = "#8B5FBF";
-                      e.currentTarget.style.backgroundColor =
-                        "rgba(139, 95, 191, 0.08)";
-                      e.currentTarget.style.borderColor =
-                        "rgba(139, 95, 191, 0.3)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.color = "#5A4D75";
-                      e.currentTarget.style.backgroundColor = "transparent";
-                      e.currentTarget.style.borderColor = "transparent";
-                    }}
-                    onClick={() => setIsScrolledMenuOpen(false)}
-                  >
-                    {item.name}
-                  </Link>
-                ))}
+              {visibleNavBarItems.map((item) => (
+                <ScrolledMobileMenuItem
+                  key={item.id}
+                  item={item}
+                  onClose={() => setIsScrolledMenuOpen(false)}
+                />
+              ))}
 
               {/* Compact Mobile Auth Links */}
               <div

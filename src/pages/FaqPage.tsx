@@ -1,13 +1,13 @@
-import Faq from "@/app/components/faq/Faq";
 import Footer from "@/app/components/footer/Footer";
 import NavBar from "@/components/common-components/navBar/NavBar";
+import { FaqComponent } from "@/components/faq-components/FaqComponent";
 import React from "react";
 
 const FaqPage = () => {
   return (
     <>
       <NavBar />
-      <Faq />
+      <FaqComponent showAll={true} />
       <Footer />
     </>
   );
