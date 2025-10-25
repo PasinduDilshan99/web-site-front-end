@@ -47,7 +47,6 @@ export const GET_VISIBLE_OUR_SERVICES = `${BASE_PATH}${VERSION}${API}${OUR_SERVI
 
 export const GET_ACTIVE_WORK_FLOW = `${BASE_PATH}${VERSION}${API}${WORK_FLOW}/active`;
 
-export const GET_AVAILABLE_ACCOMMODATION = `${BASE_PATH}${VERSION}${API}${ACCOMMODATION}/available`;
 
 export const GET_ALL_DESTINATIONS_CATEGORIES = `${BASE_PATH}${VERSION}${API}${DESTINATIONS}/active-categories`;
 export const GET_ACTIVE_DESTINATIONS= `${BASE_PATH}${VERSION}${API}${DESTINATIONS}/active-destinations`;
@@ -84,3 +83,11 @@ export const GET_PLAN_YOUR_TRIP_DESTINATIONS_TOURS = `${BASE_PATH}${API}${VERSIO
 // FAQ
 export const GET_VISIBLE_FAQ_DATA = `${BASE_PATH}${VERSION}${API}${FAQ}/visible`;
 export const INSERT_FAQ_REQUEST = `${BASE_PATH}${VERSION}${API}${FAQ}/insert-faq-request`;
+
+// Accommodations
+export const GET_AVAILABLE_ACCOMMODATION = `${BASE_PATH}${VERSION}${API}${ACCOMMODATION}/available`;
+export const GET_HOTEL_DETAILS_SECTION_BE = `${BASE_PATH}${VERSION}${API}${ACCOMMODATION}/hotels-section`;
+export const GET_RESORT_DETAILS_SECTION_BE = `${BASE_PATH}${VERSION}${API}${ACCOMMODATION}/resorts-section`;
+export const GET_VILLA_DETAILS_SECTION_BE = `${BASE_PATH}${VERSION}${API}${ACCOMMODATION}/villas-section`;
+export const GET_HOSTEL_DETAILS_SECTION_BE = `${BASE_PATH}${VERSION}${API}${ACCOMMODATION}/hostels-section`;
+export const GET_RESTAURANT_DETAILS_SECTION_BE = `${BASE_PATH}${VERSION}${API}${ACCOMMODATION}/restaurants-section`;
