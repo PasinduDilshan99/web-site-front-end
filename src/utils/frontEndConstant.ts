@@ -85,4 +85,4 @@ export const GET_HOTEL_DETAILS_SECTION_FE = `${API}${ACCOMMODATION}/hotels/deati
 export const GET_RESORT_DETAILS_SECTION_FE = `${API}${ACCOMMODATION}/resorts/deatils-for-section`;
 export const GET_VILLA_DETAILS_SECTION_FE = `${API}${ACCOMMODATION}/villas/deatils-for-section`;
 export const GET_HOSTEL_DETAILS_SECTION_FE = `${API}${ACCOMMODATION}/hostels/deatils-for-section`;
-export const GET_RESTAURANT_DETAILS_SECTION_E = `${API}${ACCOMMODATION}/restaurants/deatils-for-section`;
+export const GET_RESTAURANT_DETAILS_SECTION_FE = `${API}${ACCOMMODATION}/restaurants/deatils-for-section`;

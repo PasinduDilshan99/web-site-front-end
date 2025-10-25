@@ -1,18 +1,30 @@
-"use client"
+// components/HotelsSection.tsx
+"use client";
 import React, { useEffect, useState } from "react";
-import { HotelSectionApiResponse, HotelSectionHotel } from "@/types/accommodations-types/hotel-types";
+import {
+  HotelSectionApiResponse,
+  HotelSectionHotel,
+} from "@/types/accommodations-types/hotel-types";
 import { GET_HOTEL_DETAILS_SECTION_FE } from "@/utils/frontEndConstant";
+import HotelSectionCard from "./hotels-components/HotelSectionCard";
+import Loading from "../common-components/loading/Loading";
+import { ErrorState } from "../common-components/error-state/ErrorState";
+import SectionHeader from "../common-components/section-header/SectionHeader";
+import AnimatedButton from "../common-components/buttons/AnimatedButton";
+import { useRouter } from "next/navigation";
 
 const HotelsSection = () => {
   const [hotels, setHotels] = useState<HotelSectionHotel[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = useState(3);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchHotels = async () => {
       try {
         setLoading(true);
-        const response = await fetch(GET_HOTEL_DETAILS_SECTION_FE); // Your API endpoint
+        const response = await fetch(GET_HOTEL_DETAILS_SECTION_FE);
         const data: HotelSectionApiResponse = await response.json();
 
         if (!response.ok) {
@@ -30,138 +42,109 @@ const HotelsSection = () => {
     fetchHotels();
   }, []);
 
+  // Responsive card count handler
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+
+      if (width < 768) {
+        // Mobile
+        setVisibleCount(3);
+      } else if (width < 1024) {
+        // Tablet
+        setVisibleCount(4);
+      } else if (width < 1280) {
+        // Laptop
+        setVisibleCount(6); // 3x2 grid
+      } else if (width < 1536) {
+        // PC
+        setVisibleCount(8); // 4x2 grid
+      } else {
+        // Extra large screens
+        setVisibleCount(10); // 5x2 grid
+      }
+    };
+
+    handleResize(); // Set initial value
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const displayedHotels = hotels.slice(0, visibleCount);
+
+  const handleRetry = () => {
+    setLoading(true);
+  };
+
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-64">
-        <div className="text-lg">Loading hotels...</div>
-      </div>
+      <Loading message="Loading activities..." variant="spinner" size="md" />
     );
   }
 
   if (error) {
     return (
-      <div className="flex justify-center items-center min-h-64">
-        <div className="text-red-500 text-lg">Error: {error}</div>
-      </div>
+      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+          <ErrorState
+            title="Failed to Load activities"
+            message={error}
+            icon="alert"
+            variant="error"
+            size="md"
+            actionLabel="Try Again"
+            onAction={handleRetry}
+          />
+        </div>
+      </section>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">Featured Hotels</h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {hotels.map((hotel) => (
-          <div key={hotel.hotelId} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-            {/* Hotel Images */}
-            {hotel.hotelImages && hotel.hotelImages.length > 0 ? (
-              <div className="relative h-48">
-                <img
-                  src={hotel.hotelImages[0].imageUrl}
-                  alt={hotel.hotelImages[0].caption}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute top-2 right-2 bg-blue-600 text-white px-2 py-1 rounded-md text-sm font-semibold">
-                  {hotel.starRating} ★
-                </div>
-              </div>
-            ) : (
-              <div className="h-48 bg-gray-200 flex items-center justify-center">
-                <span className="text-gray-500">No Image Available</span>
-              </div>
-            )}
+    <div className=" mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-gradient-to-br from-purple-100 via-purple-100 to-amber-100">
+      {/* Header */}
+      <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
+        <SectionHeader
+          subtitle=""
+          title="Featured Hotels"
+          description="Discover the perfect stay for your next adventure"
+          fromColor="#A855F7"
+          toColor="#F59E0B"
+        />
+      </div>
 
-            {/* Hotel Details */}
-            <div className="p-4">
-              <h2 className="text-xl font-semibold text-gray-800 mb-2">
-                {hotel.hotelName}
-              </h2>
-              
-              <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                {hotel.hotelDescription}
-              </p>
-
-              <div className="space-y-2 mb-4">
-                <div className="flex items-center text-sm text-gray-600">
-                  <span className="font-medium">Address:</span>
-                  <span className="ml-2">{hotel.address}</span>
-                </div>
-                
-                <div className="flex items-center text-sm text-gray-600">
-                  <span className="font-medium">Contact:</span>
-                  <span className="ml-2">{hotel.contactNumber}</span>
-                </div>
-
-                <div className="flex items-center text-sm text-gray-600">
-                  <span className="font-medium">Check-in:</span>
-                  <span className="ml-2">{hotel.checkInTime} | Check-out: {hotel.checkOutTime}</span>
-                </div>
-              </div>
-
-              {/* Amenities */}
-              <div className="flex flex-wrap gap-2 mb-4">
-                {hotel.wifiAvailable && (
-                  <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
-                    WiFi
-                  </span>
-                )}
-                {hotel.parkingFacility && (
-                  <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
-                    Parking
-                  </span>
-                )}
-                {hotel.petFriendly && (
-                  <span className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">
-                    Pet Friendly
-                  </span>
-                )}
-              </div>
-
-              {/* Rooms */}
-              {hotel.rooms && hotel.rooms.length > 0 && (
-                <div className="mb-4">
-                  <h3 className="font-semibold text-gray-700 mb-2">Room Types:</h3>
-                  <div className="space-y-2">
-                    {hotel.rooms.slice(0, 2).map((room, index) => (
-                      <div key={index} className="text-sm text-gray-600">
-                        <span className="font-medium">{room.roomType}:</span>
-                        <span className="ml-1">${room.localPricePerNight}/night</span>
-                      </div>
-                    ))}
-                    {hotel.rooms.length > 2 && (
-                      <div className="text-sm text-blue-600">
-                        +{hotel.rooms.length - 2} more room types
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Reviews */}
-              {hotel.reviews && hotel.reviews.totalReviews > 0 && (
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <span className="text-yellow-500 text-lg">★</span>
-                    <span className="ml-1 font-medium text-gray-700">
-                      {hotel.reviews.averageRating}
-                    </span>
-                    <span className="ml-1 text-gray-500 text-sm">
-                      ({hotel.reviews.totalReviews} reviews)
-                    </span>
-                  </div>
-                  <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm">
-                    View Details
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
+      {/* Hotels Grid */}
+      <div
+        className={`
+        grid gap-6
+        grid-cols-1           /* Mobile: 1 column */
+        sm:grid-cols-2        /* Small: 2 columns */
+        lg:grid-cols-3        /* Laptop: 3 columns */
+        xl:grid-cols-3        /* PC: 4 columns */
+        2xl:grid-cols-4       /* Extra large: 5 columns */
+      `}
+      >
+        {displayedHotels.map((hotel) => (
+          <HotelSectionCard key={hotel.hotelId} hotel={hotel} />
         ))}
       </div>
 
+      {/* Show More Button (if there are more hotels) */}
+      <div className="text-center mt-6 sm:mt-8 md:mt-10 lg:mt-12 xl:mt-16">
+        <AnimatedButton onClick={() => router.push("/accommodations/hotels")}>
+          View All Hotels
+        </AnimatedButton>
+      </div>
+
+      {/* Empty State */}
       {hotels.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-500 text-lg">No hotels found.</p>
+          <div className="text-gray-400 text-6xl mb-4">🏨</div>
+          <p className="text-gray-500 text-lg">
+            No hotels available at the moment.
+          </p>
+          <p className="text-gray-400 text-sm mt-2">Please check back later.</p>
         </div>
       )}
     </div>
