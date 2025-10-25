@@ -38,7 +38,6 @@ export const GET_VISIBLE_HERO_SECTION_DATA = `${BASE_PATH}${VERSION}${API}${HERO
 
 export const GET_VISIBLE_WHY_CHOOSE_US_DATA = `${BASE_PATH}${VERSION}${API}${WHY_CHOOSE_US}/visible`;
 
-export const GET_VISIBLE_FAQ_DATA = `${BASE_PATH}${VERSION}${API}${FAQ}/visible`;
 
 export const UPDATE_FAQ_VIEW_COUNT = `${BASE_PATH}${VERSION}${API}${FAQ}/view-count`;
 
@@ -82,3 +81,6 @@ export const GET_ACTIVE_FOOTER_DATA = `${BASE_PATH}${API}${VERSION}${FOOTER}/act
 export const GET_PLAN_YOUR_TRIP_ACTIVE_DESTINATIONS = `${BASE_PATH}${API}${VERSION}${PLAN_YOUR_TRIP}/active`;
 export const GET_PLAN_YOUR_TRIP_DESTINATIONS_TOURS = `${BASE_PATH}${API}${VERSION}${PLAN_YOUR_TRIP}/tours`;
 
+// FAQ
+export const GET_VISIBLE_FAQ_DATA = `${BASE_PATH}${VERSION}${API}${FAQ}/visible`;
+export const INSERT_FAQ_REQUEST = `${BASE_PATH}${VERSION}${API}${FAQ}/insert-faq-request`;

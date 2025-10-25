@@ -23,3 +23,42 @@ export interface FaqProps {
   showAll?: boolean;
   displayLimit?: number;
 }
+
+export interface InsertFAQRequestType {
+  ticketNumber?: string;
+  name: string;
+  email: string;
+  category: string;
+  subject: string;
+  message: string;
+  ipAddress: string;
+  userId: number;
+}
+
+export interface ValidationError {
+  id: number;
+  field: string;
+  value: string;
+}
+
+export interface InsertFAQSuccessResponseType {
+  code: number;
+  status: string;
+  message: string;
+  data: {
+    message: string;
+  };
+  timestamp: string;
+}
+
+export interface InsertFAQErrorResponseType {
+  code: number;
+  status: string;
+  message: string;
+  data: ValidationError[];
+  timestamp: string;
+}
+
+export interface GenericErrorResponseType {
+  error: string;
+}

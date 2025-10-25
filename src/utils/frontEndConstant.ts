@@ -33,7 +33,6 @@ export const GET_ALL_WHY_CHOOSE_US_DATA = `${API}${WHY_CHOOSE_US}`;
 
 export const GET_ALL_FAQ_DATA = `${API}${FAQ}`;
 
-export const UPDATE_FAQ_VIEW_COUNT = `${API}${FAQ}/update-view-count`;
 
 export const GET_ALL_PARTNERS = `${API}${PARTNERS}`;
 
@@ -76,3 +75,8 @@ export const GET_ACTIVE_ACTIVITIES_CATEGORIES_FE = `${API}${ACTIVITIES}/categori
 export const GET_ACTIVE_FOOTER_DATA = `${API}${FOOTER}`;
 export const GET_PLAN_YOUR_TRIP_ACTIVE_DESTINATIONS_FE = `${API}${PLAN_YOUR_TRIP}`;
 export const GET_PLAN_YOUR_TRIP_DESTINATIONS_TOURS_FE = `${API}${PLAN_YOUR_TRIP}/map`;
+
+
+// FAQ
+export const UPDATE_FAQ_VIEW_COUNT = `${API}${FAQ}/update-view-count`;
+export const INSERT_FAQ_REQUEST_FE = `${API}${FAQ}/insert-faq-request`;
