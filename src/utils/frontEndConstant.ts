@@ -40,8 +40,6 @@ export const GET_ALL_OUR_SERVICES = `${API}${OUR_SERVICES}`;
 
 export const GET_ACTIVE_WORK_FLOW_STEPS = `${API}${WORK_FLOW}`;
 
-export const GET_AVAILABLE_ACCOMMODATION = `${API}${ACCOMMODATION}`;
-
 export const GET_ALL_DESTINATIONS_CATEGORIES = `${API}${DESTINATIONS}${CATEGORIES}`;
 export const GET_POPULAR_DESTINATIONS = `${API}${DESTINATIONS}/popular-destinations`;
 export const GET_ACTIVE_DESTINATIONS_FE = `${API}${DESTINATIONS}`;
@@ -80,3 +78,11 @@ export const GET_PLAN_YOUR_TRIP_DESTINATIONS_TOURS_FE = `${API}${PLAN_YOUR_TRIP}
 // FAQ
 export const UPDATE_FAQ_VIEW_COUNT = `${API}${FAQ}/update-view-count`;
 export const INSERT_FAQ_REQUEST_FE = `${API}${FAQ}/insert-faq-request`;
+
+// Accommodations
+export const GET_AVAILABLE_ACCOMMODATION = `${API}${ACCOMMODATION}`;
+export const GET_HOTEL_DETAILS_SECTION_FE = `${API}${ACCOMMODATION}/hotels/deatils-for-section`;
+export const GET_RESORT_DETAILS_SECTION_FE = `${API}${ACCOMMODATION}/resorts/deatils-for-section`;
+export const GET_VILLA_DETAILS_SECTION_FE = `${API}${ACCOMMODATION}/villas/deatils-for-section`;
+export const GET_HOSTEL_DETAILS_SECTION_FE = `${API}${ACCOMMODATION}/hostels/deatils-for-section`;
+export const GET_RESTAURANT_DETAILS_SECTION_FE = `${API}${ACCOMMODATION}/restaurants/deatils-for-section`;
