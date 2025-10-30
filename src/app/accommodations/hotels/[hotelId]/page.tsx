@@ -14,7 +14,7 @@ async function getHotelDetails(id: string): Promise<ServiceProviderAPIResponse> 
   const res = await fetch(`http://localhost:3000/api/service-providers/hotels?id=${id}`, {
     next: { revalidate: 3600 } // Revalidate every hour
   });
-  
+
   if (!res.ok) {
     throw new Error('Failed to fetch hotel details');
   }

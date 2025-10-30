@@ -7,11 +7,13 @@ interface ErrorResponse {
   error: string;
 }
 
-export async function GET(request: Request): Promise<NextResponse<ServiceProviderAPIResponse | ErrorResponse>> {
+export async function GET(
+  request: Request
+): Promise<NextResponse<ServiceProviderAPIResponse | ErrorResponse>> {
   try {
     const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
-    
+    const id = searchParams.get("id");
+
     if (!id) {
       return NextResponse.json(
         { error: "ID parameter is required" },
@@ -36,6 +38,11 @@ export async function GET(request: Request): Promise<NextResponse<ServiceProvide
     }
 
     const data: ServiceProviderAPIResponse = await response.json();
+    console.log(
+      "=================ServiceProviderAPIResponse==================="
+    );
+    console.log(data);
+    console.log("====================================");
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
     console.error("Error fetching backend data:", error);
