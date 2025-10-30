@@ -126,7 +126,7 @@ interface RoomAvailability {
   foreignPriceForDate: number;
 }
 
-// Room Details
+// Room Details - UPDATED
 interface RoomDetails {
   roomId: number;
   serviceProviderId: number;
@@ -160,6 +160,13 @@ interface RoomDetails {
   extraBedAvailable?: boolean | null;
   extraBedCharge?: number | null;
   statusId?: number | null;
+  // FIXED: Added missing createdAt properties for RoomDetails
+  createdAt?: string | null;
+  createdBy?: number | null;
+  updatedAt?: string | null;
+  updatedBy?: number | null;
+  terminatedAt?: string | null;
+  terminatedBy?: number | null;
   roomTypeName: string;
   currencyCode: string;
   roomStatus: string;
@@ -181,7 +188,7 @@ interface PackageInclusion {
   inclusionDescription: string;
 }
 
-// Package Details
+// Package Details - UPDATED
 interface PackageDetails {
   serviceProviderPackageId: number;
   serviceProviderId: number;
@@ -212,6 +219,13 @@ interface PackageDetails {
   specialNote?: string | null;
   requirements?: string | null;
   statusId?: number | null;
+  // FIXED: Added missing BaseEntity properties for PackageDetails
+  createdAt?: string | null;
+  createdBy?: number | null;
+  updatedAt?: string | null;
+  updatedBy?: number | null;
+  terminatedAt?: string | null;
+  terminatedBy?: number | null;
   currencyCode: string;
   packageStatus: string;
   features: PackageFeature[];

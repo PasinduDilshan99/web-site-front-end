@@ -25,6 +25,7 @@ const GALLERY = "/gallery";
 const ACTIVITIES = "/activities";
 const FOOTER = "/footer";
 const PLAN_YOUR_TRIP = "/plan-your-trip";
+const SERVICE_PROVIDER = "/service-provider";
 
 export const BASE_PATH = `${PROTOCOL}://${DOMAIN}:${PORT}/${CONTEXT_ROOT}`;
 
@@ -38,7 +39,6 @@ export const GET_VISIBLE_HERO_SECTION_DATA = `${BASE_PATH}${VERSION}${API}${HERO
 
 export const GET_VISIBLE_WHY_CHOOSE_US_DATA = `${BASE_PATH}${VERSION}${API}${WHY_CHOOSE_US}/visible`;
 
-
 export const UPDATE_FAQ_VIEW_COUNT = `${BASE_PATH}${VERSION}${API}${FAQ}/view-count`;
 
 export const GET_VISIBLE_PARTNERS = `${BASE_PATH}${VERSION}${API}${PARTNERS}/visible`;
@@ -47,9 +47,8 @@ export const GET_VISIBLE_OUR_SERVICES = `${BASE_PATH}${VERSION}${API}${OUR_SERVI
 
 export const GET_ACTIVE_WORK_FLOW = `${BASE_PATH}${VERSION}${API}${WORK_FLOW}/active`;
 
-
 export const GET_ALL_DESTINATIONS_CATEGORIES = `${BASE_PATH}${VERSION}${API}${DESTINATIONS}/active-categories`;
-export const GET_ACTIVE_DESTINATIONS= `${BASE_PATH}${VERSION}${API}${DESTINATIONS}/active-destinations`;
+export const GET_ACTIVE_DESTINATIONS = `${BASE_PATH}${VERSION}${API}${DESTINATIONS}/active-destinations`;
 export const GET_POPULAR_DESTINATIONS = `${BASE_PATH}${VERSION}${API}${DESTINATIONS}/popular-destinations`;
 export const GET_TRENDING_DESTINATIONS = `${BASE_PATH}${VERSION}${API}${DESTINATIONS}/trending-destinations`;
 export const GET_NEW_DESTINATIONS = `${BASE_PATH}${VERSION}${API}${DESTINATIONS}/new-destinations`;
@@ -91,3 +90,7 @@ export const GET_RESORT_DETAILS_SECTION_BE = `${BASE_PATH}${VERSION}${API}${ACCO
 export const GET_VILLA_DETAILS_SECTION_BE = `${BASE_PATH}${VERSION}${API}${ACCOMMODATION}/villas-section`;
 export const GET_HOSTEL_DETAILS_SECTION_BE = `${BASE_PATH}${VERSION}${API}${ACCOMMODATION}/hostels-section`;
 export const GET_RESTAURANT_DETAILS_SECTION_BE = `${BASE_PATH}${VERSION}${API}${ACCOMMODATION}/restaurants-section`;
+
+// Service Providers
+export const GET_SERVICE_PROVIDER_DETAILS = (id) => 
+  `${BASE_PATH}${API}${VERSION}${SERVICE_PROVIDER}/${id}`;

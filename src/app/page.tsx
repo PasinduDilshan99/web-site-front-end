@@ -88,7 +88,7 @@ export default function Home() {
       </div>
 
       {/* User Benefits & Loyalty */}
-      <div>
+      {/* <div>
         <UserLevelsHome />
       </div>
       <div>
@@ -96,7 +96,7 @@ export default function Home() {
       </div>
       <div>
         <UserBenefitsHome />
-      </div>
+      </div> */}
 
       {/* Social Proof & Content */}
       <div>
@@ -130,95 +130,5 @@ export default function Home() {
         <Footer />
       </div>
     </div>
-    // <div>
-    //   <div>
-    //     <LinkBar />
-    //   </div>
-    //   <div>
-    //     <NavBar />
-    //   </div>
-    //   <div>
-    //     <HeroSection />
-    //   </div>
-    //   <div>
-    //     <WhyChooseUs />
-    //   </div>
-    //   <div>
-    //     <Faq />
-    //   </div>
-    //   <div>
-    //     <Partners />
-    //   </div>
-    //   <div>
-    //     <OurServices />
-    //   </div>
-    //   <div>
-    //     <WorkFlow />
-    //   </div>
-    //   <div>
-    //     <Accommodations />
-    //   </div>
-    //   <div>
-    //     <DestinationsCategories />
-    //   </div>
-
-    //   <div>
-    //     <PopularDestinations />
-    //   </div>
-    //   <div>
-    //     <ActiveBlogsSummery />
-    //   </div>
-    //   <div>
-    //     <ActiveToursHome />
-    //   </div>
-    //   <div>
-    //     <NewDestinations />
-    //   </div>
-    //   <div>
-    //     <TrendingDestinations />
-    //   </div>
-    //   <div>
-    //     <ActiveToursHomeGrid />
-    //   </div>
-    //   <div>
-    //     <PopularTours />
-    //   </div>
-    //   <div>
-    //     <TourMap />
-    //   </div>
-    //   <div>
-    //     <PackagesHome />
-    //   </div>
-    //   <div>
-    //     <GalleryHome />
-    //   </div>
-    //   <div>
-    //     <ReviewsHome />
-    //   </div>
-    //   <div>
-    //     <ActivitiesHome />
-    //   </div>
-    //   <div>
-    //     <UserLevelsHome />
-    //   </div>
-    //   <div>
-    //     <UserLevelsWithBenefitsHome />
-    //   </div>
-    //   <div>
-    //     <UserBenefitsHome />
-    //   </div>
-    //   <div>
-    //     <PromotionsHome />
-    //   </div>
-    //   <div>
-    //     <Inquire />
-    //   </div>
-    //   <div>
-    //     <ActivityCategoriesHome />
-    //   </div>
-    //   <div>
-    //     <Footer />
-    //   </div>
-    // </div>
   );
 }
