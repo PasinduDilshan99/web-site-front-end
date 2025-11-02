@@ -59,7 +59,7 @@ export default function Home() {
         <NewDestinations />
       </div>
       <div>
-        <PopularTours />
+        {/* <PopularTours /> */}
       </div>
       <div>
         <ActiveToursHome />
