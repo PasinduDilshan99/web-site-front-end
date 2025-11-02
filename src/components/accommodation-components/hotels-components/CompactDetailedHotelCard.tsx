@@ -2,28 +2,43 @@
 import React, { useState } from "react";
 import { HotelSectionHotel } from "@/types/accommodations-types/hotel-types";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface CompactDetailedHotelCardProps {
   hotel: HotelSectionHotel;
 }
 
-const CompactDetailedHotelCard: React.FC<CompactDetailedHotelCardProps> = ({ hotel }) => {
+const CompactDetailedHotelCard: React.FC<CompactDetailedHotelCardProps> = ({
+  hotel,
+}) => {
   const [showAllImages, setShowAllImages] = useState(false);
   const [showAllRooms, setShowAllRooms] = useState(false);
   const [showAllReviews, setShowAllReviews] = useState(false);
+  const router = useRouter();
 
-  const displayImages = showAllImages ? hotel.hotelImages : (hotel.hotelImages?.slice(0, 3) || []);
-  const displayRooms = showAllRooms ? hotel.rooms : (hotel.rooms?.slice(0, 2) || []);
-  const displayReviews = showAllReviews ? hotel.reviews.recentReviews : (hotel.reviews.recentReviews?.slice(0, 1) || []);
+  const displayImages = showAllImages
+    ? hotel.hotelImages
+    : hotel.hotelImages?.slice(0, 3) || [];
+  const displayRooms = showAllRooms
+    ? hotel.rooms
+    : hotel.rooms?.slice(0, 2) || [];
+  const displayReviews = showAllReviews
+    ? hotel.reviews.recentReviews
+    : hotel.reviews.recentReviews?.slice(0, 1) || [];
   const displayMeals = hotel.meals?.slice(0, 2) || [];
 
+  const handleBookNow = () => {
+    router.push(`/accommodations/hotels/${hotel.hotelId}`);
+  };
+
   // Calculate price range
-  const priceRange = hotel.rooms && hotel.rooms.length > 0 
-    ? {
-        min: Math.min(...hotel.rooms.map(room => room.localPricePerNight)),
-        max: Math.max(...hotel.rooms.map(room => room.localPricePerNight))
-      }
-    : null;
+  const priceRange =
+    hotel.rooms && hotel.rooms.length > 0
+      ? {
+          min: Math.min(...hotel.rooms.map((room) => room.localPricePerNight)),
+          max: Math.max(...hotel.rooms.map((room) => room.localPricePerNight)),
+        }
+      : null;
 
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300 group">
@@ -31,12 +46,18 @@ const CompactDetailedHotelCard: React.FC<CompactDetailedHotelCardProps> = ({ hot
       <div className="bg-gradient-to-r from-purple-600 to-amber-500 p-4 text-white">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <h2 className="text-xl font-bold mb-1 line-clamp-1">{hotel.hotelName}</h2>
-            <p className="text-purple-100 text-sm mb-2 line-clamp-2">{hotel.hotelDescription}</p>
+            <h2 className="text-xl font-bold mb-1 line-clamp-1">
+              {hotel.hotelName}
+            </h2>
+            <p className="text-purple-100 text-sm mb-2 line-clamp-2">
+              {hotel.hotelDescription}
+            </p>
             <div className="flex items-center flex-wrap gap-2">
               <div className="flex items-center bg-white/20 px-2 py-1 rounded-full">
                 <span className="text-yellow-300 text-sm">⭐</span>
-                <span className="ml-1 text-xs font-bold">{hotel.starRating}</span>
+                <span className="ml-1 text-xs font-bold">
+                  {hotel.starRating}
+                </span>
               </div>
               <span className="bg-white/20 px-2 py-1 rounded-full text-xs">
                 {hotel.hotelType}
@@ -65,13 +86,22 @@ const CompactDetailedHotelCard: React.FC<CompactDetailedHotelCardProps> = ({ hot
                   onClick={() => setShowAllImages(!showAllImages)}
                   className="text-purple-600 hover:text-purple-700 text-xs font-medium flex items-center"
                 >
-                  {showAllImages ? 'Show Less' : `+${hotel.hotelImages.length - 3}`}
+                  {showAllImages
+                    ? "Show Less"
+                    : `+${hotel.hotelImages.length - 3}`}
                 </button>
               )}
             </div>
-            <div className={`grid gap-2 ${showAllImages ? 'grid-cols-2' : 'grid-cols-3'}`}>
+            <div
+              className={`grid gap-2 ${
+                showAllImages ? "grid-cols-2" : "grid-cols-3"
+              }`}
+            >
               {displayImages.map((image, index) => (
-                <div key={index} className="relative aspect-square rounded-lg overflow-hidden group/image">
+                <div
+                  key={index}
+                  className="relative aspect-square rounded-lg overflow-hidden group/image"
+                >
                   <Image
                     src={image.imageUrl}
                     alt={image.caption}
@@ -89,7 +119,9 @@ const CompactDetailedHotelCard: React.FC<CompactDetailedHotelCardProps> = ({ hot
           <div className="space-y-1 text-xs">
             <div className="flex items-center text-gray-600">
               <span className="mr-2">📍</span>
-              <span className="line-clamp-1">{hotel.address.split(',')[0]}</span>
+              <span className="line-clamp-1">
+                {hotel.address.split(",")[0]}
+              </span>
             </div>
             <div className="flex items-center text-gray-600">
               <span className="mr-2">📞</span>
@@ -105,18 +137,23 @@ const CompactDetailedHotelCard: React.FC<CompactDetailedHotelCardProps> = ({ hot
         {/* Quick Info */}
         <div className="grid grid-cols-3 gap-2 mb-4 p-2 bg-gradient-to-r from-purple-50 to-amber-50 rounded-lg border border-purple-100">
           <div className="text-center">
-            <div className="text-purple-600 font-bold text-sm">{hotel.totalRooms}</div>
+            <div className="text-purple-600 font-bold text-sm">
+              {hotel.totalRooms}
+            </div>
             <div className="text-gray-600 text-xs">Rooms</div>
           </div>
           <div className="text-center border-x border-purple-200">
             <div className="text-amber-600 font-bold text-sm">
-              {displayRooms.reduce((max, room) => Math.max(max, room.capacity), 0)}
+              {displayRooms.reduce(
+                (max, room) => Math.max(max, room.capacity),
+                0
+              )}
             </div>
             <div className="text-gray-600 text-xs">Max/Unit</div>
           </div>
           <div className="text-center">
             <div className="text-green-600 font-bold text-sm">
-              {hotel.petFriendly ? 'Yes' : 'No'}
+              {hotel.petFriendly ? "Yes" : "No"}
             </div>
             <div className="text-gray-600 text-xs">Pets</div>
           </div>
@@ -135,7 +172,7 @@ const CompactDetailedHotelCard: React.FC<CompactDetailedHotelCardProps> = ({ hot
                   onClick={() => setShowAllRooms(!showAllRooms)}
                   className="text-purple-600 hover:text-purple-700 text-xs font-medium flex items-center"
                 >
-                  {showAllRooms ? 'Show Less' : `+${hotel.rooms.length - 2}`}
+                  {showAllRooms ? "Show Less" : `+${hotel.rooms.length - 2}`}
                 </button>
               )}
             </div>
@@ -146,14 +183,18 @@ const CompactDetailedHotelCard: React.FC<CompactDetailedHotelCardProps> = ({ hot
                   className="flex justify-between items-center text-xs p-2 bg-white border border-gray-200 rounded-lg hover:border-purple-300 transition-colors"
                 >
                   <div className="flex-1">
-                    <div className="font-medium text-gray-800">{room.roomType}</div>
+                    <div className="font-medium text-gray-800">
+                      {room.roomType}
+                    </div>
                     <div className="text-gray-500 flex items-center space-x-2 mt-1">
                       <span>👥 {room.capacity}</span>
                       <span>🛏️ {room.bedType}</span>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-green-600 font-bold">${room.localPricePerNight}</div>
+                    <div className="text-green-600 font-bold">
+                      ${room.localPricePerNight}
+                    </div>
                     <button className="mt-1 bg-purple-600 hover:bg-purple-700 text-white px-2 py-1 rounded text-xs font-medium transition-colors">
                       Select
                     </button>
@@ -178,10 +219,16 @@ const CompactDetailedHotelCard: React.FC<CompactDetailedHotelCardProps> = ({ hot
                   className="flex justify-between items-center text-xs p-2 bg-amber-50 rounded border border-amber-200"
                 >
                   <div>
-                    <span className="font-medium text-gray-800">{meal.mealType}</span>
-                    <span className="text-gray-500 text-xs ml-2">• {meal.cuisineType}</span>
+                    <span className="font-medium text-gray-800">
+                      {meal.mealType}
+                    </span>
+                    <span className="text-gray-500 text-xs ml-2">
+                      • {meal.cuisineType}
+                    </span>
                   </div>
-                  <span className="text-amber-600 font-semibold">${meal.localPrice}</span>
+                  <span className="text-amber-600 font-semibold">
+                    ${meal.localPrice}
+                  </span>
                 </div>
               ))}
             </div>
@@ -210,7 +257,7 @@ const CompactDetailedHotelCard: React.FC<CompactDetailedHotelCardProps> = ({ hot
                 Pets
               </span>
             )}
-            {hotel.rooms?.some(room => room.hasAirConditioning) && (
+            {hotel.rooms?.some((room) => room.hasAirConditioning) && (
               <span className="bg-amber-100 text-amber-700 px-2 py-1 rounded-full text-xs">
                 A/C
               </span>
@@ -227,9 +274,13 @@ const CompactDetailedHotelCard: React.FC<CompactDetailedHotelCardProps> = ({ hot
                 Reviews
               </h3>
               <div className="flex items-center bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs">
-                <span className="font-bold mr-1">{hotel.reviews.averageRating}</span>
+                <span className="font-bold mr-1">
+                  {hotel.reviews.averageRating}
+                </span>
                 <span className="text-yellow-400">⭐</span>
-                <span className="ml-1 text-gray-600">({hotel.reviews.totalReviews})</span>
+                <span className="ml-1 text-gray-600">
+                  ({hotel.reviews.totalReviews})
+                </span>
               </div>
             </div>
             {displayReviews.length > 0 && (
@@ -238,22 +289,27 @@ const CompactDetailedHotelCard: React.FC<CompactDetailedHotelCardProps> = ({ hot
                   <div key={index} className="text-xs">
                     <div className="flex items-center mb-1">
                       <div className="flex text-yellow-400 text-xs">
-                        {'⭐'.repeat(review.rating)}
+                        {"⭐".repeat(review.rating)}
                       </div>
                     </div>
-                    <p className="text-gray-600 italic line-clamp-2">{review.comment}</p>
+                    <p className="text-gray-600 italic line-clamp-2">
+                      {review.comment}
+                    </p>
                   </div>
                 ))}
               </div>
             )}
-            {hotel.reviews.recentReviews && hotel.reviews.recentReviews.length > 1 && (
-              <button
-                onClick={() => setShowAllReviews(!showAllReviews)}
-                className="mt-2 text-purple-600 hover:text-purple-700 text-xs font-medium flex items-center"
-              >
-                {showAllReviews ? 'Show Less' : `+${hotel.reviews.recentReviews.length - 1} more`}
-              </button>
-            )}
+            {hotel.reviews.recentReviews &&
+              hotel.reviews.recentReviews.length > 1 && (
+                <button
+                  onClick={() => setShowAllReviews(!showAllReviews)}
+                  className="mt-2 text-purple-600 hover:text-purple-700 text-xs font-medium flex items-center"
+                >
+                  {showAllReviews
+                    ? "Show Less"
+                    : `+${hotel.reviews.recentReviews.length - 1} more`}
+                </button>
+              )}
           </div>
         )}
 
@@ -263,16 +319,18 @@ const CompactDetailedHotelCard: React.FC<CompactDetailedHotelCardProps> = ({ hot
             <span className="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
             Cancellation
           </h4>
-          <p className="text-gray-700 text-xs line-clamp-2">{hotel.cancellationPolicy}</p>
+          <p className="text-gray-700 text-xs line-clamp-2">
+            {hotel.cancellationPolicy}
+          </p>
         </div>
 
         {/* Action Buttons */}
         <div className="flex space-x-2 pt-3 border-t border-gray-100">
-          <button className="flex-1 bg-gradient-to-r from-purple-600 to-amber-500 hover:from-purple-700 hover:to-amber-600 text-white py-2 rounded-lg font-bold text-sm transition-all duration-300 transform hover:scale-105">
+          <button
+            onClick={handleBookNow}
+            className="flex-1 bg-gradient-to-r from-purple-600 to-amber-500 hover:from-purple-700 hover:to-amber-600 text-white py-2 rounded-lg font-bold text-sm transition-all duration-300 transform hover:scale-105"
+          >
             Book Now
-          </button>
-          <button className="px-3 py-2 border border-purple-300 text-purple-600 hover:bg-purple-50 rounded-lg font-medium text-xs transition-colors">
-            Details
           </button>
         </div>
       </div>

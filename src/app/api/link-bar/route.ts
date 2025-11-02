@@ -25,7 +25,7 @@ export async function GET() {
   } catch (error) {
     console.error("Error fetching backend data:", error);
     return NextResponse.json(
-      { error: "Something went wrong" },
+      { error: "Something went wrongaaaa" },
       { status: 500 }
     );
   }
