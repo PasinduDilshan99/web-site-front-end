@@ -18,3 +18,5 @@ export const REVIEWS_SECTION_SUB_TITLE = "CUSTOMER FEEDBACK";
 export const REVIEWS_SECTION_TITLE = "What Our Travelers Say";
 export const REVIEWS_SECTION_DESCRIPTION =
   "Read genuine reviews from travelers who have experienced our packages firsthand";
+
+export const UNIQUE_CODE_NAME = "uniqueCode";

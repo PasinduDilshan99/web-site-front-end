@@ -12,10 +12,39 @@ export type User = {
   mobileNumber1: string;
 };
 
+// Signup types
+export type SignupData = {
+  username: string;
+  password: string;
+  firstName: string;
+  middleName?: string;
+  lastName: string;
+  email: string;
+  mobileNumber1: string;
+  mobileNumber2?: string;
+};
+
+export type LoginResponseData = {
+  message: string;
+  username: string;
+  uniqueCode: string;
+  accessTokenExpiresAt: string;
+  refreshTokenExpiresAt: string;
+};
+
+export type ApiResponse<T> = {
+  code: number;
+  status: string;
+  message: string;
+  data: T;
+  timestamp: string;
+};
+
 type AuthContextType = {
   user: User | null;
   loading: boolean;
-  login: (username: string, password: string) => Promise<any>;
+  login: (username: string, password: string) => Promise<LoginResponseData>;
+  signup: (signupData: SignupData) => Promise<string>;
   logout: () => Promise<void>;
   hasRole: (role: string) => boolean;
   hasPrivilege: (priv: string) => boolean;
@@ -25,7 +54,12 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
-  login: async () => {},
+  login: async () => {
+    throw new Error("Login function not implemented");
+  },
+  signup: async () => {
+    throw new Error("Signup function not implemented");
+  },
   logout: async () => {},
   hasRole: () => false,
   hasPrivilege: () => false,
@@ -37,9 +71,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   // -----------------------
+  // SIGNUP
+  // -----------------------
+  const signup = async (signupData: SignupData): Promise<string> => {
+    const res = await fetch("http://localhost:8080/felicita/api/v0/auth/signup", {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(signupData),
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message || "Signup failed");
+    }
+
+    const responseBody: ApiResponse<string> = await res.json();
+    return responseBody.data;
+  };
+
+  // -----------------------
   // LOGIN
   // -----------------------
-  const login = async (username: string, password: string) => {
+  const login = async (username: string, password: string): Promise<LoginResponseData> => {
     const res = await fetch("/api/login", {
       method: "POST",
       credentials: "include",
@@ -52,8 +107,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       throw new Error(err.message || "Login failed");
     }
 
-    const responseBody = await res.json();
-    const data = responseBody.data; // backend wraps inside data
+    const responseBody: ApiResponse<LoginResponseData> = await res.json();
+    const data = responseBody.data;
 
     // Save uniqueCode in session
     sessionStorage.setItem("uniqueCode", data.uniqueCode);
@@ -67,7 +122,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // -----------------------
   // FETCH USER DETAILS
   // -----------------------
-  const fetchMe = async () => {
+  const fetchMe = async (): Promise<void> => {
     const code = sessionStorage.getItem("uniqueCode");
 
     if (!code) {
@@ -83,7 +138,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
 
       if (res.ok) {
-        const responseBody = await res.json();
+        const responseBody: ApiResponse<User> = await res.json();
         const data = responseBody.data;
 
         setUser({
@@ -105,7 +160,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.error("Failed to fetch user:", error);
       setUser(null);
       sessionStorage.removeItem("uniqueCode");
-      logout()
+      await logout();
     } finally {
       setLoading(false);
     }
@@ -114,7 +169,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // -----------------------
   // LOGOUT
   // -----------------------
-  const logout = async () => {
+  const logout = async (): Promise<void> => {
     try {
       await fetch("http://localhost:8080/felicita/api/v0/auth/logout", {
         method: "POST",
@@ -138,7 +193,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, login, logout, hasRole, hasPrivilege, fetchMe }}
+      value={{ user, loading, login, signup, logout, hasRole, hasPrivilege, fetchMe }}
     >
       {children}
     </AuthContext.Provider>
