@@ -26,6 +26,7 @@ const ACTIVITIES = "/activities";
 const FOOTER = "/footer";
 const PLAN_YOUR_TRIP = "/plan-your-trip";
 const SERVICE_PROVIDER = "/service-provider";
+const VEHICLES = "/vehicles";
 
 export const BASE_PATH = `${PROTOCOL}://${DOMAIN}:${PORT}/${CONTEXT_ROOT}`;
 
@@ -94,3 +95,8 @@ export const GET_RESTAURANT_DETAILS_SECTION_BE = `${BASE_PATH}${VERSION}${API}${
 // Service Providers
 export const GET_SERVICE_PROVIDER_DETAILS = (id) => 
   `${BASE_PATH}${API}${VERSION}${SERVICE_PROVIDER}/${id}`;
+
+// vehicles
+export const GET_ACTIVE_VEHICLES_BE = `${BASE_PATH}${API}${VERSION}${VEHICLES}/active-vehicles`;
+export const GET_VEHICLES_BY_ID_BE = (id) => 
+  `${BASE_PATH}${API}${VERSION}${VEHICLES}/${id}`;
