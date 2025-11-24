@@ -1,11 +1,10 @@
-// services/apiService.ts
+// services/userProfileAPIService.ts
 import { SidebarResponse, UserProfileResponse } from '../types/sidebar';
 
 const API_BASE_URL = 'http://localhost:8080/felicita/api/v0/user-profile';
 
-export class ApiService {
+export class UserProfileAPIService {
   private getAuthHeaders(): HeadersInit {
-    // Get cookies from document.cookie
     const cookies = document.cookie;
     return {
       'Content-Type': 'application/json',
