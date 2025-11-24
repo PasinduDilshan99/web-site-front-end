@@ -72,7 +72,10 @@ export default function Sidebar({ onContentChange }: SidebarProps) {
     }
   };
 
-  const toggleExpanded = (itemId: number) => {
+  const toggleExpanded = (itemId: number, event?: React.MouseEvent) => {
+    if (event) {
+      event.stopPropagation();
+    }
     setExpandedItems(prev => {
       const newSet = new Set(prev);
       if (newSet.has(itemId)) {
@@ -92,21 +95,26 @@ export default function Sidebar({ onContentChange }: SidebarProps) {
       setIsMobileOpen(false);
     }
 
-    // If item has children, toggle expand instead of navigating
-    if (item.children && item.children.length > 0) {
-      toggleExpanded(item.id);
-      return;
-    }
-
-    // Navigate to the item's URL
+    // Navigate to the item's URL (always navigate when clicking the item itself)
     if (item.url) {
       const route = `/profile${item.url}`;
       router.push(route);
     } else {
       // For items without URL, use name-based routing as fallback
       const routeName = item.name.toLowerCase().replace(/\s+/g, '-');
-      router.push(`/profile/${routeName}`);
+      
+      // Special handling for review sub-items
+      if (item.parentId === 2) { // Reviews parent ID
+        router.push(`/profile/${routeName}`);
+      } else {
+        router.push(`/profile/${routeName}`);
+      }
     }
+  };
+
+  const handleArrowClick = (item: SidebarItem, event: React.MouseEvent) => {
+    event.stopPropagation();
+    toggleExpanded(item.id, event);
   };
 
   const renderSidebarItem = (item: SidebarItem, level = 0) => {
@@ -126,11 +134,11 @@ export default function Sidebar({ onContentChange }: SidebarProps) {
           style={{ paddingLeft: `${paddingLeft}px` }}
           onClick={() => handleItemClick(item)}
         >
-          <div className="flex items-center space-x-3">
-            <div className={`w-2 h-2 rounded-full ${
+          <div className="flex items-center space-x-3 flex-1 min-w-0">
+            <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
               isActive ? 'bg-purple-600' : 'bg-amber-400'
             }`}></div>
-            <span className={`text-sm font-semibold transition-colors duration-300 ${
+            <span className={`text-sm font-semibold transition-colors duration-300 truncate ${
               isActive ? 'text-purple-700' : 'text-gray-700 hover:text-amber-600'
             }`}>
               {item.name}
@@ -138,16 +146,23 @@ export default function Sidebar({ onContentChange }: SidebarProps) {
           </div>
           
           {hasChildren && (
-            <svg
-              className={`w-4 h-4 transition-all duration-300 ${
-                isExpanded ? 'transform rotate-180 text-purple-600' : 'text-amber-500'
+            <button
+              onClick={(e) => handleArrowClick(item, e)}
+              className={`flex-shrink-0 ml-2 p-1 rounded transition-all duration-200 hover:bg-amber-100 ${
+                isExpanded ? 'text-purple-600' : 'text-amber-500'
               }`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
+              <svg
+                className={`w-4 h-4 transition-transform duration-200 ${
+                  isExpanded ? 'transform rotate-180' : ''
+                }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
           )}
         </div>
 
