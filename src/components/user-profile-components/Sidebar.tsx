@@ -2,10 +2,11 @@
 "use client"
 import { UserProfileAPIService } from '@/services/userProfileAPIService';
 import { SidebarItem } from '@/types/sidebar';
+import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 interface SidebarProps {
-  onContentChange: (content: any, title: string) => void;
+  onContentChange?: (content: any, title: string) => void;
 }
 
 export default function Sidebar({ onContentChange }: SidebarProps) {
@@ -16,23 +17,53 @@ export default function Sidebar({ onContentChange }: SidebarProps) {
   const [error, setError] = useState<string | null>(null);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
+  const router = useRouter();
+  const pathname = usePathname();
   const apiService = new UserProfileAPIService();
 
   useEffect(() => {
     loadSidebarData();
   }, []);
 
+  // Set active item based on current path
+  useEffect(() => {
+    if (sidebarData.length > 0) {
+      const findActiveItem = (items: SidebarItem[]): SidebarItem | null => {
+        for (const item of items) {
+          if (item.url && pathname.includes(item.url)) {
+            return item;
+          }
+          if (item.children) {
+            const childActive = findActiveItem(item.children);
+            if (childActive) return childActive;
+          }
+        }
+        return null;
+      };
+
+      const active = findActiveItem(sidebarData);
+      if (active) {
+        setActiveItem(active.id);
+        
+        // Expand parent if this is a child item
+        if (active.parentId) {
+          setExpandedItems(prev => new Set(prev).add(active.parentId!));
+        }
+      } else if (pathname === '/profile' || pathname === '/profile/user') {
+        // Default to Profile
+        const profileItem = sidebarData.find(item => item.name === 'Profile');
+        if (profileItem) {
+          setActiveItem(profileItem.id);
+        }
+      }
+    }
+  }, [pathname, sidebarData]);
+
   const loadSidebarData = async () => {
     try {
       setLoading(true);
       const response = await apiService.getSidebarData();
       setSidebarData(response.data);
-      
-      const profileItem = response.data.find(item => item.name === 'Profile');
-      if (profileItem) {
-        setActiveItem(profileItem.id);
-        handleItemClick(profileItem);
-      }
     } catch (err) {
       setError('Failed to load sidebar data');
       console.error(err);
@@ -61,21 +92,20 @@ export default function Sidebar({ onContentChange }: SidebarProps) {
       setIsMobileOpen(false);
     }
 
+    // If item has children, toggle expand instead of navigating
     if (item.children && item.children.length > 0) {
       toggleExpanded(item.id);
       return;
     }
 
+    // Navigate to the item's URL
     if (item.url) {
-      try {
-        const content = await apiService.fetchContentByUrl(item.url);
-        onContentChange(content, item.name);
-      } catch (err) {
-        console.error(`Failed to load content for ${item.name}:`, err);
-        onContentChange({ error: `Failed to load ${item.name}` }, item.name);
-      }
+      const route = `/profile${item.url}`;
+      router.push(route);
     } else {
-      onContentChange({ message: `No content available for ${item.name}` }, item.name);
+      // For items without URL, use name-based routing as fallback
+      const routeName = item.name.toLowerCase().replace(/\s+/g, '-');
+      router.push(`/profile/${routeName}`);
     }
   };
 
