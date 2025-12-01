@@ -3,15 +3,16 @@ import React, { useEffect, useState } from "react";
 import { NavBarItem, NavBarSubmenuItem } from "@/types/nav-bar-types";
 import { GET_ALL_NAV_BAR_DATA } from "@/utils/frontEndConstant";
 import Link from "next/link";
-import { COMPANY_NAME } from "@/utils/constant";
+import { COMPANY_NAME, UNIQUE_CODE_NAME } from "@/utils/constant";
 import Image from "next/image";
 import Loading from "../initial-loading/InitialLoading";
+import { useAuth } from "@/context/AuthContext";
 
 interface User {
-  id: string;
-  name: string;
-  email: string;
-  avatar?: string;
+  id: number | undefined;
+  name: string | undefined;
+  email: string | undefined;
+  avatar?: string | undefined;
 }
 
 // Mobile menu item component to handle individual state
@@ -482,6 +483,19 @@ const NavBar = () => {
   const [screenSize, setScreenSize] = useState<
     "mobile" | "tablet" | "laptop" | "desktop" | "large"
   >("desktop");
+
+  const { user: authUser } = useAuth();
+  useEffect(() => {
+    const uniqueCode = sessionStorage.getItem(UNIQUE_CODE_NAME);
+    if (uniqueCode) {
+      setUser({
+        id: authUser?.id,
+        name: authUser?.firstName,
+        email: authUser?.email,
+        avatar: "/images/user-avatar.jpg",
+      });
+    }
+  }, []);
 
   // Dynamic max visible items based on screen size
   const getMaxVisibleItems = () => {
@@ -957,10 +971,10 @@ const NavBar = () => {
                           <br />
                           <span
                             style={{
-                              color: "#8B5FBF",
+                              color: "#000",
                             }}
                           >
-                            {user.email}
+                            {user.name}
                           </span>
                         </div>
                         <Link
