@@ -3,12 +3,21 @@
 import NavBar from "@/components/common-components/navBar/NavBar";
 import Sidebar from "@/components/user-profile-components/Sidebar";
 import Footer from "../components/footer/Footer";
+import { UNIQUE_CODE_NAME } from "@/utils/constant";
+import { useRouter } from "next/navigation";
 
 export default function ProfileLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+
+  const uniqueCode = sessionStorage.getItem(UNIQUE_CODE_NAME);
+
+  if (!uniqueCode) {
+    router.push("/login");
+  }
   return (
     <>
       <NavBar />

@@ -208,3 +208,21 @@ export interface WalletResponse {
   data: WalletData;
   timestamp: string;
 }
+
+// types/history.ts
+export interface HistoryItem {
+  id: number;
+  type: 'ACTIVITIES' | 'DESTINATIONS' | 'PACKAGE' | 'TOUR';
+  dataId: number;
+  userId: number;
+  createdAt: string;
+  statusName: string;
+}
+
+export interface HistoryResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: HistoryItem[];
+  timestamp: string;
+}
