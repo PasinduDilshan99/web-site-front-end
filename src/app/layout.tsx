@@ -3,6 +3,7 @@ import "./global.css";
 import "leaflet/dist/leaflet.css";
 import { AuthProvider } from "@/context/AuthContext";
 import DecemberSnowfall from "@/components/DecemberSnowfall";
+import GlobalGradientScrollbar from "@/components/GlobalGradientScrollbar";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -18,6 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <DecemberSnowfall />
+        <GlobalGradientScrollbar />
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
