@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./global.css";
 import "leaflet/dist/leaflet.css";
 import { AuthProvider } from "@/context/AuthContext";
+import DecemberSnowfall from "@/components/DecemberSnowfall";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,6 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <DecemberSnowfall />
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
