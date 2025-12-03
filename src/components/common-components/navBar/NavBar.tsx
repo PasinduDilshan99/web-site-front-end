@@ -99,7 +99,7 @@ const NavBar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isScrolled]);
 
-  if (loading || authLoading) return <Loading />;
+  // if (loading || authLoading) return <Loading />;
   if (error) return <div className="text-red-400">Error: {error}</div>;
 
   // Filter only visible items
