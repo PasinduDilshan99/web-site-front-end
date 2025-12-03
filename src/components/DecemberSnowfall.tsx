@@ -123,7 +123,7 @@ const DecemberSnowfall = () => {
       `}</style>
       
       <div 
-        className="fixed bottom-4 right-4 z-[10000] pointer-events-auto"
+        className="fixed bottom-4 left-4 z-[10000] pointer-events-auto"
         style={{ pointerEvents: 'auto' }}
       >
         <div className="flex flex-col items-center gap-2">

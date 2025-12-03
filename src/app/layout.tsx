@@ -4,6 +4,7 @@ import "leaflet/dist/leaflet.css";
 import { AuthProvider } from "@/context/AuthContext";
 import DecemberSnowfall from "@/components/DecemberSnowfall";
 import GlobalGradientScrollbar from "@/components/GlobalGradientScrollbar";
+import ChatBot from "@/components/ChatBot";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -18,7 +19,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <DecemberSnowfall />
+        <ChatBot />
+        {/* <DecemberSnowfall /> */}
         <GlobalGradientScrollbar />
         <AuthProvider>{children}</AuthProvider>
       </body>
