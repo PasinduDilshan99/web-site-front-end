@@ -11,6 +11,8 @@ import WhyChooseUs from "../components/whyChooseUs/WhyChooseUs";
 import EmployeeDetailsWithSocialMedia from "@/components/about-us-components/EmployeeDetailsWithSocialMedia";
 import CeoSpeech from "@/components/about-us-components/CeoSpeech";
 import OurOffice from "@/components/about-us-components/OurOffice";
+import AllEmployees from "@/components/about-us-components/AllEmployees";
+import TourGuides from "@/components/about-us-components/TourGuides";
 
 const page = () => {
   return (
@@ -28,6 +30,9 @@ const page = () => {
         <OurStory />
       </div>
       <div>
+        <AllEmployees/>
+      </div>
+      <div>
         <AboutUsStatistics/>
       </div>
       <div>
@@ -39,6 +44,7 @@ const page = () => {
       <div>
         <CeoSpeech/>
       </div>
+      <TourGuides/>
       <div>
         <OurOffice/>
       </div>
