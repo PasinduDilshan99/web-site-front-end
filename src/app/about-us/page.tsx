@@ -5,6 +5,14 @@ import Footer from "../components/footer/Footer";
 import LinkBar from "@/components/common-components/linkBar/LinkBar";
 import HeroSection from "../components/heroSection/HeroSection";
 import AboutUsHeroSection from "@/components/about-us-components/AboutUsHeroSection";
+import OurStory from "@/components/about-us-components/OurStory";
+import AboutUsStatistics from "@/components/about-us-components/AboutUsStatistics";
+import WhyChooseUs from "../components/whyChooseUs/WhyChooseUs";
+import EmployeeDetailsWithSocialMedia from "@/components/about-us-components/EmployeeDetailsWithSocialMedia";
+import CeoSpeech from "@/components/about-us-components/CeoSpeech";
+import OurOffice from "@/components/about-us-components/OurOffice";
+import AllEmployees from "@/components/about-us-components/AllEmployees";
+import TourGuides from "@/components/about-us-components/TourGuides";
 
 const page = () => {
   return (
@@ -16,10 +24,29 @@ const page = () => {
         <NavBar />
       </div>
       <div>
-        <AboutUsHeroSection/>
+        <AboutUsHeroSection />
       </div>
       <div>
-        <HeroSection />
+        <OurStory />
+      </div>
+      <div>
+        <AllEmployees/>
+      </div>
+      <div>
+        <AboutUsStatistics/>
+      </div>
+      <div>
+        <WhyChooseUs/>
+      </div>
+      <div>
+        <EmployeeDetailsWithSocialMedia/>
+      </div>
+      <div>
+        <CeoSpeech/>
+      </div>
+      <TourGuides/>
+      <div>
+        <OurOffice/>
       </div>
       <Footer />
     </>
