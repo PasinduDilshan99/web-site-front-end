@@ -13,6 +13,7 @@ import CeoSpeech from "@/components/about-us-components/CeoSpeech";
 import OurOffice from "@/components/about-us-components/OurOffice";
 import AllEmployees from "@/components/about-us-components/AllEmployees";
 import TourGuides from "@/components/about-us-components/TourGuides";
+import OurFeatures from "@/components/about-us-components/OurFeatures";
 
 const page = () => {
   return (
@@ -47,6 +48,9 @@ const page = () => {
       <TourGuides/>
       <div>
         <OurOffice/>
+      </div>
+      <div>
+        <OurFeatures/>
       </div>
       <Footer />
     </>
