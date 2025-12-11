@@ -9,6 +9,7 @@ import ContactUsOffice from "@/components/contact-us-components/ContactUsOffice"
 import ContactUsSocialMedia from "@/components/contact-us-components/ContactUsSocialMedia";
 import Faq from "@/components/faq-components/Faq";
 import React from "react";
+import Footer from "../components/footer/Footer";
 
 const page = () => {
   return (
@@ -42,6 +43,9 @@ const page = () => {
       </div>
       <div>
         <CallToAction/>
+      </div>
+      <div>
+        <Footer/>
       </div>
     </div>
   );
