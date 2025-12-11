@@ -159,7 +159,7 @@ const OurOffice = () => {
   }, [mapLoaded, currentOffice]);
 
   return (
-    <section className="py-16 md:py-20 lg:py-24 px-4 md:px-6 lg:px-8 bg-gradient-to-b from-white to-blue-50">
+    <section className="py-4 md:py-8 lg:py-12 px-4 md:px-6 lg:px-8 bg-gradient-to-b from-white to-blue-50">
       <div className="max-w-7xl mx-auto">
         
         {/* Header Section */}

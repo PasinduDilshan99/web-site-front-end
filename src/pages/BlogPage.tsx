@@ -11,7 +11,7 @@ import BlogFilter from "@/components/blog-components/BlogFilter";
 import BlogCard from "@/components/blog-components/BlogCard";
 import LinkBar from "@/components/common-components/linkBar/LinkBar";
 
-// Blog categories (you can fetch these from API or hardcode based on your needs)
+// Blog categories
 const BLOG_CATEGORIES = [
   "Travel Tips",
   "Destination Guides",
@@ -43,24 +43,62 @@ const BlogPage = () => {
   // Pagination state
   const [pagination, setPagination] = useState<PaginationState>({
     currentPage: 1,
-    itemsPerPage: 9, // Default for blog display
+    itemsPerPage: 9,
   });
 
   // Items per page options
-  const itemsPerPageOptions = [6, 9, 12, 18, 24];
+  const itemsPerPageOptions = [3,6, 9, 12, 18, 24];
 
   // Extract unique writers from blogs
   const writers = [...new Set(blogs.map((blog) => blog.writer_name))];
 
-  // Calculate derived data for blogs
+  // Helper function to count total comments including replies
+  const countTotalComments = (comments: any[] | null): number => {
+    if (!comments || !Array.isArray(comments)) return 0;
+    
+    let total = comments.length;
+    
+    const countReplies = (replies: any[]): number => {
+      if (!replies || !Array.isArray(replies)) return 0;
+      
+      let replyCount = replies.length;
+      replies.forEach(reply => {
+        if (reply.replies && Array.isArray(reply.replies)) {
+          replyCount += countReplies(reply.replies);
+        }
+      });
+      return replyCount;
+    };
+    
+    comments.forEach(comment => {
+      if (comment.replies && Array.isArray(comment.replies)) {
+        total += countReplies(comment.replies);
+      }
+    });
+    
+    return total;
+  };
+
+  // Helper function to calculate total reactions
+  const calculateTotalReactions = (blogReactions: any[] | null): number => {
+    if (!blogReactions || !Array.isArray(blogReactions)) return 0;
+    
+    // Sum all reaction counts
+    return blogReactions.reduce((total, reaction) => total + (reaction.count || 0), 0);
+  };
+
+  // Enhance blog data with calculated properties
   const enhanceBlogData = (blog: Blog): Blog => {
-    const commentCount = blog.comments ? blog.comments.length : 0;
-    const totalReactions = blog.blog_reactions.reduce((total, reaction) => total + reaction.count, 0);
+    // Use likeCount from API if available, otherwise calculate from blog_reactions
+    const totalReactions = blog.likeCount || calculateTotalReactions(blog.blog_reactions);
+    
+    // Count total comments including replies
+    const commentCount = countTotalComments(blog.comments);
     
     return {
       ...blog,
-      commentCount,
       totalReactions,
+      commentCount,
     };
   };
 
@@ -76,13 +114,12 @@ const BlogPage = () => {
   }, [filters, blogs]);
 
   useEffect(() => {
-    // Reset to first page when filters change
     setPagination((prev) => ({ ...prev, currentPage: 1 }));
   }, [filters]);
 
   const handleResize = () => {
     const width = window.innerWidth;
-    let itemsPerPage = 9; // default
+    let itemsPerPage = 9;
 
     if (width < 640) {
       itemsPerPage = 6;
@@ -125,13 +162,26 @@ const BlogPage = () => {
       const result = await response.json();
 
       if (result.code === 200 && result.data) {
+        console.log('API Response:', result.data); // Debug log
+        
+        // First enhance the data with calculated properties
         const enhancedBlogs = result.data.map(enhanceBlogData);
+        
+        // Log enhanced data for debugging
+        console.log('Enhanced Blogs:', enhancedBlogs.map(blog => ({
+          title: blog.title,
+          totalReactions: blog.totalReactions,
+          commentCount: blog.commentCount,
+          date: blog.blog_created_at
+        })));
+        
         setBlogs(enhancedBlogs);
         setFilteredBlogs(enhancedBlogs);
       } else {
         throw new Error(result.message || "Failed to fetch blogs");
       }
     } catch (err) {
+      console.error('Error fetching blogs:', err);
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
@@ -139,6 +189,8 @@ const BlogPage = () => {
   };
 
   const applyFilters = (): void => {
+    console.log('Applying filters with sortBy:', filters.sortBy); // Debug log
+    
     let filtered = [...blogs];
 
     // Search filter
@@ -201,28 +253,58 @@ const BlogPage = () => {
       });
     }
 
-    // Sorting
+    // Sorting - FIXED VERSION
+    console.log('Before sorting - First 3 blogs:', filtered.slice(0, 3).map(b => ({
+      title: b.title,
+      totalReactions: b.totalReactions,
+      commentCount: b.commentCount,
+      date: b.blog_created_at
+    })));
+
     filtered.sort((a, b) => {
       switch (filters.sortBy) {
         case 'recent':
+          // Most recent first (newest date first)
           return new Date(b.blog_created_at).getTime() - new Date(a.blog_created_at).getTime();
+        
         case 'likes':
-          return (b.totalReactions || 0) - (a.totalReactions || 0);
+          // Most liked first - use likeCount if available, otherwise totalReactions
+          const aLikes = a.likeCount || a.totalReactions || 0;
+          const bLikes = b.likeCount || b.totalReactions || 0;
+          return bLikes - aLikes;
+        
         case 'comments':
-          return (b.commentCount || 0) - (a.commentCount || 0);
+          // Most comments first
+          const aComments = a.commentCount || 0;
+          const bComments = b.commentCount || 0;
+          return bComments - aComments;
+        
         case 'date-asc':
+          // Oldest first
           return new Date(a.blog_created_at).getTime() - new Date(b.blog_created_at).getTime();
+        
         case 'date-desc':
+          // Newest first
           return new Date(b.blog_created_at).getTime() - new Date(a.blog_created_at).getTime();
+        
         default:
           return 0;
       }
     });
 
+    console.log('After sorting - First 3 blogs:', filtered.slice(0, 3).map(b => ({
+      title: b.title,
+      totalReactions: b.totalReactions,
+      commentCount: b.commentCount,
+      date: b.blog_created_at,
+      sortBy: filters.sortBy
+    })));
+
     setFilteredBlogs(filtered);
   };
 
   const handleFilterChange = (filterName: keyof BlogFilters, value: any): void => {
+    console.log(`Filter changed: ${filterName} =`, value); // Debug log
     setFilters((prev) => ({
       ...prev,
       [filterName]: value,
@@ -269,8 +351,7 @@ const BlogPage = () => {
   const totalPages = Math.ceil(filteredBlogs.length / pagination.itemsPerPage);
 
   const handleBlogClick = (blogId: number) => {
-    // Navigate to blog detail page
-    window.location.href = `/blog/${blogId}`;
+    window.location.href = `/blogs/${blogId}`;
   };
 
   if (loading) {
@@ -281,7 +362,7 @@ const BlogPage = () => {
 
   if (error) {
     return (
-      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500">
+      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-br from-purple-500 via-amber-500 to-pink-500">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           <ErrorState
             title="Failed to Load Blogs"
@@ -311,10 +392,10 @@ const BlogPage = () => {
         <BlogHeroSection />
       </div>
       
-      <div className="container mx-auto px-4 py-8 md:py-12 lg:py-16 bg-gradient-to-b from-gray-50 to-white min-h-screen">
+      <div className="mx-auto px-4 py-8 md:py-12 lg:py-16 bg-gradient-to-b from-purple-50 to-amber-50 min-h-screen">
         {/* Page Header */}
         <div className="text-center mb-8 md:mb-12">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-purple-900 mb-4">
             Travel Stories & Insights
           </h1>
           <p className="text-gray-600 max-w-3xl mx-auto">
@@ -335,7 +416,7 @@ const BlogPage = () => {
         {/* Results Section */}
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <h3 className="text-2xl font-semibold text-gray-900">
+            <h3 className="text-2xl font-semibold text-purple-900">
               {filteredBlogs.length} Blog{filteredBlogs.length !== 1 ? "s" : ""} Found
             </h3>
 
@@ -343,7 +424,7 @@ const BlogPage = () => {
             <div className="flex items-center gap-3">
               <label
                 htmlFor="itemsPerPage"
-                className="text-sm font-medium text-gray-700 whitespace-nowrap"
+                className="text-sm font-medium text-purple-700 whitespace-nowrap"
               >
                 Show:
               </label>
@@ -351,7 +432,7 @@ const BlogPage = () => {
                 id="itemsPerPage"
                 value={pagination.itemsPerPage}
                 onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
-                className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                className="px-3 py-2 border border-purple-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-sm bg-white"
               >
                 {itemsPerPageOptions.map((option) => (
                   <option key={option} value={option}>
@@ -459,16 +540,16 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
   };
 
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-8 pt-6 border-t border-gray-200">
+    <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-8 pt-6 border-t border-amber-200">
       <div className="text-sm text-gray-600">
-        Showing {startItem} to {endItem} of {totalItems} blogs
+        Showing <span className="font-semibold text-purple-700">{startItem}</span> to <span className="font-semibold text-purple-700">{endItem}</span> of <span className="font-semibold text-purple-700">{totalItems}</span> blogs
       </div>
 
       <div className="flex items-center gap-1">
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-3 py-2 rounded-md border border-gray-300 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+          className="px-3 py-2 rounded-md border border-purple-300 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-purple-50 transition-colors text-purple-700"
         >
           Previous
         </button>
@@ -480,10 +561,10 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
             disabled={page === "..."}
             className={`px-3 py-2 rounded-md text-sm font-medium min-w-[40px] ${
               page === currentPage
-                ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+                ? "bg-gradient-to-r from-purple-600 to-amber-600 text-white shadow-lg"
                 : page === "..."
-                ? "cursor-default"
-                : "border border-gray-300 hover:bg-gray-50 transition-colors"
+                ? "cursor-default text-gray-500"
+                : "border border-purple-300 text-purple-700 hover:bg-purple-50 transition-colors"
             }`}
           >
             {page}
@@ -493,7 +574,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="px-3 py-2 rounded-md border border-gray-300 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+          className="px-3 py-2 rounded-md border border-purple-300 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-purple-50 transition-colors text-purple-700"
         >
           Next
         </button>
@@ -512,7 +593,7 @@ const NoResults: React.FC<{ onResetFilters: () => void }> = ({
     </div>
     <button
       onClick={onResetFilters}
-      className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors"
+      className="px-6 py-2 bg-gradient-to-r from-purple-600 to-amber-600 text-white rounded-lg hover:from-purple-700 hover:to-amber-700 transition-colors shadow-lg hover:shadow-xl"
     >
       Reset Filters
     </button>

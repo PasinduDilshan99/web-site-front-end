@@ -127,7 +127,7 @@ const AllEmployees: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 relative overflow-hidden p-4 md:p-8">
+    <div className="bg-gradient-to-br from-gray-50 to-blue-50 relative overflow-hidden p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
@@ -421,7 +421,7 @@ const AllEmployees: React.FC = () => {
         )}
 
         {/* Footer Note */}
-        <div className="text-center mt-12 pt-8 border-t border-gray-200">
+        <div className="text-center pt-8 border-t border-gray-200">
           <p className="text-gray-500 text-sm">
             Click on any team member to view their contact information
           </p>

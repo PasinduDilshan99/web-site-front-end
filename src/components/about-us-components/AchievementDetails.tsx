@@ -141,7 +141,7 @@ const AchievementDetails: React.FC = () => {
   const currentImage = currentAchievement.images[selectedImageIndex];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-16 px-4">
+    <div className=" bg-gray-50 py-16 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Achievement Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">

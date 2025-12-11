@@ -1,11 +1,10 @@
-
+import CreateBlogPage from "@/pages/CreateBlogPage";
 import React from "react";
-import ContactUsPage from "@/pages/ContactUsPage";
 
 const page = () => {
   return (
     <>
-      <ContactUsPage />
+      <CreateBlogPage />
     </>
   );
 };
