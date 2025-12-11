@@ -1,0 +1,313 @@
+"use client";
+import React, { useState } from 'react';
+
+interface ContactMethod {
+  id: number;
+  icon: React.ReactNode;
+  title: string;
+  value: string;
+  description?: string;
+  link?: string;
+  action?: 'call' | 'email' | 'whatsapp' | 'location' | 'hours' | 'emergency';
+  highlight?: boolean;
+}
+
+const ContactHighlights = () => {
+  const [copied, setCopied] = useState<string | null>(null);
+
+  const copyToClipboard = (text: string, type: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(type);
+      setTimeout(() => setCopied(null), 2000);
+    });
+  };
+
+  const contactMethods: ContactMethod[] = [
+    {
+      id: 1,
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+        </svg>
+      ),
+      title: "Call Us",
+      value: "+94 11 234 5678",
+      description: "Main Office Line",
+      link: "tel:+94112345678",
+      action: 'call'
+    },
+    {
+      id: 2,
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      ),
+      title: "Working Hours",
+      value: "Mon - Sat: 9AM - 6PM",
+      description: "Sunday: 10AM - 4PM",
+      action: 'hours'
+    },
+    {
+      id: 3,
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      ),
+      title: "Office Location",
+      value: "123 Galle Road, Colombo 03",
+      description: "Sri Lanka",
+      link: "https://maps.google.com/?q=123+Galle+Road,+Colombo+03,+Sri+Lanka",
+      action: 'location'
+    },
+    {
+      id: 4,
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+      ),
+      title: "Email Us",
+      value: "info@travelagency.com",
+      description: "For general inquiries",
+      link: "mailto:info@travelagency.com",
+      action: 'email'
+    },
+    {
+      id: 5,
+      icon: (
+        <div className="w-6 h-6">
+          <svg viewBox="0 0 24 24" fill="currentColor" className="text-green-500">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.76.982.998-3.675-.236-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.897 6.994c-.004 5.45-4.438 9.88-9.888 9.88m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.333.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.333 11.893-11.893 0-3.18-1.24-6.162-3.495-8.411" />
+          </svg>
+        </div>
+      ),
+      title: "WhatsApp",
+      value: "+94 77 123 4567",
+      description: "Instant chat support",
+      link: "https://wa.me/94771234567",
+      action: 'whatsapp'
+    },
+    {
+      id: 6,
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+      ),
+      title: "Emergency",
+      value: "+94 77 987 6543",
+      description: "24/7 Emergency Line",
+      link: "tel:+94779876543",
+      action: 'emergency',
+      highlight: true
+    }
+  ];
+
+  const handleContactAction = (method: ContactMethod) => {
+    if (method.link) {
+      if (method.action === 'whatsapp' || method.action === 'location') {
+        window.open(method.link, '_blank');
+      } else {
+        window.location.href = method.link;
+      }
+    } else if (method.action === 'email') {
+      copyToClipboard(method.value, 'email');
+    }
+  };
+
+  const getActionButton = (method: ContactMethod) => {
+    switch (method.action) {
+      case 'call':
+        return (
+          <button
+            onClick={() => handleContactAction(method)}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium flex items-center gap-2"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+            </svg>
+            Call Now
+          </button>
+        );
+      
+      case 'whatsapp':
+        return (
+          <button
+            onClick={() => handleContactAction(method)}
+            className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm font-medium flex items-center gap-2"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.76.982.998-3.675-.236-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.897 6.994c-.004 5.45-4.438 9.88-9.888 9.88m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.333.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.333 11.893-11.893 0-3.18-1.24-6.162-3.495-8.411" />
+            </svg>
+            Chat on WhatsApp
+          </button>
+        );
+      
+      case 'email':
+        return (
+          <button
+            onClick={() => handleContactAction(method)}
+            className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-sm font-medium flex items-center gap-2"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            {copied === 'email' ? 'Copied!' : 'Copy Email'}
+          </button>
+        );
+      
+      case 'location':
+        return (
+          <button
+            onClick={() => handleContactAction(method)}
+            className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium flex items-center gap-2"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+            </svg>
+            Get Directions
+          </button>
+        );
+      
+      case 'emergency':
+        return (
+          <button
+            onClick={() => handleContactAction(method)}
+            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm font-medium flex items-center gap-2 animate-pulse"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            Emergency Call
+          </button>
+        );
+      
+      default:
+        return (
+          <button
+            onClick={() => handleContactAction(method)}
+            className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm font-medium"
+          >
+            Contact
+          </button>
+        );
+    }
+  };
+
+  return (
+    <div className="py-12 px-4 md:px-8 bg-gradient-to-b from-gray-50 to-white">
+      <div className="container mx-auto">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+            Quick Contact Options
+          </h2>
+          <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+            Choose your preferred way to get in touch with our travel experts. 
+            We&apos;re available through multiple channels for your convenience.
+          </p>
+          <div className="w-24 h-1 bg-teal-500 mx-auto mt-6 rounded-full"></div>
+        </div>
+
+        {/* Contact Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          {contactMethods.map((method) => (
+            <div
+              key={method.id}
+              className={`relative rounded-xl p-6 transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
+                method.highlight 
+                  ? 'bg-gradient-to-br from-red-50 to-white border-2 border-red-200' 
+                  : 'bg-white border border-gray-200'
+              }`}
+            >
+              {/* Highlight Badge */}
+              {method.highlight && (
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                  <span className="px-4 py-1 bg-red-500 text-white text-xs font-bold rounded-full animate-pulse">
+                    24/7 Available
+                  </span>
+                </div>
+              )}
+              
+              {/* Icon Container */}
+              <div className={`inline-flex p-4 rounded-2xl mb-4 ${
+                method.highlight 
+                  ? 'bg-red-100 text-red-600' 
+                  : 'bg-teal-50 text-teal-600'
+              }`}>
+                {method.icon}
+              </div>
+              
+              {/* Title */}
+              <h3 className="text-xl font-bold text-gray-800 mb-2">{method.title}</h3>
+              
+              {/* Value */}
+              <div className="mb-2">
+                <p className="text-lg font-semibold text-gray-900">{method.value}</p>
+                {method.description && (
+                  <p className="text-gray-600 text-sm mt-1">{method.description}</p>
+                )}
+              </div>
+              
+              {/* Action Button */}
+              <div className="mt-6">
+                {getActionButton(method)}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Additional Information Banner */}
+        <div className="bg-gradient-to-r from-teal-500 to-blue-500 rounded-2xl p-6 md:p-8 text-white">
+          <div className="flex flex-col md:flex-row items-center justify-between">
+            <div className="mb-6 md:mb-0">
+              <h3 className="text-2xl font-bold mb-2">Need Immediate Assistance?</h3>
+              <p className="text-teal-100">
+                Our travel consultants are standing by to help you plan your perfect journey.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-4">
+              <a
+                href="tel:+94112345678"
+                className="px-6 py-3 bg-white text-teal-600 font-bold rounded-lg hover:bg-gray-100 transition-colors flex items-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+                Call Now
+              </a>
+              <a
+                href="https://wa.me/94771234567"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-6 py-3 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2"
+              >
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
+                </svg>
+                WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Timezone Information */}
+        <div className="mt-8 text-center text-gray-600">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span className="text-sm font-medium">
+              Sri Lanka Time (GMT+5:30) • We respond within 1 business hour
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ContactHighlights;

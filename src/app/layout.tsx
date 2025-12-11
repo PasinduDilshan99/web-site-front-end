@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <ChatBot />
-        <DecemberSnowfall />
+        {/* <DecemberSnowfall /> */}
         <GlobalGradientScrollbar />
         <AuthProvider>{children}</AuthProvider>
       </body>
