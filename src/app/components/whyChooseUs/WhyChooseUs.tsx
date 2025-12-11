@@ -7,6 +7,7 @@ import { ErrorState } from "../../../components/common-components/error-state/Er
 import { EmptyState } from "../../../components/common-components/empty-state/EmptyState";
 import Loading from "../../../components/common-components/loading/Loading";
 import AnimatedButton from "../../../components/common-components/buttons/AnimatedButton";
+import { useRouter } from "next/navigation"; // Import useRouter for navigation
 
 // Import state components
 
@@ -32,6 +33,7 @@ const getDefaultImage = () => {
 };
 
 const WhyChooseUs = () => {
+  const router = useRouter(); // Initialize router
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [cardsData, setCardsData] = useState<WhyChooseUsCardAPI[]>([]);
@@ -97,11 +99,9 @@ const WhyChooseUs = () => {
     fetchCardsData();
   };
 
-  // Handle card click
-  const handleCardClick = (clickedUrl: string) => {
-    if (clickedUrl) {
-      window.location.href = clickedUrl;
-    }
+  // Handle Learn More button click - navigate to about-us page
+  const handleLearnMoreClick = () => {
+    router.push("/about-us");
   };
 
   // Extract stats from title (e.g., "50+", "100%", "10+", "98%")
@@ -123,37 +123,12 @@ const WhyChooseUs = () => {
 
   // Error state
   if (error) {
-    return (
-      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <ErrorState
-            title="Failed to Load Content"
-            message={error}
-            icon="alert"
-            variant="error"
-            size="md"
-            actionLabel="Try Again"
-            onAction={handleRetry}
-          />
-        </div>
-      </section>
-    );
+    return null;
   }
 
   // No data state
   if (cardsData.length === 0) {
-    return (
-      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <EmptyState
-            title="No Content Available"
-            message="We're preparing some amazing content for you. Please check back soon!"
-            icon="data"
-            size="md"
-          />
-        </div>
-      </section>
-    );
+    return null;
   }
 
   return (
@@ -179,8 +154,8 @@ const WhyChooseUs = () => {
             return (
               <div
                 key={card.cardId}
-                onClick={() => handleCardClick(card.cardClickedUrl)}
-                className="group bg-white rounded-xl sm:rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 sm:hover:-translate-y-3 md:hover:-translate-y-4 overflow-hidden cursor-pointer border border-white/10 backdrop-blur-sm h-full flex flex-col"
+                // Removed onClick handler from card
+                className="group bg-white rounded-xl sm:rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 sm:hover:-translate-y-3 md:hover:-translate-y-4 overflow-hidden border border-white/10 backdrop-blur-sm h-full flex flex-col"
               >
                 {/* Card Image - Responsive Heights */}
                 <div className="relative h-32 sm:h-36 md:h-40 lg:h-44 xl:h-48 overflow-hidden bg-gradient-to-br from-purple-100 to-amber-100 flex-shrink-0">
@@ -266,7 +241,7 @@ const WhyChooseUs = () => {
 
         {/* Call to Action - Fully Responsive */}
         <div className="text-center mt-8">
-          <AnimatedButton onClick={() => console.log("Clicked!")}>
+          <AnimatedButton onClick={handleLearnMoreClick}>
             Learn More About Us
           </AnimatedButton>
         </div>

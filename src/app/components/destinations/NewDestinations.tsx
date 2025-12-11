@@ -6,6 +6,7 @@ import { ErrorState } from "../../../components/common-components/error-state/Er
 import { EmptyState } from "../../../components/common-components/empty-state/EmptyState";
 import SectionHeader from "../../../components/common-components/section-header/SectionHeader";
 import AnimatedButton from "../../../components/common-components/buttons/AnimatedButton";
+import { useRouter } from "next/navigation";
 
 interface ImageType {
   imageId: number;
@@ -180,6 +181,16 @@ const NewDestinations = () => {
   const [newDestinations, setNewDestinations] = useState<NewDestinationsType[]>(
     []
   );
+  const router = useRouter();
+
+  const handleMoreDestinationClick = () => {
+    router.push("/destinations");
+  };
+
+  const handleMoreDetails = (destinationId: number) => {
+        router.push(`/destinations/${destinationId}`);
+
+  }
 
   useEffect(() => {
     const fetchNewDestinations = async () => {
@@ -227,36 +238,11 @@ const NewDestinations = () => {
   }
 
   if (error) {
-    return (
-      <section className="py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <ErrorState
-            title="Failed to Load Content"
-            message={error}
-            icon="alert"
-            variant="error"
-            size="md"
-            actionLabel="Try Again"
-            onAction={handleRetry}
-          />
-        </div>
-      </section>
-    );
+    return null;
   }
 
   if (newDestinations.length === 0) {
-    return (
-      <section className="py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <EmptyState
-            title="No Content Available"
-            message="We're preparing some amazing content for you. Please check back soon!"
-            icon="data"
-            size="md"
-          />
-        </div>
-      </section>
-    );
+    return null;
   }
 
   return (
@@ -313,7 +299,7 @@ const NewDestinations = () => {
                     </p>
                   </div>
 
-                  <button className="px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-amber-600 to-purple-600 text-white text-xs sm:text-sm md:text-base font-medium rounded-lg sm:rounded-xl hover:from-purple-700 hover:to-amber-700 transition-colors">
+                  <button onClick={()=>handleMoreDetails(destination.destinationId)} className="px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-amber-600 to-purple-600 text-white text-xs sm:text-sm md:text-base font-medium rounded-lg sm:rounded-xl hover:from-purple-700 hover:to-amber-700 transition-colors">
                     Read more
                   </button>
                 </div>
@@ -324,7 +310,7 @@ const NewDestinations = () => {
 
         {/* View All Button */}
         <div className="text-center mt-6 sm:mt-8 md:mt-10 lg:mt-12 xl:mt-16">
-          <AnimatedButton onClick={() => console.log("Clicked!")}>
+          <AnimatedButton onClick={handleMoreDestinationClick}>
             More Destinations
           </AnimatedButton>
         </div>

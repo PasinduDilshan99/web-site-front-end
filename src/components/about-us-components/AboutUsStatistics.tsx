@@ -80,10 +80,10 @@ const AboutUsStatistics = () => {
             item.statusName === 'ACTIVE'
           );
           
-          // Initialize animated values starting from 1
+          // Initialize animated values starting from 0
           const initialAnimatedValues: { [key: number]: number } = {};
           activeStats.forEach(stat => {
-            initialAnimatedValues[stat.id] = 1; // Start from 1
+            initialAnimatedValues[stat.id] = 0;
           });
           setAnimatedValues(initialAnimatedValues);
           
@@ -102,7 +102,7 @@ const AboutUsStatistics = () => {
     fetchStatistics();
   }, []);
 
-  // Animation effect
+  // Animation effect - FIXED VERSION
   useEffect(() => {
     if (statistics.length === 0 || hasAnimatedRef.current) return;
 
@@ -112,32 +112,44 @@ const AboutUsStatistics = () => {
           if (entry.isIntersecting && !hasAnimatedRef.current) {
             hasAnimatedRef.current = true;
             
-            // Animate each counter
+            // Animate each counter with optimized timing
             statistics.forEach((stat) => {
-              const startValue = 1;
+              const startValue = 0;
               const endValue = stat.value;
-              const duration = 2000; // 2 seconds
-              const incrementTime = Math.floor(duration / (endValue - startValue));
-              let currentValue = startValue;
-
-              const timer = setInterval(() => {
-                currentValue += 1;
+              const duration = 1500; // Reduced from 2000ms to 1500ms
+              
+              // Use requestAnimationFrame for smoother animation
+              let startTime: number | null = null;
+              
+              const animateCounter = (timestamp: number) => {
+                if (!startTime) startTime = timestamp;
+                const elapsed = timestamp - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Easing function for smooth animation
+                const easeOutQuad = (t: number) => t * (2 - t);
+                const easedProgress = easeOutQuad(progress);
+                
+                const currentValue = Math.floor(startValue + (endValue - startValue) * easedProgress);
+                
                 setAnimatedValues(prev => ({
                   ...prev,
                   [stat.id]: currentValue
                 }));
 
-                if (currentValue >= endValue) {
-                  clearInterval(timer);
+                if (progress < 1) {
+                  requestAnimationFrame(animateCounter);
                 }
-              }, incrementTime);
+              };
+
+              requestAnimationFrame(animateCounter);
             });
           }
         });
       },
       {
-        threshold: 0.5, // Trigger when 50% of component is visible
-        rootMargin: '0px 0px -100px 0px' // Slight offset
+        threshold: 0.3, // Trigger when 30% of component is visible
+        rootMargin: '0px 0px -50px 0px' // Reduced offset
       }
     );
 
@@ -152,14 +164,13 @@ const AboutUsStatistics = () => {
     };
   }, [statistics]);
 
-  
   if (loading) {
     return (
       <div className="py-16 px-4 bg-gradient-to-b from-white to-blue-50">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+          <div className="flex flex-wrap justify-center gap-6">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="bg-white p-6 rounded-xl shadow-lg text-center animate-pulse">
+              <div key={i} className="bg-white p-6 rounded-xl shadow-lg text-center animate-pulse w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] lg:w-[calc(16.666%-20px)] max-w-[180px]">
                 <div className="w-12 h-12 bg-gray-200 rounded-full mx-auto mb-3"></div>
                 <div className="h-8 bg-gray-200 rounded mb-2 mx-auto w-1/2"></div>
                 <div className="h-4 bg-gray-200 rounded mb-1 mx-auto w-3/4"></div>
@@ -173,14 +184,7 @@ const AboutUsStatistics = () => {
   }
 
   if (error) {
-    return (
-      <div className="py-16 px-4 bg-gradient-to-b from-white to-blue-50">
-        <div className="max-w-7xl mx-auto text-center">
-          <p className="text-red-500 mb-4">Error: {error}</p>
-          <p className="text-gray-600">Showing sample statistics</p>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   return (
@@ -188,17 +192,17 @@ const AboutUsStatistics = () => {
       ref={countersRef} 
       className="py-16 px-4 bg-gradient-to-b from-white to-blue-50"
     >
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+      <div className="mx-auto">
+        <div className="flex flex-wrap justify-center gap-6 w-full">
           {statistics.map((stat) => {
-            const animatedValue = animatedValues[stat.id] || 1;
+            const animatedValue = animatedValues[stat.id] || 0;
             const displayValue = formatValue(stat.name, animatedValue);
             const finalValue = formatValue(stat.name, stat.value);
             
             return (
               <div
                 key={stat.id}
-                className="bg-white p-6 rounded-xl shadow-lg text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group"
+                className="bg-white p-6 rounded-xl shadow-lg text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] lg:w-[calc(16.666%-20px)] max-w-[300px]"
                 style={{
                   borderTop: `4px solid ${stat.color}`,
                 }}
@@ -207,7 +211,7 @@ const AboutUsStatistics = () => {
                 <div 
                   className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 transition-all duration-300 group-hover:scale-110"
                   style={{
-                    backgroundColor: `${stat.color}15`, // 15 = ~10% opacity
+                    backgroundColor: `${stat.color}15`,
                     color: stat.color,
                   }}
                 >
@@ -217,7 +221,6 @@ const AboutUsStatistics = () => {
                       alt={stat.name}
                       className="w-6 h-6"
                       onError={(e) => {
-                        // Fallback icon if image fails to load
                         const target = e.target as HTMLImageElement;
                         target.style.display = 'none';
                         const fallbackIcon = document.createElement('div');
@@ -260,7 +263,7 @@ const AboutUsStatistics = () => {
                   </div>
                 )}
 
-                {/* Progress indicator (hidden by default) */}
+                {/* Progress indicator */}
                 <div className="mt-3 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
                   <div 
                     className="h-full rounded-full transition-all duration-500"
@@ -274,8 +277,6 @@ const AboutUsStatistics = () => {
             );
           })}
         </div>
-
-    
       </div>
     </div>
   );

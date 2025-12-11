@@ -895,7 +895,7 @@ const BlogDetailsPage = () => {
             {/* Sidebar */}
             <div className="lg:col-span-1">
               {/* Author Card */}
-              <div className="bg-white rounded-3xl shadow-xl p-6 mb-8 border border-purple-200 sticky top-24">
+              <div className="bg-white rounded-3xl shadow-xl p-6 mb-8 border border-purple-200  top-24">
                 <div className="text-center mb-6">
                   <div className="w-24 h-24 rounded-full bg-gradient-to-r from-purple-500 to-amber-400 flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-lg">
                     <User className="w-12 h-12 text-white" />
@@ -940,7 +940,7 @@ const BlogDetailsPage = () => {
                     {relatedBlogs.map((blog) => (
                       <div
                         key={blog.blog_id}
-                        onClick={() => router.push(`/blog/${blog.blog_id}`)}
+                        onClick={() => router.push(`/blogs/${blog.blog_id}`)}
                         className="group cursor-pointer p-4 rounded-xl border border-purple-100 hover:border-amber-300 hover:shadow-md transition-all"
                       >
                         <div className="flex items-start gap-3">

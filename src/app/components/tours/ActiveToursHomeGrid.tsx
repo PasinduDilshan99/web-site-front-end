@@ -9,30 +9,41 @@ import SectionHeader from "../../../components/common-components/section-header/
 import AnimatedButton from "../../../components/common-components/buttons/AnimatedButton";
 import { ActiveToursType, ApiResponse } from "@/types/sri-lankan-tour-types";
 import ToursGrid from "@/components/sri-lankan-tours-components/ToursGrid";
+import { useRouter } from "next/navigation";
 
 const ActiveToursHomeGrid = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTours, setActiveTours] = useState<ActiveToursType[]>([]);
   const [displayCount, setDisplayCount] = useState(3);
+  const router = useRouter()
+
+
+  const handleMoreToursClick = () =>{
+    router.push("/sri-lankan-tours")
+  }
 
   // Update display count based on screen size
-  useEffect(() => {
-    const updateDisplayCount = () => {
-      const width = window.innerWidth;
-      if (width < 768) {
-        setDisplayCount(3);
-      } else if (width < 1024) {
-        setDisplayCount(6);
-      } else {
-        setDisplayCount(9);
-      }
-    };
+useEffect(() => {
+  const updateDisplayCount = () => {
+    const width = window.innerWidth;
+    
+    if (width < 640) { // Mobile: < 640px
+      setDisplayCount(3);
+    } else if (width < 768) { // Tablet: 640px - 767px
+      setDisplayCount(4);
+    } else if (width < 1024) { // Laptop: 768px - 1023px
+      setDisplayCount(6);
+    } else { // PC: ≥ 1024px
+      setDisplayCount(9);
+    }
+  };
 
-    updateDisplayCount();
-    window.addEventListener("resize", updateDisplayCount);
-    return () => window.removeEventListener("resize", updateDisplayCount);
-  }, []);
+  updateDisplayCount();
+  window.addEventListener("resize", updateDisplayCount);
+  
+  return () => window.removeEventListener("resize", updateDisplayCount);
+}, []);
 
   useEffect(() => {
     const fetchActiveTours = async () => {
@@ -83,41 +94,16 @@ const ActiveToursHomeGrid = () => {
   }
 
   if (error) {
-    return (
-      <section className="py-8 md:py-12 lg:py-16 xl:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ErrorState
-            title="Failed to Load Content"
-            message={error}
-            icon="alert"
-            variant="error"
-            size="md"
-            actionLabel="Try Again"
-            onAction={handleRetry}
-          />
-        </div>
-      </section>
-    );
+    return null;
   }
 
   if (activeTours.length === 0) {
-    return (
-      <section className="py-8 md:py-12 lg:py-16 xl:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <EmptyState
-            title="No Content Available"
-            message="We're preparing some amazing content for you. Please check back soon!"
-            icon="data"
-            size="md"
-          />
-        </div>
-      </section>
-    );
+    return null;
   }
 
   return (
-    <div className="w-full bg-gradient-to-br from-amber-50 to-purple-50 py-8 md:py-12 lg:py-16 xl:py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="w-full bg-gradient-to-br from-amber-50 to-purple-50 py-8 md:py-8 lg:py-8 xl:py-12">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
           <SectionHeader
@@ -135,6 +121,12 @@ const ActiveToursHomeGrid = () => {
           displayCount={displayCount}
         />
       </div>
+
+              <div className="text-center mt-8">
+          <AnimatedButton onClick={handleMoreToursClick}>
+            More Tours
+          </AnimatedButton>
+        </div>
     </div>
   );
 };

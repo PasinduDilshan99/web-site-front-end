@@ -40,30 +40,28 @@ export default function Home() {
       <div>
         <HeroSection />
       </div>
-      <div>
+      {/* <div>
         <Partners />
-      </div>
+      </div> */}
       <div>
         <WhyChooseUs />
       </div>
       <div>
         <OurServices />
       </div>
-      <div>
+      {/* <div>
         <PopularDestinations />
       </div>
       <div>
         <TrendingDestinations />
-      </div>
+      </div> */}
       <div>
         <NewDestinations />
       </div>
-      <div>
-        {/* <PopularTours /> */}
-      </div>
-      <div>
+      <div>{/* <PopularTours /> */}</div>
+      {/* <div>
         <ActiveToursHome />
-      </div>
+      </div> */}
       <div>
         <ActiveToursHomeGrid />
       </div>
@@ -73,19 +71,18 @@ export default function Home() {
       <div>
         <ActivitiesHome />
       </div>
-      <div>
+      {/* <div>
         <ActivityCategoriesHome />
-      </div>
-
+      </div> */}
       <div>
         <PackagesHome />
       </div>
       <div>
         <Accommodations />
       </div>
-      <div>
+      {/* <div>
         <DestinationsCategories />
-      </div>
+      </div> */}
 
       {/* User Benefits & Loyalty */}
       {/* <div>
@@ -102,9 +99,9 @@ export default function Home() {
       <div>
         <GalleryHome />
       </div>
-      <div>
+      {/* <div>
         <ReviewsHome />
-      </div>
+      </div> */}
       <div>
         <ActiveBlogsSummery />
       </div>
@@ -113,9 +110,9 @@ export default function Home() {
       <div>
         <WorkFlow />
       </div>
-      <div>
+      {/* <div>
         <PromotionsHome />
-      </div>
+      </div> */}
 
       {/* Support & Information */}
       <div>

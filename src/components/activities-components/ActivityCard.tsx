@@ -57,7 +57,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
         </div>
 
         {/* Status Badge */}
-        <div className="absolute top-2 sm:top-3 right-2 sm:right-3">
+        {/* <div className="absolute top-2 sm:top-3 right-2 sm:right-3">
           <span
             className={`px-2 sm:px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(
               activity.status
@@ -65,10 +65,10 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
           >
             {activity.status}
           </span>
-        </div>
+        </div> */}
 
         {/* Price Badge */}
-        <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 bg-white/90 backdrop-blur-sm px-2 sm:px-3 py-1 sm:py-2 rounded-lg sm:rounded-xl">
+        {/* <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 bg-white/90 backdrop-blur-sm px-2 sm:px-3 py-1 sm:py-2 rounded-lg sm:rounded-xl">
           <div className="flex flex-col">
             <div className="flex items-center">
               <span className="text-sm sm:text-base md:text-lg font-bold text-gray-900">
@@ -83,7 +83,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
               <span className="text-xs text-gray-600 ml-1">local</span>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Activity Content */}

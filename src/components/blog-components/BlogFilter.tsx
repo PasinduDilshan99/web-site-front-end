@@ -65,7 +65,7 @@ const BlogFilter: React.FC<BlogFilterProps> = ({
             value={filters.search}
             onChange={(e) => onFilterChange('search', e.target.value)}
             placeholder="Search blogs, titles, or authors..."
-            className="w-full pl-12 pr-4 py-3.5 border-2 border-purple-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-base transition-all bg-purple-50/50"
+            className="text-black w-full pl-12 pr-4 py-3.5 border-2 border-purple-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-base transition-all bg-purple-50/50"
           />
         </div>
       </div>
@@ -81,7 +81,7 @@ const BlogFilter: React.FC<BlogFilterProps> = ({
           <select
             value={filters.writer}
             onChange={(e) => onFilterChange('writer', e.target.value)}
-            className="w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-base bg-white transition-all cursor-pointer hover:border-purple-300"
+            className="text-gray-500 w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-base bg-white transition-all cursor-pointer hover:border-purple-300"
           >
             <option value="">All Authors</option>
             {writers.map((writer) => (
@@ -101,7 +101,7 @@ const BlogFilter: React.FC<BlogFilterProps> = ({
           <select
             value={filters.category}
             onChange={(e) => onFilterChange('category', e.target.value)}
-            className="w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-base bg-white transition-all cursor-pointer hover:border-purple-300"
+            className="text-gray-500 w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-base bg-white transition-all cursor-pointer hover:border-purple-300"
           >
             <option value="">All Categories</option>
             {categories.map((category) => (
@@ -121,7 +121,7 @@ const BlogFilter: React.FC<BlogFilterProps> = ({
           <select
             value={filters.sortBy}
             onChange={(e) => onFilterChange('sortBy', e.target.value)}
-            className="w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-base bg-white transition-all cursor-pointer hover:border-purple-300"
+            className="text-gray-500 w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-base bg-white transition-all cursor-pointer hover:border-purple-300"
           >
             <option value="recent">🕐 Most Recent</option>
             <option value="likes">❤️ Most Liked</option>
@@ -144,7 +144,7 @@ const BlogFilter: React.FC<BlogFilterProps> = ({
                 value={filters.dateRange[0]}
                 onChange={(e) => handleDateChange(e.target.value, true)}
                 max={filters.dateRange[1]}
-                className="w-full px-3 py-2.5 border-2 border-purple-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-sm transition-all"
+                className="text-gray-500 w-full px-3 py-2.5 border-2 border-purple-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-sm transition-all"
               />
               <div className="text-xs text-purple-600 mt-1 text-center">From</div>
             </div>
@@ -154,7 +154,7 @@ const BlogFilter: React.FC<BlogFilterProps> = ({
                 value={filters.dateRange[1]}
                 onChange={(e) => handleDateChange(e.target.value, false)}
                 min={filters.dateRange[0]}
-                className="w-full px-3 py-2.5 border-2 border-purple-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-sm transition-all"
+                className="text-gray-500 w-full px-3 py-2.5 border-2 border-purple-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-sm transition-all"
               />
               <div className="text-xs text-purple-600 mt-1 text-center">To</div>
             </div>

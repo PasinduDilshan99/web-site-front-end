@@ -469,11 +469,11 @@ const Accommodations = () => {
         )}
 
         {/* Call to Action */}
-          <div className="text-center mt-6 sm:mt-8 md:mt-10 lg:mt-12 xl:mt-16">
+          {/* <div className="text-center mt-6 sm:mt-8 md:mt-10 lg:mt-12 xl:mt-16">
             <AnimatedButton onClick={() => console.log("View all clicked")}>
               View All Accommodations
             </AnimatedButton>
-          </div>
+          </div> */}
       </div>
     </section>
   );

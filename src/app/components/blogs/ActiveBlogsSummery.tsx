@@ -1,5 +1,8 @@
 "use client";
+import AnimatedButton from "@/components/common-components/buttons/AnimatedButton";
+import SectionHeader from "@/components/common-components/section-header/SectionHeader";
 import { GET_ALL_ACTIVE_BLOGS } from "@/utils/frontEndConstant";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 interface ImageType {
@@ -59,6 +62,11 @@ const ActiveBlogsSummery = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeBlogs, setActiveBlogs] = useState<BlogType[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const router = useRouter();
+
+  const handleMoreBlogs = () =>{
+    router.push("/blogs")
+  }
 
   useEffect(() => {
     const fetchActiveBlogs = async () => {
@@ -238,16 +246,7 @@ const ActiveBlogsSummery = () => {
   }
 
   if (error) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 text-center">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 sm:p-6 max-w-2xl mx-auto">
-          <h3 className="text-red-800 font-semibold text-sm sm:text-base mb-2">
-            Error Loading Blogs
-          </h3>
-          <p className="text-red-600 text-xs sm:text-sm">{error}</p>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   const visibleBlogs = getVisibleBlogs();
@@ -255,22 +254,18 @@ const ActiveBlogsSummery = () => {
   return (
     <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 bg-gradient-to-br from-amber-50 to-purple-50">
       {/* Header */}
-      <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-        <p className="text-gray-700 max-w-2xl mx-auto text-xs sm:text-sm lg:text-base px-4 mb-2">
-          Our Blogs
-        </p>
-        <h2 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold bg-gradient-to-r from-[#A855F7] to-[#F59E0B] bg-clip-text text-transparent mb-3 sm:mb-4 lg:mb-6 leading-tight px-4">
-          Recent Articles & Posts
-        </h2>
-        <p className="text-gray-700 max-w-2xl mx-auto text-xs sm:text-sm lg:text-base px-4 mb-4 sm:mb-6">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore
-        </p>
-        <div className="w-12 sm:w-16 md:w-20 lg:w-24 h-0.5 sm:h-1 bg-gradient-to-r from-[#A855F7] to-[#F59E0B] mx-auto rounded-full"></div>
-      </div>
+        <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
+          <SectionHeader
+            subtitle="Our Blogs"
+            title="Recent Articles & Posts"
+            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore"
+            fromColor="#A855F7"
+            toColor="#F59E0B"
+          />
+        </div>
 
       {/* Carousel Container */}
-      <div className="relative max-w-7xl mx-auto">
+      <div className="relative mx-auto">
         {/* Navigation Arrows - Show on all screens except very small mobile */}
         {activeBlogs.length > 1 && (
           <>
@@ -541,11 +536,11 @@ const ActiveBlogsSummery = () => {
       )}
 
       {/* View All Button */}
-      <div className="text-center mt-8 sm:mt-12 lg:mt-16">
-        <button className="px-6 sm:px-8 py-2 sm:py-3 lg:py-4 bg-gradient-to-r from-amber-600 to-purple-600 text-white font-semibold rounded-full hover:from-purple-700 hover:to-amber-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl text-sm sm:text-base">
-          View All Articles
-        </button>
-      </div>
+          <div className="text-center mt-6 sm:mt-8 md:mt-10 lg:mt-12 xl:mt-16">
+              <AnimatedButton onClick={handleMoreBlogs}>
+                View All Blogs
+              </AnimatedButton>
+            </div>
     </div>
   );
 };

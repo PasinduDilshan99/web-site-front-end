@@ -405,6 +405,10 @@ const CreateBlogPage = () => {
 
   const previewContent = getPreviewContent();
 
+  if(!user){
+    router.push("/login")
+  }
+
   return (
     <>
       <LinkBar />
