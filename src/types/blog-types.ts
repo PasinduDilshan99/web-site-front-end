@@ -43,6 +43,7 @@ export interface BlogDetailsData {
   description: string;
   blogCategory: string; // Added this field
   views:number;
+  isBookmark: boolean;
   images: BlogImage[];
   likeCount: number;
   comments: BlogComment[] | null;

@@ -10,12 +10,15 @@ import LinkBar from "@/components/common-components/linkBar/LinkBar";
 import Loading from "@/components/common-components/loading/Loading";
 import { ErrorState } from "@/components/common-components/error-state/ErrorState";
 import { BlogDetailsData, BlogTag } from "@/types/blog-types";
-import { fetchBlogDetails,  fetchRelatedBlogs,
+import {
+  fetchBlogDetails,
+  fetchRelatedBlogs,
   fetchTags,
   calculateTotalComments,
   calculateTotalReactions,
   getReadTime,
-  formatDate, } from "@/utils/blog-utils";
+  formatDate,
+} from "@/utils/blog-utils";
 import BlogHeader from "@/components/blog-components/BlogHeader";
 import BlogImages from "@/components/blog-components/BlogImages";
 import BlogContent from "@/components/blog-components/BlogContent";
@@ -40,7 +43,6 @@ const BlogDetailsPage = () => {
   const [replyTexts, setReplyTexts] = useState<Record<number, string>>({});
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
-  const [isBookmarked, setIsBookmarked] = useState(false);
   const [totalComments, setTotalComments] = useState(0);
   const [showReplyInput, setShowReplyInput] = useState<number | null>(null);
 
@@ -77,6 +79,19 @@ const BlogDetailsPage = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Handle bookmark update from BlogHeader
+  const handleBookmarkUpdate = (isBookmarked: boolean) => {
+    // Update local state if needed
+    if (blogData) {
+      setBlogData({
+        ...blogData,
+        isBookmark: isBookmarked,
+      });
+    }
+    // You can also trigger a refetch if needed
+    // loadBlogData();
   };
 
   // Handle comment submission
@@ -167,16 +182,6 @@ const BlogDetailsPage = () => {
       setIsLiked(!isLiked);
     } catch (err) {
       console.error("Error liking blog:", err);
-    }
-  };
-
-  // Handle bookmark action
-  const handleBookmark = async () => {
-    try {
-      // TODO: Implement bookmark API call
-      setIsBookmarked(!isBookmarked);
-    } catch (err) {
-      console.error("Error bookmarking blog:", err);
     }
   };
 
@@ -284,9 +289,10 @@ const BlogDetailsPage = () => {
             <div className="lg:col-span-2">
               <div className="bg-white rounded-3xl shadow-xl p-6 md:p-8 mb-8 border border-purple-200">
                 <BlogHeader
-                blogId = {blogData.blog_id}
+                  blogId={blogData.blog_id}
                   title={blogData.title}
                   views={blogData.views}
+                  isBookmark={blogData.isBookmark}
                   subtitle={blogData.subtitle}
                   writerName={blogData.writer_name}
                   date={blogData.blog_created_at}
@@ -295,8 +301,7 @@ const BlogDetailsPage = () => {
                   totalComments={totalComments}
                   imageCount={blogData.images?.length || 0}
                   onShare={handleShare}
-                  onBookmark={handleBookmark}
-                  isBookmarked={isBookmarked}
+                  onBookmarkUpdate={handleBookmarkUpdate}
                 />
 
                 <BlogImages
@@ -318,11 +323,11 @@ const BlogDetailsPage = () => {
 
                 <BlogActions
                   isLiked={isLiked}
-                  isBookmarked={isBookmarked}
+                  isBookmarked={blogData.isBookmark}
                   totalReactions={totalReactions}
                   onLike={handleLike}
                   onShare={handleShare}
-                  onBookmark={handleBookmark}
+                  onBookmark={() => {}}
                 />
               </div>
 

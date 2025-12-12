@@ -46,6 +46,8 @@ const BlogActions: React.FC<BlogActionsProps> = ({
             ? "bg-amber-50 text-amber-700 border border-amber-300"
             : "bg-white border border-purple-300 text-purple-700 hover:bg-purple-50"
         }`}
+        disabled={true} // Disabled because BlogHeader handles it
+        title="Bookmark handled in header"
       >
         <Bookmark
           className={`w-5 h-5 ${isBookmarked ? "fill-current" : ""}`}

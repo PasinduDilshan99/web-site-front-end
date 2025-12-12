@@ -77,8 +77,6 @@ export const fetchBlogDetails = async (
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Cookie:
-          "token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNpbmR1IiwidXNlcklkIjo0LCJ1c2VybmFtZSI6InBhc2luZHUiLCJpYXQiOjE3NjI2Njg5NjksImV4cCI6MTc2MjY2OTA4OX0.5wQ6QL3q2pvSoCEhDze6t_Aub3Vb8hlcMRQ3UQxu8yg",
       },
       body: JSON.stringify({ id }),
       credentials: "include",
@@ -192,4 +190,7 @@ export const fetchTags = async (): Promise<BlogTag[]> => {
     console.error("Error fetching tags:", err);
     return [];
   }
+
+  
 };
+
