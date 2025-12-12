@@ -37,11 +37,12 @@ export interface BlogReaction {
   reaction_type_name: string;
 }
 
-export interface Blog {
+export interface BlogDetailsData {
   title: string;
   subtitle: string;
   description: string;
   blogCategory: string; // Added this field
+  views:number;
   images: BlogImage[];
   likeCount: number;
   comments: BlogComment[] | null;
@@ -66,4 +67,115 @@ export interface BlogFilters {
 export interface PaginationState {
   currentPage: number;
   itemsPerPage: number;
+}
+
+
+
+export interface ApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: BlogDetailsData;
+  timestamp: string;
+}
+
+export interface BlogTag {
+  id: number;
+  name: string;
+  description: string;
+  statusId: number;
+  statusName: string;
+  createdAt: string;
+  createdBy: string | null;
+  updatedAt: string;
+  updatedBy: string | null;
+  terminatedAt: string | null;
+  terminatedBy: string | null;
+}
+
+export interface TagsApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: BlogTag[];
+  timestamp: string;
+}
+
+export interface BlogActionsProps {
+  isLiked: boolean;
+  isBookmarked: boolean;
+  totalReactions: number;
+  onLike: () => void;
+  onShare: () => void;
+  onBookmark: () => void;
+}
+
+export interface BlogHeaderProps {
+  blogId:number;
+  title: string;
+  views:number;
+  subtitle: string;
+  writerName: string;
+  date: string;
+  readTime: number;
+  totalReactions: number;
+  totalComments: number;
+  imageCount: number;
+  onShare: () => void;
+  onBookmark: () => void;
+  isBookmarked: boolean;
+}
+
+export interface BlogImagesProps {
+  images: BlogImage[];
+  currentIndex: number;
+  onNext: () => void;
+  onPrev: () => void;
+  onSelectImage: (index: number) => void;
+  title: string;
+}
+
+export interface BlogContentProps {
+  description: string;
+}
+
+export interface BlogTagsProps {
+  tags: BlogTag[];
+  loadingTags: boolean;
+  onTagClick: (tagName: string) => void;
+}
+
+export interface CommentsSectionProps {
+  comments: BlogComment[];
+  totalComments: number;
+  commentText: string;
+  setCommentText: (text: string) => void;
+  isSubmittingComment: boolean;
+  replyTexts: Record<number, string>;
+  setReplyTexts: (texts: Record<number, string>) => void;
+  showReplyInput: number | null;
+  setShowReplyInput: (id: number | null) => void;
+  onSubmitComment: () => void;
+  onSubmitReply: (commentId: number) => void;
+  formatDate: (dateString: string) => string;
+}
+
+export interface CommentItemProps {
+  comment: BlogComment | BlogCommentReply;
+  depth?: number;
+  replyTexts: Record<number, string>;
+  showReplyInput: number | null;
+  onReplyTextChange: (commentId: number, text: string) => void;
+  onSubmitReply: (commentId: number) => void;
+  setShowReplyInput: (id: number | null) => void;
+  formatDate: (dateString: string) => string;
+}
+
+export interface SidebarProps {
+  writerName: string;
+  blogCount: number;
+  relatedBlogs: any[];
+  tags: BlogTag[];
+  loadingTags: boolean;
+  onTagClick: (tagName: string) => void;
 }
