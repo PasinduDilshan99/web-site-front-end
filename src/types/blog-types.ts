@@ -41,6 +41,7 @@ export interface Blog {
   title: string;
   subtitle: string;
   description: string;
+  blogCategory: string; // Added this field
   images: BlogImage[];
   likeCount: number;
   comments: BlogComment[] | null;

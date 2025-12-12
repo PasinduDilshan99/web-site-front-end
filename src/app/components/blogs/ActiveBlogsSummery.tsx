@@ -64,9 +64,9 @@ const ActiveBlogsSummery = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const router = useRouter();
 
-  const handleMoreBlogs = () =>{
-    router.push("/blogs")
-  }
+  const handleMoreBlogs = () => {
+    router.push("/blogs");
+  };
 
   useEffect(() => {
     const fetchActiveBlogs = async () => {
@@ -77,7 +77,12 @@ const ActiveBlogsSummery = () => {
 
         if (response.ok) {
           const items: BlogType[] = data.data || [];
-          setActiveBlogs(items);
+          const randomSix = items
+            .slice() // copy array (to avoid mutating original)
+            .sort(() => Math.random() - 0.5) // shuffle
+            .slice(0, 6); // take first 6
+
+          setActiveBlogs(randomSix);
           setError(null);
         } else {
           setError(data.message || "Failed to fetch active blogs");
@@ -254,15 +259,15 @@ const ActiveBlogsSummery = () => {
   return (
     <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 bg-gradient-to-br from-amber-50 to-purple-50">
       {/* Header */}
-        <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
-          <SectionHeader
-            subtitle="Our Blogs"
-            title="Recent Articles & Posts"
-            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore"
-            fromColor="#A855F7"
-            toColor="#F59E0B"
-          />
-        </div>
+      <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
+        <SectionHeader
+          subtitle="Our Blogs"
+          title="Recent Articles & Posts"
+          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore"
+          fromColor="#A855F7"
+          toColor="#F59E0B"
+        />
+      </div>
 
       {/* Carousel Container */}
       <div className="relative mx-auto">
@@ -536,11 +541,11 @@ const ActiveBlogsSummery = () => {
       )}
 
       {/* View All Button */}
-          <div className="text-center mt-6 sm:mt-8 md:mt-10 lg:mt-12 xl:mt-16">
-              <AnimatedButton onClick={handleMoreBlogs}>
-                View All Blogs
-              </AnimatedButton>
-            </div>
+      <div className="text-center mt-6 sm:mt-8 md:mt-10 lg:mt-12 xl:mt-16">
+        <AnimatedButton onClick={handleMoreBlogs}>
+          View All Blogs
+        </AnimatedButton>
+      </div>
     </div>
   );
 };

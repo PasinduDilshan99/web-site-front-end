@@ -90,6 +90,28 @@ interface ApiResponse {
   timestamp: string;
 }
 
+// Define Tag Type
+interface BlogTag {
+  id: number;
+  name: string;
+  description: string;
+  statusId: number;
+  statusName: string;
+  createdAt: string;
+  createdBy: string | null;
+  updatedAt: string;
+  updatedBy: string | null;
+  terminatedAt: string | null;
+  terminatedBy: string | null;
+}
+
+interface TagsApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: BlogTag[];
+  timestamp: string;
+}
 
 const BlogDetailsPage = () => {
   const { blogId } = useParams();
@@ -100,6 +122,8 @@ const BlogDetailsPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [blogData, setBlogData] = useState<BlogDetailsData | null>(null);
   const [relatedBlogs, setRelatedBlogs] = useState<Blog[]>([]);
+  const [tags, setTags] = useState<BlogTag[]>([]);
+  const [loadingTags, setLoadingTags] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [commentText, setCommentText] = useState("");
   const [replyTexts, setReplyTexts] = useState<Record<number, string>>({});
@@ -217,6 +241,9 @@ const BlogDetailsPage = () => {
 
         // Fetch related blogs based on writer or category
         fetchRelatedBlogs(normalizedData.writer_id);
+        
+        // Fetch tags
+        fetchTags();
       } else {
         throw new Error(apiResponse.message || "Failed to fetch blog details");
       }
@@ -269,6 +296,41 @@ const BlogDetailsPage = () => {
     } catch (err) {
       console.error("Error fetching related blogs:", err);
       // Don't set error state for related blogs fetch failure
+    }
+  };
+
+  // Fetch tags
+  const fetchTags = async () => {
+    try {
+      setLoadingTags(true);
+      const response = await fetch(
+        "http://localhost:8080/felicita/v0/api/blog/tags",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result: TagsApiResponse = await response.json();
+      if (result.code === 200 && result.data) {
+        // Filter only active tags and sort by name
+        const activeTags = result.data
+          .filter(tag => tag.statusName === "ACTIVE")
+          .sort((a, b) => a.name.localeCompare(b.name));
+        setTags(activeTags);
+      }
+    } catch (err) {
+      console.error("Error fetching tags:", err);
+      // Don't set error state for tags fetch failure
+    } finally {
+      setLoadingTags(false);
     }
   };
 
@@ -408,6 +470,11 @@ const BlogDetailsPage = () => {
     }
   };
 
+  // Handle tag click - navigate to blog search with tag
+  const handleTagClick = (tagName: string) => {
+    router.push(`/blogs?search=${encodeURIComponent(tagName)}`);
+  };
+
   // Render comment with replies recursively
   const renderComment = (comment: Comment | CommentReply, depth = 0) => {
     const isReply = depth > 0;
@@ -532,7 +599,7 @@ const BlogDetailsPage = () => {
             variant="error"
             size="lg"
             actionLabel="Back to Blogs"
-            onAction={() => router.push("/blog")}
+            onAction={() => router.push("/blogs")}
           />
         </div>
         <Footer />
@@ -568,7 +635,7 @@ const BlogDetailsPage = () => {
         {/* Back Button */}
         <div className="container mx-auto px-4 py-6">
           <button
-            onClick={() => router.push("/blog")}
+            onClick={() => router.push("/blogs")}
             className="flex items-center gap-2 text-purple-700 hover:text-amber-600 font-medium transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -770,21 +837,31 @@ const BlogDetailsPage = () => {
                   />
                 </div>
 
-                {/* Tags */}
+                {/* Tags - Now using API tags */}
                 <div className="mt-8 pt-8 border-t border-purple-100">
                   <div className="flex flex-wrap items-center gap-2">
                     <Tag className="w-5 h-5 text-purple-600" />
                     <span className="text-sm font-medium text-purple-700">
-                      Tags:
+                      Popular Tags:
                     </span>
-                    {["Travel", "Adventure", "Culture", "Tips"].map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-sm hover:bg-purple-100 transition-colors cursor-pointer"
-                      >
-                        #{tag}
-                      </span>
-                    ))}
+                    {loadingTags ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
+                        <span className="text-sm text-gray-500">Loading tags...</span>
+                      </div>
+                    ) : tags.length > 0 ? (
+                      tags.slice(0, 8).map((tag) => (
+                        <button
+                          key={tag.id}
+                          onClick={() => handleTagClick(tag.name)}
+                          className="px-3 py-1 bg-gradient-to-r from-purple-50 to-amber-50 text-purple-700 rounded-full text-sm hover:from-purple-100 hover:to-amber-100 transition-colors cursor-pointer border border-purple-200"
+                        >
+                          #{tag.name}
+                        </button>
+                      ))
+                    ) : (
+                      <span className="text-sm text-gray-500">No tags available</span>
+                    )}
                   </div>
                 </div>
 
@@ -895,7 +972,7 @@ const BlogDetailsPage = () => {
             {/* Sidebar */}
             <div className="lg:col-span-1">
               {/* Author Card */}
-              <div className="bg-white rounded-3xl shadow-xl p-6 mb-8 border border-purple-200  top-24">
+              <div className="bg-white rounded-3xl shadow-xl p-6 mb-8 border border-purple-200 top-24">
                 <div className="text-center mb-6">
                   <div className="w-24 h-24 rounded-full bg-gradient-to-r from-purple-500 to-amber-400 flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-lg">
                     <User className="w-12 h-12 text-white" />
@@ -974,7 +1051,7 @@ const BlogDetailsPage = () => {
                     ))}
                   </div>
                   <button
-                    onClick={() => router.push(`/blog?writer=${blogData.writer_name}`)}
+                    onClick={() => router.push(`/blogs?writer=${blogData.writer_name}`)}
                     className="w-full mt-6 py-3 text-center text-purple-700 font-medium hover:text-amber-600 transition-colors border border-purple-300 rounded-xl hover:border-amber-300"
                   >
                     View All Blogs →
@@ -982,39 +1059,38 @@ const BlogDetailsPage = () => {
                 </div>
               )}
 
-              {/* Popular Tags */}
+              {/* Popular Tags - Updated with API tags */}
               <div className="bg-white rounded-3xl shadow-xl p-6 mt-8 border border-purple-200">
                 <h3 className="text-xl font-bold text-purple-900 mb-6">
                   Popular Tags
                 </h3>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    "Travel Tips",
-                    "Adventure",
-                    "Culture",
-                    "Food",
-                    "Budget Travel",
-                    "Luxury",
-                    "Beaches",
-                    "Mountains",
-                    "City Guides",
-                    "Local Experiences",
-                  ].map((tag) => (
-                    <button
-                      key={tag}
-                      onClick={() => router.push(`/blog?search=${tag}`)}
-                      className="px-3 py-1.5 bg-purple-50 text-purple-700 rounded-full text-sm hover:bg-purple-100 transition-colors"
-                    >
-                      #{tag}
-                    </button>
-                  ))}
-                </div>
+                {loadingTags ? (
+                  <div className="text-center py-4">
+                    <div className="w-6 h-6 border-2 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+                    <p className="text-sm text-gray-500">Loading tags...</p>
+                  </div>
+                ) : tags.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {tags.map((tag) => (
+                      <button
+                        key={tag.id}
+                        onClick={() => handleTagClick(tag.name)}
+                        className="px-3 py-1.5 bg-gradient-to-r from-purple-50 to-amber-50 text-purple-700 rounded-full text-sm hover:from-purple-100 hover:to-amber-100 transition-colors cursor-pointer border border-purple-200"
+                      >
+                        #{tag.name}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-4 text-gray-500">
+                    No tags available
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </main>
       </div>
-
       <Footer />
     </>
   );
