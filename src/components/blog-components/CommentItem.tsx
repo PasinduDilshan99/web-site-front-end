@@ -1,8 +1,8 @@
 // app/blog/[id]/components/CommentItem.tsx
 import React, { useState } from "react";
-import { User, Send, ThumbsUp } from "lucide-react";
-import { BlogCommentReply,BlogComment } from "@/types/blog-types";
-import ReplyItem from "./ReplyItem";
+import { User, Send, ThumbsUp, Heart, Laugh, Zap, Frown, ChevronDown, ChevronUp } from "lucide-react";
+import { BlogComment, BlogCommentReply, REACTION_TYPES, ReactionType } from "@/types/blog-types";
+import { useAuth } from "@/context/AuthContext";
 
 interface CommentItemProps {
   comment: BlogComment | BlogCommentReply;
@@ -11,8 +11,11 @@ interface CommentItemProps {
   showReplyInput: number | null;
   onReplyTextChange: (commentId: number, text: string) => void;
   onSubmitReply: (commentId: number) => void;
+  onCommentReact: (commentId: number, reactType: string) => void;
+  userReaction?: string | null;
   setShowReplyInput: (id: number | null) => void;
   formatDate: (dateString: string) => string;
+  onNeedLogin?: () => void;
 }
 
 const CommentItem: React.FC<CommentItemProps> = ({
@@ -22,13 +25,20 @@ const CommentItem: React.FC<CommentItemProps> = ({
   showReplyInput,
   onReplyTextChange,
   onSubmitReply,
+  onCommentReact,
+  userReaction,
   setShowReplyInput,
   formatDate,
+  onNeedLogin,
 }) => {
+  const { user } = useAuth();
   const isReply = depth > 0;
   const [localReplyText, setLocalReplyText] = useState(
     replyTexts[comment.comment_id] || ""
   );
+  const [showReactions, setShowReactions] = useState(false);
+  const [isReacting, setIsReacting] = useState(false);
+  const [showReplies, setShowReplies] = useState(true);
 
   const handleReplyTextChange = (text: string) => {
     setLocalReplyText(text);
@@ -42,7 +52,50 @@ const CommentItem: React.FC<CommentItemProps> = ({
     }
   };
 
+  const handleCommentReaction = async (reactType: ReactionType) => {
+    if (!user && onNeedLogin) {
+      onNeedLogin?.();
+      return;
+    }
+    
+    if (isReacting) return;
+    
+    try {
+      setIsReacting(true);
+      await onCommentReact(comment.comment_id, reactType);
+    } finally {
+      setIsReacting(false);
+      setShowReactions(false);
+    }
+  };
+
+  const getReactionIcon = (type: string) => {
+    switch (type) {
+      case REACTION_TYPES.LIKE: return <ThumbsUp className="w-4 h-4" />;
+      case REACTION_TYPES.LOVE: return <Heart className="w-4 h-4" />;
+      case REACTION_TYPES.HAHA: return <Laugh className="w-4 h-4" />;
+      case REACTION_TYPES.WOW: return <Zap className="w-4 h-4" />;
+      case REACTION_TYPES.SAD: return <Frown className="w-4 h-4" />;
+      case REACTION_TYPES.ANGRY: return <Frown className="w-4 h-4" style={{ color: '#e53e3e' }} />;
+      default: return <ThumbsUp className="w-4 h-4" />;
+    }
+  };
+
+  const getReactionColor = (type: string) => {
+    switch (type) {
+      case REACTION_TYPES.LIKE: return "text-blue-600";
+      case REACTION_TYPES.LOVE: return "text-red-500";
+      case REACTION_TYPES.HAHA: return "text-yellow-500";
+      case REACTION_TYPES.WOW: return "text-purple-500";
+      case REACTION_TYPES.SAD: return "text-blue-400";
+      case REACTION_TYPES.ANGRY: return "text-red-600";
+      default: return "text-purple-600";
+    }
+  };
+
   const commentData = comment as BlogComment;
+  const hasReplies = commentData.replies && commentData.replies.length > 0;
+  const reactionCount = comment.reactions ? comment.reactions.length : 0;
 
   return (
     <div
@@ -66,33 +119,86 @@ const CommentItem: React.FC<CommentItemProps> = ({
                   {formatDate(comment.comment_date)}
                 </p>
               </div>
-              {!isReply && (
-                <button
-                  onClick={() =>
-                    setShowReplyInput(
-                      showReplyInput === comment.comment_id
-                        ? null
-                        : comment.comment_id
-                    )
-                  }
-                  className="text-sm text-purple-600 hover:text-amber-600 font-medium flex items-center gap-1"
-                >
-                  <Send className="w-4 h-4" />
-                  Reply
-                </button>
-              )}
-            </div>
-            <p className="text-gray-700 leading-relaxed">{comment.comment}</p>
-
-            {/* Reactions */}
-            {comment.reactions && comment.reactions.length > 0 && (
-              <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-100">
-                <div className="flex items-center gap-1 text-sm text-gray-600">
-                  <ThumbsUp className="w-4 h-4 text-purple-500" />
-                  <span>{comment.reactions.length} likes</span>
+              <div className="flex items-center gap-2">
+                {!isReply && hasReplies && (
+                  <button
+                    onClick={() => setShowReplies(!showReplies)}
+                    className="text-sm text-gray-500 hover:text-purple-700"
+                    title={showReplies ? "Hide replies" : "Show replies"}
+                  >
+                    {showReplies ? (
+                      <ChevronUp className="w-4 h-4" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4" />
+                    )}
+                  </button>
+                )}
+                
+                {!isReply && (
+                  <button
+                    onClick={() =>
+                      setShowReplyInput(
+                        showReplyInput === comment.comment_id
+                          ? null
+                          : comment.comment_id
+                      )
+                    }
+                    className="text-sm text-purple-600 hover:text-amber-600 font-medium flex items-center gap-1"
+                  >
+                    <Send className="w-4 h-4" />
+                    Reply
+                  </button>
+                )}
+                
+                {/* Reaction Button */}
+                <div className="relative">
+                  <button
+                    onClick={() => setShowReactions(!showReactions)}
+                    disabled={isReacting}
+                    className={`text-sm flex items-center gap-1 px-2 py-1 rounded disabled:opacity-50 ${
+                      userReaction
+                        ? "text-purple-700 bg-purple-50"
+                        : "text-gray-600 hover:text-purple-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    {isReacting ? (
+                      <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                    ) : userReaction ? (
+                      <span className={getReactionColor(userReaction)}>
+                        {getReactionIcon(userReaction)}
+                      </span>
+                    ) : (
+                      <ThumbsUp className="w-4 h-4" />
+                    )}
+                    {reactionCount > 0 && (
+                      <span className="text-xs">{reactionCount}</span>
+                    )}
+                  </button>
+                  
+                  {/* Reaction Picker */}
+                  {showReactions && (
+                    <div className="absolute bottom-full mb-2 right-0 bg-white rounded-xl shadow-lg p-2 border border-gray-200 z-50 flex gap-1">
+                      {Object.values(REACTION_TYPES).map((type) => (
+                        <button
+                          key={type}
+                          onClick={() => handleCommentReaction(type)}
+                          disabled={isReacting}
+                          className={`p-2 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50 ${
+                            userReaction === type ? 'bg-gray-100' : ''
+                          }`}
+                          title={type}
+                        >
+                          <div className={`w-6 h-6 flex items-center justify-center ${getReactionColor(type)}`}>
+                            {getReactionIcon(type)}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
-            )}
+            </div>
+            <p className="text-gray-700 leading-relaxed">{comment.comment}</p>
           </div>
         </div>
 
@@ -120,20 +226,26 @@ const CommentItem: React.FC<CommentItemProps> = ({
         )}
 
         {/* Render Replies */}
-        {commentData.replies &&
-          commentData.replies.map((reply) => (
-            <ReplyItem
-              key={reply.comment_id}
-              reply={reply}
-              depth={depth + 1}
-              replyTexts={replyTexts}
-              showReplyInput={showReplyInput}
-              onReplyTextChange={onReplyTextChange}
-              onSubmitReply={onSubmitReply}
-              setShowReplyInput={setShowReplyInput}
-              formatDate={formatDate}
-            />
-          ))}
+        {showReplies && commentData.replies && commentData.replies.length > 0 && (
+          <div className="mt-4">
+            {commentData.replies.map((reply) => (
+              <CommentItem
+                key={reply.comment_id}
+                comment={reply}
+                depth={depth + 1}
+                replyTexts={replyTexts}
+                showReplyInput={showReplyInput}
+                onReplyTextChange={onReplyTextChange}
+                onSubmitReply={onSubmitReply}
+                onCommentReact={onCommentReact}
+                userReaction={userReaction}
+                setShowReplyInput={setShowReplyInput}
+                formatDate={formatDate}
+                onNeedLogin={onNeedLogin}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import React from "react";
 import { User, Send, TrendingUp, MessageCircle } from "lucide-react";
 import CommentItem from "./CommentItem";
 import { BlogComment } from "@/types/blog-types";
+import { useAuth } from "@/context/AuthContext";
 
 interface CommentsSectionProps {
   comments: BlogComment[];
@@ -16,7 +17,10 @@ interface CommentsSectionProps {
   setShowReplyInput: (id: number | null) => void;
   onSubmitComment: () => void;
   onSubmitReply: (commentId: number) => void;
+  onCommentReact: (commentId: number, reactType: string) => void;
+  commentReactions: Record<number, string | null>;
   formatDate: (dateString: string) => string;
+  onNeedLogin?: () => void;
 }
 
 const CommentsSection: React.FC<CommentsSectionProps> = ({
@@ -31,10 +35,23 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
   setShowReplyInput,
   onSubmitComment,
   onSubmitReply,
+  onCommentReact,
+  commentReactions,
   formatDate,
+  onNeedLogin,
 }) => {
+  const { user } = useAuth();
+
   const handleReplyTextChange = (commentId: number, text: string) => {
     setReplyTexts({ ...replyTexts, [commentId]: text });
+  };
+
+  const handleCommentSubmit = () => {
+    if (!user && onNeedLogin) {
+      onNeedLogin();
+      return;
+    }
+    onSubmitComment();
   };
 
   return (
@@ -62,13 +79,18 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
               placeholder="Share your thoughts on this blog..."
               className="w-full px-4 py-3 border border-purple-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent resize-none h-32"
               rows={4}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && e.ctrlKey) {
+                  handleCommentSubmit();
+                }
+              }}
             />
             <div className="flex justify-between items-center mt-3">
               <div className="text-sm text-gray-500">
-                Share your experience or ask questions
+                Share your experience or ask questions (Ctrl+Enter to submit)
               </div>
               <button
-                onClick={onSubmitComment}
+                onClick={handleCommentSubmit}
                 disabled={!commentText.trim() || isSubmittingComment}
                 className="px-6 py-2 bg-gradient-to-r from-purple-600 to-amber-500 text-white rounded-lg hover:from-purple-700 hover:to-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
               >
@@ -100,8 +122,11 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
               showReplyInput={showReplyInput}
               onReplyTextChange={handleReplyTextChange}
               onSubmitReply={onSubmitReply}
+              onCommentReact={onCommentReact}
+              userReaction={commentReactions[comment.comment_id]}
               setShowReplyInput={setShowReplyInput}
               formatDate={formatDate}
+              onNeedLogin={onNeedLogin}
             />
           ))
         ) : (

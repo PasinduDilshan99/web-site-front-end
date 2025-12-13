@@ -1,4 +1,4 @@
-// app/blog/[id]/utils/blog-utils.ts
+// utils/blog-utils.ts
 import {
   BlogDetailsData,
   BlogTag,
@@ -7,7 +7,8 @@ import {
   BlogComment,
   BlogCommentReply,
   BlogReaction,
-} from "../types/blog-types";
+  BlogComment as CommentType,
+} from "@/types/blog-types";
 
 // Format date with better error handling
 export const formatDate = (dateString: string): string => {
@@ -67,6 +68,49 @@ export const calculateTotalReactions = (
   return reactions.reduce((total, reaction) => total + reaction.count, 0);
 };
 
+// Helper function to find user reaction in comments
+const findUserReactionInComments = (
+  comments: CommentType[] | null,
+  userId: number
+): Record<number, string> => {
+  const reactionsMap: Record<number, string> = {};
+  
+  if (!comments) return reactionsMap;
+  
+  const traverseComments = (commentList: CommentType[]) => {
+    commentList.forEach(comment => {
+      if (comment.reactions) {
+        const userReaction = comment.reactions.find(reaction => reaction.user_id === userId);
+        if (userReaction && userReaction.reaction_type_name) {
+          reactionsMap[comment.comment_id] = userReaction.reaction_type_name.toLowerCase();
+        }
+      }
+      
+      if (comment.replies) {
+        traverseReplies(comment.replies);
+      }
+    });
+  };
+  
+  const traverseReplies = (replies: BlogCommentReply[]) => {
+    replies.forEach(reply => {
+      if (reply.reactions) {
+        const userReaction = reply.reactions.find(reaction => reaction.user_id === userId);
+        if (userReaction && userReaction.reaction_type_name) {
+          reactionsMap[reply.comment_id] = userReaction.reaction_type_name.toLowerCase();
+        }
+      }
+      
+      if (reply.replies) {
+        traverseReplies(reply.replies);
+      }
+    });
+  };
+  
+  traverseComments(comments);
+  return reactionsMap;
+};
+
 // Fetch blog details
 export const fetchBlogDetails = async (
   id: number
@@ -114,7 +158,7 @@ export const fetchBlogDetails = async (
 export const fetchRelatedBlogs = async (
   writerId: number,
   currentBlogId: number
-): Promise<any[]> => {
+): Promise<BlogDetailsData[]> => {
   try {
     const response = await fetch(
       "http://localhost:8080/felicita/v0/api/blog/active",
@@ -190,7 +234,4 @@ export const fetchTags = async (): Promise<BlogTag[]> => {
     console.error("Error fetching tags:", err);
     return [];
   }
-
-  
 };
-

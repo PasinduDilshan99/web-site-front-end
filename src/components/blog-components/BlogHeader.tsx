@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { Calendar, User, Clock, Eye, Share2, Bookmark } from "lucide-react";
 import { formatDate } from "@/utils/blog-utils";
 import { useAuth } from "@/context/AuthContext";
-import BlogLoginDialog from "./BlogLoginDialog";
 
 interface BlogHeaderProps {
   blogId: number;

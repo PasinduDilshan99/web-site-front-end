@@ -19,6 +19,7 @@ import {
   getReadTime,
   formatDate,
 } from "@/utils/blog-utils";
+import { blogReact, addComment, commentReact } from "@/utils/blog-api";
 import BlogHeader from "@/components/blog-components/BlogHeader";
 import BlogImages from "@/components/blog-components/BlogImages";
 import BlogContent from "@/components/blog-components/BlogContent";
@@ -45,10 +46,11 @@ const BlogDetailsPage = () => {
   const [commentText, setCommentText] = useState("");
   const [replyTexts, setReplyTexts] = useState<Record<number, string>>({});
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
+  const [userReaction, setUserReaction] = useState<string | null>(null);
   const [totalComments, setTotalComments] = useState(0);
   const [showReplyInput, setShowReplyInput] = useState<number | null>(null);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
+  const [commentReactions, setCommentReactions] = useState<Record<number, string | null>>({});
   
   // Ref to prevent multiple simultaneous bookmark API calls
   const isBookmarkProcessing = useRef(false);
@@ -63,6 +65,29 @@ const BlogDetailsPage = () => {
       }
 
       const blogDetails = await fetchBlogDetails(parseInt(id as string));
+      
+      // Extract user reaction from blog data if available
+      if (blogDetails.userBlogReaction) {
+        setUserReaction(blogDetails.userBlogReaction);
+      }
+      
+      // Extract comment reactions
+      const reactions: Record<number, string | null> = {};
+      if (blogDetails.comments) {
+        const extractReactions = (comments: any[]) => {
+          comments.forEach(comment => {
+            if (comment.userReactionType) {
+              reactions[comment.comment_id] = comment.userReactionType;
+            }
+            if (comment.replies) {
+              extractReactions(comment.replies);
+            }
+          });
+        };
+        extractReactions(blogDetails.comments);
+      }
+      
+      setCommentReactions(reactions);
       setBlogData(blogDetails);
       setTotalComments(calculateTotalComments(blogDetails.comments));
 
@@ -85,6 +110,116 @@ const BlogDetailsPage = () => {
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Handle blog reaction
+  const handleBlogReact = async (reactType: string) => {
+    if (!user) {
+      setShowLoginDialog(true);
+      return;
+    }
+
+    if (!blogData) return;
+
+    try {
+      const response = await blogReact({
+        blogId: blogData.blog_id,
+        reactType: reactType
+      });
+
+      if (response.code === 200) {
+        const message = response.data?.message?.toLowerCase() || '';
+        
+        if (message.includes('add')) {
+          setUserReaction(reactType);
+          // Update local reaction count optimistically
+          if (blogData) {
+            const updatedData = { ...blogData };
+            const existingReaction = updatedData.blog_reactions.find(
+              r => r.reaction_type_name?.toLowerCase() === reactType
+            );
+            
+            if (existingReaction) {
+              existingReaction.count += 1;
+            } else {
+              updatedData.blog_reactions.push({
+                reaction_type_id: 1,
+                reaction_type_name: reactType,
+                count: 1
+              });
+            }
+            
+            // Remove previous reaction if changing
+            if (userReaction && userReaction !== reactType) {
+              const prevReaction = updatedData.blog_reactions.find(
+                r => r.reaction_type_name?.toLowerCase() === userReaction
+              );
+              if (prevReaction && prevReaction.count > 0) {
+                prevReaction.count -= 1;
+              }
+            }
+            
+            setBlogData(updatedData);
+          }
+          
+        } else if (message.includes('remove')) {
+          setUserReaction(null);
+          // Update local reaction count optimistically
+          if (blogData && userReaction) {
+            const updatedData = { ...blogData };
+            const reaction = updatedData.blog_reactions.find(
+              r => r.reaction_type_name?.toLowerCase() === userReaction
+            );
+            if (reaction && reaction.count > 0) {
+              reaction.count -= 1;
+            }
+            setBlogData(updatedData);
+          }
+          
+        } else if (message.includes('change')) {
+          setUserReaction(reactType);
+          // Update local reaction count optimistically
+          if (blogData) {
+            const updatedData = { ...blogData };
+            
+            // Decrement old reaction
+            if (userReaction) {
+              const oldReaction = updatedData.blog_reactions.find(
+                r => r.reaction_type_name?.toLowerCase() === userReaction
+              );
+              if (oldReaction && oldReaction.count > 0) {
+                oldReaction.count -= 1;
+              }
+            }
+            
+            // Increment new reaction
+            const newReaction = updatedData.blog_reactions.find(
+              r => r.reaction_type_name?.toLowerCase() === reactType
+            );
+            if (newReaction) {
+              newReaction.count += 1;
+            } else {
+              updatedData.blog_reactions.push({
+                reaction_type_id: 1,
+                reaction_type_name: reactType,
+                count: 1
+              });
+            }
+            
+            setBlogData(updatedData);
+          }
+        }
+        
+        // Refetch blog data to get accurate counts
+        setTimeout(() => {
+          loadBlogData();
+        }, 500);
+      }
+    } catch (error) {
+      console.error('Error reacting to blog:', error);
+      // Revert optimistic update
+      loadBlogData();
     }
   };
 
@@ -164,91 +299,108 @@ const BlogDetailsPage = () => {
   // Handle comment submission
   const handleSubmitComment = async () => {
     if (!commentText.trim()) return;
+    
+    if (!user) {
+      setShowLoginDialog(true);
+      return;
+    }
+
+    if (!blogData) return;
 
     try {
       setIsSubmittingComment(true);
-      // TODO: Implement comment submission API call
-      // For now, simulate successful submission
-      setTimeout(() => {
-        // Add new comment to state
-        const newComment = {
-          username: "Current User", // Replace with actual user
-          comment: commentText,
-          reactions: [],
-          replies: null,
-          comment_id: Date.now(), // Temporary ID
-          user_id: 1, // Replace with actual user ID
-          comment_date: new Date().toISOString(),
-        };
+      
+      const response = await addComment({
+        blogId: blogData.blog_id,
+        parentId: null,
+        comment: commentText
+      });
 
-        if (blogData) {
-          const updatedData = {
-            ...blogData,
-            comments: [...(blogData.comments || []), newComment],
-          };
-          setBlogData(updatedData);
-          setTotalComments(calculateTotalComments(updatedData.comments));
-        }
-
-        setCommentText("");
-        setIsSubmittingComment(false);
-      }, 1000);
+      if (response.code === 200) {
+        // Clear comment text
+        setCommentText('');
+        // Reload blog data to get updated comments
+        await loadBlogData();
+      }
     } catch (err) {
-      console.error("Error submitting comment:", err);
+      console.error('Error submitting comment:', err);
+    } finally {
       setIsSubmittingComment(false);
     }
   };
 
   // Handle reply submission
-  const handleSubmitReply = async (commentId: number) => {
-    const replyText = replyTexts[commentId];
+  const handleSubmitReply = async (parentCommentId: number) => {
+    const replyText = replyTexts[parentCommentId];
     if (!replyText?.trim()) return;
+    
+    if (!user) {
+      setShowLoginDialog(true);
+      return;
+    }
+
+    if (!blogData) return;
 
     try {
-      // TODO: Implement reply submission API call
-      // For now, simulate successful submission
-      const newReply = {
-        username: "Current User", // Replace with actual user
-        comment: replyText,
-        reactions: [],
-        replies: null,
-        comment_id: Date.now(), // Temporary ID
-        user_id: 1, // Replace with actual user ID
-        comment_date: new Date().toISOString(),
-      };
+      const response = await addComment({
+        blogId: blogData.blog_id,
+        parentId: parentCommentId,
+        comment: replyText
+      });
 
-      if (blogData && blogData.comments) {
-        const updatedComments = blogData.comments.map((comment) => {
-          if (comment.comment_id === commentId) {
-            return {
-              ...comment,
-              replies: comment.replies ? [...comment.replies, newReply] : [newReply],
-            };
-          }
-          return comment;
-        });
-
-        const updatedData = {
-          ...blogData,
-          comments: updatedComments,
-        };
-        setBlogData(updatedData);
-        setTotalComments(calculateTotalComments(updatedData.comments));
-        setReplyTexts({ ...replyTexts, [commentId]: "" });
+      if (response.code === 200) {
+        // Clear reply text
+        setReplyTexts({ ...replyTexts, [parentCommentId]: '' });
         setShowReplyInput(null);
+        // Reload blog data to get updated comments
+        await loadBlogData();
       }
     } catch (err) {
-      console.error("Error submitting reply:", err);
+      console.error('Error submitting reply:', err);
     }
   };
 
-  // Handle like action
-  const handleLike = async () => {
+  // Handle comment reaction
+  const handleCommentReact = async (commentId: number, reactType: string) => {
+    if (!user) {
+      setShowLoginDialog(true);
+      return;
+    }
+
     try {
-      // TODO: Implement like API call
-      setIsLiked(!isLiked);
-    } catch (err) {
-      console.error("Error liking blog:", err);
+      const response = await commentReact({
+        commentId: commentId,
+        reactType: reactType
+      });
+
+      if (response.code === 200) {
+        const message = response.data?.message?.toLowerCase() || '';
+        
+        // Update local state
+        if (message.includes('add')) {
+          setCommentReactions({
+            ...commentReactions,
+            [commentId]: reactType
+          });
+        } else if (message.includes('remove')) {
+          setCommentReactions({
+            ...commentReactions,
+            [commentId]: null
+          });
+        } else if (message.includes('change')) {
+          setCommentReactions({
+            ...commentReactions,
+            [commentId]: reactType
+          });
+        }
+        
+        // Reload blog data to get updated reaction counts
+        setTimeout(() => {
+          loadBlogData();
+        }, 500);
+      }
+    } catch (error) {
+      console.error('Error reacting to comment:', error);
     }
   };
 
@@ -390,10 +542,10 @@ const BlogDetailsPage = () => {
                 />
 
                 <BlogActions
-                  isLiked={isLiked}
+                  userReaction={userReaction}
                   isBookmarked={blogData.isBookmark}
                   totalReactions={totalReactions}
-                  onLike={handleLike}
+                  onReact={handleBlogReact}
                   onShare={handleShare}
                   onBookmark={handleBookmark}
                   onNeedLogin={() => setShowLoginDialog(true)}
@@ -412,7 +564,10 @@ const BlogDetailsPage = () => {
                 setShowReplyInput={setShowReplyInput}
                 onSubmitComment={handleSubmitComment}
                 onSubmitReply={handleSubmitReply}
+                onCommentReact={handleCommentReact}
+                commentReactions={commentReactions}
                 formatDate={formatDate}
+                onNeedLogin={() => setShowLoginDialog(true)}
               />
             </div>
 
@@ -434,7 +589,7 @@ const BlogDetailsPage = () => {
       <BlogLoginDialog
         isOpen={showLoginDialog}
         onClose={() => setShowLoginDialog(false)}
-        message="You need to login to bookmark this blog and access other features."
+        message="You need to login to interact with this blog and access other features."
       />
     </>
   );

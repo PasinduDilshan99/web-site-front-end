@@ -75,14 +75,18 @@ const BlogLoginDialog: React.FC<BlogLoginDialogProps> = ({ isOpen, onClose, mess
             <ul className="text-sm text-gray-600 space-y-1">
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                React to blogs and comments
+              </li>
+              <li className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-purple-500" />
+                Add comments and replies
+              </li>
+              <li className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
                 Save blogs to your bookmarks
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-purple-500" />
-                Like and comment on blogs
-              </li>
-              <li className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
                 Get personalized recommendations
               </li>
             </ul>

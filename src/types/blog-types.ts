@@ -9,6 +9,7 @@ export interface CommentReaction {
   username: string;
   user_id: number;
   reaction_type_id: number;
+  reaction_type_name?: string;
 }
 
 export interface BlogCommentReply {
@@ -19,6 +20,9 @@ export interface BlogCommentReply {
   comment_id: number;
   user_id: number;
   comment_date: string;
+  parent_id?: number;
+  userReacted?: boolean;
+  userReactionType?: string;
 }
 
 export interface BlogComment {
@@ -29,6 +33,8 @@ export interface BlogComment {
   comment_id: number;
   user_id: number;
   comment_date: string;
+  userReacted?: boolean;
+  userReactionType?: string;
 }
 
 export interface BlogReaction {
@@ -41,8 +47,8 @@ export interface BlogDetailsData {
   title: string;
   subtitle: string;
   description: string;
-  blogCategory: string; // Added this field
-  views:number;
+  blogCategory: string;
+  views: number;
   isBookmark: boolean;
   images: BlogImage[];
   likeCount: number;
@@ -55,6 +61,7 @@ export interface BlogDetailsData {
   blog_reactions: BlogReaction[];
   commentCount?: number;
   totalReactions?: number;
+  userBlogReaction?: string | null;
 }
 
 export interface BlogFilters {
@@ -69,8 +76,6 @@ export interface PaginationState {
   currentPage: number;
   itemsPerPage: number;
 }
-
-
 
 export interface ApiResponse {
   code: number;
@@ -104,17 +109,19 @@ export interface TagsApiResponse {
 
 export interface BlogActionsProps {
   isLiked: boolean;
+  userReaction: string | null;
   isBookmarked: boolean;
   totalReactions: number;
-  onLike: () => void;
+  onReact: (reactType: string) => void;
   onShare: () => void;
   onBookmark: () => void;
+  onNeedLogin?: () => void;
 }
 
 export interface BlogHeaderProps {
-  blogId:number;
+  blogId: number;
   title: string;
-  views:number;
+  views: number;
   subtitle: string;
   writerName: string;
   date: string;
@@ -124,7 +131,8 @@ export interface BlogHeaderProps {
   imageCount: number;
   onShare: () => void;
   onBookmark: () => void;
-  isBookmarked: boolean;
+  isBookmark: boolean;
+  onNeedLogin?: () => void;
 }
 
 export interface BlogImagesProps {
@@ -158,7 +166,10 @@ export interface CommentsSectionProps {
   setShowReplyInput: (id: number | null) => void;
   onSubmitComment: () => void;
   onSubmitReply: (commentId: number) => void;
+  onCommentReact: (commentId: number, reactType: string) => void;
+  commentReactions: Record<number, string | null>;
   formatDate: (dateString: string) => string;
+  onNeedLogin?: () => void;
 }
 
 export interface CommentItemProps {
@@ -168,8 +179,11 @@ export interface CommentItemProps {
   showReplyInput: number | null;
   onReplyTextChange: (commentId: number, text: string) => void;
   onSubmitReply: (commentId: number) => void;
+  onCommentReact: (commentId: number, reactType: string) => void;
+  userReaction?: string | null;
   setShowReplyInput: (id: number | null) => void;
   formatDate: (dateString: string) => string;
+  onNeedLogin?: () => void;
 }
 
 export interface SidebarProps {
@@ -180,3 +194,32 @@ export interface SidebarProps {
   loadingTags: boolean;
   onTagClick: (tagName: string) => void;
 }
+
+// API Request Interfaces
+export interface BlogReactRequest {
+  blogId: number;
+  reactType: string;
+}
+
+export interface CommentRequest {
+  blogId: number;
+  parentId?: number | null;
+  comment: string;
+}
+
+export interface CommentReactRequest {
+  commentId: number;
+  reactType: string;
+}
+
+// Reaction types
+export const REACTION_TYPES = {
+  LIKE: 'like',
+  LOVE: 'love',
+  HAHA: 'haha',
+  WOW: 'wow',
+  SAD: 'sad',
+  ANGRY: 'angry'
+} as const;
+
+export type ReactionType = typeof REACTION_TYPES[keyof typeof REACTION_TYPES];
