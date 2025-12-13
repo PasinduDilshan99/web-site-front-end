@@ -1,7 +1,7 @@
 // app/blog/[id]/page.tsx
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import NavBar from "@/components/common-components/navBar/NavBar";
@@ -26,11 +26,14 @@ import BlogTags from "@/components/blog-components/BlogTags";
 import BlogActions from "@/components/blog-components/BlogActions";
 import CommentsSection from "@/components/blog-components/CommentsSection";
 import Sidebar from "@/components/blog-components/Sidebar";
+import BlogLoginDialog from "@/components/blog-components/BlogLoginDialog";
+import { useAuth } from "@/context/AuthContext";
 
 const BlogDetailsPage = () => {
   const { blogId } = useParams();
   const router = useRouter();
   const id = blogId;
+  const { user } = useAuth();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -45,6 +48,10 @@ const BlogDetailsPage = () => {
   const [isLiked, setIsLiked] = useState(false);
   const [totalComments, setTotalComments] = useState(0);
   const [showReplyInput, setShowReplyInput] = useState<number | null>(null);
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
+  
+  // Ref to prevent multiple simultaneous bookmark API calls
+  const isBookmarkProcessing = useRef(false);
 
   const loadBlogData = async () => {
     try {
@@ -81,17 +88,77 @@ const BlogDetailsPage = () => {
     }
   };
 
-  // Handle bookmark update from BlogHeader
-  const handleBookmarkUpdate = (isBookmarked: boolean) => {
-    // Update local state if needed
-    if (blogData) {
+  // Handle bookmark API call
+  const handleBookmark = async () => {
+    // Check if user is logged in
+    if (!user) {
+      setShowLoginDialog(true);
+      return;
+    }
+    
+    if (!blogData || isBookmarkProcessing.current) return;
+    
+    try {
+      isBookmarkProcessing.current = true;
+      
+      // Optimistically update UI
+      const newBookmarkState = !blogData.isBookmark;
       setBlogData({
         ...blogData,
-        isBookmark: isBookmarked,
+        isBookmark: newBookmarkState,
       });
+      
+      const response = await fetch(
+        "http://localhost:8080/felicita/v0/api/blog/bookmark",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: "token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNpbmR1IiwidXNlcklkIjo0LCJ1c2VybmFtZSI6InBhc2luZHUiLCJpYXQiOjE3NjI2Njg5NjksImV4cCI6MTc2MjY2OTA4OX0.5wQ6QL3q2pvSoCEhDze6t_Aub3Vb8hlcMRQ3UQxu8yg",
+          },
+          body: JSON.stringify({ blogId: blogData.blog_id }),
+          credentials: "include",
+        }
+      );
+
+      const result = await response.json();
+
+      if (response.ok && result.code === 200) {
+        const message = result.data?.message?.toLowerCase() || "";
+        
+        // Verify the server response matches our expected state
+        if ((message.includes("insert") && newBookmarkState) || 
+            (message.includes("remove") && !newBookmarkState)) {
+          console.log(`Bookmark ${newBookmarkState ? "added" : "removed"} successfully`);
+        } else {
+          // Server response doesn't match, revert
+          console.warn("Server response doesn't match optimistic update");
+          setBlogData({
+            ...blogData,
+            isBookmark: !newBookmarkState,
+          });
+        }
+      } else {
+        // Revert on API error
+        console.error("Bookmark API error:", result.message);
+        setBlogData({
+          ...blogData,
+          isBookmark: !newBookmarkState,
+        });
+      }
+    } catch (error) {
+      // Revert on network error
+      console.error("Network error updating bookmark:", error);
+      setBlogData({
+        ...blogData,
+        isBookmark: !blogData.isBookmark,
+      });
+    } finally {
+      // Allow new requests after a delay
+      setTimeout(() => {
+        isBookmarkProcessing.current = false;
+      }, 500);
     }
-    // You can also trigger a refetch if needed
-    // loadBlogData();
   };
 
   // Handle comment submission
@@ -301,7 +368,8 @@ const BlogDetailsPage = () => {
                   totalComments={totalComments}
                   imageCount={blogData.images?.length || 0}
                   onShare={handleShare}
-                  onBookmarkUpdate={handleBookmarkUpdate}
+                  onBookmark={handleBookmark}
+                  onNeedLogin={() => setShowLoginDialog(true)}
                 />
 
                 <BlogImages
@@ -327,7 +395,8 @@ const BlogDetailsPage = () => {
                   totalReactions={totalReactions}
                   onLike={handleLike}
                   onShare={handleShare}
-                  onBookmark={() => {}}
+                  onBookmark={handleBookmark}
+                  onNeedLogin={() => setShowLoginDialog(true)}
                 />
               </div>
 
@@ -360,6 +429,13 @@ const BlogDetailsPage = () => {
         </main>
       </div>
       <Footer />
+      
+      {/* Login Dialog */}
+      <BlogLoginDialog
+        isOpen={showLoginDialog}
+        onClose={() => setShowLoginDialog(false)}
+        message="You need to login to bookmark this blog and access other features."
+      />
     </>
   );
 };

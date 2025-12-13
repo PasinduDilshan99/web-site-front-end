@@ -1,16 +1,15 @@
 // app/blog/[id]/components/BlogHeader.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Calendar, User, Clock, Eye, Share2, Bookmark } from "lucide-react";
 import { formatDate } from "@/utils/blog-utils";
 import { useAuth } from "@/context/AuthContext";
 import BlogLoginDialog from "./BlogLoginDialog";
-import { log } from "console";
 
 interface BlogHeaderProps {
   blogId: number;
   title: string;
   views: number;
-  isBookmark: boolean; // Initial bookmark status from API
+  isBookmark: boolean;
   subtitle: string;
   writerName: string;
   date: string;
@@ -19,7 +18,8 @@ interface BlogHeaderProps {
   totalComments: number;
   imageCount: number;
   onShare: () => void;
-  onBookmarkUpdate?: (isBookmarked: boolean) => void; // Callback to update parent
+  onBookmark: () => void;
+  onNeedLogin?: () => void;
 }
 
 const BlogHeader: React.FC<BlogHeaderProps> = ({
@@ -35,88 +35,51 @@ const BlogHeader: React.FC<BlogHeaderProps> = ({
   totalComments,
   imageCount,
   onShare,
-  onBookmarkUpdate,
+  onBookmark,
+  onNeedLogin,
 }) => {
-    console.log('====================================');
-    console.log(isBookmark);
-    console.log('====================================');
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [localIsBookmarked, setLocalIsBookmarked] = useState(isBookmark);
+  
+  // Ref to prevent multiple clicks
+  const isProcessing = useRef(false);
 
   // Update local state when isBookmark prop changes
   useEffect(() => {
     setLocalIsBookmarked(isBookmark);
   }, [isBookmark]);
 
-  // Function to handle bookmark API call
-  const handleBookmarkToggle = async () => {
+  // Function to handle bookmark click
+  const handleBookmarkClick = async () => {
+    // Prevent multiple simultaneous clicks
+    if (isProcessing.current) {
+      return;
+    }
+    
     // Check if user is logged in
     if (!user) {
-      setShowLoginDialog(true);
+      if (onNeedLogin) {
+        onNeedLogin();
+      }
       return;
     }
 
     try {
+      isProcessing.current = true;
       setIsLoading(true);
       
-      // Optimistically update UI
-      const optimisticUpdate = !localIsBookmarked;
-      setLocalIsBookmarked(optimisticUpdate);
+      // Call the parent's bookmark handler
+      onBookmark();
       
-      const response = await fetch(
-        "http://localhost:8080/felicita/v0/api/blog/bookmark",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Cookie: "token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNpbmR1IiwidXNlcklkIjo0LCJ1c2VybmFtZSI6InBhc2luZHUiLCJpYXQiOjE3NjI2Njg5NjksImV4cCI6MTc2MjY2OTA4OX0.5wQ6QL3q2pvSoCEhDze6t_Aub3Vb8hlcMRQ3UQxu8yg",
-          },
-          body: JSON.stringify({ blogId }),
-          credentials: "include",
-        }
-      );
-
-      const result = await response.json();
-
-      if (response.ok && result.code === 200) {
-        // Check the message to determine if it was added or removed
-        const message = result.data?.message?.toLowerCase() || "";
-        
-        let finalState = localIsBookmarked; // Default to current state
-        
-        if (message.includes("insert")) {
-          // Successfully bookmarked
-          finalState = true;
-          console.log("Bookmark added successfully");
-        } else if (message.includes("remove")) {
-          // Successfully removed bookmark
-          finalState = false;
-          console.log("Bookmark removed successfully");
-        }
-        
-        // Update state with server response
-        setLocalIsBookmarked(finalState);
-        
-        // Notify parent about bookmark update
-        if (onBookmarkUpdate) {
-          onBookmarkUpdate(finalState);
-        }
-      } else {
-        // Revert optimistic update if API fails
-        setLocalIsBookmarked(!optimisticUpdate);
-        console.error("Bookmark error:", result.message);
-        // Show error message
-        // toast.error("Failed to update bookmark");
-      }
     } catch (error) {
-      // Revert optimistic update on network error
-      setLocalIsBookmarked(!localIsBookmarked);
-      console.error("Error updating bookmark:", error);
-      // toast.error("An error occurred");
+      console.error("Error handling bookmark:", error);
     } finally {
-      setIsLoading(false);
+      // Reset loading state after a short delay
+      setTimeout(() => {
+        setIsLoading(false);
+        isProcessing.current = false;
+      }, 300);
     }
   };
 
@@ -151,7 +114,7 @@ const BlogHeader: React.FC<BlogHeaderProps> = ({
             Share
           </button>
           <button
-            onClick={handleBookmarkToggle}
+            onClick={handleBookmarkClick}
             disabled={isLoading}
             className={`p-2 rounded-lg transition-all flex items-center gap-1 group relative ${
               localIsBookmarked
@@ -236,13 +199,6 @@ const BlogHeader: React.FC<BlogHeaderProps> = ({
           <div className="text-sm text-gray-600">Images</div>
         </div>
       </div>
-
-      {/* Login Dialog */}
-      <BlogLoginDialog
-        isOpen={showLoginDialog}
-        onClose={() => setShowLoginDialog(false)}
-        message="You need to login to bookmark this blog and access other features."
-      />
     </>
   );
 };

@@ -1,6 +1,7 @@
 // app/blog/[id]/components/BlogActions.tsx
 import React from "react";
 import { Heart, Share2, Bookmark } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 interface BlogActionsProps {
   isLiked: boolean;
@@ -9,6 +10,7 @@ interface BlogActionsProps {
   onLike: () => void;
   onShare: () => void;
   onBookmark: () => void;
+  onNeedLogin?: () => void; // Add this prop to show login dialog
 }
 
 const BlogActions: React.FC<BlogActionsProps> = ({
@@ -18,7 +20,18 @@ const BlogActions: React.FC<BlogActionsProps> = ({
   onLike,
   onShare,
   onBookmark,
+  onNeedLogin,
 }) => {
+  const { user } = useAuth();
+
+  const handleBookmarkClick = () => {
+    if (!user && onNeedLogin) {
+      onNeedLogin();
+      return;
+    }
+    onBookmark();
+  };
+
   return (
     <div className="mt-8 pt-8 border-t border-purple-100 flex flex-wrap gap-4">
       <button
@@ -40,14 +53,13 @@ const BlogActions: React.FC<BlogActionsProps> = ({
         Share
       </button>
       <button
-        onClick={onBookmark}
+        onClick={handleBookmarkClick}
         className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-colors ${
           isBookmarked
             ? "bg-amber-50 text-amber-700 border border-amber-300"
             : "bg-white border border-purple-300 text-purple-700 hover:bg-purple-50"
         }`}
-        disabled={true} // Disabled because BlogHeader handles it
-        title="Bookmark handled in header"
+        title={isBookmarked ? "Remove from bookmarks" : "Add to bookmarks"}
       >
         <Bookmark
           className={`w-5 h-5 ${isBookmarked ? "fill-current" : ""}`}
