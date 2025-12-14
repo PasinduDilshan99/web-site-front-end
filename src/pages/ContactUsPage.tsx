@@ -29,9 +29,9 @@ const ContactUsPage = () => {
       <div>
         <ContactForm />
       </div>
-      <div>
+      {/* <div>
         <ContactUsOffice />
-      </div>
+      </div> */}
       <div>
         <BusinessInformation />
       </div>
