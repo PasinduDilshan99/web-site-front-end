@@ -102,9 +102,9 @@ export default function Home() {
       {/* <div>
         <ReviewsHome />
       </div> */}
-      <div>
+      {/* <div>
         <ActiveBlogsSummery />
-      </div>
+      </div> */}
 
       {/* Process & Promotions */}
       <div>
@@ -115,9 +115,9 @@ export default function Home() {
       </div> */}
 
       {/* Support & Information */}
-      <div>
+      {/* <div>
         <Faq />
-      </div>
+      </div> */}
       <div>
         <Inquire />
       </div>

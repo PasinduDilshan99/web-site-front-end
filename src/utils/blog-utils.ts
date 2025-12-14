@@ -235,3 +235,31 @@ export const fetchTags = async (): Promise<BlogTag[]> => {
     return [];
   }
 };
+
+
+// In blog-utils.ts
+export const fetchBlogTags = async (blogId: number): Promise<BlogTag[]> => {
+  try {
+    const response = await fetch(
+      `http://localhost:8080/felicita/v0/api/blog/tags/${blogId}`,
+      {
+        credentials: 'include',
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch blog tags: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    if (result.code === 200) {
+      return result.data || [];
+    } else {
+      throw new Error(result.message || 'Failed to fetch blog tags');
+    }
+  } catch (error) {
+    console.error('Error fetching blog tags:', error);
+    throw error;
+  }
+};

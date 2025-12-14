@@ -14,7 +14,7 @@ const BlogTags: React.FC<BlogTagsProps> = ({ tags, loadingTags, onTagClick }) =>
     <div className="mt-8 pt-8 border-t border-purple-100">
       <div className="flex flex-wrap items-center gap-2">
         <Tag className="w-5 h-5 text-purple-600" />
-        <span className="text-sm font-medium text-purple-700">Popular Tags:</span>
+        <span className="text-sm font-medium text-purple-700">Related Tags:</span>
         {loadingTags ? (
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 border-2 border-purple-600 border-t-transparent rounded-full animate-spin"></div>

@@ -18,6 +18,7 @@ import {
   calculateTotalReactions,
   getReadTime,
   formatDate,
+  fetchBlogTags,
 } from "@/utils/blog-utils";
 import { blogReact, addComment, commentReact } from "@/utils/blog-api";
 import BlogHeader from "@/components/blog-components/BlogHeader";
@@ -50,8 +51,10 @@ const BlogDetailsPage = () => {
   const [totalComments, setTotalComments] = useState(0);
   const [showReplyInput, setShowReplyInput] = useState<number | null>(null);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
-  const [commentReactions, setCommentReactions] = useState<Record<number, string | null>>({});
-  
+  const [commentReactions, setCommentReactions] = useState<
+    Record<number, string | null>
+  >({});
+
   // Ref to prevent multiple simultaneous bookmark API calls
   const isBookmarkProcessing = useRef(false);
 
@@ -59,23 +62,20 @@ const BlogDetailsPage = () => {
     try {
       setLoading(true);
       setError(null);
-
       if (!id || isNaN(parseInt(id as string))) {
         throw new Error("Invalid blog ID");
       }
-
       const blogDetails = await fetchBlogDetails(parseInt(id as string));
-      
-      // Extract user reaction from blog data if available
+
       if (blogDetails.userBlogReaction) {
         setUserReaction(blogDetails.userBlogReaction);
       }
-      
+
       // Extract comment reactions
       const reactions: Record<number, string | null> = {};
       if (blogDetails.comments) {
         const extractReactions = (comments: any[]) => {
-          comments.forEach(comment => {
+          comments.forEach((comment) => {
             if (comment.userReactionType) {
               reactions[comment.comment_id] = comment.userReactionType;
             }
@@ -86,7 +86,7 @@ const BlogDetailsPage = () => {
         };
         extractReactions(blogDetails.comments);
       }
-      
+
       setCommentReactions(reactions);
       setBlogData(blogDetails);
       setTotalComments(calculateTotalComments(blogDetails.comments));
@@ -97,10 +97,9 @@ const BlogDetailsPage = () => {
         parseInt(id as string)
       );
       setRelatedBlogs(related);
-
-      // Fetch tags
-      const tagsData = await fetchTags();
-      setTags(tagsData);
+      // const tagsData = await fetchTags();
+      // setTags(tagsData);
+      handleGetTags(blogId)
     } catch (err) {
       console.error("Error loading blog data:", err);
       setError(
@@ -125,77 +124,69 @@ const BlogDetailsPage = () => {
     try {
       const response = await blogReact({
         blogId: blogData.blog_id,
-        reactType: reactType
+        reactType: reactType,
       });
 
       if (response.code === 200) {
-        const message = response.data?.message?.toLowerCase() || '';
-        
-        if (message.includes('add')) {
+        const message = response.data?.message?.toLowerCase() || "";
+
+        if (message.includes("add")) {
           setUserReaction(reactType);
-          // Update local reaction count optimistically
           if (blogData) {
             const updatedData = { ...blogData };
             const existingReaction = updatedData.blog_reactions.find(
-              r => r.reaction_type_name?.toLowerCase() === reactType
+              (r) => r.reaction_type_name?.toLowerCase() === reactType
             );
-            
+
             if (existingReaction) {
               existingReaction.count += 1;
             } else {
               updatedData.blog_reactions.push({
                 reaction_type_id: 1,
                 reaction_type_name: reactType,
-                count: 1
+                count: 1,
               });
             }
-            
-            // Remove previous reaction if changing
+
             if (userReaction && userReaction !== reactType) {
               const prevReaction = updatedData.blog_reactions.find(
-                r => r.reaction_type_name?.toLowerCase() === userReaction
+                (r) => r.reaction_type_name?.toLowerCase() === userReaction
               );
               if (prevReaction && prevReaction.count > 0) {
                 prevReaction.count -= 1;
               }
             }
-            
+
             setBlogData(updatedData);
           }
-          
-        } else if (message.includes('remove')) {
+        } else if (message.includes("remove")) {
           setUserReaction(null);
-          // Update local reaction count optimistically
           if (blogData && userReaction) {
             const updatedData = { ...blogData };
             const reaction = updatedData.blog_reactions.find(
-              r => r.reaction_type_name?.toLowerCase() === userReaction
+              (r) => r.reaction_type_name?.toLowerCase() === userReaction
             );
             if (reaction && reaction.count > 0) {
               reaction.count -= 1;
             }
             setBlogData(updatedData);
           }
-          
-        } else if (message.includes('change')) {
+        } else if (message.includes("change")) {
           setUserReaction(reactType);
-          // Update local reaction count optimistically
           if (blogData) {
             const updatedData = { ...blogData };
-            
-            // Decrement old reaction
+
             if (userReaction) {
               const oldReaction = updatedData.blog_reactions.find(
-                r => r.reaction_type_name?.toLowerCase() === userReaction
+                (r) => r.reaction_type_name?.toLowerCase() === userReaction
               );
               if (oldReaction && oldReaction.count > 0) {
                 oldReaction.count -= 1;
               }
             }
-            
-            // Increment new reaction
+
             const newReaction = updatedData.blog_reactions.find(
-              r => r.reaction_type_name?.toLowerCase() === reactType
+              (r) => r.reaction_type_name?.toLowerCase() === reactType
             );
             if (newReaction) {
               newReaction.count += 1;
@@ -203,53 +194,45 @@ const BlogDetailsPage = () => {
               updatedData.blog_reactions.push({
                 reaction_type_id: 1,
                 reaction_type_name: reactType,
-                count: 1
+                count: 1,
               });
             }
-            
+
             setBlogData(updatedData);
           }
         }
-        
-        // Refetch blog data to get accurate counts
+
         setTimeout(() => {
           loadBlogData();
         }, 500);
       }
     } catch (error) {
-      console.error('Error reacting to blog:', error);
+      console.error("Error reacting to blog:", error);
       // Revert optimistic update
       loadBlogData();
     }
   };
 
-  // Handle bookmark API call
   const handleBookmark = async () => {
-    // Check if user is logged in
     if (!user) {
       setShowLoginDialog(true);
       return;
     }
-    
     if (!blogData || isBookmarkProcessing.current) return;
-    
     try {
       isBookmarkProcessing.current = true;
-      
-      // Optimistically update UI
       const newBookmarkState = !blogData.isBookmark;
       setBlogData({
         ...blogData,
         isBookmark: newBookmarkState,
       });
-      
+
       const response = await fetch(
         "http://localhost:8080/felicita/v0/api/blog/bookmark",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Cookie: "token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNpbmR1IiwidXNlcklkIjo0LCJ1c2VybmFtZSI6InBhc2luZHUiLCJpYXQiOjE3NjI2Njg5NjksImV4cCI6MTc2MjY2OTA4OX0.5wQ6QL3q2pvSoCEhDze6t_Aub3Vb8hlcMRQ3UQxu8yg",
           },
           body: JSON.stringify({ blogId: blogData.blog_id }),
           credentials: "include",
@@ -260,13 +243,15 @@ const BlogDetailsPage = () => {
 
       if (response.ok && result.code === 200) {
         const message = result.data?.message?.toLowerCase() || "";
-        
-        // Verify the server response matches our expected state
-        if ((message.includes("insert") && newBookmarkState) || 
-            (message.includes("remove") && !newBookmarkState)) {
-          console.log(`Bookmark ${newBookmarkState ? "added" : "removed"} successfully`);
+
+        if (
+          (message.includes("insert") && newBookmarkState) ||
+          (message.includes("remove") && !newBookmarkState)
+        ) {
+          console.log(
+            `Bookmark ${newBookmarkState ? "added" : "removed"} successfully`
+          );
         } else {
-          // Server response doesn't match, revert
           console.warn("Server response doesn't match optimistic update");
           setBlogData({
             ...blogData,
@@ -274,7 +259,6 @@ const BlogDetailsPage = () => {
           });
         }
       } else {
-        // Revert on API error
         console.error("Bookmark API error:", result.message);
         setBlogData({
           ...blogData,
@@ -282,14 +266,12 @@ const BlogDetailsPage = () => {
         });
       }
     } catch (error) {
-      // Revert on network error
       console.error("Network error updating bookmark:", error);
       setBlogData({
         ...blogData,
         isBookmark: !blogData.isBookmark,
       });
     } finally {
-      // Allow new requests after a delay
       setTimeout(() => {
         isBookmarkProcessing.current = false;
       }, 500);
@@ -299,7 +281,7 @@ const BlogDetailsPage = () => {
   // Handle comment submission
   const handleSubmitComment = async () => {
     if (!commentText.trim()) return;
-    
+
     if (!user) {
       setShowLoginDialog(true);
       return;
@@ -309,21 +291,19 @@ const BlogDetailsPage = () => {
 
     try {
       setIsSubmittingComment(true);
-      
+
       const response = await addComment({
         blogId: blogData.blog_id,
         parentId: null,
-        comment: commentText
+        comment: commentText,
       });
 
       if (response.code === 200) {
-        // Clear comment text
-        setCommentText('');
-        // Reload blog data to get updated comments
+        setCommentText("");
         await loadBlogData();
       }
     } catch (err) {
-      console.error('Error submitting comment:', err);
+      console.error("Error submitting comment:", err);
     } finally {
       setIsSubmittingComment(false);
     }
@@ -333,34 +313,28 @@ const BlogDetailsPage = () => {
   const handleSubmitReply = async (parentCommentId: number) => {
     const replyText = replyTexts[parentCommentId];
     if (!replyText?.trim()) return;
-    
     if (!user) {
       setShowLoginDialog(true);
       return;
     }
-
     if (!blogData) return;
-
     try {
       const response = await addComment({
         blogId: blogData.blog_id,
         parentId: parentCommentId,
-        comment: replyText
+        comment: replyText,
       });
 
       if (response.code === 200) {
-        // Clear reply text
-        setReplyTexts({ ...replyTexts, [parentCommentId]: '' });
+        setReplyTexts({ ...replyTexts, [parentCommentId]: "" });
         setShowReplyInput(null);
-        // Reload blog data to get updated comments
         await loadBlogData();
       }
     } catch (err) {
-      console.error('Error submitting reply:', err);
+      console.error("Error submitting reply:", err);
     }
   };
 
-  // Handle comment reaction
   const handleCommentReact = async (commentId: number, reactType: string) => {
     if (!user) {
       setShowLoginDialog(true);
@@ -370,37 +344,37 @@ const BlogDetailsPage = () => {
     try {
       const response = await commentReact({
         commentId: commentId,
-        reactType: reactType
+        reactType: reactType,
       });
 
       if (response.code === 200) {
-        const message = response.data?.message?.toLowerCase() || '';
-        
+        const message = response.data?.message?.toLowerCase() || "";
+
         // Update local state
-        if (message.includes('add')) {
+        if (message.includes("add")) {
           setCommentReactions({
             ...commentReactions,
-            [commentId]: reactType
+            [commentId]: reactType,
           });
-        } else if (message.includes('remove')) {
+        } else if (message.includes("remove")) {
           setCommentReactions({
             ...commentReactions,
-            [commentId]: null
+            [commentId]: null,
           });
-        } else if (message.includes('change')) {
+        } else if (message.includes("change")) {
           setCommentReactions({
             ...commentReactions,
-            [commentId]: reactType
+            [commentId]: reactType,
           });
         }
-        
+
         // Reload blog data to get updated reaction counts
         setTimeout(() => {
           loadBlogData();
         }, 500);
       }
     } catch (error) {
-      console.error('Error reacting to comment:', error);
+      console.error("Error reacting to comment:", error);
     }
   };
 
@@ -444,6 +418,27 @@ const BlogDetailsPage = () => {
     router.push(`/blogs?search=${encodeURIComponent(tagName)}`);
   };
 
+    const handleGetTags = async (blogId: number) => {
+    if (!blogId) return;
+    try {
+      setLoadingTags(true);
+      const blogTags = await fetchBlogTags(blogId);
+      setTags(blogTags);
+    } catch (error) {
+      console.error("Error fetching blog tags:", error);
+      try {
+        const allTags = await fetchTags();
+        setTags(allTags);
+      } catch (fallbackError) {
+        console.error("Error fetching all tags:", fallbackError);
+        setTags([]);
+      }
+    } finally {
+      setLoadingTags(false);
+    }
+  };
+
+  
   useEffect(() => {
     if (id) {
       loadBlogData();
@@ -468,7 +463,8 @@ const BlogDetailsPage = () => {
         <div className="min-h-screen bg-gradient-to-b from-purple-50 to-amber-50 flex items-center justify-center px-4">
           <ErrorState
             title="Blog Not Found"
-            message={error || "The blog post you're looking for doesn't exist."}
+            // message={error || "The blog post you're looking for doesn't exist."}
+            message=""
             icon="alert"
             variant="error"
             size="lg"
@@ -584,7 +580,7 @@ const BlogDetailsPage = () => {
         </main>
       </div>
       <Footer />
-      
+
       {/* Login Dialog */}
       <BlogLoginDialog
         isOpen={showLoginDialog}

@@ -3,12 +3,12 @@ import { BlogTag } from "@/types/blog-types";
 import React from "react";
 
 interface PopularTagsProps {
-  tags: BlogTag[];
+  tagList: BlogTag[];
   loadingTags: boolean;
   onTagClick: (tagName: string) => void;
 }
 
-const PopularTags: React.FC<PopularTagsProps> = ({ tags, loadingTags, onTagClick }) => {
+const PopularTags: React.FC<PopularTagsProps> = ({ tagList, loadingTags, onTagClick }) => {
   return (
     <div className="bg-white rounded-3xl shadow-xl p-6 border border-purple-200">
       <h3 className="text-xl font-bold text-purple-900 mb-6">Popular Tags</h3>
@@ -17,9 +17,9 @@ const PopularTags: React.FC<PopularTagsProps> = ({ tags, loadingTags, onTagClick
           <div className="w-6 h-6 border-2 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
           <p className="text-sm text-gray-500">Loading tags...</p>
         </div>
-      ) : tags.length > 0 ? (
+      ) : tagList.length > 0 ? (
         <div className="flex flex-wrap gap-2">
-          {tags.map((tag) => (
+          {tagList.map((tag) => (
             <button
               key={tag.id}
               onClick={() => onTagClick(tag.name)}

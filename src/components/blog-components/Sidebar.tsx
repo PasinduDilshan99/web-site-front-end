@@ -1,9 +1,10 @@
 // app/blog/[id]/components/Sidebar.tsx
 import { BlogTag } from "@/types/blog-types";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import AuthorCard from "./AuthorCard";
 import RelatedBlogs from "./RelatedBlogs";
 import PopularTags from "./PopularTags";
+import { fetchTags } from "@/utils/blog-utils";
 
 interface SidebarProps {
   writerName: string;
@@ -22,12 +23,27 @@ const Sidebar: React.FC<SidebarProps> = ({
   loadingTags,
   onTagClick,
 }) => {
+  const [tagList, setTagList] = useState<BlogTag[]>([]);
+
+  const fetchAllTags = async () => {
+    try {
+      const tagsData = await fetchTags();
+      setTagList(tagsData);
+    } catch (error) {
+      console.error("Error fetching tags:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllTags();
+  }, []);
+
   return (
     <div className="lg:col-span-1 space-y-8">
       <AuthorCard writerName={writerName} blogCount={blogCount} />
       <RelatedBlogs relatedBlogs={relatedBlogs} writerName={writerName} />
       <PopularTags
-        tags={tags}
+        tagList={tagList}
         loadingTags={loadingTags}
         onTagClick={onTagClick}
       />

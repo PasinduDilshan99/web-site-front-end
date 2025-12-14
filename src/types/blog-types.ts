@@ -8,7 +8,7 @@ export interface BlogImage {
 export interface CommentReaction {
   username: string;
   user_id: number;
-  reaction_type_id: number;
+  reaction_type: string;
   reaction_type_name?: string;
 }
 
