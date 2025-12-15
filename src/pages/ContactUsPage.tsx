@@ -38,9 +38,9 @@ const ContactUsPage = () => {
       <div>
         <ContactUsSocialMedia />
       </div>
-      <div>
+      {/* <div>
         <Faq />
-      </div>
+      </div> */}
       <div>
         <CallToAction />
       </div>
