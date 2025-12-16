@@ -1,3 +1,16 @@
+// Add this interface for activity search request
+export interface ActivitySearchRequest {
+  name: string | null;
+  minPrice: number | null;
+  maxPrice: number | null;
+  duration: number | null;
+  activityCategory: string | null;
+  season: string | null;
+  status: string | null;
+  pageSize: number;
+  pageNumber: number;
+}
+
 export interface Schedule {
   id: number;
   name: string;

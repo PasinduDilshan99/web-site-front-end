@@ -6,6 +6,7 @@ import DecemberSnowfall from "@/components/DecemberSnowfall";
 import GlobalGradientScrollbar from "@/components/GlobalGradientScrollbar";
 import ChatBot from "@/components/ChatBot";
 import NavBar from "@/components/common-components/navBar/NavBar";
+import LinkBar from "@/components/common-components/linkBar/LinkBar";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -20,7 +21,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {/* <NavBar/> */}
+      {/* <LinkBar />
+      <NavBar /> */}
         <ChatBot />
         {/* <DecemberSnowfall /> */}
         <GlobalGradientScrollbar />

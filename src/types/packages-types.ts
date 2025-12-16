@@ -1,3 +1,20 @@
+// Add this interface for package search request
+export interface PackageSearchRequest {
+  name: string | null;
+  minPrice: number | null;
+  maxPrice: number | null;
+  duration: number | null;
+  packageType: string | null;
+  location: string | null;
+  minGroupSize: number | null;
+  maxGroupSize: number | null;
+  fromDate: string | null;
+  toDate: string | null;
+  pageSize: number;
+  pageNumber: number;
+}
+
+// Update the existing interfaces to match the API response
 export interface Schedule {
   scheduleId: number;
   scheduleName: string;
@@ -273,5 +290,3 @@ export interface PackageHistoryResponse {
   data: PackageHistory[];
   timestamp: string;
 }
-
-// Add to packages-types.ts

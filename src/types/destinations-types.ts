@@ -1,3 +1,16 @@
+// Add this interface for destination search request
+export interface DestinationSearchRequest {
+  name: string | null;
+  minPrice: number | null;
+  maxPrice: number | null;
+  duration: number | null;
+  destinationCategory: string | null;
+  season: string | null;
+  status: string | null;
+  pageSize: number;
+  pageNumber: number;
+}
+
 export interface PopularDestinationImage {
   imageId: number;
   imageName: string;

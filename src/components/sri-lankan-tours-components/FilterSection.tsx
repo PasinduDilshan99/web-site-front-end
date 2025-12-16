@@ -1,5 +1,5 @@
 import { TourFilters } from "@/types/sri-lankan-tour-types";
-import React, { useState } from "react";
+import React, { useState, FormEvent } from "react";
 
 interface FilterSectionProps {
   filters: TourFilters;
@@ -46,15 +46,27 @@ const FilterSection: React.FC<FilterSectionProps> = ({
     }
   };
 
-  const handleSearchClick = () => {
+  const handleSearchClick = (e?: React.MouseEvent | FormEvent) => {
+    // Prevent default form submission behavior
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     onSearch(); // This triggers API call in parent component
   };
 
   // Handle Enter key in search input
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
+      e.preventDefault(); // Prevent form submission
       handleSearchClick();
     }
+  };
+
+  // Handle form submission
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    handleSearchClick(e);
   };
 
   return (
@@ -65,12 +77,14 @@ const FilterSection: React.FC<FilterSectionProps> = ({
         </h2>
         <div className="flex gap-3">
           <button
+            type="button" // Explicitly set type to button
             onClick={onResetFilters}
             className="px-6 py-2 bg-gradient-to-r from-amber-600 to-purple-600 text-white rounded-lg hover:from-amber-700 hover:to-purple-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg"
           >
             Reset Filters
           </button>
           <button
+            type="button" // Explicitly set type to button
             onClick={handleSearchClick}
             className="px-6 py-2 bg-gradient-to-r from-purple-600 to-amber-600 text-white rounded-lg hover:from-purple-700 hover:to-amber-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg flex items-center gap-2"
           >
@@ -284,6 +298,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
         </div>
         <div className="relative flex justify-center">
           <button
+            type="button"
             onClick={toggleAdvancedFilters}
             className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-purple-500 text-white rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
           >
@@ -413,6 +428,7 @@ const ActiveFiltersSummary: React.FC<{
           >
             {filter.label}
             <button
+              type="button"
               onClick={() => removeFilter(filter.name)}
               className="hover:text-red-600 transition-colors duration-200 ml-1"
             >

@@ -1,11 +1,12 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   PopularDestinationsType,
   Filters,
   EnhancedDestination,
   DestinationHistoryType,
   DestinationHistoryImage,
+  DestinationSearchRequest,
 } from "@/types/destinations-types";
 import Loading from "@/components/common-components/loading/Loading";
 import { ErrorState } from "@/components/common-components/error-state/ErrorState";
@@ -20,7 +21,21 @@ import DestinationHistoryGallery from "@/components/destinations-components/Dest
 import DestinationHeroSection from "@/components/destinations-components/DestinationHeroSection";
 import LinkBar from "@/components/common-components/linkBar/LinkBar";
 
-// Review types (move these to a types file if needed)
+// Define API response interface
+interface DestinationListResponse {
+  destinationCount: number;
+  destinationResponseDtos: PopularDestinationsType[];
+}
+
+interface PaginatedDestinationResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: DestinationListResponse | null;
+  timestamp: string;
+}
+
+// Review types (keep existing review types)
 interface Image {
   imageId: number;
   imageName: string;
@@ -83,33 +98,19 @@ export interface Review {
   comments: Comment[];
 }
 
-// Pagination types
-interface PaginationState {
-  currentPage: number;
-  itemsPerPage: number;
-}
-
 const DestinationPage: React.FC = () => {
   const [destinations, setDestinations] = useState<EnhancedDestination[]>([]);
-  const [filteredDestinations, setFilteredDestinations] = useState<
-    EnhancedDestination[]
-  >([]);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [history, setHistory] = useState<DestinationHistoryType[]>([]);
+  const [historyImages, setHistoryImages] = useState<DestinationHistoryImage[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [reviewsLoading, setReviewsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [reviewsError, setReviewsError] = useState<string | null>(null);
-  const [history, setHistory] = useState<DestinationHistoryType[]>([]);
   const [historyLoading, setHistoryLoading] = useState<boolean>(true);
   const [historyError, setHistoryError] = useState<string | null>(null);
-  const [historyImages, setHistoryImages] = useState<DestinationHistoryImage[]>(
-    []
-  );
-  const [historyImagesLoading, setHistoryImagesLoading] =
-    useState<boolean>(true);
-  const [historyImagesError, setHistoryImagesError] = useState<string | null>(
-    null
-  );
+  const [historyImagesLoading, setHistoryImagesLoading] = useState<boolean>(true);
+  const [historyImagesError, setHistoryImagesError] = useState<string | null>(null);
 
   // Filter states
   const [filters, setFilters] = useState<Filters>({
@@ -122,78 +123,178 @@ const DestinationPage: React.FC = () => {
   });
 
   // Pagination state
-  const [pagination, setPagination] = useState<PaginationState>({
-    currentPage: 1,
-    itemsPerPage: 12, // Default for desktop
-  });
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [itemsPerPage, setItemsPerPage] = useState<number>(12);
+  const [totalDestinations, setTotalDestinations] = useState<number>(0);
+  const [totalPages, setTotalPages] = useState<number>(0);
 
-  // Extract unique values for filter options from actual data
-  const categories = [
-    ...new Set(destinations.map((dest) => dest.categoryName)),
-  ];
-  const locations = [...new Set(destinations.map((dest) => dest.location))];
+  // Search button state
+  const [searchTriggered, setSearchTriggered] = useState<boolean>(false);
+  const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
 
-  // Duration options based on activities
-  const durations = [
-    ...new Set(
-      destinations.flatMap((dest) =>
-        dest.activities.map((activity) =>
-          Math.ceil(activity.durationHours / 24)
-        )
-      )
-    ),
-  ]
-    .filter((duration) => duration > 0)
-    .sort((a, b) => a - b);
+  // Filter options from initial data
+  const [categories, setCategories] = useState<string[]>([]);
+  const [locations, setLocations] = useState<string[]>([]);
+  const [durations, setDurations] = useState<number[]>([]);
 
-  // Items per page options
-  const itemsPerPageOptions = [4, 6, 9, 12, 16];
+  // Fetch filter options (initial data)
+  const fetchFilterOptions = useCallback(async (): Promise<void> => {
+    try {
+      const requestBody: DestinationSearchRequest = {
+        name: null,
+        minPrice: null,
+        maxPrice: null,
+        duration: null,
+        destinationCategory: null,
+        season: null,
+        status: null,
+        pageSize: 100, // Fetch more for filter options
+        pageNumber: 1,
+      };
 
-  useEffect(() => {
-    fetchDestinations();
-    fetchReviews();
-    fetchHistory();
-    fetchHistoryImages();
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+      const response = await fetch(
+        "http://localhost:8080/felicita/v0/api/destination/destinations",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: "token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNpbmR1IiwidXNlcklkIjo0LCJ1c2VybmFtZSI6InBhc2luZHUiLCJpYXQiOjE3NjI2Njg5NjksImV4cCI6MTc2MjY2OTA4OX0.5wQ6QL3q2pvSoCEhDze6t_Aub3Vb8hlcMRQ3UQxu8yg",
+          },
+          body: JSON.stringify(requestBody),
+        }
+      );
+
+      const result: PaginatedDestinationResponse = await response.json();
+
+      if (result.code === 200 && result.data) {
+        // Extract unique values for filters
+        const categoriesList = [...new Set(result.data.destinationResponseDtos.map((dest) => dest.categoryName))];
+        const locationsList = [...new Set(result.data.destinationResponseDtos.map((dest) => dest.location))];
+        // Duration options based on activities
+        const durationsList = [
+          ...new Set(
+            result.data.destinationResponseDtos.flatMap((dest) =>
+              dest.activities.map((activity) =>
+                Math.ceil(activity.durationHours / 24)
+              )
+            )
+          ),
+        ]
+          .filter((duration) => duration > 0)
+          .sort((a, b) => a - b);
+        
+        setCategories(categoriesList);
+        setLocations(locationsList);
+        setDurations(durationsList);
+      }
+    } catch (err) {
+      console.error("Error fetching filter options:", err);
+    }
   }, []);
 
-  useEffect(() => {
-    applyFilters();
-  }, [filters, destinations]);
+  // Fetch destinations with filters - main API call function
+  const fetchDestinationsWithFilters = useCallback(async (): Promise<void> => {
+    try {
+      setLoading(true);
+      
+      // Prepare API request - Note: Some filters might not be supported by the API
+      const requestBody: DestinationSearchRequest = {
+        name: filters.search || null,
+        minPrice: filters.priceRange[0] > 0 ? filters.priceRange[0] : null,
+        maxPrice: filters.priceRange[1] < 10000 ? filters.priceRange[1] : null,
+        duration: filters.duration ? parseFloat(filters.duration) : null,
+        destinationCategory: filters.category || null,
+        season: null, // Not in current API, but keeping structure
+        status: null, // Not in current API, but keeping structure
+        pageSize: itemsPerPage,
+        pageNumber: currentPage,
+      };
 
-  useEffect(() => {
-    // Reset to first page when filters change
-    setPagination((prev) => ({ ...prev, currentPage: 1 }));
-  }, [filters]);
+      const response = await fetch(
+        "http://localhost:8080/felicita/v0/api/destination/destinations",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: "token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNpbmR1IiwidXNlcklkIjo0LCJ1c2VybmFtZSI6InBhc2luZHUiLCJpYXQiOjE3NjI2Njg5NjksImV4cCI6MTc2MjY2OTA4OX0.5wQ6QL3q2pvSoCEhDze6t_Aub3Vb8hlcMRQ3UQxu8yg",
+          },
+          body: JSON.stringify(requestBody),
+        }
+      );
 
-  const handleResize = () => {
-    const width = window.innerWidth;
-    let itemsPerPage = 12; // default for desktop
+      const result: PaginatedDestinationResponse = await response.json();
 
-    if (width < 640) {
-      // mobile
-      itemsPerPage = 4;
-    } else if (width < 768) {
-      // small tablet
-      itemsPerPage = 6;
-    } else if (width < 1024) {
-      // tablet/laptop
-      itemsPerPage = 9;
-    } else if (width < 1280) {
-      // desktop
-      itemsPerPage = 12;
-    } else {
-      // large screens
-      itemsPerPage = 16;
+      if (result.code === 200) {
+        if (result.data) {
+          // Enhance destinations with mock rating and popularity data
+          const enhancedDestinations: EnhancedDestination[] = result.data.destinationResponseDtos.map(
+            (destination: PopularDestinationsType) => ({
+              ...destination,
+              rating: generateMockRating(destination.destinationId),
+              popularity: generateMockPopularity(destination.destinationId),
+            })
+          );
+          setDestinations(enhancedDestinations);
+          setTotalDestinations(result.data.destinationCount);
+          setTotalPages(Math.ceil(result.data.destinationCount / itemsPerPage));
+        } else {
+          setDestinations([]);
+          setTotalDestinations(0);
+          setTotalPages(0);
+        }
+        setError(null);
+      } else {
+        throw new Error(result.message);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setLoading(false);
+      setIsInitialLoad(false);
     }
+  }, [filters, currentPage, itemsPerPage]);
 
-    setPagination((prev) => ({
-      ...prev,
-      itemsPerPage,
-    }));
-  };
+  // Initial data fetch - runs only once on mount
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      try {
+        setLoading(true);
+        await fetchFilterOptions();
+        await fetchDestinationsWithFilters();
+        fetchReviews();
+        fetchHistory();
+        fetchHistoryImages();
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+      }
+    };
+    
+    fetchInitialData();
+  }, []); // Empty dependency array - runs only once on mount
+
+  // Fetch destinations when search is triggered
+  useEffect(() => {
+    if (searchTriggered) {
+      setCurrentPage(1); // Reset to first page when search is triggered
+      fetchDestinationsWithFilters();
+      setSearchTriggered(false);
+    }
+  }, [searchTriggered, fetchDestinationsWithFilters]);
+
+  // Fetch destinations when page changes
+  useEffect(() => {
+    if (!isInitialLoad && currentPage > 0) {
+      fetchDestinationsWithFilters();
+    }
+  }, [currentPage]); // Only depends on currentPage
+
+  // Fetch destinations when items per page changes
+  useEffect(() => {
+    if (!isInitialLoad) {
+      setCurrentPage(1); // Reset to first page
+      fetchDestinationsWithFilters();
+    }
+  }, [itemsPerPage]); // Only depends on itemsPerPage
 
   const fetchHistory = async (): Promise<void> => {
     try {
@@ -215,33 +316,6 @@ const DestinationPage: React.FC = () => {
       );
     } finally {
       setHistoryLoading(false);
-    }
-  };
-
-  const fetchDestinations = async (): Promise<void> => {
-    try {
-      const response = await fetch(
-        "http://localhost:8080/felicita/v0/api/destination/active-destinations"
-      );
-      const result = await response.json();
-
-      if (result.code === 200) {
-        // Enhance destinations with mock rating and popularity data
-        const enhancedDestinations: EnhancedDestination[] = result.data.map(
-          (destination: PopularDestinationsType) => ({
-            ...destination,
-            rating: generateMockRating(destination.destinationId),
-            popularity: generateMockPopularity(destination.destinationId),
-          })
-        );
-        setDestinations(enhancedDestinations);
-      } else {
-        throw new Error(result.message);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -299,59 +373,6 @@ const DestinationPage: React.FC = () => {
     return (destinationId % 100) + 1;
   };
 
-  const applyFilters = (): void => {
-    let filtered = [...destinations];
-
-    // Search filter
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      filtered = filtered.filter(
-        (dest) =>
-          dest.destinationName.toLowerCase().includes(searchLower) ||
-          dest.destinationDescription.toLowerCase().includes(searchLower) ||
-          dest.location.toLowerCase().includes(searchLower) ||
-          dest.activities.some((activity) =>
-            activity.activityName.toLowerCase().includes(searchLower)
-          )
-      );
-    }
-
-    // Price range filter (using mock price calculation)
-    filtered = filtered.filter((dest) => {
-      const price = getPrice(dest.popularity, dest.rating);
-      return price >= filters.priceRange[0] && price <= filters.priceRange[1];
-    });
-
-    // Duration filter (based on activities)
-    if (filters.duration) {
-      const durationDays = parseInt(filters.duration);
-      filtered = filtered.filter((dest) =>
-        dest.activities.some(
-          (activity) => Math.ceil(activity.durationHours / 24) === durationDays
-        )
-      );
-    }
-
-    // Category filter
-    if (filters.category) {
-      filtered = filtered.filter(
-        (dest) => dest.categoryName === filters.category
-      );
-    }
-
-    // Location filter
-    if (filters.location) {
-      filtered = filtered.filter((dest) => dest.location === filters.location);
-    }
-
-    // Rating filter
-    if (filters.rating > 0) {
-      filtered = filtered.filter((dest) => dest.rating >= filters.rating);
-    }
-
-    setFilteredDestinations(filtered);
-  };
-
   // Mock price calculation (same as in DestinationCard)
   const getPrice = (popularity: number, rating: number): number => {
     const basePrice = popularity * rating * 10;
@@ -363,6 +384,11 @@ const DestinationPage: React.FC = () => {
       ...prev,
       [filterName]: value,
     }));
+    // Do NOT trigger API call here - wait for search button click
+  };
+
+  const handleSearch = (): void => {
+    setSearchTriggered(true);
   };
 
   const resetFilters = (): void => {
@@ -374,38 +400,41 @@ const DestinationPage: React.FC = () => {
       location: "",
       rating: 0,
     });
+    // Trigger search automatically after reset
+    setSearchTriggered(true);
   };
 
   const handleRetry = () => {
     setError(null);
+    setReviewsError(null);
+    setHistoryError(null);
+    setHistoryImagesError(null);
     setLoading(true);
-    fetchDestinations();
+    setReviewsLoading(true);
+    setHistoryLoading(true);
+    setHistoryImagesLoading(true);
+    setIsInitialLoad(true);
+    fetchFilterOptions();
+    fetchDestinationsWithFilters();
+    fetchReviews();
+    fetchHistory();
+    fetchHistoryImages();
   };
 
   // Pagination functions
   const handlePageChange = (page: number): void => {
-    setPagination((prev) => ({ ...prev, currentPage: page }));
+    setCurrentPage(page);
+    // Scroll to top of results section
+    const resultsSection = document.getElementById("results-section");
+    if (resultsSection) {
+      resultsSection.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   const handleItemsPerPageChange = (items: number): void => {
-    setPagination((prev) => ({
-      ...prev,
-      itemsPerPage: items,
-      currentPage: 1, // Reset to first page when changing items per page
-    }));
+    setItemsPerPage(items);
+    // API call will be triggered by the useEffect that watches itemsPerPage
   };
-
-  // Calculate paginated destinations
-  const getPaginatedDestinations = (): EnhancedDestination[] => {
-    const startIndex = (pagination.currentPage - 1) * pagination.itemsPerPage;
-    const endIndex = startIndex + pagination.itemsPerPage;
-    return filteredDestinations.slice(startIndex, endIndex);
-  };
-
-  // Calculate total pages
-  const totalPages = Math.ceil(
-    filteredDestinations.length / pagination.itemsPerPage
-  );
 
   if (loading) {
     return (
@@ -431,7 +460,9 @@ const DestinationPage: React.FC = () => {
     );
   }
 
-  const paginatedDestinations = getPaginatedDestinations();
+  // Calculate paginated destinations display info
+  const startItem = (currentPage - 1) * itemsPerPage + 1;
+  const endItem = Math.min(currentPage * itemsPerPage, totalDestinations);
 
   return (
     <>
@@ -454,6 +485,7 @@ const DestinationPage: React.FC = () => {
         <FilterSection
           filters={filters}
           onFilterChange={handleFilterChange}
+          onSearch={handleSearch}
           onResetFilters={resetFilters}
           categories={categories}
           locations={locations}
@@ -461,11 +493,11 @@ const DestinationPage: React.FC = () => {
         />
 
         {/* Results Section */}
-        <div className="mb-8">
+        <div id="results-section" className="mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <h3 className="text-2xl font-semibold text-gray-900">
-              {filteredDestinations.length} Destination
-              {filteredDestinations.length !== 1 ? "s" : ""} Found
+              {totalDestinations} Destination
+              {totalDestinations !== 1 ? "s" : ""} Found
             </h3>
 
             {/* Items per page selector */}
@@ -478,37 +510,39 @@ const DestinationPage: React.FC = () => {
               </label>
               <select
                 id="itemsPerPage"
-                value={pagination.itemsPerPage}
+                value={itemsPerPage}
                 onChange={(e) =>
                   handleItemsPerPageChange(Number(e.target.value))
                 }
                 className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm"
               >
-                {itemsPerPageOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option} per page
-                  </option>
-                ))}
+                <option value={4}>4 per page</option>
+                <option value={6}>6 per page</option>
+                <option value={9}>9 per page</option>
+                <option value={12}>12 per page</option>
+                <option value={16}>16 per page</option>
               </select>
             </div>
           </div>
 
           {/* Destinations Grid */}
-          {paginatedDestinations.length > 0 ? (
+          {destinations.length > 0 ? (
             <>
               <DestinationsGrid
-                destinations={paginatedDestinations}
-                displayCount={paginatedDestinations.length}
+                destinations={destinations}
+                displayCount={destinations.length}
               />
 
               {/* Pagination Controls */}
               {totalPages > 1 && (
                 <PaginationControls
-                  currentPage={pagination.currentPage}
+                  currentPage={currentPage}
                   totalPages={totalPages}
                   onPageChange={handlePageChange}
-                  totalItems={filteredDestinations.length}
-                  itemsPerPage={pagination.itemsPerPage}
+                  totalItems={totalDestinations}
+                  itemsPerPage={itemsPerPage}
+                  startItem={startItem}
+                  endItem={endItem}
                 />
               )}
             </>
@@ -544,6 +578,8 @@ const DestinationPage: React.FC = () => {
   );
 };
 
+export default DestinationPage;
+
 // Pagination Controls Component
 interface PaginationControlsProps {
   currentPage: number;
@@ -551,6 +587,8 @@ interface PaginationControlsProps {
   onPageChange: (page: number) => void;
   totalItems: number;
   itemsPerPage: number;
+  startItem: number;
+  endItem: number;
 }
 
 const PaginationControls: React.FC<PaginationControlsProps> = ({
@@ -559,10 +597,9 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
   onPageChange,
   totalItems,
   itemsPerPage,
+  startItem,
+  endItem,
 }) => {
-  const startItem = (currentPage - 1) * itemsPerPage + 1;
-  const endItem = Math.min(currentPage * itemsPerPage, totalItems);
-
   const getPageNumbers = (): (number | string)[] => {
     const pages: (number | string)[] = [];
     const maxVisiblePages = 5;
@@ -671,5 +708,3 @@ const NoResults: React.FC<{ onResetFilters: () => void }> = ({
     </button>
   </div>
 );
-
-export default DestinationPage;
