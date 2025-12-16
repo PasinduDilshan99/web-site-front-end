@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 
 export interface TourHeroData {
@@ -36,6 +37,7 @@ const TourHeroSection = () => {
   const [heroData, setHeroData] = useState<TourHeroData[]>([]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchHeroData = async () => {
@@ -128,22 +130,9 @@ const TourHeroSection = () => {
       "photo-1520250497591-112f2f40a3f4",
       "photo-1469474968028-56623f02e42e",
     ];
-    return `https://images.unsplash.com/${fallbackImages[index % fallbackImages.length]}?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80`;
-  };
-
-  const handleButtonClick = (link?: string) => {
-    if (link) {
-      if (link.startsWith("http")) {
-        window.open(link, "_blank");
-      } else if (link.startsWith("#")) {
-        const element = document.querySelector(link);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth" });
-        }
-      } else {
-        window.location.href = link;
-      }
-    }
+    return `https://images.unsplash.com/${
+      fallbackImages[index % fallbackImages.length]
+    }?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80`;
   };
 
   if (loading) {
@@ -151,7 +140,9 @@ const TourHeroSection = () => {
       <div className="relative w-full h-[500px] sm:h-[600px] md:h-[700px] lg:h-[750px] xl:h-[800px] 2xl:h-[850px] overflow-hidden bg-gradient-to-br from-purple-900 via-purple-800 to-amber-900 flex items-center justify-center">
         <div className="text-center text-white px-4">
           <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 lg:h-16 lg:w-16 border-b-2 border-amber-400 mx-auto mb-4"></div>
-          <p className="text-sm sm:text-base md:text-lg lg:text-xl">Loading Amazing Tours...</p>
+          <p className="text-sm sm:text-base md:text-lg lg:text-xl">
+            Loading Amazing Tours...
+          </p>
         </div>
       </div>
     );
@@ -225,7 +216,8 @@ const TourHeroSection = () => {
         <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-amber-500/20 backdrop-blur-sm rounded-full border border-amber-400/30">
           <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-amber-400 rounded-full animate-pulse"></div>
           <span className="text-xs sm:text-sm font-medium text-white">
-            <span className="text-amber-200 font-bold">{heroData.length}</span> Tour Categories
+            <span className="text-amber-200 font-bold">{heroData.length}</span>{" "}
+            Tour Categories
           </span>
         </div>
       </div>
@@ -268,7 +260,9 @@ const TourHeroSection = () => {
                   {currentSlideData.primaryButtonText && (
                     <button
                       onClick={() =>
-                        handleButtonClick(currentSlideData.primaryButtonLink)
+                        router.push(
+                          `/sri-lankan-tours?tourType=${currentSlideData.primaryButtonLink}`
+                        )
                       }
                       className="w-full sm:w-auto px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 bg-gradient-to-r from-amber-500 to-purple-600 text-white text-sm sm:text-base font-semibold rounded-lg sm:rounded-xl hover:from-amber-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-xl flex items-center justify-center gap-2 sm:gap-3 group"
                     >
@@ -285,13 +279,17 @@ const TourHeroSection = () => {
                           d="M14 5l7 7m0 0l-7 7m7-7H3"
                         />
                       </svg>
-                      <span className="truncate">{currentSlideData.primaryButtonText}</span>
+                      <span className="truncate">
+                        {currentSlideData.primaryButtonText}
+                      </span>
                     </button>
                   )}
                   {currentSlideData.secondaryButtonText && (
                     <button
                       onClick={() =>
-                        handleButtonClick(currentSlideData.secondaryButtonLink)
+                        router.push(
+                          `/sri-lankan-tours?location=${currentSlideData.primaryButtonLink}`
+                        )
                       }
                       className="w-full sm:w-auto px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 border-2 border-white/50 text-white text-sm sm:text-base font-semibold rounded-lg sm:rounded-xl hover:bg-white hover:text-purple-900 transition-all duration-300 flex items-center justify-center gap-2 sm:gap-3 group"
                     >
@@ -308,7 +306,9 @@ const TourHeroSection = () => {
                           d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                         />
                       </svg>
-                      <span className="truncate">{currentSlideData.secondaryButtonText}</span>
+                      <span className="truncate">
+                        {currentSlideData.secondaryButtonText}
+                      </span>
                     </button>
                   )}
                 </div>
@@ -340,7 +340,9 @@ const TourHeroSection = () => {
                   </svg>
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs text-amber-200 truncate">Destinations</p>
+                  <p className="text-xs text-amber-200 truncate">
+                    Destinations
+                  </p>
                   <p className="text-base sm:text-lg font-bold">50+</p>
                 </div>
               </div>
@@ -382,7 +384,9 @@ const TourHeroSection = () => {
                   </svg>
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs text-amber-200 truncate">Customer Rating</p>
+                  <p className="text-xs text-amber-200 truncate">
+                    Customer Rating
+                  </p>
                   <p className="text-base sm:text-lg font-bold">4.9/5</p>
                 </div>
               </div>

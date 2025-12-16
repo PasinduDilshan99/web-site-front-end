@@ -21,6 +21,7 @@ import TourHistorySection from "@/components/sri-lankan-tours-components/TourHis
 import TourHistoryGallery from "@/components/sri-lankan-tours-components/TourHistoryGallery";
 import LinkBar from "@/components/common-components/linkBar/LinkBar";
 import TourHeroSection from "@/components/sri-lankan-tours-components/TourHeroSection";
+import { useSearchParams } from "next/navigation";
 
 const SriLankanTourPage: React.FC = () => {
   const [tours, setTours] = useState<ActiveToursType[]>([]);
@@ -35,6 +36,10 @@ const SriLankanTourPage: React.FC = () => {
   const [galleryImages, setGalleryImages] = useState<TourHistoryImage[]>([]);
   const [galleryLoading, setGalleryLoading] = useState<boolean>(true);
   const [galleryError, setGalleryError] = useState<string | null>(null);
+    const searchParams = useSearchParams();
+
+  const tourType: string | null = searchParams.get("tourType");
+  const location: string | null = searchParams.get("location");
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -61,7 +66,8 @@ const SriLankanTourPage: React.FC = () => {
   const [durations, setDurations] = useState<number[]>([]);
 
   // Debounce timer for page size changes
-  const [pageSizeDebounceTimer, setPageSizeDebounceTimer] = useState<NodeJS.Timeout | null>(null);
+  const [pageSizeDebounceTimer, setPageSizeDebounceTimer] =
+    useState<NodeJS.Timeout | null>(null);
 
   // Fetch filter options (initial data)
   const fetchFilterOptions = useCallback(async (): Promise<void> => {
@@ -85,7 +91,8 @@ const SriLankanTourPage: React.FC = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Cookie: "token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNpbmR1IiwidXNlcklkIjo0LCJ1c2VybmFtZSI6InBhc2luZHUiLCJpYXQiOjE3NjI2Njg5NjksImV4cCI6MTc2MjY2OTA4OX0.5wQ6QL3q2pvSoCEhDze6t_Aub3Vb8hlcMRQ3UQxu8yg",
+            Cookie:
+              "token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNpbmR1IiwidXNlcklkIjo0LCJ1c2VybmFtZSI6InBhc2luZHUiLCJpYXQiOjE3NjI2Njg5NjksImV4cCI6MTc2MjY2OTA4OX0.5wQ6QL3q2pvSoCEhDze6t_Aub3Vb8hlcMRQ3UQxu8yg",
           },
           body: JSON.stringify(requestBody),
         }
@@ -95,16 +102,35 @@ const SriLankanTourPage: React.FC = () => {
 
       if (result.code === 200 && result.data) {
         // Extract unique values for filters
-        const types = [...new Set(result.data.tourResponseDtoList.map((tour) => tour.tourTypeName))];
-        const categories = [...new Set(result.data.tourResponseDtoList.map((tour) => tour.tourCategoryName))];
-        const seasonsList = [...new Set(result.data.tourResponseDtoList.map((tour) => tour.seasonName))];
-        const locationsList = [
-          ...new Set(result.data.tourResponseDtoList.flatMap((tour) => [tour.startLocation, tour.endLocation])),
+        const types = [
+          ...new Set(
+            result.data.tourResponseDtoList.map((tour) => tour.tourTypeName)
+          ),
         ];
-        const durationsList = [...new Set(result.data.tourResponseDtoList.map((tour) => tour.duration))].sort(
-          (a, b) => a - b
-        );
-        
+        const categories = [
+          ...new Set(
+            result.data.tourResponseDtoList.map((tour) => tour.tourCategoryName)
+          ),
+        ];
+        const seasonsList = [
+          ...new Set(
+            result.data.tourResponseDtoList.map((tour) => tour.seasonName)
+          ),
+        ];
+        const locationsList = [
+          ...new Set(
+            result.data.tourResponseDtoList.flatMap((tour) => [
+              tour.startLocation,
+              tour.endLocation,
+            ])
+          ),
+        ];
+        const durationsList = [
+          ...new Set(
+            result.data.tourResponseDtoList.map((tour) => tour.duration)
+          ),
+        ].sort((a, b) => a - b);
+
         setTourTypes(types);
         setTourCategories(categories);
         setSeasons(seasonsList);
@@ -117,65 +143,90 @@ const SriLankanTourPage: React.FC = () => {
   }, []);
 
   // Fetch tours with filters - MAIN API CALL FUNCTION
-  const fetchToursWithFilters = useCallback(async (pageNum: number = currentPage, pageSize: number = itemsPerPage): Promise<void> => {
-    try {
-      setLoading(true);
-      
-      // Prepare API request
-      const requestBody: TourSearchRequest = {
-        name: filters.search || null,
-        minPrice: filters.priceRange[0] > 0 ? filters.priceRange[0] : null,
-        maxPrice: filters.priceRange[1] < 5000 ? filters.priceRange[1] : null,
-        duration: filters.duration ? parseInt(filters.duration) : null,
-        tourType: filters.tourType || null,
-        tourCategory: filters.tourCategory || null,
-        season: filters.season || null,
-        location: filters.location || null,
-        pageNumber: pageNum,
-        pageSize: pageSize,
-      };
+  const fetchToursWithFilters = useCallback(
+    async (
+      pageNum: number = currentPage,
+      pageSize: number = itemsPerPage
+    ): Promise<void> => {
+      try {
+        setLoading(true);
 
-      const response = await fetch(
-        "http://localhost:8080/felicita/v0/api/tour/tours",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Cookie: "token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNpbmR1IiwidXNlcklkIjo0LCJ1c2VybmFtZSI6InBhc2luZHUiLCJpYXQiOjE3NjI2Njg5NjksImV4cCI6MTc2MjY2OTA4OX0.5wQ6QL3q2pvSoCEhDze6t_Aub3Vb8hlcMRQ3UQxu8yg",
-          },
-          body: JSON.stringify(requestBody),
-        }
-      );
+        // Prepare API request
+        const requestBody: TourSearchRequest = {
+          name: filters.search || null,
+          minPrice: filters.priceRange[0] > 0 ? filters.priceRange[0] : null,
+          maxPrice: filters.priceRange[1] < 5000 ? filters.priceRange[1] : null,
+          duration: filters.duration ? parseInt(filters.duration) : null,
+          tourType: filters.tourType || (tourType || null),
+          tourCategory: filters.tourCategory || null,
+          season: filters.season || null,
+         location: filters.location || (location || null),
+          pageNumber: pageNum,
+          pageSize: pageSize,
+        };
 
-      const result: PaginatedTourResponse = await response.json();
+        const response = await fetch(
+          "http://localhost:8080/felicita/v0/api/tour/tours",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestBody),
+          }
+        );
 
-      if (result.code === 200) {
-        if (result.data) {
-          setTours(result.data.tourResponseDtoList);
-          setTotalTours(result.data.totalTours);
-          setTotalPages(Math.ceil(result.data.totalTours / pageSize));
-          setCurrentPage(pageNum); // Update current page after successful fetch
+        const result: PaginatedTourResponse = await response.json();
+
+        if (result.code === 200) {
+          if (result.data) {
+            setTours(result.data.tourResponseDtoList);
+            setTotalTours(result.data.totalTours);
+            setTotalPages(Math.ceil(result.data.totalTours / pageSize));
+            setCurrentPage(pageNum); // Update current page after successful fetch
+          } else {
+            setTours([]);
+            setTotalTours(0);
+            setTotalPages(0);
+          }
+          setError(null);
         } else {
-          setTours([]);
-          setTotalTours(0);
-          setTotalPages(0);
+          throw new Error(result.message);
         }
-        setError(null);
-      } else {
-        throw new Error(result.message);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
-    } finally {
-      setLoading(false);
-    }
-  }, [filters, currentPage, itemsPerPage]); // Dependencies: filters, currentPage, itemsPerPage
+    },
+    [filters, currentPage, itemsPerPage,tourType, location]
+  ); // Dependencies: filters, currentPage, itemsPerPage
+
+  // Add this useEffect to sync URL params on component mount
+useEffect(() => {
+  if (tourType || location) {
+    setFilters(prev => ({
+      ...prev,
+      ...(tourType && { tourType }),
+      ...(location && { location })
+    }));
+  }
+}, []); // Run only on initial mount
 
   // Initial data fetch
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
         setLoading(true);
+
+              if (tourType || location) {
+        setFilters(prev => ({
+          ...prev,
+          ...(tourType && { tourType }),
+          ...(location && { location })
+        }));
+      }
+
         await fetchFilterOptions();
         await fetchToursWithFilters(1, itemsPerPage); // Fetch first page on initial load
         fetchReviews();
@@ -187,9 +238,9 @@ const SriLankanTourPage: React.FC = () => {
         setLoading(false);
       }
     };
-    
+
     fetchInitialData();
-  }, []); // Empty dependency array - runs once on mount
+  }, [tourType, location]); // Empty dependency array - runs once on mount
 
   // Fetch tours when page changes
   useEffect(() => {
@@ -206,7 +257,7 @@ const SriLankanTourPage: React.FC = () => {
     }
 
     setItemsPerPage(value);
-    
+
     // Set a new debounce timer to call API after 300ms
     const timer = setTimeout(() => {
       setCurrentPage(1); // Reset to first page when changing items per page
@@ -243,6 +294,11 @@ const SriLankanTourPage: React.FC = () => {
       location: "",
     });
     setCurrentPage(1);
+
+    if (typeof window !== 'undefined') {
+    window.history.replaceState({}, '', '/sri-lankan-tours');
+  }
+
     fetchToursWithFilters(1, itemsPerPage);
   }, [fetchToursWithFilters, itemsPerPage]);
 
@@ -413,8 +469,7 @@ const SriLankanTourPage: React.FC = () => {
         <div id="results-section" className="mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <h3 className="text-2xl font-semibold text-gray-900">
-              {totalTours} Tour{totalTours !== 1 ? "s" : ""}{" "}
-              Found
+              {totalTours} Tour{totalTours !== 1 ? "s" : ""} Found
             </h3>
 
             {/* Items Per Page Selector */}
@@ -450,10 +505,7 @@ const SriLankanTourPage: React.FC = () => {
           {/* Tours Grid */}
           {tours.length > 0 ? (
             <>
-              <ToursGrid
-                tours={tours}
-                displayCount={tours.length}
-              />
+              <ToursGrid tours={tours} displayCount={tours.length} />
 
               {/* Pagination Controls */}
               {totalPages > 1 && (
