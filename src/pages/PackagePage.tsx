@@ -22,6 +22,8 @@ import PackageHistoryGallery from "@/components/packages-components/PackageHisto
 import NavBar from "@/components/common-components/navBar/NavBar";
 import Footer from "@/app/components/footer/Footer";
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";
+import PackageHeroSection from "@/components/packages-components/PackageHeroSection";
+import LinkBar from "@/components/common-components/linkBar/LinkBar";
 
 interface PackageHistoryImagesResponse {
   code: number;
@@ -398,7 +400,9 @@ const PackagePage: React.FC = () => {
 
   return (
     <>
+      <LinkBar />
       <NavBar />
+      <PackageHeroSection />
       <div className="mx-auto px-4 py-8 bg-gradient-to-br from-purple-100 via-purple-100 to-amber-100">
         {/* Page Header */}
         <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">

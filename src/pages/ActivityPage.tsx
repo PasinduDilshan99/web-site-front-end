@@ -16,6 +16,8 @@ import ActivityHistorySection, {
   ActivityHistoryImage,
 } from "@/components/activities-components/ActivityHistorySection";
 import ActivityHistoryGallery from "@/components/activities-components/ActivityHistoryGallery";
+import ActivityHeroSection from "@/components/activities-components/ActivityHeroSection";
+import LinkBar from "@/components/common-components/linkBar/LinkBar";
 
 // Review types (move these to a types file if needed)
 interface CommentReaction {
@@ -416,7 +418,9 @@ const ActivityPage: React.FC = () => {
 
   return (
     <>
+      <LinkBar />
       <NavBar />
+      <ActivityHeroSection />
       <div className="mx-auto px-4 py-8 bg-gradient-to-br from-blue-50 via-purple-50 to-amber-50 min-h-screen">
         {/* Page Header */}
         <div className="text-center mb-12">

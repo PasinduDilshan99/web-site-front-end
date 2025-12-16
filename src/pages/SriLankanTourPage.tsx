@@ -17,6 +17,8 @@ import ReviewsSection from "@/components/sri-lankan-tours-components/ReviewsSect
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";
 import TourHistorySection from "@/components/sri-lankan-tours-components/TourHistorySection";
 import TourHistoryGallery from "@/components/sri-lankan-tours-components/TourHistoryGallery";
+import LinkBar from "@/components/common-components/linkBar/LinkBar";
+import TourHeroSection from "@/components/sri-lankan-tours-components/TourHeroSection";
 
 const SriLankanTourPage: React.FC = () => {
   const [tours, setTours] = useState<ActiveToursType[]>([]);
@@ -341,7 +343,9 @@ const SriLankanTourPage: React.FC = () => {
 
   return (
     <>
+      <LinkBar />
       <NavBar />
+      <TourHeroSection />
       <div className="mx-auto px-4 py-8 bg-gradient-to-br from-amber-50 via-purple-50 to-blue-50 min-h-screen">
         {/* Page Header */}
         <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">

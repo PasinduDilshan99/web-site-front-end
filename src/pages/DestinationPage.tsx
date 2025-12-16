@@ -17,6 +17,8 @@ import ReviewsSection from "@/components/destinations-components/ReviewsSection"
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";
 import DestinationHistory from "@/components/destinations-components/DestinationHistory";
 import DestinationHistoryGallery from "@/components/destinations-components/DestinationHistoryGallery";
+import DestinationHeroSection from "@/components/destinations-components/DestinationHeroSection";
+import LinkBar from "@/components/common-components/linkBar/LinkBar";
 
 // Review types (move these to a types file if needed)
 interface Image {
@@ -433,7 +435,9 @@ const DestinationPage: React.FC = () => {
 
   return (
     <>
+      <LinkBar />
       <NavBar />
+      <DestinationHeroSection />
       <div className="mx-auto px-4 py-8 bg-gradient-to-br from-purple-100 via-purple-100 to-amber-100 min-h-screen">
         {/* Page Header */}
         <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
