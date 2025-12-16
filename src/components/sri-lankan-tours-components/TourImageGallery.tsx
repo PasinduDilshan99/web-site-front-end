@@ -81,7 +81,7 @@ const TourImageGallery: React.FC<TourImageGalleryProps> = ({ tour }) => {
           </div>
 
           {/* Tablet and above: Vertical thumbnails */}
-          <div className="absolute bottom-3 sm:bottom-4 right-3 sm:right-4 hidden sm:flex flex-col gap-1">
+          <div className="absolute bottom-3 sm:bottom-4 right-3 sm:right-4 hidden sm:flex flex gap-1">
             {allImages.slice(0, 3).map((image, index) => (
               <div
                 key={index}

@@ -36,11 +36,16 @@ export interface ActiveToursType {
   images: TourImage[];
 }
 
-export interface ApiResponse {
+export interface TourListResponse {
+  totalTours: number;
+  tourResponseDtoList: ActiveToursType[];
+}
+
+export interface PaginatedTourResponse {
   code: number;
   status: string;
   message: string;
-  data: ActiveToursType[];
+  data: TourListResponse | null;
   timestamp: string;
 }
 
@@ -54,6 +59,18 @@ export interface TourFilters {
   location: string;
 }
 
+export interface TourSearchRequest {
+  name: string | null;
+  minPrice: number | null;
+  maxPrice: number | null;
+  duration: number | null;
+  tourType: string | null;
+  tourCategory: string | null;
+  season: string | null;
+  location: string | null;
+  pageNumber: number;
+  pageSize: number;
+}
 
 // types/sri-lankan-tour-types.ts
 export interface ReviewImage {
@@ -193,7 +210,6 @@ export interface TourHistoryResponse {
   data: TourHistory[];
   timestamp: string;
 }
-
 
 export interface TourHistoryImage {
   imageId: number;
