@@ -32,12 +32,6 @@ export default function Home() {
   return (
     <div>
       <div>
-        <LinkBar />
-      </div>
-      <div>
-        <NavBar />
-      </div>
-      <div>
         <HeroSection />
       </div>
       {/* <div>
@@ -120,11 +114,6 @@ export default function Home() {
       </div> */}
       <div>
         <Inquire />
-      </div>
-
-      {/* Footer */}
-      <div>
-        <Footer />
       </div>
     </div>
   );

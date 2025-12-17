@@ -233,3 +233,134 @@ export interface TourHistoryImagesResponse {
   data: TourHistoryImage[];
   timestamp: string;
 }
+
+
+// Add these interfaces to your existing types file
+
+export interface Accommodation {
+  day: number;
+  breakfast: boolean;
+  breakfastDescription: string | null;
+  lunch: boolean;
+  lunchDescription: string | null;
+  dinner: boolean;
+  dinnerDescription: string | null;
+  morningTea: boolean;
+  morningTeaDescription: string | null;
+  eveningTea: boolean;
+  eveningTeaDescription: string | null;
+  snacks: boolean;
+  snackNote: string | null;
+  hotel: Hotel | null;
+  transport: Transport | null;
+  otherNotes: string | null;
+}
+
+export interface Hotel {
+  hotelId: number;
+  hotelName: string;
+  hotelType: string | null;
+  hotelCategory: string;
+  longitude: number;
+  latitude: number;
+  location: string;
+  description: string;
+  facilities: string | null;
+}
+
+export interface Transport {
+  transportId: number;
+  transportType: string;
+  vehicleModel: string;
+  seatCount: number;
+  airConditioned: boolean;
+  driverIncluded: boolean | null;
+  fuelIncluded: boolean | null;
+  description: string | null;
+}
+
+export interface DestinationImage {
+  imageId: number;
+  imageName: string;
+  imageDescription: string;
+  imageUrl: string;
+  imageStatus: string | null;
+}
+
+export interface Destination {
+  destinationId: number;
+  destinationName: string;
+  destinationDescription: string;
+  destinationStatus: string | null;
+  category: string;
+  categoryDescription: string;
+  location: string;
+  latitude: number;
+  longitude: number;
+  createdAt: string;
+  createdBy: string;
+  createrImageUrl: string;
+  updatedAt: string | null;
+  updatedBy: string | null;
+  updaterImageUrl: string | null;
+  images: DestinationImage[];
+}
+
+export interface Requirement {
+  id: number;
+  name: string;
+  value: string;
+  description: string;
+  color: string;
+  status: number;
+}
+
+export interface ActivityImage {
+  id: number;
+  name: string;
+  description: string;
+  status: number;
+  image_url: string;
+}
+
+export interface Activity {
+  id: number;
+  destinationId: number;
+  name: string;
+  description: string;
+  activitiesCategory: string;
+  durationHours: number;
+  availableFrom: string;
+  availableTo: string;
+  priceLocal: number;
+  priceForeigners: number;
+  minParticipate: number;
+  maxParticipate: number;
+  season: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  categoryName: string;
+  categoryDescription: string;
+  requirements: Requirement[];
+  images: ActivityImage[];
+}
+
+export interface DestinationWithActivities {
+  destination: Destination;
+  activities: Activity[];
+}
+
+export interface DayDetails {
+  dayNumber: number;
+  accommodations: Accommodation;
+  destinations: DestinationWithActivities[];
+}
+
+export interface TourDetailsApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: DayDetails[];
+  timestamp: string;
+}

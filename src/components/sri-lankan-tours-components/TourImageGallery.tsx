@@ -129,8 +129,8 @@ const TourImageGallery: React.FC<TourImageGalleryProps> = ({ tour }) => {
               }}
               className={`w-2 h-2 rounded-full transition-all duration-200 ${
                 index === currentImageIndex
-                  ? "bg-white"
-                  : "bg-white bg-opacity-50 hover:bg-opacity-80"
+                  ? "bg-gradient-to-b from-amber-800 to-purple-800"
+                  : "bg-gradient-to-b from-purple-300 to-amber-300 bg-opacity-50 hover:bg-opacity-80"
               }`}
             />
           ))}

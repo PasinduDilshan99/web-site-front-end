@@ -288,7 +288,7 @@ const TourHeroSection = () => {
                     <button
                       onClick={() =>
                         router.push(
-                          `/sri-lankan-tours?location=${currentSlideData.primaryButtonLink}`
+                          `/sri-lankan-tours?location=${currentSlideData.secondaryButtonLink}`
                         )
                       }
                       className="w-full sm:w-auto px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 border-2 border-white/50 text-white text-sm sm:text-base font-semibold rounded-lg sm:rounded-xl hover:bg-white hover:text-purple-900 transition-all duration-300 flex items-center justify-center gap-2 sm:gap-3 group"

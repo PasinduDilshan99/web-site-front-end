@@ -15,12 +15,6 @@ const ContactUsPage = () => {
   return (
     <>
       <div>
-        <LinkBar />
-      </div>
-      <div>
-        <NavBar />
-      </div>
-      <div>
         <ContactUsHeroSection />
       </div>
       <div>
@@ -43,9 +37,6 @@ const ContactUsPage = () => {
       </div> */}
       <div>
         <CallToAction />
-      </div>
-      <div>
-        <Footer />
       </div>
     </>
   );

@@ -414,12 +414,6 @@ const BlogPage: React.FC = () => {
   return (
     <>
       <div>
-        <LinkBar />
-      </div>
-      <div>
-        <NavBar />
-      </div>
-      <div>
         <BlogHeroSection />
       </div>
       
@@ -529,10 +523,6 @@ const BlogPage: React.FC = () => {
             <NoResults onResetFilters={resetFilters} />
           )}
         </div>
-      </div>
-      
-      <div>
-        <Footer />
       </div>
     </>
   );

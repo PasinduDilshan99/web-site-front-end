@@ -18,12 +18,6 @@ const AboutUsPage = () => {
   return (
     <>
       <div>
-        <LinkBar />
-      </div>
-      <div>
-        <NavBar />
-      </div>
-      <div>
         <AboutUsHeroSection />
       </div>
       <div>
@@ -57,9 +51,6 @@ const AboutUsPage = () => {
       {/* <div>
         <AchievementDetails />
       </div> */}
-      <div>
-        <Footer />
-      </div>
     </>
   );
 };

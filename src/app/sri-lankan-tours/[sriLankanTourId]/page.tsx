@@ -19,6 +19,17 @@ import SLTourDetailsSchedules from "@/components/sri-lankan-tours-components/SLT
 import SLTourDetailsBookingSidebar from "@/components/sri-lankan-tours-components/SLTourDetailsBookingSidebar";
 import TourHistorySection from "@/components/sri-lankan-tours-components/TourHistorySection";
 import TourHistoryGallery from "@/components/sri-lankan-tours-components/TourHistoryGallery";
+import SLTourDayWiseDetails from "@/components/sri-lankan-tours-components/SLTourDayWiseDetails";
+import { DayDetails } from "@/types/sri-lankan-tour-types";
+
+// Add this interface near other interfaces
+interface DayDetailsApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: DayDetails[];
+  timestamp: string;
+}
 
 interface Schedule {
   scheduleId: number;
@@ -88,6 +99,11 @@ const SriLankanTourDetailsPage = () => {
   const [galleryImages, setGalleryImages] = useState<TourHistoryImage[]>([]);
   const [galleryLoading, setGalleryLoading] = useState<boolean>(true);
   const [galleryError, setGalleryError] = useState<string | null>(null);
+  const [dayDetails, setDayDetails] = React.useState<DayDetails[]>([]);
+  const [dayDetailsLoading, setDayDetailsLoading] = React.useState(true);
+  const [dayDetailsError, setDayDetailsError] = React.useState<string | null>(
+    null
+  );
 
   React.useEffect(() => {
     const fetchTourDetails = async () => {
@@ -137,8 +153,15 @@ const SriLankanTourDetailsPage = () => {
       fetchTourReviews();
       fetchTourHistory();
       fetchTourHistoryImages();
+      fetchDayWiseDetails();
     }
   }, [sriLankanTourId]);
+
+  const handleRetryDayDetails = () => {
+    if (sriLankanTourId) {
+      fetchDayWiseDetails();
+    }
+  };
 
   const fetchTourHistory = async (): Promise<void> => {
     try {
@@ -158,6 +181,28 @@ const SriLankanTourDetailsPage = () => {
       );
     } finally {
       setHistoryLoading(false);
+    }
+  };
+
+  const fetchDayWiseDetails = async () => {
+    try {
+      setDayDetailsLoading(true);
+      const response = await fetch(
+        `http://localhost:8080/felicita/v0/api/tour/tour-details/${sriLankanTourId}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch day-wise details");
+      }
+
+      const data: DayDetailsApiResponse = await response.json();
+      setDayDetails(data.data);
+    } catch (err) {
+      setDayDetailsError(
+        err instanceof Error ? err.message : "An error occurred"
+      );
+    } finally {
+      setDayDetailsLoading(false);
     }
   };
 
@@ -236,15 +281,7 @@ const SriLankanTourDetailsPage = () => {
 
   if (tourLoading) {
     return (
-      <section className="py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <Loading
-            message="Loading tour details..."
-            variant="spinner"
-            size="md"
-          />
-        </div>
-      </section>
+      <Loading message="Loading tour details..." variant="spinner" size="md" />
     );
   }
 
@@ -282,49 +319,53 @@ const SriLankanTourDetailsPage = () => {
   }
 
   return (
-    <>
-      <NavBar />
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-purple-50">
-        <SLTourDetailsHeroSection tour={tour} />
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-purple-50">
+      <SLTourDetailsHeroSection tour={tour} />
 
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Main Content */}
-            <div className="lg:col-span-2">
-              <SLTourDetailsOverview tour={tour} />
-              <SLTourDetailsSchedules schedules={tour.schedules} />
-            </div>
-
-            {/* Sidebar */}
-            <div className="lg:col-span-1">
-              <SLTourDetailsBookingSidebar tour={tour} />
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Content */}
+          <div className="lg:col-span-2">
+            <SLTourDetailsOverview tour={tour} />
+            <div className="mt-8">
+              <SLTourDayWiseDetails
+                days={dayDetails}
+                loading={dayDetailsLoading}
+                error={dayDetailsError}
+                onRetry={handleRetryDayDetails}
+              />
             </div>
           </div>
-        </div>
 
-        {/* Reviews Section */}
-        <ReviewsSection
-          reviews={reviews}
-          loading={reviewsLoading}
-          error={reviewsError}
-          onRetry={handleRetryReviews}
-        />
-        <TourMapContainer tourId={sriLankanTourId} />
-        <TourHistorySection
-          histories={histories}
-          loading={historyLoading}
-          error={historyError}
-          onRetry={fetchTourHistory}
-        />
-        <TourHistoryGallery
-          images={galleryImages}
-          loading={galleryLoading}
-          error={galleryError}
-          onRetry={fetchTourHistoryImages}
-        />
+          {/* Sidebar */}
+          <div className="lg:col-span-1">
+            <SLTourDetailsBookingSidebar tour={tour} />
+            <SLTourDetailsSchedules schedules={tour.schedules} />
+          </div>
+        </div>
       </div>
-      <Footer />
-    </>
+
+      {/* Reviews Section */}
+      <ReviewsSection
+        reviews={reviews}
+        loading={reviewsLoading}
+        error={reviewsError}
+        onRetry={handleRetryReviews}
+      />
+      <TourMapContainer tourId={sriLankanTourId} />
+      <TourHistorySection
+        histories={histories}
+        loading={historyLoading}
+        error={historyError}
+        onRetry={fetchTourHistory}
+      />
+      <TourHistoryGallery
+        images={galleryImages}
+        loading={galleryLoading}
+        error={galleryError}
+        onRetry={fetchTourHistoryImages}
+      />
+    </div>
   );
 };
 

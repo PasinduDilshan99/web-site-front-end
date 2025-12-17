@@ -8,11 +8,8 @@ import React from "react";
 const FaqPage = () => {
   return (
     <>
-      <LinkBar />
-      <NavBar />
       <FaqHeroSection />
       <FaqComponent showAll={true} />
-      <Footer />
     </>
   );
 };

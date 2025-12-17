@@ -11,7 +11,7 @@ const SLTourDetailsBookingSidebar: React.FC<
   return (
     <>
       {/* Booking Card */}
-      <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-6">
+      <div className="bg-white rounded-2xl shadow-lg p-6 top-6">
         <h3 className="text-xl font-bold text-gray-800 mb-4">Book This Tour</h3>
 
         <div className="space-y-4">
