@@ -364,3 +364,63 @@ export interface TourDetailsApiResponse {
   data: DayDetails[];
   timestamp: string;
 }
+
+export interface Inclusion {
+  id: number;
+  description: string;
+  displayOrder: number;
+  status: string;
+}
+
+export interface Exclusion {
+  id: number;
+  description: string;
+  displayOrder: number;
+  status: string;
+}
+
+export interface Condition {
+  id: number;
+  description: string;
+  displayOrder: number;
+  status: string;
+}
+
+export interface TravelTip {
+  id: number;
+  title: string;
+  description: string;
+  displayOrder: number;
+  status: string;
+}
+
+export interface TourExtraDetailsData {
+  inclusions: Inclusion[];
+  exclusions: Exclusion[];
+  conditions: Condition[];
+  travelTips: TravelTip[];
+}
+
+export interface TourExtraDetailsApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: TourExtraDetailsData;
+  timestamp: string;
+}
+
+// types/tour-extra-details-types.ts
+export interface TourExtraDetailItem {
+  id: number;
+  description?: string;
+  title?: string;
+  displayOrder: number;
+  status: 'ACTIVE' | 'INACTIVE';
+}
+
+export interface TourExtraDetails {
+  inclusions: TourExtraDetailItem[];
+  exclusions: TourExtraDetailItem[];
+  conditions: TourExtraDetailItem[];
+  travelTips: TourExtraDetailItem[];
+}

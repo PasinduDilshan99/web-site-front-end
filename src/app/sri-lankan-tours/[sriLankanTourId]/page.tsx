@@ -21,6 +21,7 @@ import TourHistorySection from "@/components/sri-lankan-tours-components/TourHis
 import TourHistoryGallery from "@/components/sri-lankan-tours-components/TourHistoryGallery";
 import SLTourDayWiseDetails from "@/components/sri-lankan-tours-components/SLTourDayWiseDetails";
 import { DayDetails } from "@/types/sri-lankan-tour-types";
+import { TourExtraDetails as TourExtraDetailsType } from "@/types/sri-lankan-tour-types";
 
 // Add this interface near other interfaces
 interface DayDetailsApiResponse {
@@ -104,6 +105,13 @@ const SriLankanTourDetailsPage = () => {
   const [dayDetailsError, setDayDetailsError] = React.useState<string | null>(
     null
   );
+  const [extraDetails, setExtraDetails] = useState<TourExtraDetailsType | null>(
+    null
+  );
+  const [extraDetailsLoading, setExtraDetailsLoading] = useState(false);
+  const [extraDetailsError, setExtraDetailsError] = useState<string | null>(
+    null
+  );
 
   React.useEffect(() => {
     const fetchTourDetails = async () => {
@@ -123,6 +131,26 @@ const SriLankanTourDetailsPage = () => {
         setTourError(err instanceof Error ? err.message : "An error occurred");
       } finally {
         setTourLoading(false);
+      }
+    };
+
+    const fetchExtraDetails = async () => {
+      try {
+        setExtraDetailsLoading(true);
+        const response = await fetch(
+          `http://localhost:8080/felicita/v0/api/tour/tour-extra-details/${sriLankanTourId}`
+        );
+        const data = await response.json();
+
+        if (data.code === 200) {
+          setExtraDetails(data.data);
+        } else {
+          setExtraDetailsError("Failed to load additional details");
+        }
+      } catch (err) {
+        setExtraDetailsError("Failed to load additional details");
+      } finally {
+        setExtraDetailsLoading(false);
       }
     };
 
@@ -154,6 +182,7 @@ const SriLankanTourDetailsPage = () => {
       fetchTourHistory();
       fetchTourHistoryImages();
       fetchDayWiseDetails();
+      fetchExtraDetails();
     }
   }, [sriLankanTourId]);
 
@@ -333,6 +362,9 @@ const SriLankanTourDetailsPage = () => {
                 loading={dayDetailsLoading}
                 error={dayDetailsError}
                 onRetry={handleRetryDayDetails}
+                extraDetails={extraDetails}
+                extraDetailsLoading={extraDetailsLoading}
+                extraDetailsError={extraDetailsError}
               />
             </div>
           </div>
