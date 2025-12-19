@@ -258,7 +258,7 @@ const TourExtraDetails: React.FC<TourExtraDetailsProps> = ({
                 >
                   <div className="flex items-start space-x-3">
                     <div className="flex-shrink-0">
-                      <div className={`w-10 h-10 ${colorClasses.bg} rounded-lg flex items-center justify-center`}>
+                      <div className={`text-emerald-600 w-10 h-10 ${colorClasses.bg} rounded-lg flex items-center justify-center`}>
                         {getIconForInclusion(item.description)}
                       </div>
                     </div>
@@ -324,7 +324,7 @@ const TourExtraDetails: React.FC<TourExtraDetailsProps> = ({
                 >
                   <div className="flex items-start space-x-3">
                     <div className="flex-shrink-0">
-                      <div className={`w-10 h-10 ${colorClasses.bg} rounded-lg flex items-center justify-center`}>
+                      <div className={`text-amber-600 w-10 h-10 ${colorClasses.bg} rounded-lg flex items-center justify-center`}>
                         {getIconForCondition(item.description)}
                       </div>
                     </div>
@@ -358,7 +358,7 @@ const TourExtraDetails: React.FC<TourExtraDetailsProps> = ({
                   <div className="flex flex-col h-full">
                     <div className="flex items-start space-x-3 mb-3">
                       <div className="flex-shrink-0">
-                        <div className={`w-12 h-12 ${colorClasses.bg} rounded-lg flex items-center justify-center`}>
+                        <div className={`text-blue-600 w-12 h-12 ${colorClasses.bg} rounded-lg flex items-center justify-center`}>
                           {getIconForTravelTip(tip.title)}
                         </div>
                       </div>
