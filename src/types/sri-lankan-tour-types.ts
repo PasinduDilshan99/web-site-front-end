@@ -409,7 +409,6 @@ export interface TourExtraDetailsApiResponse {
   timestamp: string;
 }
 
-// types/tour-extra-details-types.ts
 export interface TourExtraDetailItem {
   id: number;
   description?: string;

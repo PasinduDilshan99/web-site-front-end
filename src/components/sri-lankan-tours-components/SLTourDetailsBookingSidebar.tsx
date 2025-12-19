@@ -1,37 +1,127 @@
+import { Package } from "@/app/sri-lankan-tours/[sriLankanTourId]/page";
 import { TourDetails } from "@/types/packages-types";
 import React from "react";
 
 interface SLTourDetailsBookingSidebarProps {
   tour: TourDetails;
+  selectedPackage?: Package | null;
 }
 
 const SLTourDetailsBookingSidebar: React.FC<
   SLTourDetailsBookingSidebarProps
-> = ({ tour }) => {
+> = ({ tour, selectedPackage }) => {
+
+  const price = selectedPackage?.pricePerPerson || 50;
+  const originalPrice = selectedPackage?.totalPrice;
+  const discount = selectedPackage?.discount || 0;
+  const hasDiscount = discount > 0;
+
   return (
     <>
       {/* Booking Card */}
       <div className="bg-white rounded-2xl shadow-lg p-6 top-6">
         <h3 className="text-xl font-bold text-gray-800 mb-4">Book This Tour</h3>
 
+        {/* Package Info if selected */}
+        {selectedPackage && (
+          <div className="mb-4 p-3 bg-gradient-to-r from-purple-50 to-amber-50 rounded-lg border border-purple-100">
+            <div className="flex items-center justify-between mb-2">
+              <div>
+                <span className="text-sm font-medium text-gray-600">Selected Package:</span>
+                <h4 className="text-lg font-bold text-purple-700">{selectedPackage.packageName}</h4>
+              </div>
+              {selectedPackage.color && (
+                <div 
+                  className="w-6 h-6 rounded-full border-2 border-white shadow"
+                  style={{ backgroundColor: selectedPackage.color }}
+                />
+              )}
+            </div>
+            <p className="text-sm text-gray-600">{selectedPackage.packageDescription}</p>
+          </div>
+        )}
+
         <div className="space-y-4">
           <div className="flex justify-between items-center py-3 border-b border-gray-200">
-            <span className="text-gray-600">Starting from</span>
-            <span className="text-3xl font-bold text-amber-600">$50</span>
+            <div className="text-left">
+              <span className="text-gray-600 block">Starting from</span>
+              {hasDiscount && (
+                <span className="text-xs text-gray-500 line-through">
+                  ${originalPrice?.toLocaleString()}
+                </span>
+              )}
+            </div>
+            <div className="text-right">
+              <span className="text-3xl font-bold text-amber-600">
+                ${price.toLocaleString()}
+              </span>
+              {hasDiscount && (
+                <div className="text-xs text-green-600 font-medium bg-green-100 px-2 py-1 rounded-full inline-block mt-1">
+                  Save {discount}%
+                </div>
+              )}
+              <p className="text-xs text-gray-500 mt-1">per person</p>
+            </div>
           </div>
+
+          {/* Package Inclusions Summary */}
+          {selectedPackage && (
+            <div className="bg-gray-50 rounded-lg p-3">
+              <h5 className="text-sm font-semibold text-gray-700 mb-2">Package Includes:</h5>
+              <ul className="space-y-1 text-sm text-gray-600">
+                {selectedPackage.packageDayByDayDtoList[0]?.breakfast && (
+                  <li className="flex items-center gap-1">
+                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+                    Breakfast included
+                  </li>
+                )}
+                {selectedPackage.packageDayByDayDtoList[0]?.lunch && (
+                  <li className="flex items-center gap-1">
+                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+                    Lunch included
+                  </li>
+                )}
+                {selectedPackage.packageDayByDayDtoList[0]?.hotelName && (
+                  <li className="flex items-center gap-1">
+                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+                    Hotel accommodation
+                  </li>
+                )}
+                {selectedPackage.packageDayByDayDtoList[0]?.vehicleTypeName && (
+                  <li className="flex items-center gap-1">
+                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+                    Transport included
+                  </li>
+                )}
+              </ul>
+            </div>
+          )}
 
           <div className="space-y-3">
             <SLTourDetailsFeatureItem text="Best price guarantee" />
             <SLTourDetailsFeatureItem text="Free cancellation" />
+            <SLTourDetailsFeatureItem text="Instant confirmation" />
+            {selectedPackage && (
+              <SLTourDetailsFeatureItem text="Flexible payment options" />
+            )}
           </div>
 
           <button className="w-full bg-gradient-to-r from-amber-600 to-purple-600 hover:from-purple-700 hover:to-amber-700 text-white py-4 rounded-xl font-semibold text-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
-            Book Now
+            {selectedPackage ? "Book This Package" : "Book Now"}
           </button>
 
           <p className="text-xs text-gray-500 text-center">
             Secure your spot with easy booking
           </p>
+          
+          {/* Package Days Info */}
+          {selectedPackage && (
+            <div className="text-center text-sm text-gray-600 pt-2 border-t border-gray-100">
+              <span className="font-medium">{selectedPackage.packageDayByDayDtoList.length} days</span>
+              <span className="mx-2">•</span>
+              <span>Complete itinerary</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -54,6 +144,20 @@ const SLTourDetailsBookingSidebar: React.FC<
             value={tour.seasonName}
             description={tour.seasonDescription}
           />
+          <SLTourDetailsDetailItem
+            label="Duration"
+            value={`${tour.duration} days`}
+            description="Complete tour duration"
+          />
+          {selectedPackage && (
+            <div className="pt-3 border-t border-gray-100">
+              <SLTourDetailsDetailItem
+                label="Package Details"
+                value={selectedPackage.packageName}
+                description={`Includes accommodation, transport, and meals for ${selectedPackage.packageDayByDayDtoList.length} days`}
+              />
+            </div>
+          )}
         </div>
       </div>
     </>
@@ -63,7 +167,7 @@ const SLTourDetailsBookingSidebar: React.FC<
 const SLTourDetailsFeatureItem: React.FC<{ text: string }> = ({ text }) => (
   <div className="flex items-center gap-2 text-sm text-gray-600">
     <svg
-      className="w-4 h-4 text-green-500"
+      className="w-4 h-4 text-green-500 flex-shrink-0"
       fill="currentColor"
       viewBox="0 0 20 20"
     >
