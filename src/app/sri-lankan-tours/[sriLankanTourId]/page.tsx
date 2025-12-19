@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import ReviewsSection from "@/components/sri-lankan-tours-components/ReviewsSection";
 import {
@@ -7,6 +7,7 @@ import {
   TourHistoryImage,
   TourReview,
   Accommodation,
+  TourExtraDetails,
 } from "@/types/sri-lankan-tour-types";
 import TourMapContainer from "@/components/sri-lankan-tours-components/tour-map-components/TourMapContainer";
 import NavBar from "@/components/common-components/navBar/NavBar";
@@ -22,8 +23,8 @@ import TourHistorySection from "@/components/sri-lankan-tours-components/TourHis
 import TourHistoryGallery from "@/components/sri-lankan-tours-components/TourHistoryGallery";
 import SLTourDayWiseDetails from "@/components/sri-lankan-tours-components/SLTourDayWiseDetails";
 import { DayDetails } from "@/types/sri-lankan-tour-types";
-import { TourExtraDetails as TourExtraDetailsType } from "@/types/sri-lankan-tour-types";
 import { Calendar } from "lucide-react";
+import { PackageSchedulesComponent } from "@/components/sri-lankan-tours-components/tour-day-to-day-details-components/PackageSchedules";
 
 // Add this interface near other interfaces
 interface DayDetailsApiResponse {
@@ -50,6 +51,22 @@ interface Image {
   imageName: string;
   imageDescription: string;
   imageUrl: string;
+}
+
+export interface TourAssignedEmployeeResponse {
+  firstName: string;
+  lastName: string;
+  imageUrl: string;
+  email: string;
+  mobileNumber: string;
+  designationName: string;
+  assignMessage: string;
+  relatedOtherTours: RelatedOtherTour[];
+}
+
+export interface RelatedOtherTour {
+  tourId: number;
+  tourName: string;
 }
 
 interface TourDetails {
@@ -122,6 +139,7 @@ interface PackageDayAccommodation {
   airCondition: boolean;
 }
 
+// Update Package interface to include extra details
 export interface Package {
   packageId: number;
   packageName: string;
@@ -132,6 +150,10 @@ export interface Package {
   color: string;
   hoverColor: string;
   packageDayByDayDtoList: PackageDayAccommodation[];
+  inclusions?: TourExtraDetails["inclusions"];
+  exclusions?: TourExtraDetails["exclusions"];
+  conditions?: TourExtraDetails["conditions"];
+  travelTips?: TourExtraDetails["travelTips"];
 }
 
 interface PackagesApiResponse {
@@ -139,6 +161,58 @@ interface PackagesApiResponse {
   status: string;
   message: string;
   data: Package[];
+  timestamp: string;
+}
+
+// Add interface for Package Extra Details API response
+interface PackageExtraDetailsItem {
+  id: number;
+  description?: string;
+  title?: string;
+  displayOrder: number;
+  status: "ACTIVE" | "INACTIVE";
+}
+
+interface PackageExtraDetailsData {
+  packageId: number;
+  inclusions: PackageExtraDetailsItem[];
+  exclusions: PackageExtraDetailsItem[];
+  conditions: PackageExtraDetailsItem[];
+  travelTips: PackageExtraDetailsItem[];
+}
+
+interface PackageExtraDetailsApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: PackageExtraDetailsData[];
+  timestamp: string;
+}
+
+// Add interface for Package Schedules API response
+export interface PackageSchedule {
+  packageScheduleId: number;
+  packageId: number;
+  name: string;
+  assumeStartDate: string;
+  assumeEndDate: string;
+  description: string;
+  specialNote: string;
+  status: string;
+  durationStart: number;
+  durationEnd: number;
+}
+
+interface PackageSchedulesData {
+  packageId: number;
+  packageSchedules: PackageSchedule[];
+}
+
+interface PackageSchedulesApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: PackageSchedulesData[];
   timestamp: string;
 }
 
@@ -161,13 +235,12 @@ const SriLankanTourDetailsPage = () => {
   const [dayDetailsError, setDayDetailsError] = React.useState<string | null>(
     null
   );
-  const [extraDetails, setExtraDetails] = useState<TourExtraDetailsType | null>(
-    null
-  );
-  const [extraDetailsLoading, setExtraDetailsLoading] = useState(false);
-  const [extraDetailsError, setExtraDetailsError] = useState<string | null>(
-    null
-  );
+  const [tourExtraDetails, setTourExtraDetails] =
+    useState<TourExtraDetails | null>(null);
+  const [tourExtraDetailsLoading, setTourExtraDetailsLoading] = useState(false);
+  const [tourExtraDetailsError, setTourExtraDetailsError] = useState<
+    string | null
+  >(null);
 
   // Add package states
   const [packages, setPackages] = useState<Package[]>([]);
@@ -176,6 +249,27 @@ const SriLankanTourDetailsPage = () => {
   const [packagesError, setPackagesError] = useState<string | null>(null);
   const [dayDetailsWithAccommodations, setDayDetailsWithAccommodations] =
     useState<DayDetails[]>([]);
+  const [packageExtraDetails, setPackageExtraDetails] = useState<
+    PackageExtraDetailsData[]
+  >([]);
+  const [packageExtraDetailsLoading, setPackageExtraDetailsLoading] =
+    useState(false);
+  const [packageExtraDetailsError, setPackageExtraDetailsError] = useState<
+    string | null
+  >(null);
+
+  // Add package schedules states
+  const [packageSchedules, setPackageSchedules] = useState<
+    PackageSchedulesData[]
+  >([]);
+  const [packageSchedulesLoading, setPackageSchedulesLoading] = useState(false);
+  const [packageSchedulesError, setPackageSchedulesError] = useState<
+    string | null
+  >(null);
+  const [assignUser, setAssignUser] =
+    useState<TourAssignedEmployeeResponse | null>(null);
+  const [assignUserError, setAssignUserError] = useState<string | null>(null);
+  const [assignUserLoading, setAssignUserLoading] = useState(false);
 
   // Function to convert PackageDayAccommodation to Accommodation
   const convertToAccommodation = (
@@ -241,6 +335,73 @@ const SriLankanTourDetailsPage = () => {
     });
   };
 
+  // Function to get selected package extra details
+  const getSelectedPackageExtraDetails = (): TourExtraDetails | null => {
+    if (!selectedPackage || packageExtraDetails.length === 0) {
+      return null;
+    }
+
+    const selectedPackageDetails = packageExtraDetails.find(
+      (detail) => detail.packageId === selectedPackage.packageId
+    );
+
+    if (!selectedPackageDetails) {
+      return null;
+    }
+
+    // Convert to TourExtraDetails format
+    return {
+      inclusions: selectedPackageDetails.inclusions.map((item) => ({
+        id: item.id,
+        description: item.description || "",
+        displayOrder: item.displayOrder,
+        status: item.status,
+      })),
+      exclusions: selectedPackageDetails.exclusions.map((item) => ({
+        id: item.id,
+        description: item.description || "",
+        displayOrder: item.displayOrder,
+        status: item.status,
+      })),
+      conditions: selectedPackageDetails.conditions.map((item) => ({
+        id: item.id,
+        description: item.description || "",
+        displayOrder: item.displayOrder,
+        status: item.status,
+      })),
+      travelTips: selectedPackageDetails.travelTips.map((item) => ({
+        id: item.id,
+        title: item.title || "",
+        description: item.description || "",
+        displayOrder: item.displayOrder,
+        status: item.status,
+      })),
+    };
+  };
+
+  // Function to get selected package schedules
+  const getSelectedPackageSchedules = (): PackageSchedule[] => {
+    if (!selectedPackage || packageSchedules.length === 0) {
+      return [];
+    }
+
+    const selectedPackageSchedules = packageSchedules.find(
+      (schedules) => schedules.packageId === selectedPackage.packageId
+    );
+
+    return selectedPackageSchedules?.packageSchedules || [];
+  };
+
+  // Function to get current extra details (either package-specific or general tour details)
+  const getCurrentExtraDetails = (): TourExtraDetails | null => {
+    // If we have package extra details, use them
+    const packageDetails = getSelectedPackageExtraDetails();
+    if (packageDetails) {
+      return packageDetails;
+    }
+    return tourExtraDetails;
+  };
+
   React.useEffect(() => {
     const fetchTourDetails = async () => {
       try {
@@ -262,26 +423,24 @@ const SriLankanTourDetailsPage = () => {
       }
     };
 
-    const fetchExtraDetails = async () => {
+    const fetchTourExtraDetails = async () => {
       try {
-        setExtraDetailsLoading(true);
+        setTourExtraDetailsLoading(true);
         const response = await fetch(
           `http://localhost:8080/felicita/v0/api/tour/tour-extra-details/${sriLankanTourId}`
         );
         const data = await response.json();
-        console.log('====================================');
-        console.log(data);
-        console.log('====================================');
+        console.log("Tour Extra Details:", data);
 
         if (data.code === 200) {
-          setExtraDetails(data.data);
+          setTourExtraDetails(data.data);
         } else {
-          setExtraDetailsError("Failed to load additional details");
+          setTourExtraDetailsError("Failed to load tour additional details");
         }
       } catch (err) {
-        setExtraDetailsError("Failed to load additional details");
+        setTourExtraDetailsError("Failed to load tour additional details");
       } finally {
-        setExtraDetailsLoading(false);
+        setTourExtraDetailsLoading(false);
       }
     };
 
@@ -333,6 +492,83 @@ const SriLankanTourDetailsPage = () => {
         setPackagesLoading(false);
       }
     };
+    const fetchAssignUser = async () => {
+      try {
+        setAssignUserLoading(true);
+        const response = await fetch(
+          `http://localhost:8080/felicita/api/v0/employee/employee-details/${sriLankanTourId}`
+        );
+        const result = await response.json();
+
+        if (result.code === 200) {
+          setAssignUser(result.data);
+        } else {
+          throw new Error(result.message);
+        }
+      } catch (err) {
+        setAssignUserError(
+          err instanceof Error ? err.message : "Failed to load assign user"
+        );
+      } finally {
+        setAssignUserLoading(false);
+      }
+    };
+
+    const fetchPackageExtraDetails = async () => {
+      try {
+        setPackageExtraDetailsLoading(true);
+        const response = await fetch(
+          `http://localhost:8080/felicita/v0/api/package/package-extra-details/${sriLankanTourId}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch package extra details");
+        }
+
+        const data: PackageExtraDetailsApiResponse = await response.json();
+        console.log("Package Extra Details:", data);
+
+        if (data.code === 200) {
+          setPackageExtraDetails(data.data);
+        } else {
+          setPackageExtraDetailsError("Failed to load package extra details");
+        }
+      } catch (err) {
+        setPackageExtraDetailsError(
+          err instanceof Error ? err.message : "An error occurred"
+        );
+      } finally {
+        setPackageExtraDetailsLoading(false);
+      }
+    };
+
+    const fetchPackageSchedules = async () => {
+      try {
+        setPackageSchedulesLoading(true);
+        const response = await fetch(
+          `http://localhost:8080/felicita/v0/api/package/package-schedules/${sriLankanTourId}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch package schedules");
+        }
+
+        const data: PackageSchedulesApiResponse = await response.json();
+        console.log("Package Schedules:", data);
+
+        if (data.code === 200) {
+          setPackageSchedules(data.data);
+        } else {
+          setPackageSchedulesError("Failed to load package schedules");
+        }
+      } catch (err) {
+        setPackageSchedulesError(
+          err instanceof Error ? err.message : "An error occurred"
+        );
+      } finally {
+        setPackageSchedulesLoading(false);
+      }
+    };
 
     if (sriLankanTourId) {
       fetchTourDetails();
@@ -340,13 +576,16 @@ const SriLankanTourDetailsPage = () => {
       fetchTourHistory();
       fetchTourHistoryImages();
       fetchDayWiseDetails();
-      fetchExtraDetails();
-      fetchPackages(); // Add this
+      fetchTourExtraDetails();
+      fetchPackages();
+      fetchPackageExtraDetails();
+      fetchPackageSchedules(); // Add this
+      fetchAssignUser();
     }
   }, [sriLankanTourId]);
 
   // Effect to update day details with accommodations when package changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (dayDetails.length > 0 && selectedPackage) {
       const mergedDayDetails = mergeAccommodationsWithDayDetails(
         dayDetails,
@@ -357,6 +596,11 @@ const SriLankanTourDetailsPage = () => {
       setDayDetailsWithAccommodations(dayDetails);
     }
   }, [dayDetails, selectedPackage]);
+
+  // Handle package selection
+  const handlePackageSelect = (pkg: Package) => {
+    setSelectedPackage(pkg);
+  };
 
   const handleRetryDayDetails = () => {
     if (sriLankanTourId) {
@@ -390,6 +634,68 @@ const SriLankanTourDetailsPage = () => {
         })
         .finally(() => {
           setPackagesLoading(false);
+        });
+    }
+  };
+
+  const handleRetryPackageExtraDetails = () => {
+    if (sriLankanTourId) {
+      setPackageExtraDetailsLoading(true);
+      setPackageExtraDetailsError(null);
+      fetch(
+        `http://localhost:8080/felicita/v0/api/package/package-extra-details/${sriLankanTourId}`
+      )
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to fetch package extra details");
+          }
+          return response.json();
+        })
+        .then((data: PackageExtraDetailsApiResponse) => {
+          if (data.code === 200) {
+            setPackageExtraDetails(data.data);
+          } else {
+            setPackageExtraDetailsError("Failed to load package extra details");
+          }
+        })
+        .catch((err) => {
+          setPackageExtraDetailsError(
+            err instanceof Error ? err.message : "An error occurred"
+          );
+        })
+        .finally(() => {
+          setPackageExtraDetailsLoading(false);
+        });
+    }
+  };
+
+  const handleRetryPackageSchedules = () => {
+    if (sriLankanTourId) {
+      setPackageSchedulesLoading(true);
+      setPackageSchedulesError(null);
+      fetch(
+        `http://localhost:8080/felicita/v0/api/package/package-schedules/${sriLankanTourId}`
+      )
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to fetch package schedules");
+          }
+          return response.json();
+        })
+        .then((data: PackageSchedulesApiResponse) => {
+          if (data.code === 200) {
+            setPackageSchedules(data.data);
+          } else {
+            setPackageSchedulesError("Failed to load package schedules");
+          }
+        })
+        .catch((err) => {
+          setPackageSchedulesError(
+            err instanceof Error ? err.message : "An error occurred"
+          );
+        })
+        .finally(() => {
+          setPackageSchedulesLoading(false);
         });
     }
   };
@@ -556,7 +862,7 @@ const SriLankanTourDetailsPage = () => {
           {packages.map((pkg) => (
             <div
               key={pkg.packageId}
-              onClick={() => setSelectedPackage(pkg)}
+              onClick={() => handlePackageSelect(pkg)}
               className={`p-5 rounded-xl border-2 cursor-pointer transition-all duration-300 hover:shadow-lg ${
                 selectedPackage?.packageId === pkg.packageId
                   ? "border-purple-600 bg-white transform scale-[1.02]"
@@ -638,6 +944,9 @@ const SriLankanTourDetailsPage = () => {
                 <p className="text-sm text-gray-600">
                   {selectedPackage.packageDescription}
                 </p>
+                <div className="mt-2 text-sm text-purple-600 font-medium">
+                  Package-specific details and schedules will be shown below
+                </div>
               </div>
               <div className="text-right">
                 <div className="text-lg font-bold text-purple-600">
@@ -691,6 +1000,9 @@ const SriLankanTourDetailsPage = () => {
     );
   }
 
+  const currentExtraDetails = getCurrentExtraDetails();
+  const currentPackageSchedules = getSelectedPackageSchedules();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 to-purple-50">
       <SLTourDetailsHeroSection tour={tour} />
@@ -724,20 +1036,58 @@ const SriLankanTourDetailsPage = () => {
                 loading={dayDetailsLoading}
                 error={dayDetailsError}
                 onRetry={handleRetryDayDetails}
-                extraDetails={extraDetails}
-                extraDetailsLoading={extraDetailsLoading}
-                extraDetailsError={extraDetailsError}
+                extraDetails={currentExtraDetails}
+                extraDetailsLoading={
+                  packageExtraDetailsLoading || tourExtraDetailsLoading
+                }
+                extraDetailsError={
+                  packageExtraDetailsError || tourExtraDetailsError
+                }
               />
             </div>
           </div>
 
           {/* Sidebar */}
           <div className="lg:col-span-1">
+            {/* Show package schedules if available, otherwise show general tour schedules */}
+            {packageSchedulesLoading ? (
+              <div className="mt-6 p-6 bg-white rounded-2xl shadow-lg">
+                <div className="text-center py-4">
+                  <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600"></div>
+                  <p className="mt-2 text-gray-600 text-sm">
+                    Loading schedules...
+                  </p>
+                </div>
+              </div>
+            ) : packageSchedulesError ? (
+              <div className="mt-6 p-4 bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl border border-red-200">
+                <div className="text-center">
+                  <p className="text-red-600 text-sm mb-2">
+                    Failed to load schedules
+                  </p>
+                  <button
+                    onClick={handleRetryPackageSchedules}
+                    className="px-3 py-1.5 bg-gradient-to-r from-purple-600 to-amber-600 text-white text-sm rounded-lg hover:opacity-90"
+                  >
+                    Retry
+                  </button>
+                </div>
+              </div>
+            ) : currentPackageSchedules.length > 0 ? (
+              <PackageSchedulesComponent
+                schedules={currentPackageSchedules}
+                packageName={selectedPackage?.packageName || ""}
+              />
+            ) : (
+              <SLTourDetailsSchedules schedules={tour.schedules} />
+            )}
             <SLTourDetailsBookingSidebar
               tour={tour}
               selectedPackage={selectedPackage}
+              assignUser={assignUser}
+              assignUserLoading={assignUserLoading}
+              assignUserError={assignUserError}
             />
-            <SLTourDetailsSchedules schedules={tour.schedules} />
           </div>
         </div>
       </div>
@@ -765,5 +1115,4 @@ const SriLankanTourDetailsPage = () => {
     </div>
   );
 };
-
 export default SriLankanTourDetailsPage;
