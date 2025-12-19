@@ -1077,6 +1077,7 @@ const SriLankanTourDetailsPage = () => {
               <PackageSchedulesComponent
                 schedules={currentPackageSchedules}
                 packageName={selectedPackage?.packageName || ""}
+                packageId={selectedPackage?.packageId || 1}
               />
             ) : (
               <SLTourDetailsSchedules schedules={tour.schedules} />
