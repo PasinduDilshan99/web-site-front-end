@@ -99,7 +99,7 @@ const CardHeader = ({ children, className = '' }: { children: React.ReactNode; c
 );
 
 const CardTitle = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
-  <h3 className={`text-xl font-semibold text-gray-800 ${className}`}>
+  <h3 className={`text-xl font-semibold text-gray-900 ${className}`}>
     {children}
   </h3>
 );
@@ -111,7 +111,7 @@ const CardContent = ({ children, className = '' }: { children: React.ReactNode; 
 );
 
 const Label = ({ children, htmlFor, className = '' }: { children: React.ReactNode; htmlFor?: string; className?: string }) => (
-  <label htmlFor={htmlFor} className={`block text-sm font-medium text-gray-700 mb-1 ${className}`}>
+  <label htmlFor={htmlFor} className={`block text-sm font-medium text-gray-900 mb-1 ${className}`}>
     {children}
   </label>
 );
@@ -131,14 +131,14 @@ const Select = ({
     value={value}
     onChange={onChange}
     disabled={disabled}
-    className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${className}`}
+    className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 ${className}`}
   >
     {children}
   </select>
 );
 
 const SelectItem = ({ value, children }: any) => (
-  <option value={value}>{children}</option>
+  <option value={value} className="text-gray-900">{children}</option>
 );
 
 const Button = ({ 
@@ -154,8 +154,8 @@ const Button = ({
   const variantClasses = {
     primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
     secondary: 'bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500',
-    outline: 'border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-blue-500',
-    ghost: 'text-gray-700 hover:bg-gray-100 focus:ring-gray-500'
+    outline: 'border border-gray-300 text-gray-900 hover:bg-gray-50 focus:ring-blue-500',
+    ghost: 'text-gray-900 hover:bg-gray-100 focus:ring-gray-500'
   };
   
   return (
@@ -186,7 +186,7 @@ const Toast = ({ message, type = 'error', onClose }: { message: string; type?: '
   
   return (
     <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-md shadow-lg ${
-      type === 'success' ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-red-100 text-red-800 border border-red-200'
+      type === 'success' ? 'bg-green-100 text-green-900 border border-green-200' : 'bg-red-100 text-red-900 border border-red-200'
     }`}>
       <div className="flex justify-between items-center">
         <span className="font-medium">{message}</span>
@@ -295,62 +295,141 @@ const BookedToursPage = () => {
     }
   };
 
-  // Calculate totals
+  // Calculate accommodation total per person using your backend logic
+  const calculateAccommodationTotalPerPerson = (accommodations: AccommodationDetail[]): number => {
+    let totalAmount = 0.0;
+    
+    for (const p of accommodations) {
+      // Calculate price with service charge
+      const priceWithServiceCharge = p.price * (100.0 + p.serviceCharge) / 100;
+      
+      // Calculate discount
+      const discount = priceWithServiceCharge * p.discount / 100;
+      
+      // Calculate tax
+      const tax = priceWithServiceCharge * p.tax / 100;
+      
+      // Calculate total for this accommodation day
+      const total = priceWithServiceCharge - discount + tax + p.extraCharge + p.transportPrice;
+      totalAmount += total;
+    }
+    
+    return totalAmount;
+  };
+
+  // Calculate activity total per person using your backend logic
+  const calculateActivityTotalPerPerson = (activities: ActivityDetail[]): number => {
+    let totalAmount = 0.0;
+    
+    for (const p of activities) {
+      totalAmount += p.pricePerPerson;
+    }
+    
+    return totalAmount;
+  };
+
+  // Calculate destination extra total per person using your backend logic
+  const calculateDestinationExtraTotalPerPerson = (destinations: DestinationDetail[]): number => {
+    let totalAmount = 0.0;
+    
+    for (const p of destinations) {
+      totalAmount += p.extraPrice;
+    }
+    
+    return totalAmount;
+  };
+
+  // Calculate totals with participant count using your backend logic
   const calculateTotals = () => {
     if (!receiptData) return {
+      activitiesTotalPerPerson: 0,
+      destinationsTotalPerPerson: 0,
+      accommodationsTotalPerPerson: 0,
       activitiesTotal: 0,
       destinationsTotal: 0,
       accommodationsTotal: 0,
-      calculatedSubtotal: 0
+      calculatedSubtotal: 0,
+      participantsCount: 0
     };
 
-    const activitiesTotal = receiptData.activityDetailsList.reduce((sum, activity) => sum + activity.totalPrice, 0);
-    const destinationsTotal = receiptData.destiantionDetails.reduce((sum, destination) => sum + destination.extraPrice, 0);
+    const participantsCount = receiptData.participentDetails.length;
     
-    const accommodationsTotal = receiptData.accommodationDetailsList.reduce((sum, accommodation) => {
-      const basePrice = accommodation.price;
-      const transportPrice = accommodation.transportPrice;
-      const discountAmount = (basePrice * accommodation.discount) / 100;
-      const serviceCharge = ((basePrice - discountAmount) * accommodation.serviceCharge) / 100;
-      const tax = ((basePrice - discountAmount + serviceCharge) * accommodation.tax) / 100;
-      const extraCharge = accommodation.extraCharge;
-      
-      return sum + basePrice + transportPrice - discountAmount + serviceCharge + tax + extraCharge;
-    }, 0);
+    // Calculate per person totals using your backend logic
+    const activitiesTotalPerPerson = calculateActivityTotalPerPerson(receiptData.activityDetailsList);
+    const destinationsTotalPerPerson = calculateDestinationExtraTotalPerPerson(receiptData.destiantionDetails);
+    const accommodationsTotalPerPerson = calculateAccommodationTotalPerPerson(receiptData.accommodationDetailsList);
+    
+    // Multiply by participants count for total
+    const activitiesTotal = activitiesTotalPerPerson * participantsCount;
+    const destinationsTotal = destinationsTotalPerPerson * participantsCount;
+    const accommodationsTotal = accommodationsTotalPerPerson * participantsCount;
 
-    const calculatedSubtotal = activitiesTotal + destinationsTotal + accommodationsTotal + receiptData.packagePrice;
+    // Add package price to calculate subtotal
+    const calculatedSubtotal =  activitiesTotal + destinationsTotal + accommodationsTotal;
 
     return {
+      activitiesTotalPerPerson,
+      destinationsTotalPerPerson,
+      accommodationsTotalPerPerson,
       activitiesTotal,
       destinationsTotal,
       accommodationsTotal,
-      calculatedSubtotal
+      calculatedSubtotal,
+      participantsCount
     };
   };
 
-  // Download receipt as PDF (simulated - for actual PDF generation you'd need a library)
-  const downloadReceipt = () => {
+  // Generate PDF using jsPDF (simplified - for production, use a proper PDF library)
+  const downloadPDF = () => {
     if (!receiptData) return;
     
+    // For now, we'll create a simple downloadable text file
+    // In a real application, you would use jsPDF or similar library
     const receiptContent = generateReceiptContent();
-    const blob = new Blob([receiptContent], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `receipt-${receiptData.bookingReference}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
     
-    showToast('Receipt downloaded successfully', 'success');
+    // Create PDF-like structure
+    const pdfContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Receipt - ${receiptData.bookingReference}</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 40px; color: #000; }
+          .header { text-align: center; margin-bottom: 30px; }
+          .header h1 { color: #2c3e50; margin-bottom: 5px; }
+          .header p { color: #7f8c8d; }
+          .section { margin-bottom: 25px; }
+          .section-title { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px; margin-bottom: 15px; }
+          table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+          th { background-color: #f8f9fa; color: #000; text-align: left; padding: 10px; border: 1px solid #dee2e6; }
+          td { padding: 10px; border: 1px solid #dee2e6; color: #000; }
+          .total-row { background-color: #f8f9fa; font-weight: bold; }
+          .amount { text-align: right; }
+          .footer { margin-top: 40px; text-align: center; color: #7f8c8d; font-size: 0.9em; }
+        </style>
+      </head>
+      <body>
+        ${generatePDFContent()}
+      </body>
+      </html>
+    `;
+    
+    // Open in new window for printing/saving
+    const newWindow = window.open();
+    if (newWindow) {
+      newWindow.document.write(pdfContent);
+      newWindow.document.close();
+    }
+    
+    showToast('PDF generated. Use browser print to save as PDF.', 'success');
   };
 
-  // Generate receipt content
+  // Generate receipt content for text file
   const generateReceiptContent = () => {
     if (!receiptData) return '';
     
     const totals = calculateTotals();
+    const subtotalDifference = totals.calculatedSubtotal - receiptData.subtotal;
     
     let content = `========================================\n`;
     content += `         BOOKING RECEIPT\n`;
@@ -372,80 +451,85 @@ const BookedToursPage = () => {
     content += `Description: ${receiptData.tourDescription}\n\n`;
     
     content += `========================================\n`;
-    content += `         BILLING INFORMATION\n`;
+    content += `         PARTICIPANTS (${totals.participantsCount})\n`;
     content += `========================================\n`;
-    content += `Name: ${receiptData.billingFullName}\n`;
-    content += `Address: ${receiptData.billingAddress}\n`;
-    content += `Email: ${receiptData.billingEmail}\n`;
-    content += `Phone: ${receiptData.billingPhone}\n\n`;
+    content += `All prices below are multiplied by ${totals.participantsCount} participants\n\n`;
     
     content += `========================================\n`;
-    content += `         PRICE BREAKDOWN\n`;
+    content += `         PRICE BREAKDOWN (PER PERSON)\n`;
     content += `========================================\n`;
     
-    // Package Price
+    // Package Price (total, not per person)
     content += `Package Price: $${receiptData.packagePrice.toFixed(2)}\n\n`;
     
-    // Activities
+    // Activities per person
     if (receiptData.activityDetailsList.length > 0) {
-      content += `Activities:\n`;
+      content += `Activities (Per Person):\n`;
       receiptData.activityDetailsList.forEach((activity, index) => {
         content += `  ${index + 1}. ${activity.activityName}\n`;
         content += `     Description: ${activity.activityDescription}\n`;
         content += `     Participants: ${activity.numberOfParticipants}\n`;
         content += `     Price/Person: $${activity.pricePerPerson.toFixed(2)}\n`;
-        content += `     Total: $${activity.totalPrice.toFixed(2)}\n`;
       });
-      content += `  Activities Total: $${totals.activitiesTotal.toFixed(2)}\n\n`;
+      content += `  Activities Total Per Person: $${totals.activitiesTotalPerPerson.toFixed(2)}\n`;
+      content += `  Activities Total (x${totals.participantsCount}): $${totals.activitiesTotal.toFixed(2)}\n\n`;
     }
     
-    // Destinations
+    // Destinations per person
     if (receiptData.destiantionDetails.length > 0) {
-      content += `Destinations:\n`;
+      content += `Destinations (Per Person):\n`;
       receiptData.destiantionDetails.forEach((destination, index) => {
         content += `  ${index + 1}. ${destination.destinationName}\n`;
         content += `     Description: ${destination.destinationDescription}\n`;
-        content += `     Extra Price: $${destination.extraPrice.toFixed(2)}\n`;
-        content += `     Note: ${destination.extraPriceNote}\n`;
+        content += `     Price per person: $${destination.extraPrice.toFixed(2)}\n`;
       });
-      content += `  Destinations Total: $${totals.destinationsTotal.toFixed(2)}\n\n`;
+      content += `  Destinations Total Per Person: $${totals.destinationsTotalPerPerson.toFixed(2)}\n`;
+      content += `  Destinations Total (x${totals.participantsCount}): $${totals.destinationsTotal.toFixed(2)}\n\n`;
     }
     
-    // Accommodation
+    // Accommodation per person (using your calculation logic)
     if (receiptData.accommodationDetailsList.length > 0) {
-      content += `Accommodation:\n`;
+      content += `Accommodation (Per Person - calculated as per backend logic):\n`;
       receiptData.accommodationDetailsList.forEach((accommodation, index) => {
-        const basePrice = accommodation.price;
-        const transportPrice = accommodation.transportPrice;
-        const discountAmount = (basePrice * accommodation.discount) / 100;
-        const serviceCharge = ((basePrice - discountAmount) * accommodation.serviceCharge) / 100;
-        const tax = ((basePrice - discountAmount + serviceCharge) * accommodation.tax) / 100;
-        const extraCharge = accommodation.extraCharge;
-        const dayTotal = basePrice + transportPrice - discountAmount + serviceCharge + tax + extraCharge;
+        // Calculate using your backend logic
+        const priceWithServiceCharge = accommodation.price * (100.0 + accommodation.serviceCharge) / 100;
+        const discount = priceWithServiceCharge * accommodation.discount / 100;
+        const tax = priceWithServiceCharge * accommodation.tax / 100;
+        const dayTotalPerPerson = priceWithServiceCharge - discount + tax + accommodation.extraCharge + accommodation.transportPrice;
         
         content += `  Day ${accommodation.dayNumber} - ${accommodation.hotelName}:\n`;
-        content += `     Base Price: $${basePrice.toFixed(2)}\n`;
-        content += `     Transport: $${transportPrice.toFixed(2)}\n`;
-        content += `     Discount (${accommodation.discount}%): -$${discountAmount.toFixed(2)}\n`;
-        content += `     Service Charge (${accommodation.serviceCharge}%): $${serviceCharge.toFixed(2)}\n`;
+        content += `     Base Price: $${accommodation.price.toFixed(2)}\n`;
+        content += `     With Service Charge (${accommodation.serviceCharge}%): $${priceWithServiceCharge.toFixed(2)}\n`;
+        content += `     Discount (${accommodation.discount}%): -$${discount.toFixed(2)}\n`;
         content += `     Tax (${accommodation.tax}%): $${tax.toFixed(2)}\n`;
-        content += `     Extra (${accommodation.extraChargeNote}): $${extraCharge.toFixed(2)}\n`;
-        content += `     Day Total: $${dayTotal.toFixed(2)}\n`;
+        content += `     Extra Charge: $${accommodation.extraCharge.toFixed(2)}\n`;
+        content += `     Transport: $${accommodation.transportPrice.toFixed(2)}\n`;
+        content += `     Day Total Per Person: $${dayTotalPerPerson.toFixed(2)}\n`;
       });
-      content += `  Accommodation Total: $${totals.accommodationsTotal.toFixed(2)}\n\n`;
+      content += `  Accommodation Total Per Person: $${totals.accommodationsTotalPerPerson.toFixed(2)}\n`;
+      content += `  Accommodation Total (x${totals.participantsCount}): $${totals.accommodationsTotal.toFixed(2)}\n\n`;
     }
     
     content += `========================================\n`;
     content += `         SUMMARY\n`;
     content += `========================================\n`;
-    content += `Package Price: $${receiptData.packagePrice.toFixed(2)}\n`;
-    content += `Activities: $${totals.activitiesTotal.toFixed(2)}\n`;
-    content += `Destinations: $${totals.destinationsTotal.toFixed(2)}\n`;
-    content += `Accommodation: $${totals.accommodationsTotal.toFixed(2)}\n`;
-    content += `Calculated Subtotal: $${totals.calculatedSubtotal.toFixed(2)}\n`;
-    content += `Actual Subtotal: $${receiptData.subtotal.toFixed(2)}\n`;
-    content += `Difference: $${(totals.calculatedSubtotal - receiptData.subtotal).toFixed(2)}\n\n`;
+    content += `Participants: ${totals.participantsCount}\n\n`;
+    content += `PER PERSON CALCULATIONS:\n`;
+    content += `  Activities: $${totals.activitiesTotalPerPerson.toFixed(2)}\n`;
+    content += `  Destinations: $${totals.destinationsTotalPerPerson.toFixed(2)}\n`;
+    content += `  Accommodation: $${totals.accommodationsTotalPerPerson.toFixed(2)}\n`;
+    content += `  Total Per Person (excl. package): $${(totals.activitiesTotalPerPerson + totals.destinationsTotalPerPerson + totals.accommodationsTotalPerPerson).toFixed(2)}\n\n`;
     
+    content += `TOTAL CALCULATIONS (x${totals.participantsCount}):\n`;
+    content += `  Package Price: $${receiptData.packagePrice.toFixed(2)}\n`;
+    content += `  Activities Total: $${totals.activitiesTotal.toFixed(2)}\n`;
+    content += `  Destinations Total: $${totals.destinationsTotal.toFixed(2)}\n`;
+    content += `  Accommodation Total: $${totals.accommodationsTotal.toFixed(2)}\n`;
+    content += `  Calculated Subtotal: $${totals.calculatedSubtotal.toFixed(2)}\n`;
+    content += `  Actual Subtotal: $${receiptData.subtotal.toFixed(2)}\n`;
+    content += `  Difference: $${subtotalDifference.toFixed(2)}\n\n`;
+    
+    content += `INVOICE SUMMARY:\n`;
     content += `Tax: $${receiptData.taxAmount.toFixed(2)}\n`;
     content += `Discount: $${receiptData.discountAmount.toFixed(2)}\n`;
     if (receiptData.insuranceAmount) {
@@ -457,7 +541,7 @@ const BookedToursPage = () => {
     content += `Final Amount: $${receiptData.finalAmount.toFixed(2)}\n\n`;
     
     content += `========================================\n`;
-    content += `         PARTICIPANTS\n`;
+    content += `         PARTICIPANT DETAILS\n`;
     content += `========================================\n`;
     receiptData.participentDetails.forEach((participant, index) => {
       content += `Participant ${index + 1}:\n`;
@@ -476,6 +560,257 @@ const BookedToursPage = () => {
     content += `========================================\n`;
     
     return content;
+  };
+
+  // Generate HTML content for PDF
+  const generatePDFContent = () => {
+    if (!receiptData) return '';
+    
+    const totals = calculateTotals();
+    const subtotalDifference = totals.calculatedSubtotal - receiptData.subtotal;
+    
+    return `
+      <div class="header">
+        <h1>BOOKING RECEIPT</h1>
+        <p>Receipt for Booking #${receiptData.bookingReference}</p>
+      </div>
+      
+      <div class="section">
+        <h2 class="section-title">Booking Information</h2>
+        <table>
+          <tr>
+            <td><strong>Booking ID:</strong></td>
+            <td>${receiptData.bookingId}</td>
+            <td><strong>Booking Date:</strong></td>
+            <td>${receiptData.bookingDate}</td>
+          </tr>
+          <tr>
+            <td><strong>Reference:</strong></td>
+            <td>${receiptData.bookingReference}</td>
+            <td><strong>Status:</strong></td>
+            <td>${receiptData.bookingStatus}</td>
+          </tr>
+          <tr>
+            <td><strong>Invoice:</strong></td>
+            <td>${receiptData.invoiceNumber}</td>
+            <td><strong>Due Date:</strong></td>
+            <td>${receiptData.dueDate}</td>
+          </tr>
+        </table>
+      </div>
+      
+      <div class="section">
+        <h2 class="section-title">Tour Details</h2>
+        <p><strong>Tour:</strong> ${receiptData.tourName}</p>
+        <p><strong>Package:</strong> ${receiptData.packageName}</p>
+        <p><strong>Dates:</strong> ${receiptData.assumeStartDate} to ${receiptData.assumeEndDate}</p>
+        <p><strong>Participants:</strong> ${totals.participantsCount} persons</p>
+        <p>${receiptData.tourDescription}</p>
+      </div>
+      
+      <div class="section">
+        <h2 class="section-title">Price Breakdown</h2>
+        <p><em>Note: All per person prices are multiplied by ${totals.participantsCount} participants</em></p>
+        
+        <h3>Package Price (Total)</h3>
+        <table>
+          <tr>
+            <th>Item</th>
+            <th class="amount">Amount</th>
+          </tr>
+          <tr>
+            <td>Tour Package (${receiptData.tourName})</td>
+            <td class="amount">$${receiptData.packagePrice.toFixed(2)}</td>
+          </tr>
+        </table>
+        
+        ${totals.activitiesTotal > 0 ? `
+        <h3>Activities</h3>
+        <p><em>Per Person: $${totals.activitiesTotalPerPerson.toFixed(2)} | Total (x${totals.participantsCount}): $${totals.activitiesTotal.toFixed(2)}</em></p>
+        <table>
+          <tr>
+            <th>Activity</th>
+            <th>Participants</th>
+            <th class="amount">Price/Person</th>
+          </tr>
+          ${receiptData.activityDetailsList.map((activity, index) => `
+            <tr>
+              <td>${activity.activityName}</td>
+              <td>${activity.numberOfParticipants}</td>
+              <td class="amount">$${activity.pricePerPerson.toFixed(2)}</td>
+            </tr>
+          `).join('')}
+          <tr class="total-row">
+            <td colspan="2">Activities Total Per Person:</td>
+            <td class="amount">$${totals.activitiesTotalPerPerson.toFixed(2)}</td>
+          </tr>
+          <tr class="total-row">
+            <td colspan="2">Activities Total (x${totals.participantsCount}):</td>
+            <td class="amount">$${totals.activitiesTotal.toFixed(2)}</td>
+          </tr>
+        </table>
+        ` : ''}
+        
+        ${totals.destinationsTotal > 0 ? `
+        <h3>Destinations</h3>
+        <p><em>Per Person: $${totals.destinationsTotalPerPerson.toFixed(2)} | Total (x${totals.participantsCount}): $${totals.destinationsTotal.toFixed(2)}</em></p>
+        <table>
+          <tr>
+            <th>Destination</th>
+            <th class="amount">Price/Person</th>
+          </tr>
+          ${receiptData.destiantionDetails.map((destination, index) => `
+            <tr>
+              <td>${destination.destinationName}</td>
+              <td class="amount">$${destination.extraPrice.toFixed(2)}</td>
+            </tr>
+          `).join('')}
+          <tr class="total-row">
+            <td>Destinations Total Per Person:</td>
+            <td class="amount">$${totals.destinationsTotalPerPerson.toFixed(2)}</td>
+          </tr>
+          <tr class="total-row">
+            <td>Destinations Total (x${totals.participantsCount}):</td>
+            <td class="amount">$${totals.destinationsTotal.toFixed(2)}</td>
+          </tr>
+        </table>
+        ` : ''}
+        
+        ${totals.accommodationsTotal > 0 ? `
+        <h3>Accommodation</h3>
+        <p><em>Per Person: $${totals.accommodationsTotalPerPerson.toFixed(2)} | Total (x${totals.participantsCount}): $${totals.accommodationsTotal.toFixed(2)}</em></p>
+        <table>
+          <tr>
+            <th>Day</th>
+            <th>Hotel</th>
+            <th class="amount">Price/Person</th>
+            <th class="amount">Transport/Person</th>
+            <th class="amount">Day Total/Person</th>
+          </tr>
+          ${receiptData.accommodationDetailsList.map((accommodation, index) => {
+            // Calculate using your backend logic
+            const priceWithServiceCharge = accommodation.price * (100.0 + accommodation.serviceCharge) / 100;
+            const discount = priceWithServiceCharge * accommodation.discount / 100;
+            const tax = priceWithServiceCharge * accommodation.tax / 100;
+            const dayTotalPerPerson = priceWithServiceCharge - discount + tax + accommodation.extraCharge + accommodation.transportPrice;
+            
+            return `
+              <tr>
+                <td>${accommodation.dayNumber}</td>
+                <td>${accommodation.hotelName}</td>
+                <td class="amount">$${accommodation.price.toFixed(2)}</td>
+                <td class="amount">$${accommodation.transportPrice.toFixed(2)}</td>
+                <td class="amount">$${dayTotalPerPerson.toFixed(2)}</td>
+              </tr>
+            `;
+          }).join('')}
+          <tr class="total-row">
+            <td colspan="4">Accommodation Total Per Person:</td>
+            <td class="amount">$${totals.accommodationsTotalPerPerson.toFixed(2)}</td>
+          </tr>
+          <tr class="total-row">
+            <td colspan="4">Accommodation Total (x${totals.participantsCount}):</td>
+            <td class="amount">$${totals.accommodationsTotal.toFixed(2)}</td>
+          </tr>
+        </table>
+        ` : ''}
+        
+        <h3>Summary</h3>
+        <table>
+          <tr>
+            <th>Category</th>
+            <th class="amount">Per Person</th>
+            <th class="amount">Total (x${totals.participantsCount})</th>
+          </tr>
+          ${totals.activitiesTotal > 0 ? `
+          <tr>
+            <td>Activities</td>
+            <td class="amount">$${totals.activitiesTotalPerPerson.toFixed(2)}</td>
+            <td class="amount">$${totals.activitiesTotal.toFixed(2)}</td>
+          </tr>
+          ` : ''}
+          ${totals.destinationsTotal > 0 ? `
+          <tr>
+            <td>Destinations</td>
+            <td class="amount">$${totals.destinationsTotalPerPerson.toFixed(2)}</td>
+            <td class="amount">$${totals.destinationsTotal.toFixed(2)}</td>
+          </tr>
+          ` : ''}
+          ${totals.accommodationsTotal > 0 ? `
+          <tr>
+            <td>Accommodation</td>
+            <td class="amount">$${totals.accommodationsTotalPerPerson.toFixed(2)}</td>
+            <td class="amount">$${totals.accommodationsTotal.toFixed(2)}</td>
+          </tr>
+          ` : ''}
+          <tr>
+            <td>Package Price</td>
+            <td class="amount">N/A</td>
+            <td class="amount">$${receiptData.packagePrice.toFixed(2)}</td>
+          </tr>
+          <tr class="total-row">
+            <td><strong>Calculated Subtotal</strong></td>
+            <td class="amount"><strong>$${(totals.activitiesTotalPerPerson + totals.destinationsTotalPerPerson + totals.accommodationsTotalPerPerson).toFixed(2)}</strong></td>
+            <td class="amount"><strong>$${totals.calculatedSubtotal.toFixed(2)}</strong></td>
+          </tr>
+          <tr>
+            <td>Actual Subtotal</td>
+            <td class="amount"></td>
+            <td class="amount">$${receiptData.subtotal.toFixed(2)}</td>
+          </tr>
+          <tr>
+            <td>Difference</td>
+            <td class="amount"></td>
+            <td class="amount ${subtotalDifference === 0 ? 'text-green-600' : 'text-red-600'}">$${subtotalDifference.toFixed(2)}</td>
+          </tr>
+        </table>
+      </div>
+      
+      <div class="section">
+        <h2 class="section-title">Final Invoice</h2>
+        <table>
+          <tr>
+            <td>Subtotal:</td>
+            <td class="amount">$${receiptData.subtotal.toFixed(2)}</td>
+          </tr>
+          <tr>
+            <td>Tax:</td>
+            <td class="amount">$${receiptData.taxAmount.toFixed(2)}</td>
+          </tr>
+          <tr>
+            <td>Discount:</td>
+            <td class="amount">-$${receiptData.discountAmount.toFixed(2)}</td>
+          </tr>
+          ${receiptData.insuranceAmount ? `
+          <tr>
+            <td>Insurance:</td>
+            <td class="amount">$${receiptData.insuranceAmount.toFixed(2)}</td>
+          </tr>
+          ` : ''}
+          <tr class="total-row">
+            <td><strong>Total Amount:</strong></td>
+            <td class="amount"><strong>$${receiptData.totalAmount.toFixed(2)}</strong></td>
+          </tr>
+          <tr>
+            <td>Amount Paid:</td>
+            <td class="amount">$${receiptData.amountPaid.toFixed(2)}</td>
+          </tr>
+          <tr class="total-row">
+            <td><strong>Balance Due:</strong></td>
+            <td class="amount"><strong>$${receiptData.balanceDue.toFixed(2)}</strong></td>
+          </tr>
+          <tr>
+            <td>Final Amount:</td>
+            <td class="amount">$${receiptData.finalAmount.toFixed(2)}</td>
+          </tr>
+        </table>
+      </div>
+      
+      <div class="footer">
+        <p>For any queries, please contact our customer service.</p>
+        <p>Thank you for choosing our services!</p>
+      </div>
+    `;
   };
 
   // Print receipt
@@ -497,6 +832,20 @@ const BookedToursPage = () => {
               left: 0;
               top: 0;
               width: 100%;
+              color: #000 !important;
+            }
+            #receipt-print-content th,
+            #receipt-print-content td {
+              color: #000 !important;
+            }
+            #receipt-print-content .text-gray-900 {
+              color: #000 !important;
+            }
+            #receipt-print-content .text-gray-800 {
+              color: #000 !important;
+            }
+            #receipt-print-content .text-gray-700 {
+              color: #000 !important;
             }
           }
         </style>
@@ -556,8 +905,8 @@ const BookedToursPage = () => {
             <div className="flex justify-between items-center">
               <CardTitle>Booking Receipt</CardTitle>
               <div className="flex space-x-2">
-                <Button variant="outline" onClick={downloadReceipt}>
-                  Download Receipt
+                <Button variant="outline" onClick={downloadPDF}>
+                  Download PDF
                 </Button>
                 <Button variant="outline" onClick={printReceipt}>
                   Print Receipt
@@ -573,34 +922,34 @@ const BookedToursPage = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div id="receipt-print-content" className="space-y-6">
+            <div id="receipt-print-content" className="space-y-6 text-gray-900">
               {/* Header */}
               <div className="text-center">
-                <h2 className="text-2xl font-bold text-gray-800">BOOKING CONFIRMATION</h2>
-                <p className="text-gray-600 mt-1">Receipt for Booking #{receiptData.bookingReference}</p>
+                <h2 className="text-2xl font-bold text-gray-900">BOOKING CONFIRMATION</h2>
+                <p className="text-gray-700 mt-1">Receipt for Booking #{receiptData.bookingReference}</p>
               </div>
 
               {/* Booking Info */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <p><strong className="text-gray-700">Booking ID:</strong> {receiptData.bookingId}</p>
-                  <p><strong className="text-gray-700">Reference:</strong> {receiptData.bookingReference}</p>
-                  <p><strong className="text-gray-700">Invoice:</strong> {receiptData.invoiceNumber}</p>
-                  <p><strong className="text-gray-700">Status:</strong> 
+                  <p><strong className="text-gray-900">Booking ID:</strong> {receiptData.bookingId}</p>
+                  <p><strong className="text-gray-900">Reference:</strong> {receiptData.bookingReference}</p>
+                  <p><strong className="text-gray-900">Invoice:</strong> {receiptData.invoiceNumber}</p>
+                  <p><strong className="text-gray-900">Status:</strong> 
                     <span className={`ml-2 px-2 py-1 rounded text-xs ${
-                      receiptData.bookingStatus === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
-                      receiptData.bookingStatus === 'CONFIRMED' ? 'bg-green-100 text-green-800' :
-                      'bg-gray-100 text-gray-800'
+                      receiptData.bookingStatus === 'PENDING' ? 'bg-yellow-100 text-yellow-900' :
+                      receiptData.bookingStatus === 'CONFIRMED' ? 'bg-green-100 text-green-900' :
+                      'bg-gray-100 text-gray-900'
                     }`}>
                       {receiptData.bookingStatus}
                     </span>
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <p><strong className="text-gray-700">Invoice Date:</strong> {receiptData.invoiceDate}</p>
-                  <p><strong className="text-gray-700">Due Date:</strong> {receiptData.dueDate}</p>
-                  <p><strong className="text-gray-700">Booking Date:</strong> {receiptData.bookingDate}</p>
-                  <p><strong className="text-gray-700">Tour Dates:</strong> {receiptData.assumeStartDate} to {receiptData.assumeEndDate}</p>
+                  <p><strong className="text-gray-900">Invoice Date:</strong> {receiptData.invoiceDate}</p>
+                  <p><strong className="text-gray-900">Due Date:</strong> {receiptData.dueDate}</p>
+                  <p><strong className="text-gray-900">Booking Date:</strong> {receiptData.bookingDate}</p>
+                  <p><strong className="text-gray-900">Tour Dates:</strong> {receiptData.assumeStartDate} to {receiptData.assumeEndDate}</p>
                 </div>
               </div>
 
@@ -608,46 +957,39 @@ const BookedToursPage = () => {
 
               {/* Tour Details */}
               <div>
-                <h3 className="font-bold text-lg text-gray-800 mb-2">Tour Details</h3>
+                <h3 className="font-bold text-lg text-gray-900 mb-2">Tour Details</h3>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <p><strong className="text-gray-700">Tour:</strong> {receiptData.tourName}</p>
-                  <p><strong className="text-gray-700">Package:</strong> {receiptData.packageName}</p>
-                  <p className="text-gray-600 mt-2">{receiptData.tourDescription}</p>
+                  <p><strong className="text-gray-900">Tour:</strong> {receiptData.tourName}</p>
+                  <p><strong className="text-gray-900">Package:</strong> {receiptData.packageName}</p>
+                  <p><strong className="text-gray-900">Participants:</strong> {totals.participantsCount} persons</p>
+                  <p className="text-gray-700 mt-2">{receiptData.tourDescription}</p>
                 </div>
               </div>
 
-              {/* Billing Info */}
+              {/* Price Breakdown */}
               <div>
-                <h3 className="font-bold text-lg text-gray-800 mb-2">Billing Information</h3>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p><strong className="text-gray-700">Name:</strong> {receiptData.billingFullName}</p>
-                  <p><strong className="text-gray-700">Address:</strong> {receiptData.billingAddress}</p>
-                  <p><strong className="text-gray-700">Email:</strong> {receiptData.billingEmail}</p>
-                  <p><strong className="text-gray-700">Phone:</strong> {receiptData.billingPhone}</p>
-                </div>
-              </div>
-
-              {/* Detailed Price Breakdown */}
-              <div>
-                <h3 className="font-bold text-lg text-gray-800 mb-4">Detailed Price Breakdown</h3>
+                <h3 className="font-bold text-lg text-gray-900 mb-4">Price Breakdown</h3>
+                <p className="text-gray-700 mb-4">
+                  <em>Note: Per person prices are multiplied by {totals.participantsCount} participants</em>
+                </p>
                 
                 {/* Package Price */}
                 <div className="mb-6">
-                  <h4 className="font-medium text-gray-700 mb-2">Package Price</h4>
+                  <h4 className="font-medium text-gray-900 mb-2">Package Price (Total)</h4>
                   <div className="overflow-x-auto">
                     <table className="w-full border-collapse border border-gray-300">
                       <thead>
                         <tr className="bg-gray-100">
-                          <th className="border border-gray-300 p-2 text-left">Item</th>
-                          <th className="border border-gray-300 p-2 text-left">Description</th>
-                          <th className="border border-gray-300 p-2 text-right">Amount</th>
+                          <th className="border border-gray-300 p-2 text-left text-gray-900">Item</th>
+                          <th className="border border-gray-300 p-2 text-left text-gray-900">Description</th>
+                          <th className="border border-gray-300 p-2 text-right text-gray-900">Amount</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr className="hover:bg-gray-50">
-                          <td className="border border-gray-300 p-2">Tour Package</td>
-                          <td className="border border-gray-300 p-2">{receiptData.tourName} - {receiptData.packageName}</td>
-                          <td className="border border-gray-300 p-2 text-right">${receiptData.packagePrice.toFixed(2)}</td>
+                          <td className="border border-gray-300 p-2 text-gray-900">Tour Package</td>
+                          <td className="border border-gray-300 p-2 text-gray-900">{receiptData.tourName} - {receiptData.packageName}</td>
+                          <td className="border border-gray-300 p-2 text-right text-gray-900">${receiptData.packagePrice.toFixed(2)}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -657,31 +999,36 @@ const BookedToursPage = () => {
                 {/* Activities Table */}
                 {receiptData.activityDetailsList.length > 0 && (
                   <div className="mb-6">
-                    <h4 className="font-medium text-gray-700 mb-2">Activities</h4>
+                    <h4 className="font-medium text-gray-900 mb-2">Activities</h4>
+                    <p className="text-gray-700 mb-2">
+                      <em>Per Person: ${totals.activitiesTotalPerPerson.toFixed(2)} | Total (x{totals.participantsCount}): ${totals.activitiesTotal.toFixed(2)}</em>
+                    </p>
                     <div className="overflow-x-auto">
                       <table className="w-full border-collapse border border-gray-300">
                         <thead>
                           <tr className="bg-gray-100">
-                            <th className="border border-gray-300 p-2 text-left">Activity</th>
-                            <th className="border border-gray-300 p-2 text-left">Description</th>
-                            <th className="border border-gray-300 p-2 text-center">Participants</th>
-                            <th className="border border-gray-300 p-2 text-right">Price/Person</th>
-                            <th className="border border-gray-300 p-2 text-right">Total</th>
+                            <th className="border border-gray-300 p-2 text-left text-gray-900">Activity</th>
+                            <th className="border border-gray-300 p-2 text-left text-gray-900">Description</th>
+                            <th className="border border-gray-300 p-2 text-center text-gray-900">Participants</th>
+                            <th className="border border-gray-300 p-2 text-right text-gray-900">Price/Person</th>
                           </tr>
                         </thead>
                         <tbody>
                           {receiptData.activityDetailsList.map((activity, index) => (
                             <tr key={index} className="hover:bg-gray-50">
-                              <td className="border border-gray-300 p-2">{activity.activityName}</td>
-                              <td className="border border-gray-300 p-2">{activity.activityDescription}</td>
-                              <td className="border border-gray-300 p-2 text-center">{activity.numberOfParticipants}</td>
-                              <td className="border border-gray-300 p-2 text-right">${activity.pricePerPerson.toFixed(2)}</td>
-                              <td className="border border-gray-300 p-2 text-right">${activity.totalPrice.toFixed(2)}</td>
+                              <td className="border border-gray-300 p-2 text-gray-900">{activity.activityName}</td>
+                              <td className="border border-gray-300 p-2 text-gray-900">{activity.activityDescription}</td>
+                              <td className="border border-gray-300 p-2 text-center text-gray-900">{activity.numberOfParticipants}</td>
+                              <td className="border border-gray-300 p-2 text-right text-gray-900">${activity.pricePerPerson.toFixed(2)}</td>
                             </tr>
                           ))}
                           <tr className="bg-gray-50 font-medium">
-                            <td colSpan={4} className="border border-gray-300 p-2 text-right">Activities Total:</td>
-                            <td className="border border-gray-300 p-2 text-right">${totals.activitiesTotal.toFixed(2)}</td>
+                            <td colSpan={3} className="border border-gray-300 p-2 text-right text-gray-900">Activities Total Per Person:</td>
+                            <td className="border border-gray-300 p-2 text-right text-gray-900">${totals.activitiesTotalPerPerson.toFixed(2)}</td>
+                          </tr>
+                          <tr className="bg-gray-100 font-medium">
+                            <td colSpan={3} className="border border-gray-300 p-2 text-right text-gray-900">Activities Total (x{totals.participantsCount}):</td>
+                            <td className="border border-gray-300 p-2 text-right text-gray-900">${totals.activitiesTotal.toFixed(2)}</td>
                           </tr>
                         </tbody>
                       </table>
@@ -692,29 +1039,34 @@ const BookedToursPage = () => {
                 {/* Destinations Table */}
                 {receiptData.destiantionDetails.length > 0 && (
                   <div className="mb-6">
-                    <h4 className="font-medium text-gray-700 mb-2">Destinations</h4>
+                    <h4 className="font-medium text-gray-900 mb-2">Destinations</h4>
+                    <p className="text-gray-700 mb-2">
+                      <em>Per Person: ${totals.destinationsTotalPerPerson.toFixed(2)} | Total (x{totals.participantsCount}): ${totals.destinationsTotal.toFixed(2)}</em>
+                    </p>
                     <div className="overflow-x-auto">
                       <table className="w-full border-collapse border border-gray-300">
                         <thead>
                           <tr className="bg-gray-100">
-                            <th className="border border-gray-300 p-2 text-left">Destination</th>
-                            <th className="border border-gray-300 p-2 text-left">Description</th>
-                            <th className="border border-gray-300 p-2 text-left">Note</th>
-                            <th className="border border-gray-300 p-2 text-right">Extra Price</th>
+                            <th className="border border-gray-300 p-2 text-left text-gray-900">Destination</th>
+                            <th className="border border-gray-300 p-2 text-left text-gray-900">Description</th>
+                            <th className="border border-gray-300 p-2 text-center text-gray-900">Price/Person</th>
                           </tr>
                         </thead>
                         <tbody>
                           {receiptData.destiantionDetails.map((destination, index) => (
                             <tr key={index} className="hover:bg-gray-50">
-                              <td className="border border-gray-300 p-2">{destination.destinationName}</td>
-                              <td className="border border-gray-300 p-2">{destination.destinationDescription}</td>
-                              <td className="border border-gray-300 p-2">{destination.extraPriceNote}</td>
-                              <td className="border border-gray-300 p-2 text-right">${destination.extraPrice.toFixed(2)}</td>
+                              <td className="border border-gray-300 p-2 text-gray-900">{destination.destinationName}</td>
+                              <td className="border border-gray-300 p-2 text-gray-900">{destination.destinationDescription}</td>
+                              <td className="border border-gray-300 p-2 text-center text-gray-900">${destination.extraPrice.toFixed(2)}</td>
                             </tr>
                           ))}
                           <tr className="bg-gray-50 font-medium">
-                            <td colSpan={3} className="border border-gray-300 p-2 text-right">Destinations Total:</td>
-                            <td className="border border-gray-300 p-2 text-right">${totals.destinationsTotal.toFixed(2)}</td>
+                            <td colSpan={2} className="border border-gray-300 p-2 text-right text-gray-900">Destinations Total Per Person:</td>
+                            <td className="border border-gray-300 p-2 text-right text-gray-900">${totals.destinationsTotalPerPerson.toFixed(2)}</td>
+                          </tr>
+                          <tr className="bg-gray-100 font-medium">
+                            <td colSpan={2} className="border border-gray-300 p-2 text-right text-gray-900">Destinations Total (x{totals.participantsCount}):</td>
+                            <td className="border border-gray-300 p-2 text-right text-gray-900">${totals.destinationsTotal.toFixed(2)}</td>
                           </tr>
                         </tbody>
                       </table>
@@ -725,49 +1077,46 @@ const BookedToursPage = () => {
                 {/* Accommodation Table */}
                 {receiptData.accommodationDetailsList.length > 0 && (
                   <div className="mb-6">
-                    <h4 className="font-medium text-gray-700 mb-2">Accommodation</h4>
+                    <h4 className="font-medium text-gray-900 mb-2">Accommodation</h4>
+                    <p className="text-gray-700 mb-2">
+                      <em>Per Person: ${totals.accommodationsTotalPerPerson.toFixed(2)} | Total (x{totals.participantsCount}): ${totals.accommodationsTotal.toFixed(2)}</em>
+                    </p>
                     <div className="overflow-x-auto">
                       <table className="w-full border-collapse border border-gray-300">
                         <thead>
                           <tr className="bg-gray-100">
-                            <th className="border border-gray-300 p-2 text-left">Day</th>
-                            <th className="border border-gray-300 p-2 text-left">Hotel</th>
-                            <th className="border border-gray-300 p-2 text-right">Base Price</th>
-                            <th className="border border-gray-300 p-2 text-right">Transport</th>
-                            <th className="border border-gray-300 p-2 text-right">Discount</th>
-                            <th className="border border-gray-300 p-2 text-right">Service</th>
-                            <th className="border border-gray-300 p-2 text-right">Tax</th>
-                            <th className="border border-gray-300 p-2 text-right">Extra</th>
-                            <th className="border border-gray-300 p-2 text-right">Day Total</th>
+                            <th className="border border-gray-300 p-2 text-left text-gray-900">Day</th>
+                            <th className="border border-gray-300 p-2 text-left text-gray-900">Hotel</th>
+                            <th className="border border-gray-300 p-2 text-right text-gray-900">Price/Person</th>
+                            <th className="border border-gray-300 p-2 text-right text-gray-900">Transport/Person</th>
+                            <th className="border border-gray-300 p-2 text-right text-gray-900">Day Total/Person</th>
                           </tr>
                         </thead>
                         <tbody>
                           {receiptData.accommodationDetailsList.map((accommodation, index) => {
-                            const basePrice = accommodation.price;
-                            const transportPrice = accommodation.transportPrice;
-                            const discountAmount = (basePrice * accommodation.discount) / 100;
-                            const serviceCharge = ((basePrice - discountAmount) * accommodation.serviceCharge) / 100;
-                            const tax = ((basePrice - discountAmount + serviceCharge) * accommodation.tax) / 100;
-                            const extraCharge = accommodation.extraCharge;
-                            const dayTotal = basePrice + transportPrice - discountAmount + serviceCharge + tax + extraCharge;
+                            // Calculate using your backend logic
+                            const priceWithServiceCharge = accommodation.price * (100.0 + accommodation.serviceCharge) / 100;
+                            const discount = priceWithServiceCharge * accommodation.discount / 100;
+                            const tax = priceWithServiceCharge * accommodation.tax / 100;
+                            const dayTotalPerPerson = priceWithServiceCharge - discount + tax + accommodation.extraCharge + accommodation.transportPrice;
                             
                             return (
                               <tr key={index} className="hover:bg-gray-50">
-                                <td className="border border-gray-300 p-2 text-center">{accommodation.dayNumber}</td>
-                                <td className="border border-gray-300 p-2">{accommodation.hotelName}</td>
-                                <td className="border border-gray-300 p-2 text-right">${basePrice.toFixed(2)}</td>
-                                <td className="border border-gray-300 p-2 text-right">${transportPrice.toFixed(2)}</td>
-                                <td className="border border-gray-300 p-2 text-right">-${discountAmount.toFixed(2)} (${accommodation.discount}%)</td>
-                                <td className="border border-gray-300 p-2 text-right">${serviceCharge.toFixed(2)} (${accommodation.serviceCharge}%)</td>
-                                <td className="border border-gray-300 p-2 text-right">${tax.toFixed(2)} (${accommodation.tax}%)</td>
-                                <td className="border border-gray-300 p-2 text-right">${extraCharge.toFixed(2)}<br/><span className="text-xs text-gray-600">{accommodation.extraChargeNote}</span></td>
-                                <td className="border border-gray-300 p-2 text-right font-medium">${dayTotal.toFixed(2)}</td>
+                                <td className="border border-gray-300 p-2 text-center text-gray-900">{accommodation.dayNumber}</td>
+                                <td className="border border-gray-300 p-2 text-gray-900">{accommodation.hotelName}</td>
+                                <td className="border border-gray-300 p-2 text-right text-gray-900">${accommodation.price.toFixed(2)}</td>
+                                <td className="border border-gray-300 p-2 text-right text-gray-900">${accommodation.transportPrice.toFixed(2)}</td>
+                                <td className="border border-gray-300 p-2 text-right font-medium text-gray-900">${dayTotalPerPerson.toFixed(2)}</td>
                               </tr>
                             );
                           })}
                           <tr className="bg-gray-50 font-medium">
-                            <td colSpan={8} className="border border-gray-300 p-2 text-right">Accommodation Total:</td>
-                            <td className="border border-gray-300 p-2 text-right">${totals.accommodationsTotal.toFixed(2)}</td>
+                            <td colSpan={4} className="border border-gray-300 p-2 text-right text-gray-900">Accommodation Total Per Person:</td>
+                            <td className="border border-gray-300 p-2 text-right text-gray-900">${totals.accommodationsTotalPerPerson.toFixed(2)}</td>
+                          </tr>
+                          <tr className="bg-gray-100 font-medium">
+                            <td colSpan={4} className="border border-gray-300 p-2 text-right text-gray-900">Accommodation Total (x{totals.participantsCount}):</td>
+                            <td className="border border-gray-300 p-2 text-right text-gray-900">${totals.accommodationsTotal.toFixed(2)}</td>
                           </tr>
                         </tbody>
                       </table>
@@ -777,49 +1126,44 @@ const BookedToursPage = () => {
 
                 {/* Summary Table */}
                 <div className="mb-6">
-                  <h4 className="font-medium text-gray-700 mb-2">Summary</h4>
+                  <h4 className="font-medium text-gray-900 mb-2">Summary</h4>
                   <div className="overflow-x-auto">
                     <table className="w-full border-collapse border border-gray-300">
                       <thead>
                         <tr className="bg-gray-100">
-                          <th className="border border-gray-300 p-2 text-left">Category</th>
-                          <th className="border border-gray-300 p-2 text-right">Amount</th>
+                          <th className="border border-gray-300 p-2 text-left text-gray-900">Category</th>
+                          <th className="border border-gray-300 p-2 text-right text-gray-900">Per Person</th>
+                          <th className="border border-gray-300 p-2 text-right text-gray-900">Total (x{totals.participantsCount})</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr className="hover:bg-gray-50">
-                          <td className="border border-gray-300 p-2">Package Price</td>
-                          <td className="border border-gray-300 p-2 text-right">${receiptData.packagePrice.toFixed(2)}</td>
-                        </tr>
                         {totals.activitiesTotal > 0 && (
                           <tr className="hover:bg-gray-50">
-                            <td className="border border-gray-300 p-2">Activities</td>
-                            <td className="border border-gray-300 p-2 text-right">${totals.activitiesTotal.toFixed(2)}</td>
+                            <td className="border border-gray-300 p-2 text-gray-900">Activities</td>
+                            <td className="border border-gray-300 p-2 text-right text-gray-900">${totals.activitiesTotalPerPerson.toFixed(2)}</td>
+                            <td className="border border-gray-300 p-2 text-right text-gray-900">${totals.activitiesTotal.toFixed(2)}</td>
                           </tr>
                         )}
                         {totals.destinationsTotal > 0 && (
                           <tr className="hover:bg-gray-50">
-                            <td className="border border-gray-300 p-2">Destinations</td>
-                            <td className="border border-gray-300 p-2 text-right">${totals.destinationsTotal.toFixed(2)}</td>
+                            <td className="border border-gray-300 p-2 text-gray-900">Destinations</td>
+                            <td className="border border-gray-300 p-2 text-right text-gray-900">${totals.destinationsTotalPerPerson.toFixed(2)}</td>
+                            <td className="border border-gray-300 p-2 text-right text-gray-900">${totals.destinationsTotal.toFixed(2)}</td>
                           </tr>
                         )}
                         {totals.accommodationsTotal > 0 && (
                           <tr className="hover:bg-gray-50">
-                            <td className="border border-gray-300 p-2">Accommodation</td>
-                            <td className="border border-gray-300 p-2 text-right">${totals.accommodationsTotal.toFixed(2)}</td>
+                            <td className="border border-gray-300 p-2 text-gray-900">Accommodation</td>
+                            <td className="border border-gray-300 p-2 text-right text-gray-900">${totals.accommodationsTotalPerPerson.toFixed(2)}</td>
+                            <td className="border border-gray-300 p-2 text-right text-gray-900">${totals.accommodationsTotal.toFixed(2)}</td>
                           </tr>
                         )}
                         <tr className="bg-gray-100 font-medium">
-                          <td className="border border-gray-300 p-2">Calculated Subtotal</td>
-                          <td className="border border-gray-300 p-2 text-right">${totals.calculatedSubtotal.toFixed(2)}</td>
-                        </tr>
-                        <tr className="bg-gray-100 font-medium">
-                          <td className="border border-gray-300 p-2">Actual Subtotal</td>
-                          <td className="border border-gray-300 p-2 text-right">${receiptData.subtotal.toFixed(2)}</td>
-                        </tr>
-                        <tr className={`font-medium ${subtotalDifference === 0 ? 'text-green-600' : 'text-red-600'}`}>
-                          <td className="border border-gray-300 p-2">Difference</td>
-                          <td className="border border-gray-300 p-2 text-right">${subtotalDifference.toFixed(2)}</td>
+                          <td className="border border-gray-300 p-2 text-gray-900">Calculated Subtotal</td>
+                          <td className="border border-gray-300 p-2 text-right text-gray-900">
+                            ${(totals.activitiesTotalPerPerson + totals.destinationsTotalPerPerson + totals.accommodationsTotalPerPerson).toFixed(2)}
+                          </td>
+                          <td className="border border-gray-300 p-2 text-right text-gray-900">${totals.calculatedSubtotal.toFixed(2)}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -828,45 +1172,41 @@ const BookedToursPage = () => {
 
                 {/* Final Price Summary */}
                 <div>
-                  <h4 className="font-medium text-gray-700 mb-2">Final Price Summary</h4>
+                  <h4 className="font-medium text-gray-900 mb-2">Final Price Summary</h4>
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-gray-700">Subtotal:</span>
-                        <span className="font-medium">${receiptData.subtotal.toFixed(2)}</span>
+                        <span className="text-gray-900">Total Amount:</span>
+                        <span className="font-medium text-gray-900">${receiptData.totalAmount.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-700">Tax:</span>
-                        <span className="font-medium">${receiptData.taxAmount.toFixed(2)}</span>
+                        <span className="text-gray-900">Tax:</span>
+                        <span className="font-medium text-gray-900">${receiptData.taxAmount.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-700">Discount:</span>
-                        <span className="font-medium">-${receiptData.discountAmount.toFixed(2)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-700">Package Price:</span>
-                        <span className="font-medium">${receiptData.packagePrice.toFixed(2)}</span>
+                        <span className="text-gray-900">Discount:</span>
+                        <span className="font-medium text-gray-900">-${receiptData.discountAmount.toFixed(2)}</span>
                       </div>
                       {receiptData.insuranceAmount && (
                         <div className="flex justify-between">
-                          <span className="text-gray-700">Insurance:</span>
-                          <span className="font-medium">${receiptData.insuranceAmount.toFixed(2)}</span>
+                          <span className="text-gray-900">Insurance:</span>
+                          <span className="font-medium text-gray-900">${receiptData.insuranceAmount.toFixed(2)}</span>
                         </div>
                       )}
                       <Separator />
                       <div className="flex justify-between font-bold text-lg">
-                        <span className="text-gray-800">Total Amount:</span>
-                        <span className="text-blue-600">${receiptData.totalAmount.toFixed(2)}</span>
+                        <span className="text-gray-900">Sub Total Amount:</span>
+                        <span className="text-blue-600">${receiptData.subtotal.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-700">Amount Paid:</span>
-                        <span className="font-medium">${receiptData.amountPaid.toFixed(2)}</span>
+                        <span className="text-gray-900">Amount Paid:</span>
+                        <span className="font-medium text-gray-900">${receiptData.amountPaid.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between font-bold text-lg">
-                        <span className="text-gray-800">Balance Due:</span>
+                        <span className="text-gray-900">Balance Due:</span>
                         <span className="text-red-600">${receiptData.balanceDue.toFixed(2)}</span>
                       </div>
-                      <div className="flex justify-between text-sm text-gray-600 mt-2">
+                      <div className="flex justify-between text-sm text-gray-700 mt-2">
                         <span>Final Amount (incl. all charges):</span>
                         <span>${receiptData.finalAmount.toFixed(2)}</span>
                       </div>
@@ -878,33 +1218,33 @@ const BookedToursPage = () => {
               {/* Participants Table */}
               {receiptData.participentDetails.length > 0 && (
                 <div>
-                  <h3 className="font-bold text-lg text-gray-800 mb-2">Participants</h3>
+                  <h3 className="font-bold text-lg text-gray-900 mb-2">Participants ({totals.participantsCount})</h3>
                   <div className="overflow-x-auto">
                     <table className="w-full border-collapse border border-gray-300">
                       <thead>
                         <tr className="bg-gray-100">
-                          <th className="border border-gray-300 p-2 text-left">Name</th>
-                          <th className="border border-gray-300 p-2 text-left">Date of Birth</th>
-                          <th className="border border-gray-300 p-2 text-left">Gender</th>
-                          <th className="border border-gray-300 p-2 text-left">Passport</th>
-                          <th className="border border-gray-300 p-2 text-left">Contact</th>
-                          <th className="border border-gray-300 p-2 text-left">Medical Info</th>
+                          <th className="border border-gray-300 p-2 text-left text-gray-900">Name</th>
+                          <th className="border border-gray-300 p-2 text-left text-gray-900">Date of Birth</th>
+                          <th className="border border-gray-300 p-2 text-left text-gray-900">Gender</th>
+                          <th className="border border-gray-300 p-2 text-left text-gray-900">Passport</th>
+                          <th className="border border-gray-300 p-2 text-left text-gray-900">Contact</th>
+                          <th className="border border-gray-300 p-2 text-left text-gray-900">Medical Info</th>
                         </tr>
                       </thead>
                       <tbody>
                         {receiptData.participentDetails.map((participant, index) => (
                           <tr key={index} className="hover:bg-gray-50">
-                            <td className="border border-gray-300 p-2">
+                            <td className="border border-gray-300 p-2 text-gray-900">
                               {participant.firstName} {participant.lastName}
                             </td>
-                            <td className="border border-gray-300 p-2">{participant.dateOfBirth}</td>
-                            <td className="border border-gray-300 p-2">{participant.gender}</td>
-                            <td className="border border-gray-300 p-2">{participant.passportNumber}</td>
-                            <td className="border border-gray-300 p-2">
+                            <td className="border border-gray-300 p-2 text-gray-900">{participant.dateOfBirth}</td>
+                            <td className="border border-gray-300 p-2 text-gray-900">{participant.gender}</td>
+                            <td className="border border-gray-300 p-2 text-gray-900">{participant.passportNumber}</td>
+                            <td className="border border-gray-300 p-2 text-gray-900">
                               <div>{participant.email}</div>
                               <div>{participant.mobileNumber}</div>
                             </td>
-                            <td className="border border-gray-300 p-2">
+                            <td className="border border-gray-300 p-2 text-gray-900">
                               <div><strong>Medical:</strong> {participant.medicalConditions}</div>
                               <div><strong>Allergies:</strong> {participant.allergies}</div>
                             </td>
@@ -917,7 +1257,7 @@ const BookedToursPage = () => {
               )}
 
               {/* Footer */}
-              <div className="text-center text-gray-500 mt-6 pt-6 border-t">
+              <div className="text-center text-gray-700 mt-6 pt-6 border-t">
                 <p>For any queries, please contact our customer service.</p>
                 <p className="mt-1">Thank you for choosing our services!</p>
               </div>
@@ -935,7 +1275,7 @@ const BookedToursPage = () => {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">View Booked Tours Receipt</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-6">View Booked Tours Receipt</h1>
       
       {/* Toast Notification */}
       {toast && (

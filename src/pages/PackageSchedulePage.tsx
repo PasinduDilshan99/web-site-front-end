@@ -83,10 +83,6 @@ const PackageSchedulePage = () => {
         const response = await fetch(
           `http://localhost:8080/felicita/v0/api/package/package-schedules-details/${packageId}`,
           {
-            headers: {
-              Cookie:
-                "token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNpbmR1IiwidXNlcklkIjo0LCJ1c2VybmFtZSI6InBhc2luZHUiLCJpYXQiOjE3NjI2Njg5NjksImV4cCI6MTc2MjY2OTA4OX0.5wQ6QL3q2pvSoCEhDze6t_Aub3Vb8hlcMRQ3UQxu8yg",
-            },
             credentials: "include",
           }
         );

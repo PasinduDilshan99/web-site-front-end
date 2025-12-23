@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import React from "react";
 
 // ========== Interfaces ==========
@@ -44,7 +45,10 @@ interface ScheduleCardProps {
   packageData: PackageDetails;
 }
 
-const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule, packageData }) => {
+const ScheduleCard: React.FC<ScheduleCardProps> = ({
+  schedule,
+  packageData,
+}) => {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -52,6 +56,7 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule, packageData }) =>
       day: "numeric",
     });
   };
+  const router = useRouter();
 
   const getDurationRange = (start: number, end: number) => {
     if (start === end) return `${start} day${start > 1 ? "s" : ""}`;
@@ -65,11 +70,11 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule, packageData }) =>
   const isOngoing = startDate <= new Date() && endDate >= new Date();
 
   return (
-    <div 
+    <div
       className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-200"
-      style={{ 
+      style={{
         borderLeftColor: packageData.color,
-        borderLeftWidth: '4px'
+        borderLeftWidth: "4px",
       }}
     >
       {/* Schedule Status Badge */}
@@ -165,7 +170,10 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule, packageData }) =>
                 </svg>
                 <span className="text-sm text-gray-600">Package</span>
               </div>
-              <p className="font-semibold text-gray-900 truncate" style={{ color: packageData.color }}>
+              <p
+                className="font-semibold text-gray-900 truncate"
+                style={{ color: packageData.color }}
+              >
                 {packageData.packageName}
               </p>
             </div>
@@ -246,7 +254,9 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule, packageData }) =>
                   <p className="text-sm font-semibold text-amber-800 mb-1">
                     Special Note
                   </p>
-                  <p className="text-sm text-amber-700">{schedule.specialNote}</p>
+                  <p className="text-sm text-amber-700">
+                    {schedule.specialNote}
+                  </p>
                 </div>
               </div>
             </div>
@@ -279,7 +289,8 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule, packageData }) =>
                 <span className="text-sm text-gray-600">Group Size</span>
               </div>
               <span className="font-semibold text-gray-900">
-                {packageData.minPersonCount} - {packageData.maxPersonCount} people
+                {packageData.minPersonCount} - {packageData.maxPersonCount}{" "}
+                people
               </span>
             </div>
           </div>
@@ -294,7 +305,9 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule, packageData }) =>
                 className="px-4 py-2 text-white text-sm font-semibold rounded-lg hover:opacity-90 transition-all flex items-center gap-2 group"
                 style={{ backgroundColor: packageData.color }}
                 onClick={() => {
-                  console.log("Book schedule:", schedule.scheduleId);
+                  router.push(
+                    `/booking?packageScheduleName=${schedule.scheduleName}&packageScheduleId=${schedule.scheduleId}`
+                  );
                 }}
               >
                 <svg
