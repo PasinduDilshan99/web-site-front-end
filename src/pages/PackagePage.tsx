@@ -425,8 +425,6 @@ const PackagePage: React.FC = () => {
 
   return (
     <>
-      <LinkBar />
-      <NavBar />
       <PackageHeroSection />
       <div className="mx-auto px-4 py-8 bg-gradient-to-br from-purple-100 via-purple-100 to-amber-100">
         {/* Page Header */}
@@ -535,7 +533,6 @@ const PackagePage: React.FC = () => {
           onRetry={handleHistoryImagesRetry}
         />
       </div>
-      <Footer />
     </>
   );
 };

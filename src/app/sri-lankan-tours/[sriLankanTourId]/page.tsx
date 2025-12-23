@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import ReviewsSection from "@/components/sri-lankan-tours-components/ReviewsSection";
 import {
   TourHistory,
@@ -235,6 +235,7 @@ const SriLankanTourDetailsPage = () => {
   const [dayDetailsError, setDayDetailsError] = React.useState<string | null>(
     null
   );
+  const router = useRouter();
   const [tourExtraDetails, setTourExtraDetails] =
     useState<TourExtraDetails | null>(null);
   const [tourExtraDetailsLoading, setTourExtraDetailsLoading] = useState(false);
@@ -851,12 +852,43 @@ const SriLankanTourDetailsPage = () => {
 
     return (
       <div className="mb-8 p-6 bg-gradient-to-r from-purple-50 to-amber-50 rounded-2xl shadow-lg">
-        <h3 className="text-2xl font-bold text-gray-900 mb-4">
-          Select Your Package
-        </h3>
-        <p className="text-gray-600 mb-6">
-          Choose the package that best suits your preferences and budget
-        </p>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+          <div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">
+              Select Your Package
+            </h3>
+            <p className="text-gray-600 max-w-xl">
+              Choose the package that best suits your preferences and budget
+            </p>
+          </div>
+          <div>
+            <button
+              className="group flex items-center gap-2 px-6 py-3 text-purple-600 font-medium border-2 border-purple-200 rounded-xl hover:border-purple-600 hover:bg-purple-600 hover:text-white transition-all duration-300 shadow-sm hover:shadow-md"
+              onClick={() =>
+                router.push(
+                  `/packages/packages-compare?tour-name=${
+                    tour?.tourName || "name"
+                  }&tour-id=${sriLankanTourId}`
+                )
+              }
+            >
+              <svg
+                className="w-5 h-5 transition-transform duration-300 group-hover:scale-110"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+              Compare Packages
+            </button>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {packages.map((pkg) => (
@@ -901,17 +933,27 @@ const SriLankanTourDetailsPage = () => {
                 </div>
                 {pkg.discount > 0 && (
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="line-through text-gray-400">
+                    {/* <span className="line-through text-gray-400">
                       LKR {pkg.totalPrice.toLocaleString()}
-                    </span>
+                    </span> */}
                     <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
                       Save {pkg.discount}%
                     </span>
                   </div>
                 )}
               </div>
+              <div>
+                <button
+                  className="px-6 py-3 bg-white text-purple-600 font-medium rounded-lg border border-purple-200 hover:border-purple-300 hover:bg-purple-50 transition-all duration-200 hover:shadow-md"
+                  onClick={() =>
+                    router.push(`/packages/${selectedPackage?.packageId}`)
+                  }
+                >
+                  Show All Details
+                </button>
+              </div>
 
-              <div className="text-sm text-gray-500">
+              {/* <div className="text-sm text-gray-500">
                 <div className="flex items-center gap-2 mb-1">
                   <span>•</span>
                   <span>
@@ -929,7 +971,7 @@ const SriLankanTourDetailsPage = () => {
                   <span>•</span>
                   <span>Days: {pkg.packageDayByDayDtoList.length}</span>
                 </div>
-              </div>
+              </div> */}
             </div>
           ))}
         </div>
