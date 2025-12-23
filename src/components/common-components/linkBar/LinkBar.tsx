@@ -41,58 +41,86 @@ const LinkBar = () => {
   }, []);
 
   if (loading) return <Loading />;
-  if (error)
-    return <div className="text-red-400 text-sm p-2">Error: {error}</div>;
+  if (error) return (
+    <div className="px-3 py-2 bg-red-500/10 border border-red-500/30 rounded-lg text-red-300 text-sm font-medium text-center backdrop-blur-sm">
+      Error: {error}
+    </div>
+  );
 
   return (
-    <div
-      className="flex items-center justify-between backdrop-blur-lg border-b h-[32px] md:h-[36px] lg:h-[40px] px-3 md:px-4 lg:px-6 shadow-xl relative overflow-hidden"
+    <div 
+      className="relative flex items-center justify-between backdrop-blur-lg border-b px-4 md:px-6 lg:px-8 shadow-xl overflow-hidden"
       style={{
-        background: `linear-gradient(to right, oklch(41.4% 0.112 45.904), oklch(42.4% 0.199 265.638),oklch(38.1% 0.176 304.987))`,
-        borderColor: "rgba(124, 58, 237, 0.6)",
+        height: 'clamp(36px, 5vw, 48px)',
+        background: 'linear-gradient(90deg, oklch(41.4% 0.112 45.904) 0%, oklch(42.4% 0.199 265.638) 50%, oklch(38.1% 0.176 304.987) 100%)',
+        borderColor: 'rgba(124, 58, 237, 0.3)',
+        boxShadow: '0 4px 12px -2px rgba(0, 0, 0, 0.15), 0 2px 6px -1px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
       }}
     >
-      <div
-        className="absolute inset-0 animate-pulse-slow"
+      {/* Animated Background Glow */}
+      <div 
+        className="absolute inset-0"
         style={{
-          background: `linear-gradient(to right, rgba(124, 58, 237, 0.2) 0%, rgba(180, 83, 9, 0.15) 50%, rgba(124, 58, 237, 0.2) 100%)`,
+          background: 'linear-gradient(90deg, rgba(124, 58, 237, 0.2) 0%, rgba(180, 83, 9, 0.15) 50%, rgba(124, 58, 237, 0.2) 100%)',
+          animation: 'shimmer 3s ease-in-out infinite',
+          opacity: 0.8
         }}
-      ></div>
+      />
 
-      <div className="flex items-center gap-1 sm:gap-2 md:gap-3 lg:gap-4 h-full relative z-10">
+      {/* Full Items Section */}
+      <div className="flex items-center gap-2 sm:gap-3 md:gap-4 relative z-10 h-full">
         {fullItems.map((item) => (
           <a
             key={item.name}
             href={item.linkUrl}
-            className="flex items-center gap-1 sm:gap-2 backdrop-blur-md px-2 sm:px-3 md:px-3 lg:px-4 h-[22px] md:h-[24px] lg:h-[26px] rounded-full shadow-lg hover:scale-105 active:scale-95 transition-all duration-300 text-[10px] sm:text-xs md:text-sm lg:text-base group relative overflow-hidden"
+            className="relative inline-flex items-center gap-1.5 sm:gap-2 backdrop-blur-md rounded-full px-2.5 sm:px-3 md:px-3.5 lg:px-4 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 group"
             style={{
-              background: `linear-gradient(to right, rgba(124, 58, 237, 0.4), rgba(180, 83, 9, 0.3))`,
-              border: "1px solid rgba(168, 85, 247, 0.6)",
+              height: 'clamp(24px, 3.5vw, 30px)',
+              background: 'linear-gradient(90deg, rgba(124, 58, 237, 0.3), rgba(180, 83, 9, 0.2))',
+              border: '1px solid rgba(168, 85, 247, 0.4)',
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = `linear-gradient(to right, rgba(124, 58, 237, 0.6), rgba(180, 83, 9, 0.5))`;
-              e.currentTarget.style.borderColor = "rgba(168, 85, 247, 0.8)";
+              e.currentTarget.style.background = 'linear-gradient(90deg, rgba(124, 58, 237, 0.5), rgba(180, 83, 9, 0.4))';
+              e.currentTarget.style.borderColor = 'rgba(168, 85, 247, 0.8)';
+              e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(168, 85, 247, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = `linear-gradient(to right, rgba(124, 58, 237, 0.4), rgba(180, 83, 9, 0.3))`;
-              e.currentTarget.style.borderColor = "rgba(168, 85, 247, 0.6)";
+              e.currentTarget.style.background = 'linear-gradient(90deg, rgba(124, 58, 237, 0.3), rgba(180, 83, 9, 0.2))';
+              e.currentTarget.style.borderColor = 'rgba(168, 85, 247, 0.4)';
+              e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1)';
             }}
+            aria-label={`Visit ${item.name} - ${item.description}`}
           >
-            {/* Hover effect overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-amber-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-            <Image
-              src={item.iconUrl}
-              alt={item.name}
-              width={12}
-              height={12}
-              className="w-[10px] h-[10px] sm:w-[12px] sm:h-[12px] md:w-[14px] md:h-[14px] lg:w-[16px] lg:h-[16px] group-hover:scale-110 transition-transform duration-300 relative z-10"
-            />
-            <span
-              className="font-medium leading-none hidden sm:inline transition-all duration-300 relative z-10 drop-shadow-sm"
+            {/* Hover Overlay */}
+            <div 
+              className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
               style={{
-                color: "#FFFFFF",
-                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                background: 'linear-gradient(90deg, rgba(168, 85, 247, 0.2), rgba(251, 191, 36, 0.15))'
+              }}
+            />
+            
+            {/* Icon */}
+            <div className="relative z-10 transition-transform duration-300 group-hover:scale-110">
+              <Image
+                src={item.iconUrl}
+                alt={item.name}
+                width={14}
+                height={14}
+                className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4"
+                style={{
+                  filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3))'
+                }}
+                loading="lazy"
+              />
+            </div>
+            
+            {/* Text */}
+            <span 
+              className="relative z-10 font-medium leading-none text-white transition-all duration-300 hidden sm:inline"
+              style={{
+                fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)',
+                textShadow: '0 1px 2px rgba(0, 0, 0, 0.4), 0 0 1px rgba(0, 0, 0, 0.1)'
               }}
             >
               {item.description}
@@ -101,41 +129,71 @@ const LinkBar = () => {
         ))}
       </div>
 
-      <div className="flex items-center gap-1 sm:gap-2 md:gap-3 lg:gap-4 h-full relative z-10">
+      {/* Icon-Only Items Section */}
+      <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 relative z-10 h-full">
         {imageOnlyItems.map((item) => (
           <a
             key={item.name}
             href={item.linkUrl}
-            className="flex items-center justify-center backdrop-blur-md rounded-full shadow-lg hover:scale-110 active:scale-95 transition-all duration-300 w-[18px] h-[18px] sm:w-[20px] sm:h-[20px] md:w-[22px] md:h-[22px] lg:w-[24px] lg:h-[24px] group relative overflow-hidden"
+            className="relative inline-flex items-center justify-center backdrop-blur-md rounded-full transition-all duration-300 hover:scale-110 active:scale-95 group"
             style={{
-              background: `linear-gradient(135deg, rgba(124, 58, 237, 0.5), rgba(180, 83, 9, 0.4))`,
-              border: "1px solid rgba(168, 85, 247, 0.6)",
+              width: 'clamp(22px, 3vw, 28px)',
+              height: 'clamp(22px, 3vw, 28px)',
+              background: 'linear-gradient(135deg, rgba(124, 58, 237, 0.4), rgba(180, 83, 9, 0.3))',
+              border: '1px solid rgba(168, 85, 247, 0.4)',
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = `linear-gradient(135deg, rgba(124, 58, 237, 0.7), rgba(180, 83, 9, 0.6))`;
-              e.currentTarget.style.borderColor = "rgba(168, 85, 247, 0.9)";
+              e.currentTarget.style.background = 'linear-gradient(135deg, rgba(124, 58, 237, 0.6), rgba(180, 83, 9, 0.5))';
+              e.currentTarget.style.borderColor = 'rgba(168, 85, 247, 0.8)';
+              e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(168, 85, 247, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = `linear-gradient(135deg, rgba(124, 58, 237, 0.5), rgba(180, 83, 9, 0.4))`;
-              e.currentTarget.style.borderColor = "rgba(168, 85, 247, 0.6)";
+              e.currentTarget.style.background = 'linear-gradient(135deg, rgba(124, 58, 237, 0.4), rgba(180, 83, 9, 0.3))';
+              e.currentTarget.style.borderColor = 'rgba(168, 85, 247, 0.4)';
+              e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1)';
             }}
+            aria-label={`Visit ${item.name}`}
           >
-            {/* Hover effect overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-600/25 to-amber-600/25 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-            <Image
-              src={item.iconUrl || DEFAULT_ICON_URL}
-              alt={item.name}
-              width={10}
-              height={10}
-              className="w-[8px] h-[8px] sm:w-[10px] sm:h-[10px] md:w-[12px] md:h-[12px] lg:w-[14px] lg:h-[14px] group-hover:scale-110 transition-transform duration-300 relative z-10 filter brightness-0 invert"
+            {/* Hover Overlay */}
+            <div 
+              className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
               style={{
-                filter: "brightness(0) invert(1)",
+                background: 'radial-gradient(circle at center, rgba(168, 85, 247, 0.3), transparent 70%)'
               }}
             />
+            
+            {/* Icon */}
+            <div className="relative z-10 transition-transform duration-300 group-hover:scale-110">
+              <Image
+                src={item.iconUrl || DEFAULT_ICON_URL}
+                alt={item.name}
+                width={12}
+                height={12}
+                className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5"
+                style={{
+                  filter: 'brightness(0) invert(1)'
+                }}
+                loading="lazy"
+              />
+            </div>
           </a>
         ))}
       </div>
+
+      {/* Add shimmer animation to global styles */}
+      <style jsx global>{`
+        @keyframes shimmer {
+          0%, 100% { opacity: 0.8; }
+          50% { opacity: 0.4; }
+        }
+        
+        @media (max-width: 640px) {
+          .sm\\:hidden {
+            display: none !important;
+          }
+        }
+      `}</style>
     </div>
   );
 };
