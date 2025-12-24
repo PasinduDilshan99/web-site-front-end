@@ -27,14 +27,12 @@ export default function ProfileLayout({
   if (authLoading) return <Loading />;
   return (
     <>
-      <NavBar />
-      <div className="min-h-screen bg-gradient-to-br from-amber-25 via-white to-purple-25">
+      <div className="min-h-screen bg-gradient-to-br from-amber-100 via-white to-purple-100">
         <div className="flex relative">
           <Sidebar />
           <main className="flex-1">{children}</main>
         </div>
       </div>
-      <Footer />
     </>
   );
 }

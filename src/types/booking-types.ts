@@ -161,3 +161,11 @@ export interface ReceiptData {
   destiantionDetails: DestinationDetail[];
   accommodationDetailsList: AccommodationDetail[];
 }
+
+export interface HeroItem {
+  id: number;
+  name: string;
+  description: string;
+  imageUrl: string;
+  color: string;
+}

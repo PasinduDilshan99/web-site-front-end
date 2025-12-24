@@ -450,8 +450,6 @@ const ActivityPage: React.FC = () => {
 
   return (
     <>
-      <LinkBar />
-      <NavBar />
       <ActivityHeroSection />
       <div className="mx-auto px-4 py-8 bg-gradient-to-br from-blue-50 via-purple-50 to-amber-50 min-h-screen">
         {/* Page Header */}
@@ -559,7 +557,6 @@ const ActivityPage: React.FC = () => {
           onRetry={fetchActivityHistoryImages}
         />
       </div>
-      <Footer />
     </>
   );
 };
