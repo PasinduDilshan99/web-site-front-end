@@ -5,6 +5,9 @@ import { AuthProvider } from "@/context/AuthContext";
 import DecemberSnowfall from "@/components/DecemberSnowfall";
 import GlobalGradientScrollbar from "@/components/GlobalGradientScrollbar";
 import ChatBot from "@/components/ChatBot";
+import NavBar from "@/components/common-components/navBar/NavBar";
+import LinkBar from "@/components/common-components/linkBar/LinkBar";
+import Footer from "./components/footer/Footer";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -19,10 +22,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ChatBot />
-        <DecemberSnowfall />
-        <GlobalGradientScrollbar />
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          {/* <DecemberSnowfall /> */}
+          <GlobalGradientScrollbar />
+          <LinkBar />
+          <NavBar />
+          <main>{children}</main>
+          <Footer />
+          <ChatBot />
+        </AuthProvider>
       </body>
     </html>
   );

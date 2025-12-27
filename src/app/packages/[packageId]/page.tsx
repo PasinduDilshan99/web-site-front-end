@@ -293,7 +293,6 @@ const PackagePage = () => {
 
   return (
     <>
-      <NavBar />
       <div className="min-h-screen bg-gray-50">
         {/* Header Section */}
         <PackageHeader packageData={packageData} />
@@ -356,7 +355,6 @@ const PackagePage = () => {
           />
         </div>
       </div>
-      <Footer />
     </>
   );
 };

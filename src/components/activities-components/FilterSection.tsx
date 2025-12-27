@@ -4,6 +4,7 @@ import React, { useState } from "react";
 interface FilterSectionProps {
   filters: ActivityFilters;
   onFilterChange: (filterName: keyof ActivityFilters, value: any) => void;
+  onSearch: () => void;
   onResetFilters: () => void;
   categories: string[];
   seasons: string[];
@@ -15,6 +16,7 @@ interface FilterSectionProps {
 const FilterSection: React.FC<FilterSectionProps> = ({
   filters,
   onFilterChange,
+  onSearch,
   onResetFilters,
   categories,
   seasons,
@@ -35,6 +37,19 @@ const FilterSection: React.FC<FilterSectionProps> = ({
     setShowAdvancedFilters(!showAdvancedFilters);
   };
 
+  // Handle price range change
+  const handlePriceChange = (minMax: 'min' | 'max', value: number) => {
+    if (minMax === 'min') {
+      onFilterChange("priceRange", [value, filters.priceRange[1]]);
+    } else {
+      onFilterChange("priceRange", [filters.priceRange[0], value]);
+    }
+  };
+
+  const handleSearchClick = () => {
+    onSearch();
+  };
+
   return (
     <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6 md:p-8 mb-8 border-2 border-blue-200 shadow-lg">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
@@ -47,6 +62,25 @@ const FilterSection: React.FC<FilterSectionProps> = ({
             className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg"
           >
             Reset Filters
+          </button>
+          <button
+            onClick={handleSearchClick}
+            className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg flex items-center gap-2"
+          >
+            <svg 
+              className="w-4 h-4" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" 
+              />
+            </svg>
+            Search
           </button>
         </div>
       </div>
@@ -72,24 +106,30 @@ const FilterSection: React.FC<FilterSectionProps> = ({
           <label className="block text-sm font-semibold text-gray-800">
             Price Range (Foreign)
           </label>
-          <div className="text-sm font-medium text-blue-700 mb-2">
-            {formatPrice(filters.priceRange[0])} -{" "}
-            {formatPrice(filters.priceRange[1])}
+          <div className="flex justify-between text-sm font-medium text-blue-700 mb-2">
+            <span>{formatPrice(filters.priceRange[0])}</span>
+            <span>{formatPrice(filters.priceRange[1])}</span>
           </div>
-          <input
-            type="range"
-            min="0"
-            max="10000"
-            step="100"
-            value={filters.priceRange[1]}
-            onChange={(e) =>
-              onFilterChange("priceRange", [
-                filters.priceRange[0],
-                parseInt(e.target.value),
-              ])
-            }
-            className="w-full h-3 bg-gradient-to-r from-blue-300 to-purple-300 rounded-lg appearance-none cursor-pointer accent-blue-600"
-          />
+          <div className="flex gap-4">
+            <input
+              type="number"
+              min="0"
+              max="10000"
+              value={filters.priceRange[0]}
+              onChange={(e) => handlePriceChange('min', parseInt(e.target.value) || 0)}
+              className="w-1/2 px-3 py-1 border border-blue-300 rounded-md text-sm"
+              placeholder="Min"
+            />
+            <input
+              type="number"
+              min="0"
+              max="10000"
+              value={filters.priceRange[1]}
+              onChange={(e) => handlePriceChange('max', parseInt(e.target.value) || 10000)}
+              className="w-1/2 px-3 py-1 border border-blue-300 rounded-md text-sm"
+              placeholder="Max"
+            />
+          </div>
         </div>
 
         {/* Duration */}
@@ -327,9 +367,9 @@ const ActiveFiltersSummary: React.FC<{
       label: `Status: ${filters.status}`,
       value: filters.status,
     },
-    filters.priceRange[1] < 10000 && {
+    (filters.priceRange[0] > 0 || filters.priceRange[1] < 10000) && {
       name: "priceRange",
-      label: `Price up to: ${formatPrice(filters.priceRange[1])}`,
+      label: `Price: ${formatPrice(filters.priceRange[0])} - ${formatPrice(filters.priceRange[1])}`,
       value: filters.priceRange,
     },
   ].filter(Boolean);

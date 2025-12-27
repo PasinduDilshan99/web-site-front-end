@@ -11,30 +11,27 @@ import BlogFilter from "@/components/blog-components/BlogFilter";
 import BlogCard from "@/components/blog-components/BlogCard";
 import LinkBar from "@/components/common-components/linkBar/LinkBar";
 
-// Blog categories
-const BLOG_CATEGORIES = [
-  "Travel Tips",
-  "Destination Guides",
-  "Adventure",
-  "Culture & Heritage",
-  "Food & Dining",
-  "Beach & Relaxation",
-  "City Life",
-  "Budget Travel",
-  "Luxury Travel",
-  "Family Travel",
-];
+import { useSearchParams } from "next/navigation";
 
-const BlogPage = () => {
+const BlogPage: React.FC = () => {
+  const searchParams = useSearchParams();
+
+  const writerParam: string | null = searchParams.get("writer");
+  const searchParam: string | null = searchParams.get("search");
+
+  console.log("Writer Param:", writerParam);
+  console.log("Search Param:", searchParam);
+
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [filteredBlogs, setFilteredBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [categories, setCategories] = useState<string[]>([]);
 
   // Filter states
   const [filters, setFilters] = useState<BlogFilters>({
-    search: "",
-    writer: "",
+    search: searchParam || "",
+    writer: writerParam || "",
     category: "",
     dateRange: ["", ""],
     sortBy: "recent",
@@ -88,7 +85,7 @@ const BlogPage = () => {
   };
 
   // Enhance blog data with calculated properties
-  const enhanceBlogData = (blog: Blog): Blog => {
+  const enhanceBlogData = (blog: any): Blog => {
     // Use likeCount from API if available, otherwise calculate from blog_reactions
     const totalReactions = blog.likeCount || calculateTotalReactions(blog.blog_reactions);
     
@@ -97,9 +94,47 @@ const BlogPage = () => {
     
     return {
       ...blog,
+      blogCategory: blog.blogCategory || 'Uncategorized', // Ensure blogCategory exists
       totalReactions,
       commentCount,
     };
+  };
+
+  // Determine which API to call based on parameters
+  const getApiUrl = (): string => {
+    if (writerParam) {
+      return `http://localhost:8080/felicita/v0/api/blog/writer/${encodeURIComponent(writerParam)}`;
+    } else if (searchParam) {
+      return `http://localhost:8080/felicita/v0/api/blog/tag/${encodeURIComponent(searchParam)}`;
+    } else {
+      return "http://localhost:8080/felicita/v0/api/blog/active";
+    }
+  };
+
+  // Determine if we should show filters based on parameters
+  const shouldShowFilters = (): boolean => {
+    return !writerParam && !searchParam;
+  };
+
+  // Reset filters when parameters change
+  const resetFiltersFromParams = (): void => {
+    if (writerParam) {
+      setFilters(prev => ({
+        ...prev,
+        writer: writerParam,
+        search: "",
+        category: "",
+        dateRange: ["", ""],
+      }));
+    } else if (searchParam) {
+      setFilters(prev => ({
+        ...prev,
+        search: searchParam,
+        writer: "",
+        category: "",
+        dateRange: ["", ""],
+      }));
+    }
   };
 
   useEffect(() => {
@@ -107,7 +142,7 @@ const BlogPage = () => {
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [writerParam, searchParam]); // Re-fetch when params change
 
   useEffect(() => {
     applyFilters();
@@ -144,8 +179,11 @@ const BlogPage = () => {
       setLoading(true);
       setError(null);
 
+      const apiUrl = getApiUrl();
+      console.log('Fetching from API:', apiUrl);
+
       const response = await fetch(
-        "http://localhost:8080/felicita/v0/api/blog/active",
+        apiUrl,
         {
           method: 'GET',
           headers: {
@@ -167,16 +205,28 @@ const BlogPage = () => {
         // First enhance the data with calculated properties
         const enhancedBlogs = result.data.map(enhanceBlogData);
         
-        // Log enhanced data for debugging
+        // Extract unique categories from blogs
+        const uniqueCategories = [...new Set(result.data
+          .map((blog: any) => blog.blogCategory)
+          .filter((category: string | null) => category && category.trim() !== '')
+        )] as string[];
+        
         console.log('Enhanced Blogs:', enhancedBlogs.map(blog => ({
           title: blog.title,
+          category: blog.blogCategory,
           totalReactions: blog.totalReactions,
           commentCount: blog.commentCount,
           date: blog.blog_created_at
         })));
         
+        console.log('Extracted Categories:', uniqueCategories); // Debug log
+        
         setBlogs(enhancedBlogs);
         setFilteredBlogs(enhancedBlogs);
+        setCategories(uniqueCategories.sort()); // Set categories state
+        
+        // Reset filters based on URL parameters
+        resetFiltersFromParams();
       } else {
         throw new Error(result.message || "Failed to fetch blogs");
       }
@@ -193,46 +243,27 @@ const BlogPage = () => {
     
     let filtered = [...blogs];
 
-    // Search filter
-    if (filters.search) {
+    // Search filter - only if not already filtered by search parameter
+    if (filters.search && !searchParam) {
       const searchLower = filters.search.toLowerCase();
       filtered = filtered.filter(
         (blog) =>
           blog.title.toLowerCase().includes(searchLower) ||
           blog.subtitle.toLowerCase().includes(searchLower) ||
           blog.description.toLowerCase().includes(searchLower) ||
-          blog.writer_name.toLowerCase().includes(searchLower)
+          blog.writer_name.toLowerCase().includes(searchLower) ||
+          (blog.blogCategory && blog.blogCategory.toLowerCase().includes(searchLower))
       );
     }
 
-    // Writer filter
-    if (filters.writer) {
+    // Writer filter - only if not already filtered by writer parameter
+    if (filters.writer && !writerParam) {
       filtered = filtered.filter((blog) => blog.writer_name === filters.writer);
     }
 
-    // Category filter (based on content analysis)
+    // Category filter (using actual blogCategory field from API)
     if (filters.category) {
-      filtered = filtered.filter((blog) => {
-        const title = blog.title.toLowerCase();
-        const description = blog.description.toLowerCase();
-        
-        switch (filters.category) {
-          case "Food & Dining":
-            return title.includes('food') || description.includes('food') || description.includes('cuisine');
-          case "Adventure":
-            return title.includes('adventure') || description.includes('adventure') || description.includes('hiking');
-          case "Culture & Heritage":
-            return title.includes('culture') || description.includes('culture') || description.includes('heritage');
-          case "Beach & Relaxation":
-            return title.includes('beach') || description.includes('beach') || description.includes('sea');
-          case "City Life":
-            return title.includes('city') || description.includes('city') || description.includes('urban');
-          case "Travel Tips":
-            return title.includes('tips') || description.includes('tips') || description.includes('guide');
-          default:
-            return true;
-        }
-      });
+      filtered = filtered.filter((blog) => blog.blogCategory === filters.category);
     }
 
     // Date range filter
@@ -256,6 +287,7 @@ const BlogPage = () => {
     // Sorting - FIXED VERSION
     console.log('Before sorting - First 3 blogs:', filtered.slice(0, 3).map(b => ({
       title: b.title,
+      category: b.blogCategory,
       totalReactions: b.totalReactions,
       commentCount: b.commentCount,
       date: b.blog_created_at
@@ -294,6 +326,7 @@ const BlogPage = () => {
 
     console.log('After sorting - First 3 blogs:', filtered.slice(0, 3).map(b => ({
       title: b.title,
+      category: b.blogCategory,
       totalReactions: b.totalReactions,
       commentCount: b.commentCount,
       date: b.blog_created_at,
@@ -305,6 +338,13 @@ const BlogPage = () => {
 
   const handleFilterChange = (filterName: keyof BlogFilters, value: any): void => {
     console.log(`Filter changed: ${filterName} =`, value); // Debug log
+    
+    // If changing writer or search and we have URL params, navigate to remove them
+    if ((filterName === 'writer' && writerParam) || (filterName === 'search' && searchParam)) {
+      // Clear URL parameters by navigating to base blog page
+      window.history.pushState({}, '', '/blog');
+    }
+    
     setFilters((prev) => ({
       ...prev,
       [filterName]: value,
@@ -312,6 +352,11 @@ const BlogPage = () => {
   };
 
   const resetFilters = (): void => {
+    // If we have URL parameters, navigate to base blog page
+    if (writerParam || searchParam) {
+      window.history.pushState({}, '', '/blog');
+    }
+    
     setFilters({
       search: "",
       writer: "",
@@ -361,33 +406,13 @@ const BlogPage = () => {
   }
 
   if (error) {
-    return (
-      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-br from-purple-500 via-amber-500 to-pink-500">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <ErrorState
-            title="Failed to Load Blogs"
-            message={error}
-            icon="alert"
-            variant="error"
-            size="md"
-            actionLabel="Try Again"
-            onAction={handleRetry}
-          />
-        </div>
-      </section>
-    );
+    return null;
   }
 
   const paginatedBlogs = getPaginatedBlogs();
 
   return (
     <>
-      <div>
-        <LinkBar />
-      </div>
-      <div>
-        <NavBar />
-      </div>
       <div>
         <BlogHeroSection />
       </div>
@@ -396,22 +421,49 @@ const BlogPage = () => {
         {/* Page Header */}
         <div className="text-center mb-8 md:mb-12">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-purple-900 mb-4">
-            Travel Stories & Insights
+            {writerParam ? `${writerParam}'s Blogs` : 
+             searchParam ? `Search Results for "${searchParam}"` : 
+             "Travel Stories & Insights"}
           </h1>
           <p className="text-gray-600 max-w-3xl mx-auto">
-            Discover authentic travel experiences, expert tips, and inspiring stories 
-            from our community of travel writers and explorers.
+            {writerParam ? `Discover all blogs written by ${writerParam}` : 
+             searchParam ? `Showing blogs related to "${searchParam}"` : 
+             "Discover authentic travel experiences, expert tips, and inspiring stories from our community of travel writers and explorers."}
           </p>
         </div>
 
-        {/* Filters Section */}
-        <BlogFilter
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          onResetFilters={resetFilters}
-          writers={writers}
-          categories={BLOG_CATEGORIES}
-        />
+        {/* Filters Section - Only show if no URL parameters */}
+        {shouldShowFilters() ? (
+          <BlogFilter
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            onResetFilters={resetFilters}
+            writers={writers}
+            categories={categories}
+          />
+        ) : (
+          <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-purple-200">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div>
+                <h2 className="text-xl font-bold text-purple-900">
+                  {writerParam ? `Filtered by Writer: ${writerParam}` : 
+                   searchParam ? `Filtered by Search: ${searchParam}` : ''}
+                </h2>
+                <p className="text-sm text-gray-600">
+                  Showing {blogs.length} blog{blogs.length !== 1 ? 's' : ''}
+                  {writerParam ? ` by ${writerParam}` : 
+                   searchParam ? ` related to "${searchParam}"` : ''}
+                </p>
+              </div>
+              <button
+                onClick={resetFilters}
+                className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-50 to-amber-50 text-purple-700 font-medium rounded-lg hover:from-purple-100 hover:to-amber-100 transition-colors border border-purple-200"
+              >
+                Clear Filter
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Results Section */}
         <div className="mb-8">
@@ -432,7 +484,7 @@ const BlogPage = () => {
                 id="itemsPerPage"
                 value={pagination.itemsPerPage}
                 onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
-                className="px-3 py-2 border border-purple-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-sm bg-white"
+                className="text-purple-500 px-3 py-2 border border-purple-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-sm bg-white"
               >
                 {itemsPerPageOptions.map((option) => (
                   <option key={option} value={option}>
@@ -471,10 +523,6 @@ const BlogPage = () => {
             <NoResults onResetFilters={resetFilters} />
           )}
         </div>
-      </div>
-      
-      <div>
-        <Footer />
       </div>
     </>
   );

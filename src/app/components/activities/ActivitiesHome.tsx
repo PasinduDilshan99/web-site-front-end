@@ -8,6 +8,7 @@ import AnimatedButton from "../../../components/common-components/buttons/Animat
 import SectionHeader from "../../../components/common-components/section-header/SectionHeader";
 import { ActiveActivitiesType } from "@/types/activities-types";
 import ActivitiesGrid from "@/components/activities-components/ActivitiesGrid";
+import { useRouter } from "next/navigation";
 
 const ActivitiesHome = () => {
   const [loading, setLoading] = useState(true);
@@ -16,26 +17,31 @@ const ActivitiesHome = () => {
     ActiveActivitiesType[]
   >([]);
   const [displayCount, setDisplayCount] = useState(3);
+  const router = useRouter()
+
+  const handleMoreActivities = () =>{
+    router.push("/activities")
+  }
 
   // Update display count based on screen size
-  useEffect(() => {
-    const updateDisplayCount = () => {
-      const width = window.innerWidth;
-      if (width < 768) {
-        setDisplayCount(3);
-      } else if (width < 1024) {
-        setDisplayCount(4);
-      } else if (width < 1280) {
-        setDisplayCount(6);
-      } else {
-        setDisplayCount(8);
-      }
-    };
+useEffect(() => {
+  const updateDisplayCount = () => {
+    const width = window.innerWidth;
+    if (width < 768) {           // Mobile: < 768px
+      setDisplayCount(2);
+    } else if (width < 1024) {   // Tablet: 768px - 1023px
+      setDisplayCount(4);
+    } else if (width < 1536) {   // Laptop: 1024px - 1279px
+      setDisplayCount(6);
+    } else {                     // PC: ≥ 1280px
+      setDisplayCount(8);
+    }
+  };
 
-    updateDisplayCount();
-    window.addEventListener("resize", updateDisplayCount);
-    return () => window.removeEventListener("resize", updateDisplayCount);
-  }, []);
+  updateDisplayCount();
+  window.addEventListener("resize", updateDisplayCount);
+  return () => window.removeEventListener("resize", updateDisplayCount);
+}, []);
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -75,36 +81,11 @@ const ActivitiesHome = () => {
   }
 
   if (error) {
-    return (
-      <section className="py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <ErrorState
-            title="Failed to Load Content"
-            message={error}
-            icon="alert"
-            variant="error"
-            size="md"
-            actionLabel="Try Again"
-            onAction={handleRetry}
-          />
-        </div>
-      </section>
-    );
+    return null;
   }
 
   if (activeActivities.length === 0) {
-    return (
-      <section className="py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <EmptyState
-            title="No Content Available"
-            message="We're preparing some amazing content for you. Please check back soon!"
-            icon="data"
-            size="md"
-          />
-        </div>
-      </section>
-    );
+    return null;
   }
 
   return (
@@ -127,23 +108,12 @@ const ActivitiesHome = () => {
           displayCount={displayCount}
         />
 
-        {/* Show More Button */}
-        {activeActivities.length > displayCount && (
-          <div className="text-center mt-6 sm:mt-8 md:mt-10 lg:mt-12 xl:mt-16">
-            <AnimatedButton
-              onClick={() => setDisplayCount(activeActivities.length)}
-            >
-              Show All {activeActivities.length} Activities
-            </AnimatedButton>
-          </div>
-        )}
 
         {/* View All Button when all are displayed */}
-        {displayCount === activeActivities.length &&
-          activeActivities.length > 0 && (
+        { activeActivities.length > 0 && (
             <div className="text-center mt-6 sm:mt-8 md:mt-10 lg:mt-12 xl:mt-16">
-              <AnimatedButton onClick={() => console.log("View all clicked")}>
-                View All Activities
+              <AnimatedButton onClick={handleMoreActivities}>
+                 Show All {activeActivities.length} Activities
               </AnimatedButton>
             </div>
           )}

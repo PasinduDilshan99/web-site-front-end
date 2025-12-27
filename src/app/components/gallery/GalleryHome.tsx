@@ -271,141 +271,146 @@ const GalleryHome = () => {
       </div>
 
       {/* Modal for Image Details */}
-      {selectedImage && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4 animate-fadeIn"
+{selectedImage && (
+  <>
+    {/* Blur background effect - add this div */}
+    <div 
+      className="fixed inset-0 backdrop-blur-sm bg-white/30 z-40 animate-fadeIn"
+      onClick={() => setSelectedImage(null)}
+    />
+    
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div
+        className="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-auto shadow-2xl animate-scaleIn"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Close Button */}
+        <button
           onClick={() => setSelectedImage(null)}
+          className="absolute top-4 right-4 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
         >
-          <div
-            className="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-auto shadow-2xl animate-scaleIn"
-            onClick={(e) => e.stopPropagation()}
+          <svg
+            className="w-6 h-6 text-gray-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
           >
-            {/* Close Button */}
-            <button
-              onClick={() => setSelectedImage(null)}
-              className="absolute top-4 right-4 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
-            >
-              <svg
-                className="w-6 h-6 text-gray-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
 
-            <div className="grid md:grid-cols-2 gap-6 p-6">
-              {/* Image Section */}
-              <div className="relative aspect-square rounded-xl overflow-hidden">
-                <Image
-                  src={selectedImage.imageLink}
-                  alt={selectedImage.imageName}
-                  fill
-                  className="object-cover"
-                />
+        <div className="grid md:grid-cols-2 gap-6 p-6">
+          {/* Image Section */}
+          <div className="relative aspect-square rounded-xl overflow-hidden">
+            <Image
+              src={selectedImage.imageLink}
+              alt={selectedImage.imageName}
+              fill
+              className="object-cover"
+            />
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundColor: selectedImage.hoverColor,
+                opacity: 0.1,
+              }}
+            />
+          </div>
+
+          {/* Details Section */}
+          <div className="flex flex-col justify-between py-4">
+            <div className="space-y-6">
+              {/* Title */}
+              <div>
+                <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
+                  {selectedImage.imageName}
+                </h2>
                 <div
-                  className="absolute inset-0"
-                  style={{
-                    backgroundColor: selectedImage.hoverColor,
-                    opacity: 0.1,
-                  }}
-                />
+                  className="w-20 h-1 rounded-full"
+                  style={{ backgroundColor: selectedImage.hoverColor }}
+                ></div>
               </div>
 
-              {/* Details Section */}
-              <div className="flex flex-col justify-between py-4">
-                <div className="space-y-6">
-                  {/* Title */}
-                  <div>
-                    <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
-                      {selectedImage.imageName}
-                    </h2>
-                    <div
-                      className="w-20 h-1 rounded-full"
-                      style={{ backgroundColor: selectedImage.hoverColor }}
-                    ></div>
-                  </div>
+              {/* Owner */}
+              <div>
+                <p className="text-sm text-gray-500 uppercase tracking-wide mb-1">
+                  Owner
+                </p>
+                <p className="text-lg font-semibold text-gray-800">
+                  {selectedImage.imageOwner}
+                </p>
+              </div>
 
-                  {/* Owner */}
-                  <div>
-                    <p className="text-sm text-gray-500 uppercase tracking-wide mb-1">
-                      Owner
+              {/* Location */}
+              {selectedImage.location && (
+                <div>
+                  <p className="text-sm text-gray-500 uppercase tracking-wide mb-1">
+                    Location
+                  </p>
+                  <p className="text-lg font-semibold text-gray-800">
+                    {selectedImage.location}
+                  </p>
+                </div>
+              )}
+
+              {/* Description */}
+              {selectedImage.imageDescription && (
+                <div>
+                  <p className="text-sm text-gray-500 uppercase tracking-wide mb-1">
+                    Description
+                  </p>
+                  <p className="text-base text-gray-700 leading-relaxed">
+                    {selectedImage.imageDescription}
+                  </p>
+                </div>
+              )}
+
+              {/* Source */}
+              {selectedImage.imageSource && (
+                <div>
+                  <p className="text-sm text-gray-500 uppercase tracking-wide mb-1">
+                    Source
+                  </p>
+                  {selectedImage.imageSourceLink ? (
+                    <a
+                      href={selectedImage.imageSourceLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-base text-blue-600 hover:text-blue-800 hover:underline"
+                    >
+                      {selectedImage.imageSource}
+                    </a>
+                  ) : (
+                    <p className="text-base text-gray-700">
+                      {selectedImage.imageSource}
                     </p>
-                    <p className="text-lg font-semibold text-gray-800">
-                      {selectedImage.imageOwner}
-                    </p>
-                  </div>
-
-                  {/* Location */}
-                  {selectedImage.location && (
-                    <div>
-                      <p className="text-sm text-gray-500 uppercase tracking-wide mb-1">
-                        Location
-                      </p>
-                      <p className="text-lg font-semibold text-gray-800">
-                        {selectedImage.location}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Description */}
-                  {selectedImage.imageDescription && (
-                    <div>
-                      <p className="text-sm text-gray-500 uppercase tracking-wide mb-1">
-                        Description
-                      </p>
-                      <p className="text-base text-gray-700 leading-relaxed">
-                        {selectedImage.imageDescription}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Source */}
-                  {selectedImage.imageSource && (
-                    <div>
-                      <p className="text-sm text-gray-500 uppercase tracking-wide mb-1">
-                        Source
-                      </p>
-                      {selectedImage.imageSourceLink ? (
-                        <a
-                          href={selectedImage.imageSourceLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-base text-blue-600 hover:text-blue-800 hover:underline"
-                        >
-                          {selectedImage.imageSource}
-                        </a>
-                      ) : (
-                        <p className="text-base text-gray-700">
-                          {selectedImage.imageSource}
-                        </p>
-                      )}
-                    </div>
                   )}
                 </div>
-
-                {/* Status Badge */}
-                {selectedImage.imageStatus && (
-                  <div className="mt-6">
-                    <span
-                      className="inline-block px-4 py-2 rounded-full text-sm font-semibold text-white"
-                      style={{ backgroundColor: selectedImage.hoverColor }}
-                    >
-                      {selectedImage.imageStatus}
-                    </span>
-                  </div>
-                )}
-              </div>
+              )}
             </div>
+
+            {/* Status Badge */}
+            {selectedImage.imageStatus && (
+              <div className="mt-6">
+                <span
+                  className="inline-block px-4 py-2 rounded-full text-sm font-semibold text-white"
+                  style={{ backgroundColor: selectedImage.hoverColor }}
+                >
+                  {selectedImage.imageStatus}
+                </span>
+              </div>
+            )}
           </div>
         </div>
-      )}
+      </div>
+    </div>
+  </>
+)}
 
       <style jsx>{`
         @keyframes fadeIn {

@@ -15,12 +15,6 @@ const ContactUsPage = () => {
   return (
     <>
       <div>
-        <LinkBar />
-      </div>
-      <div>
-        <NavBar />
-      </div>
-      <div>
         <ContactUsHeroSection />
       </div>
       <div>
@@ -29,23 +23,20 @@ const ContactUsPage = () => {
       <div>
         <ContactForm />
       </div>
-      <div>
+      {/* <div>
         <ContactUsOffice />
-      </div>
+      </div> */}
       <div>
         <BusinessInformation />
       </div>
       <div>
         <ContactUsSocialMedia />
       </div>
-      <div>
+      {/* <div>
         <Faq />
-      </div>
+      </div> */}
       <div>
         <CallToAction />
-      </div>
-      <div>
-        <Footer />
       </div>
     </>
   );

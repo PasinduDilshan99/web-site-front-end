@@ -36,11 +36,16 @@ export interface ActiveToursType {
   images: TourImage[];
 }
 
-export interface ApiResponse {
+export interface TourListResponse {
+  totalTours: number;
+  tourResponseDtoList: ActiveToursType[];
+}
+
+export interface PaginatedTourResponse {
   code: number;
   status: string;
   message: string;
-  data: ActiveToursType[];
+  data: TourListResponse | null;
   timestamp: string;
 }
 
@@ -54,6 +59,18 @@ export interface TourFilters {
   location: string;
 }
 
+export interface TourSearchRequest {
+  name: string | null;
+  minPrice: number | null;
+  maxPrice: number | null;
+  duration: number | null;
+  tourType: string | null;
+  tourCategory: string | null;
+  season: string | null;
+  location: string | null;
+  pageNumber: number;
+  pageSize: number;
+}
 
 // types/sri-lankan-tour-types.ts
 export interface ReviewImage {
@@ -194,7 +211,6 @@ export interface TourHistoryResponse {
   timestamp: string;
 }
 
-
 export interface TourHistoryImage {
   imageId: number;
   name: string;
@@ -216,4 +232,194 @@ export interface TourHistoryImagesResponse {
   message: string;
   data: TourHistoryImage[];
   timestamp: string;
+}
+
+
+// Add these interfaces to your existing types file
+
+export interface Accommodation {
+  day: number;
+  breakfast: boolean;
+  breakfastDescription: string | null;
+  lunch: boolean;
+  lunchDescription: string | null;
+  dinner: boolean;
+  dinnerDescription: string | null;
+  morningTea: boolean;
+  morningTeaDescription: string | null;
+  eveningTea: boolean;
+  eveningTeaDescription: string | null;
+  snacks: boolean;
+  snackNote: string | null;
+  hotel: Hotel | null;
+  transport: Transport | null;
+  otherNotes: string | null;
+}
+
+export interface Hotel {
+  hotelId: number;
+  hotelName: string;
+  hotelType: string | null;
+  hotelCategory: string;
+  longitude: number;
+  latitude: number;
+  location: string;
+  description: string;
+  facilities: string | null;
+}
+
+export interface Transport {
+  transportId: number;
+  transportType: string;
+  vehicleModel: string;
+  seatCount: number;
+  airConditioned: boolean;
+  driverIncluded: boolean | null;
+  fuelIncluded: boolean | null;
+  description: string | null;
+}
+
+export interface DestinationImage {
+  imageId: number;
+  imageName: string;
+  imageDescription: string;
+  imageUrl: string;
+  imageStatus: string | null;
+}
+
+export interface Destination {
+  destinationId: number;
+  destinationName: string;
+  destinationDescription: string;
+  destinationStatus: string | null;
+  category: string;
+  categoryDescription: string;
+  location: string;
+  latitude: number;
+  longitude: number;
+  createdAt: string;
+  createdBy: string;
+  createrImageUrl: string;
+  updatedAt: string | null;
+  updatedBy: string | null;
+  updaterImageUrl: string | null;
+  images: DestinationImage[];
+}
+
+export interface Requirement {
+  id: number;
+  name: string;
+  value: string;
+  description: string;
+  color: string;
+  status: number;
+}
+
+export interface ActivityImage {
+  id: number;
+  name: string;
+  description: string;
+  status: number;
+  image_url: string;
+}
+
+export interface Activity {
+  id: number;
+  destinationId: number;
+  name: string;
+  description: string;
+  activitiesCategory: string;
+  durationHours: number;
+  availableFrom: string;
+  availableTo: string;
+  priceLocal: number;
+  priceForeigners: number;
+  minParticipate: number;
+  maxParticipate: number;
+  season: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  categoryName: string;
+  categoryDescription: string;
+  requirements: Requirement[];
+  images: ActivityImage[];
+}
+
+export interface DestinationWithActivities {
+  destination: Destination;
+  activities: Activity[];
+}
+
+export interface DayDetails {
+  dayNumber: number;
+  accommodations: Accommodation;
+  destinations: DestinationWithActivities[];
+}
+
+export interface TourDetailsApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: DayDetails[];
+  timestamp: string;
+}
+
+export interface Inclusion {
+  id: number;
+  description: string;
+  displayOrder: number;
+  status: string;
+}
+
+export interface Exclusion {
+  id: number;
+  description: string;
+  displayOrder: number;
+  status: string;
+}
+
+export interface Condition {
+  id: number;
+  description: string;
+  displayOrder: number;
+  status: string;
+}
+
+export interface TravelTip {
+  id: number;
+  title: string;
+  description: string;
+  displayOrder: number;
+  status: string;
+}
+
+export interface TourExtraDetailsData {
+  inclusions: Inclusion[];
+  exclusions: Exclusion[];
+  conditions: Condition[];
+  travelTips: TravelTip[];
+}
+
+export interface TourExtraDetailsApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: TourExtraDetailsData;
+  timestamp: string;
+}
+
+export interface TourExtraDetailItem {
+  id: number;
+  description?: string;
+  title?: string;
+  displayOrder: number;
+  status: 'ACTIVE' | 'INACTIVE';
+}
+
+export interface TourExtraDetails {
+  inclusions: TourExtraDetailItem[];
+  exclusions: TourExtraDetailItem[];
+  conditions: TourExtraDetailItem[];
+  travelTips: TourExtraDetailItem[];
 }

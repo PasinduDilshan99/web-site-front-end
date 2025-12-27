@@ -1,4 +1,3 @@
-// Update your PackagePage component
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import { GET_ALL_ACTIVE_PACKAGES_FE } from "@/utils/frontEndConstant";
@@ -11,6 +10,7 @@ import {
   PackageHistory,
   PackageHistoryResponse,
   PackageHistoryImage,
+  PackageSearchRequest,
 } from "@/types/packages-types";
 import Loading from "@/components/common-components/loading/Loading";
 import { ErrorState } from "@/components/common-components/error-state/ErrorState";
@@ -22,26 +22,25 @@ import PackageHistoryGallery from "@/components/packages-components/PackageHisto
 import NavBar from "@/components/common-components/navBar/NavBar";
 import Footer from "@/app/components/footer/Footer";
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";
+import PackageHeroSection from "@/components/packages-components/PackageHeroSection";
+import LinkBar from "@/components/common-components/linkBar/LinkBar";
 
-interface PackageHistoryImagesResponse {
+// Define API response interface for packages
+interface PackageListResponse {
+  packageCount: number;
+  packageResponseDtos: ActivePackagesType[];
+}
+
+interface PaginatedPackageResponse {
   code: number;
   status: string;
   message: string;
-  data: PackageHistoryImage[];
+  data: PackageListResponse | null;
   timestamp: string;
-}
-
-// Pagination types
-interface PaginationState {
-  currentPage: number;
-  itemsPerPage: number;
 }
 
 const PackagePage: React.FC = () => {
   const [packages, setPackages] = useState<ActivePackagesType[]>([]);
-  const [filteredPackages, setFilteredPackages] = useState<
-    ActivePackagesType[]
-  >([]);
   const [reviews, setReviews] = useState<PackageReview[]>([]);
   const [history, setHistory] = useState<PackageHistory[]>([]);
   const [historyImages, setHistoryImages] = useState<PackageHistoryImage[]>([]);
@@ -71,81 +70,127 @@ const PackagePage: React.FC = () => {
   });
 
   // Pagination state
-  const [pagination, setPagination] = useState<PaginationState>({
-    currentPage: 1,
-    itemsPerPage: 12, // Default for desktop
-  });
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [itemsPerPage, setItemsPerPage] = useState<number>(12);
+  const [totalPackages, setTotalPackages] = useState<number>(0);
+  const [totalPages, setTotalPages] = useState<number>(0);
 
-  // Extract unique values for filter options
-  const packageTypes = [...new Set(packages.map((pkg) => pkg.packageTypeName))];
-  const locations = [...new Set(packages.map((pkg) => pkg.startLocation))];
-  const durations = [...new Set(packages.map((pkg) => pkg.duration))].sort(
-    (a, b) => a - b
-  );
+  // Search button state
+  const [searchTriggered, setSearchTriggered] = useState<boolean>(false);
+  const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
 
-  // Items per page options
-  const itemsPerPageOptions = [4, 6, 9, 12, 16];
+  // Filter options from initial data
+  const [packageTypes, setPackageTypes] = useState<string[]>([]);
+  const [locations, setLocations] = useState<string[]>([]);
+  const [durations, setDurations] = useState<number[]>([]);
 
-  // Use useCallback to memoize handleResize
-  const handleResize = useCallback((): void => {
-    const width = window.innerWidth;
-    let itemsPerPage = 12; // default for desktop
-
-    if (width < 640) {
-      // mobile
-      itemsPerPage = 4;
-    } else if (width < 768) {
-      // small tablet
-      itemsPerPage = 6;
-    } else if (width < 1024) {
-      // tablet/laptop
-      itemsPerPage = 9;
-    } else if (width < 1280) {
-      // desktop
-      itemsPerPage = 12;
-    } else {
-      // large screens
-      itemsPerPage = 16;
-    }
-
-    setPagination((prev) => ({
-      ...prev,
-      itemsPerPage,
-    }));
-  }, []); // Empty dependency array since we don't use any external variables
-
-  useEffect(() => {
-    fetchPackages();
-    fetchReviews();
-    fetchHistory();
-    fetchHistoryImages();
-
-    // Initial resize call
-    handleResize();
-
-    // Add event listener
-    window.addEventListener("resize", handleResize);
-
-    // Cleanup
-    return () => window.removeEventListener("resize", handleResize);
-  }, [handleResize]); // Add handleResize to dependency array
-
-  useEffect(() => {
-    applyFilters();
-  }, [filters, packages]); // Add proper dependencies
-
-  useEffect(() => {
-    // Reset to first page when filters change
-    setPagination((prev) => ({ ...prev, currentPage: 1 }));
-  }, [filters]);
-
-  const fetchPackages = async (): Promise<void> => {
+  // Fetch filter options (initial data)
+  const fetchFilterOptions = useCallback(async (): Promise<void> => {
     try {
-      const response = await fetch(GET_ALL_ACTIVE_PACKAGES_FE);
-      const result: ApiResponse = await response.json();
+      const requestBody: PackageSearchRequest = {
+        name: null,
+        minPrice: null,
+        maxPrice: null,
+        duration: null,
+        packageType: null,
+        location: null,
+        minGroupSize: null,
+        maxGroupSize: null,
+        fromDate: null,
+        toDate: null,
+        pageSize: 100, // Fetch more for filter options
+        pageNumber: 1,
+      };
+
+      const response = await fetch(
+        "http://localhost:8080/felicita/v0/api/package/packages",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie:
+              "token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNpbmR1IiwidXNlcklkIjo0LCJ1c2VybmFtZSI6InBhc2luZHUiLCJpYXQiOjE3NjI2Njg5NjksImV4cCI6MTc2MjY2OTA4OX0.5wQ6QL3q2pvSoCEhDze6t_Aub3Vb8hlcMRQ3UQxu8yg",
+          },
+          body: JSON.stringify(requestBody),
+        }
+      );
+
+      const result: PaginatedPackageResponse = await response.json();
+
+      if (result.code === 200 && result.data) {
+        // Extract unique values for filters
+        const types = [
+          ...new Set(
+            result.data.packageResponseDtos.map((pkg) => pkg.packageTypeName)
+          ),
+        ];
+        const locationsList = [
+          ...new Set(
+            result.data.packageResponseDtos.map((pkg) => pkg.startLocation)
+          ),
+        ];
+        const durationsList = [
+          ...new Set(
+            result.data.packageResponseDtos.map((pkg) => pkg.duration)
+          ),
+        ].sort((a, b) => a - b);
+
+        setPackageTypes(types);
+        setLocations(locationsList);
+        setDurations(durationsList);
+      }
+    } catch (err) {
+      console.error("Error fetching filter options:", err);
+    }
+  }, []);
+
+  // Fetch packages with filters - main API call function
+  const fetchPackagesWithFilters = useCallback(async (): Promise<void> => {
+    try {
+      setLoading(true);
+
+      // Prepare API request
+      const requestBody: PackageSearchRequest = {
+        name: filters.search || null,
+        minPrice: filters.priceRange[0] > 0 ? filters.priceRange[0] : null,
+        maxPrice: filters.priceRange[1] < 100000 ? filters.priceRange[1] : null,
+        duration: filters.duration ? parseInt(filters.duration) : null,
+        packageType: filters.packageType || null,
+        location: filters.location || null,
+        minGroupSize: filters.minPersons ? parseInt(filters.minPersons) : null,
+        maxGroupSize: filters.maxPersons ? parseInt(filters.maxPersons) : null,
+        fromDate: filters.startDate || null,
+        toDate: filters.endDate || null,
+        pageSize: itemsPerPage,
+        pageNumber: currentPage,
+      };
+
+      const response = await fetch(
+        "http://localhost:8080/felicita/v0/api/package/packages",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie:
+              "token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNpbmR1IiwidXNlcklkIjo0LCJ1c2VybmFtZSI6InBhc2luZHUiLCJpYXQiOjE3NjI2Njg5NjksImV4cCI6MTc2MjY2OTA4OX0.5wQ6QL3q2pvSoCEhDze6t_Aub3Vb8hlcMRQ3UQxu8yg",
+          },
+          body: JSON.stringify(requestBody),
+        }
+      );
+
+      const result: PaginatedPackageResponse = await response.json();
 
       if (result.code === 200) {
-        setPackages(result.data);
+        if (result.data) {
+          setPackages(result.data.packageResponseDtos);
+          setTotalPackages(result.data.packageCount);
+          setTotalPages(Math.ceil(result.data.packageCount / itemsPerPage));
+        } else {
+          setPackages([]);
+          setTotalPackages(0);
+          setTotalPages(0);
+        }
+        setError(null);
       } else {
         throw new Error(result.message);
       }
@@ -153,8 +198,51 @@ const PackagePage: React.FC = () => {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
+      setIsInitialLoad(false);
     }
-  };
+  }, [filters, currentPage, itemsPerPage]);
+
+  // Initial data fetch - runs only once on mount
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      try {
+        setLoading(true);
+        await fetchFilterOptions();
+        await fetchPackagesWithFilters();
+        fetchReviews();
+        fetchHistory();
+        fetchHistoryImages();
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+      }
+    };
+
+    fetchInitialData();
+  }, []); // Empty dependency array - runs only once on mount
+
+  // Fetch packages when search is triggered
+  useEffect(() => {
+    if (searchTriggered) {
+      setCurrentPage(1); // Reset to first page when search is triggered
+      fetchPackagesWithFilters();
+      setSearchTriggered(false);
+    }
+  }, [searchTriggered, fetchPackagesWithFilters]);
+
+  // Fetch packages when page changes
+  useEffect(() => {
+    if (!isInitialLoad && currentPage > 0) {
+      fetchPackagesWithFilters();
+    }
+  }, [currentPage]); // Only depends on currentPage
+
+  // Fetch packages when items per page changes
+  useEffect(() => {
+    if (!isInitialLoad) {
+      setCurrentPage(1); // Reset to first page
+      fetchPackagesWithFilters();
+    }
+  }, [itemsPerPage]); // Only depends on itemsPerPage
 
   const fetchReviews = async (): Promise<void> => {
     try {
@@ -216,7 +304,7 @@ const PackagePage: React.FC = () => {
       const response = await fetch(
         "http://localhost:8080/felicita/v0/api/package/history-images"
       );
-      const result: PackageHistoryImagesResponse = await response.json();
+      const result = await response.json();
 
       if (result.code === 200) {
         setHistoryImages(result.data);
@@ -234,76 +322,16 @@ const PackagePage: React.FC = () => {
     }
   };
 
-  const applyFilters = (): void => {
-    let filtered = [...packages];
-
-    // Search filter
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      filtered = filtered.filter(
-        (pkg) =>
-          pkg.packageName.toLowerCase().includes(searchLower) ||
-          pkg.packageDescription.toLowerCase().includes(searchLower) ||
-          pkg.tourName.toLowerCase().includes(searchLower)
-      );
-    }
-
-    // Price range filter
-    filtered = filtered.filter(
-      (pkg) =>
-        pkg.totalPrice >= filters.priceRange[0] &&
-        pkg.totalPrice <= filters.priceRange[1]
-    );
-
-    // Duration filter
-    if (filters.duration) {
-      filtered = filtered.filter(
-        (pkg) => pkg.duration === parseInt(filters.duration)
-      );
-    }
-
-    // Package type filter
-    if (filters.packageType) {
-      filtered = filtered.filter(
-        (pkg) => pkg.packageTypeName === filters.packageType
-      );
-    }
-
-    // Location filter
-    if (filters.location) {
-      filtered = filtered.filter(
-        (pkg) => pkg.startLocation === filters.location
-      );
-    }
-
-    // Persons filter
-    if (filters.minPersons) {
-      filtered = filtered.filter(
-        (pkg) => pkg.minPersonCount <= parseInt(filters.minPersons)
-      );
-    }
-    if (filters.maxPersons) {
-      filtered = filtered.filter(
-        (pkg) => pkg.maxPersonCount >= parseInt(filters.maxPersons)
-      );
-    }
-
-    // Date range filter
-    if (filters.startDate) {
-      filtered = filtered.filter((pkg) => pkg.startDate >= filters.startDate);
-    }
-    if (filters.endDate) {
-      filtered = filtered.filter((pkg) => pkg.endDate <= filters.endDate);
-    }
-
-    setFilteredPackages(filtered);
-  };
-
   const handleFilterChange = (filterName: keyof Filters, value: any): void => {
     setFilters((prev) => ({
       ...prev,
       [filterName]: value,
     }));
+    // Do NOT trigger API call here - wait for search button click
+  };
+
+  const handleSearch = (): void => {
+    setSearchTriggered(true);
   };
 
   const resetFilters = (): void => {
@@ -318,37 +346,34 @@ const PackagePage: React.FC = () => {
       startDate: "",
       endDate: "",
     });
+    // Trigger search automatically after reset
+    setSearchTriggered(true);
   };
 
   // Pagination functions
   const handlePageChange = (page: number): void => {
-    setPagination((prev) => ({ ...prev, currentPage: page }));
+    setCurrentPage(page);
+    // Scroll to top of results section
+    const resultsSection = document.getElementById("results-section");
+    if (resultsSection) {
+      resultsSection.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   const handleItemsPerPageChange = (items: number): void => {
-    setPagination((prev) => ({
-      ...prev,
-      itemsPerPage: items,
-      currentPage: 1, // Reset to first page when changing items per page
-    }));
+    setItemsPerPage(items);
+    // API call will be triggered by the useEffect that watches itemsPerPage
   };
-
-  // Calculate paginated packages
-  const getPaginatedPackages = (): ActivePackagesType[] => {
-    const startIndex = (pagination.currentPage - 1) * pagination.itemsPerPage;
-    const endIndex = startIndex + pagination.itemsPerPage;
-    return filteredPackages.slice(startIndex, endIndex);
-  };
-
-  // Calculate total pages
-  const totalPages = Math.ceil(
-    filteredPackages.length / pagination.itemsPerPage
-  );
 
   const handleRetry = () => {
     setError(null);
     setLoading(true);
-    window.location.reload();
+    setIsInitialLoad(true);
+    fetchFilterOptions();
+    fetchPackagesWithFilters();
+    fetchReviews();
+    fetchHistory();
+    fetchHistoryImages();
   };
 
   const handleReviewsRetry = () => {
@@ -394,11 +419,13 @@ const PackagePage: React.FC = () => {
     );
   }
 
-  const paginatedPackages = getPaginatedPackages();
+  // Calculate paginated packages display info
+  const startItem = (currentPage - 1) * itemsPerPage + 1;
+  const endItem = Math.min(currentPage * itemsPerPage, totalPackages);
 
   return (
     <>
-      <NavBar />
+      <PackageHeroSection />
       <div className="mx-auto px-4 py-8 bg-gradient-to-br from-purple-100 via-purple-100 to-amber-100">
         {/* Page Header */}
         <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
@@ -415,6 +442,7 @@ const PackagePage: React.FC = () => {
         <FilterSection
           filters={filters}
           onFilterChange={handleFilterChange}
+          onSearch={handleSearch}
           onResetFilters={resetFilters}
           packageTypes={packageTypes}
           locations={locations}
@@ -422,11 +450,11 @@ const PackagePage: React.FC = () => {
         />
 
         {/* Results Section */}
-        <div className="mb-8">
+        <div id="results-section" className="mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <h3 className="text-2xl font-semibold text-gray-900">
-              {filteredPackages.length} Package
-              {filteredPackages.length !== 1 ? "s" : ""} Found
+              {totalPackages} Package
+              {totalPackages !== 1 ? "s" : ""} Found
             </h3>
 
             {/* Items per page selector */}
@@ -439,38 +467,40 @@ const PackagePage: React.FC = () => {
               </label>
               <select
                 id="itemsPerPage"
-                value={pagination.itemsPerPage}
+                value={itemsPerPage}
                 onChange={(e) =>
                   handleItemsPerPageChange(Number(e.target.value))
                 }
                 className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm"
               >
-                {itemsPerPageOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option} per page
-                  </option>
-                ))}
+                <option value={4}>4 per page</option>
+                <option value={6}>6 per page</option>
+                <option value={9}>9 per page</option>
+                <option value={12}>12 per page</option>
+                <option value={16}>16 per page</option>
               </select>
             </div>
           </div>
 
           {/* Packages Grid */}
-          {paginatedPackages.length > 0 ? (
+          {packages.length > 0 ? (
             <>
               <PackageGrid
-                packages={paginatedPackages}
-                displayCount={paginatedPackages.length}
+                packages={packages}
+                displayCount={packages.length}
                 showViewDetails={true}
               />
 
               {/* Pagination Controls */}
               {totalPages > 1 && (
                 <PaginationControls
-                  currentPage={pagination.currentPage}
+                  currentPage={currentPage}
                   totalPages={totalPages}
                   onPageChange={handlePageChange}
-                  totalItems={filteredPackages.length}
-                  itemsPerPage={pagination.itemsPerPage}
+                  totalItems={totalPackages}
+                  itemsPerPage={itemsPerPage}
+                  startItem={startItem}
+                  endItem={endItem}
                 />
               )}
             </>
@@ -503,18 +533,21 @@ const PackagePage: React.FC = () => {
           onRetry={handleHistoryImagesRetry}
         />
       </div>
-      <Footer />
     </>
   );
 };
 
-// Pagination Controls Component (same as in DestinationPage)
+export default PackagePage;
+
+// Pagination Controls Component
 interface PaginationControlsProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
   totalItems: number;
   itemsPerPage: number;
+  startItem: number;
+  endItem: number;
 }
 
 const PaginationControls: React.FC<PaginationControlsProps> = ({
@@ -523,10 +556,9 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
   onPageChange,
   totalItems,
   itemsPerPage,
+  startItem,
+  endItem,
 }) => {
-  const startItem = (currentPage - 1) * itemsPerPage + 1;
-  const endItem = Math.min(currentPage * itemsPerPage, totalItems);
-
   const getPageNumbers = (): (number | string)[] => {
     const pages: (number | string)[] = [];
     const maxVisiblePages = 5;
@@ -635,5 +667,3 @@ const NoResults: React.FC<{ onResetFilters: () => void }> = ({
     </button>
   </div>
 );
-
-export default PackagePage;

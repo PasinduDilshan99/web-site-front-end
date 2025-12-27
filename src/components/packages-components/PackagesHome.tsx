@@ -89,26 +89,12 @@ const PackagesHome = () => {
   }
 
   if (error) {
-    return (
-      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <ErrorState
-            title="Failed to Load packages details"
-            message={error}
-            icon="alert"
-            variant="error"
-            size="md"
-            actionLabel="Try Again"
-            onAction={handleRetry}
-          />
-        </div>
-      </section>
-    );
+    return null;
   }
 
   return (
     <div className="bg-gray-50 py-8 sm:py-12 lg:py-16 xl:py-20">
-      <div className="container mx-auto px-3 sm:px-4 lg:px-6 xl:px-8">
+      <div className="mx-auto px-3 sm:px-4 lg:px-6 xl:px-8">
         <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
           <SectionHeader
             subtitle={PACKAGES_HEADER_SECTION_SUB_TITLE}

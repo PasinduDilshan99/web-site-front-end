@@ -1,7 +1,6 @@
-
 import BlogPage from "@/pages/BlogPage";
 
-const page = () => {
+const Page = () => {
   return (
     <div>
       <BlogPage />
@@ -9,4 +8,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

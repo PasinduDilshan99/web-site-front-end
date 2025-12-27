@@ -27,43 +27,36 @@ import WhyChooseUs from "./components/whyChooseUs/WhyChooseUs";
 import WorkFlow from "./components/workFlow/WorkFlow";
 import NavBar from "@/components/common-components/navBar/NavBar";
 import Faq from "@/components/faq-components/Faq";
+import ContactForm from "@/components/contact-us-components/ContactForm";
 
 export default function Home() {
   return (
     <div>
       <div>
-        <LinkBar />
-      </div>
-      <div>
-        <NavBar />
-      </div>
-      <div>
         <HeroSection />
       </div>
-      <div>
+      {/* <div>
         <Partners />
-      </div>
+      </div> */}
       <div>
         <WhyChooseUs />
       </div>
       <div>
         <OurServices />
       </div>
-      <div>
+      {/* <div>
         <PopularDestinations />
       </div>
       <div>
         <TrendingDestinations />
-      </div>
+      </div> */}
       <div>
         <NewDestinations />
       </div>
-      <div>
-        {/* <PopularTours /> */}
-      </div>
-      <div>
+      <div>{/* <PopularTours /> */}</div>
+      {/* <div>
         <ActiveToursHome />
-      </div>
+      </div> */}
       <div>
         <ActiveToursHomeGrid />
       </div>
@@ -73,19 +66,18 @@ export default function Home() {
       <div>
         <ActivitiesHome />
       </div>
-      <div>
+      {/* <div>
         <ActivityCategoriesHome />
-      </div>
-
+      </div> */}
       <div>
         <PackagesHome />
       </div>
       <div>
         <Accommodations />
       </div>
-      <div>
+      {/* <div>
         <DestinationsCategories />
-      </div>
+      </div> */}
 
       {/* User Benefits & Loyalty */}
       {/* <div>
@@ -102,33 +94,31 @@ export default function Home() {
       <div>
         <GalleryHome />
       </div>
-      <div>
+      {/* <div>
         <ReviewsHome />
-      </div>
-      <div>
+      </div> */}
+      {/* <div>
         <ActiveBlogsSummery />
-      </div>
+      </div> */}
 
       {/* Process & Promotions */}
       <div>
         <WorkFlow />
       </div>
-      <div>
+      {/* <div>
         <PromotionsHome />
-      </div>
+      </div> */}
 
       {/* Support & Information */}
-      <div>
+      {/* <div>
         <Faq />
-      </div>
+      </div> */}
       <div>
+        <ContactForm />
+      </div>
+      {/* <div>
         <Inquire />
-      </div>
-
-      {/* Footer */}
-      <div>
-        <Footer />
-      </div>
+      </div> */}
     </div>
   );
 }

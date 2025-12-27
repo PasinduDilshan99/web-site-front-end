@@ -284,7 +284,6 @@ const ActivityDetailsPage = () => {
 
   return (
     <>
-      <NavBar />
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-purple-50">
         <ActivityHeader activity={activity} />
 
@@ -334,7 +333,6 @@ const ActivityDetailsPage = () => {
           />
         </div>
       </div>
-      <Footer />
     </>
   );
 };

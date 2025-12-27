@@ -57,7 +57,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
         </div>
 
         {/* Status Badge */}
-        <div className="absolute top-2 sm:top-3 right-2 sm:right-3">
+        {/* <div className="absolute top-2 sm:top-3 right-2 sm:right-3">
           <span
             className={`px-2 sm:px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(
               activity.status
@@ -65,10 +65,10 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
           >
             {activity.status}
           </span>
-        </div>
+        </div> */}
 
         {/* Price Badge */}
-        <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 bg-white/90 backdrop-blur-sm px-2 sm:px-3 py-1 sm:py-2 rounded-lg sm:rounded-xl">
+        {/* <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 bg-white/90 backdrop-blur-sm px-2 sm:px-3 py-1 sm:py-2 rounded-lg sm:rounded-xl">
           <div className="flex flex-col">
             <div className="flex items-center">
               <span className="text-sm sm:text-base md:text-lg font-bold text-gray-900">
@@ -83,7 +83,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
               <span className="text-xs text-gray-600 ml-1">local</span>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Activity Content */}
@@ -170,7 +170,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
         </div>
 
         {/* Requirements */}
-        {activity.requirements.length > 0 && (
+        {/* {activity.requirements.length > 0 && (
           <div className="mb-3 sm:mb-4">
             <div className="flex items-center space-x-1 sm:space-x-2 mb-1 sm:mb-2">
               <svg
@@ -210,10 +210,10 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
               )}
             </div>
           </div>
-        )}
+        )} */}
 
         {/* Schedules */}
-        {activity.schedules.length > 0 && (
+        {/* {activity.schedules.length > 0 && (
           <div className="mb-3 sm:mb-4">
             <div className="flex items-center space-x-1 sm:space-x-2 mb-1 sm:mb-2">
               <svg
@@ -260,22 +260,22 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
               )}
             </div>
           </div>
-        )}
+        )} */}
 
         {/* Availability Times */}
-        <div className="mb-3 sm:mb-4 bg-blue-50 rounded-lg p-2 sm:p-3">
+        {/* <div className="mb-3 sm:mb-4 bg-blue-50 rounded-lg p-2 sm:p-3">
           <div className="text-xs sm:text-sm text-gray-700">
             <span className="font-semibold">Available:</span>{" "}
             {activity.available_from} - {activity.available_to}
           </div>
-        </div>
+        </div> */}
 
         {/* Action Button */}
         <button
           onClick={handleBookNow}
           className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 sm:py-3 rounded-lg sm:rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 text-sm sm:text-base"
         >
-          Book Now
+          More Details
         </button>
       </div>
     </div>

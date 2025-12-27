@@ -21,13 +21,10 @@ const PackageContent: React.FC<PackageContentProps> = ({
   };
 
   const calculateDiscountedPrice = (): number => {
-    return pkg.totalPrice * (1 - pkg.discountPercentage / 100);
+    return pkg.pricePerPerson * (1 - pkg.discountPercentage / 100);
   };
 
   const handleButtonClick = () => {
-    console.log('=================clicked===================');
-    console.log(pkg.packageId);
-    console.log('====================================');
     router.push(`/packages/${pkg.packageId}`);
   };
 
@@ -89,7 +86,7 @@ const PackageContent: React.FC<PackageContentProps> = ({
       )}
 
       {/* Schedules */}
-      {pkg.schedules && pkg.schedules.length > 0 && (
+      {/* {pkg.schedules && pkg.schedules.length > 0 && (
         <div className="mb-4">
           <h4 className="text-sm font-semibold text-gray-900 mb-2">
             Available Schedules:
@@ -115,25 +112,25 @@ const PackageContent: React.FC<PackageContentProps> = ({
             )}
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Pricing */}
-      <div className="mb-4 pt-4 border-t border-gray-200">
+      <div className="mb-4 pt-4 border-t border-gray-200 text-gray-500 text-sm">
         <div className="flex items-center gap-2 mb-1">
           <span className="text-2xl font-bold text-green-600">
             {formatPrice(calculateDiscountedPrice())}
           </span>
           {pkg.discountPercentage > 0 && (
             <span className="text-lg text-gray-500 line-through">
-              {formatPrice(pkg.totalPrice)}
+              {formatPrice(pkg.pricePerPerson)}
             </span>
-          )}
+          )}per person
         </div>
-        <div className="text-sm text-gray-600">
+        {/* <div className="text-sm text-gray-600">
           {pkg.pricePerPerson
             ? formatPrice(pkg.pricePerPerson) + " per person"
             : "Contact for pricing"}
-        </div>
+        </div> */}
       </div>
 
       {/* Action Button */}
@@ -158,7 +155,7 @@ const PackageContent: React.FC<PackageContentProps> = ({
             e.currentTarget.style.backgroundColor = pkg.color;
           }}
         >
-          Book Now
+          More Details
         </button>
       )}
     </div>

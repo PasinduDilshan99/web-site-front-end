@@ -1,8 +1,9 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   ActiveActivitiesType,
   ActivityFilters,
+  ActivitySearchRequest,
 } from "@/types/activities-types";
 import Loading from "@/components/common-components/loading/Loading";
 import { ErrorState } from "@/components/common-components/error-state/ErrorState";
@@ -16,8 +17,24 @@ import ActivityHistorySection, {
   ActivityHistoryImage,
 } from "@/components/activities-components/ActivityHistorySection";
 import ActivityHistoryGallery from "@/components/activities-components/ActivityHistoryGallery";
+import ActivityHeroSection from "@/components/activities-components/ActivityHeroSection";
+import LinkBar from "@/components/common-components/linkBar/LinkBar";
 
-// Review types (move these to a types file if needed)
+// Define API response interface
+interface ActivityListResponse {
+  activityCount: number;
+  activityResponseDtos: ActiveActivitiesType[];
+}
+
+interface PaginatedActivityResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: ActivityListResponse | null;
+  timestamp: string;
+}
+
+// Review types (keep existing review types)
 interface CommentReaction {
   commentReactionId: number;
   commentReactionCommentId: number;
@@ -84,25 +101,17 @@ export interface Review {
 
 const ActivityPage: React.FC = () => {
   const [activities, setActivities] = useState<ActiveActivitiesType[]>([]);
-  const [filteredActivities, setFilteredActivities] = useState<
-    ActiveActivitiesType[]
-  >([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [histories, setHistories] = useState<ActivityHistory[]>([]);
-  const [historyImages, setHistoryImages] = useState<ActivityHistoryImage[]>(
-    []
-  );
+  const [historyImages, setHistoryImages] = useState<ActivityHistoryImage[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [reviewsLoading, setReviewsLoading] = useState<boolean>(true);
   const [historyLoading, setHistoryLoading] = useState<boolean>(true);
-  const [historyImagesLoading, setHistoryImagesLoading] =
-    useState<boolean>(true);
+  const [historyImagesLoading, setHistoryImagesLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [reviewsError, setReviewsError] = useState<string | null>(null);
   const [historyError, setHistoryError] = useState<string | null>(null);
-  const [historyImagesError, setHistoryImagesError] = useState<string | null>(
-    null
-  );
+  const [historyImagesError, setHistoryImagesError] = useState<string | null>(null);
 
   // Filter states
   const [filters, setFilters] = useState<ActivityFilters>({
@@ -117,85 +126,124 @@ const ActivityPage: React.FC = () => {
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [itemsPerPage, setItemsPerPage] = useState<number>(6); // Default for mobile
+  const [itemsPerPage, setItemsPerPage] = useState<number>(12);
+  const [totalActivities, setTotalActivities] = useState<number>(0);
+  const [totalPages, setTotalPages] = useState<number>(0);
 
-  // Extract unique values for filter options from actual data
-  const categories = [
-    ...new Set(activities.map((activity) => activity.category_name)),
-  ];
-  const seasons = [
-    ...new Set(
-      activities.flatMap((activity) =>
-        activity.season.split(",").map((s) => s.trim())
-      )
-    ),
-  ];
-  const statuses = [...new Set(activities.map((activity) => activity.status))];
+  // Search button state
+  const [searchTriggered, setSearchTriggered] = useState<boolean>(false);
+  const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
 
-  // Duration options based on duration_hours
-  const durations = [
-    ...new Set(
-      activities.map((activity) => Math.ceil(activity.duration_hours))
-    ),
-  ].sort((a, b) => a - b);
+  // Filter options from initial data
+  const [categories, setCategories] = useState<string[]>([]);
+  const [seasons, setSeasons] = useState<string[]>([]);
+  const [durations, setDurations] = useState<number[]>([]);
+  const [participantsOptions, setParticipantsOptions] = useState<number[]>([]);
+  const [statuses, setStatuses] = useState<string[]>([]);
 
-  // Participants options
-  const participantsOptions = [
-    ...new Set(activities.map((activity) => activity.max_participate)),
-  ].sort((a, b) => a - b);
-
-  useEffect(() => {
-    fetchActivities();
-    fetchReviews();
-    fetchActivityHistory(); // Add this call
-    fetchActivityHistoryImages();
-  }, []);
-
-  useEffect(() => {
-    applyFilters();
-  }, [filters, activities]);
-
-  // Reset to first page when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [filters]);
-
-  // Responsive items per page
-  useEffect(() => {
-    const handleResize = () => {
-      if (typeof window !== "undefined") {
-        const width = window.innerWidth;
-        if (width < 768) {
-          setItemsPerPage(6); // Mobile
-        } else if (width < 1024) {
-          setItemsPerPage(8); // Tablet
-        } else if (width < 1280) {
-          setItemsPerPage(9); // Laptop
-        } else if (width < 1536) {
-          setItemsPerPage(12); // PC
-        } else {
-          setItemsPerPage(16); // Large screens
-        }
-      }
-    };
-
-    handleResize(); // Set initial value
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  const fetchActivities = async (): Promise<void> => {
+  // Fetch filter options (initial data)
+  const fetchFilterOptions = useCallback(async (): Promise<void> => {
     try {
+      const requestBody: ActivitySearchRequest = {
+        name: null,
+        minPrice: null,
+        maxPrice: null,
+        duration: null,
+        activityCategory: null,
+        season: null,
+        status: null,
+        pageSize: 100, // Fetch more for filter options
+        pageNumber: 1,
+      };
+
       const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/activities/active"
+        "http://localhost:8080/felicita/api/v0/activities/activities",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: "token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNpbmR1IiwidXNlcklkIjo0LCJ1c2VybmFtZSI6InBhc2luZHUiLCJpYXQiOjE3NjI2Njg5NjksImV4cCI6MTc2MjY2OTA4OX0.5wQ6QL3q2pvSoCEhDze6t_Aub3Vb8hlcMRQ3UQxu8yg",
+          },
+          body: JSON.stringify(requestBody),
+        }
       );
-      const result = await response.json();
+
+      const result: PaginatedActivityResponse = await response.json();
+
+      if (result.code === 200 && result.data) {
+        // Extract unique values for filters
+        const categoriesList = [...new Set(result.data.activityResponseDtos.map((activity) => activity.category_name))];
+        const seasonsList = [
+          ...new Set(
+            result.data.activityResponseDtos.flatMap((activity) =>
+              activity.season.split(",").map((s) => s.trim())
+            )
+          ),
+        ];
+        const durationsList = [
+          ...new Set(
+            result.data.activityResponseDtos.map((activity) => Math.ceil(activity.duration_hours))
+          ),
+        ].sort((a, b) => a - b);
+        const participantsList = [
+          ...new Set(result.data.activityResponseDtos.map((activity) => activity.max_participate)),
+        ].sort((a, b) => a - b);
+        const statusesList = [...new Set(result.data.activityResponseDtos.map((activity) => activity.status))];
+        
+        setCategories(categoriesList);
+        setSeasons(seasonsList);
+        setDurations(durationsList);
+        setParticipantsOptions(participantsList);
+        setStatuses(statusesList);
+      }
+    } catch (err) {
+      console.error("Error fetching filter options:", err);
+    }
+  }, []);
+
+  // Fetch activities with filters - main API call function
+  const fetchActivitiesWithFilters = useCallback(async (): Promise<void> => {
+    try {
+      setLoading(true);
+      
+      // Prepare API request
+      const requestBody: ActivitySearchRequest = {
+        name: filters.search || null,
+        minPrice: filters.priceRange[0] > 0 ? filters.priceRange[0] : null,
+        maxPrice: filters.priceRange[1] < 10000 ? filters.priceRange[1] : null,
+        duration: filters.duration ? parseFloat(filters.duration) : null,
+        activityCategory: filters.category || null,
+        season: filters.season || null,
+        status: filters.status || null,
+        pageSize: itemsPerPage,
+        pageNumber: currentPage,
+      };
+
+      const response = await fetch(
+        "http://localhost:8080/felicita/api/v0/activities/activities",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: "token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNpbmR1IiwidXNlcklkIjo0LCJ1c2VybmFtZSI6InBhc2luZHUiLCJpYXQiOjE3NjI2Njg5NjksImV4cCI6MTc2MjY2OTA4OX0.5wQ6QL3q2pvSoCEhDze6t_Aub3Vb8hlcMRQ3UQxu8yg",
+          },
+          body: JSON.stringify(requestBody),
+        }
+      );
+
+      const result: PaginatedActivityResponse = await response.json();
 
       if (result.code === 200) {
-        setActivities(result.data);
+        if (result.data) {
+          setActivities(result.data.activityResponseDtos);
+          setTotalActivities(result.data.activityCount);
+          setTotalPages(Math.ceil(result.data.activityCount / itemsPerPage));
+        } else {
+          setActivities([]);
+          setTotalActivities(0);
+          setTotalPages(0);
+        }
+        setError(null);
       } else {
         throw new Error(result.message);
       }
@@ -203,8 +251,52 @@ const ActivityPage: React.FC = () => {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
+      setIsInitialLoad(false);
     }
-  };
+  }, [filters, currentPage, itemsPerPage]);
+
+  // Initial data fetch - runs only once on mount
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      try {
+        setLoading(true);
+        await fetchFilterOptions();
+        await fetchActivitiesWithFilters();
+        fetchReviews();
+        fetchActivityHistory();
+        fetchActivityHistoryImages();
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+      }
+    };
+    
+    fetchInitialData();
+  }, []); // Empty dependency array - runs only once on mount
+
+  // Fetch activities when search is triggered
+  useEffect(() => {
+    if (searchTriggered) {
+      setCurrentPage(1); // Reset to first page when search is triggered
+      fetchActivitiesWithFilters();
+      setSearchTriggered(false);
+    }
+  }, [searchTriggered, fetchActivitiesWithFilters]);
+
+  // Fetch activities when page changes
+  useEffect(() => {
+    if (!isInitialLoad && currentPage > 0) {
+      fetchActivitiesWithFilters();
+    }
+  }, [currentPage]); // Only depends on currentPage
+
+  // Fetch activities when items per page changes
+  useEffect(() => {
+    if (!isInitialLoad) {
+      setCurrentPage(1); // Reset to first page
+      fetchActivitiesWithFilters();
+    }
+  }, [itemsPerPage]); // Only depends on itemsPerPage
+
   const fetchActivityHistoryImages = async (): Promise<void> => {
     try {
       const response = await fetch(
@@ -268,71 +360,6 @@ const ActivityPage: React.FC = () => {
     }
   };
 
-  const applyFilters = (): void => {
-    let filtered = [...activities];
-
-    // Search filter
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      filtered = filtered.filter(
-        (activity) =>
-          activity.name.toLowerCase().includes(searchLower) ||
-          activity.description.toLowerCase().includes(searchLower) ||
-          activity.category_name.toLowerCase().includes(searchLower)
-      );
-    }
-
-    // Price range filter (using foreign price)
-    filtered = filtered.filter((activity) => {
-      return (
-        activity.price_foreigners >= filters.priceRange[0] &&
-        activity.price_foreigners <= filters.priceRange[1]
-      );
-    });
-
-    // Duration filter
-    if (filters.duration) {
-      const durationHours = parseInt(filters.duration);
-      filtered = filtered.filter(
-        (activity) => Math.ceil(activity.duration_hours) === durationHours
-      );
-    }
-
-    // Category filter
-    if (filters.category) {
-      filtered = filtered.filter(
-        (activity) => activity.category_name === filters.category
-      );
-    }
-
-    // Season filter
-    if (filters.season) {
-      filtered = filtered.filter((activity) =>
-        activity.season
-          .split(",")
-          .map((s) => s.trim())
-          .includes(filters.season)
-      );
-    }
-
-    // Participants filter
-    if (filters.participants) {
-      const maxParticipants = parseInt(filters.participants);
-      filtered = filtered.filter(
-        (activity) => activity.max_participate <= maxParticipants
-      );
-    }
-
-    // Status filter
-    if (filters.status) {
-      filtered = filtered.filter(
-        (activity) => activity.status === filters.status
-      );
-    }
-
-    setFilteredActivities(filtered);
-  };
-
   const handleFilterChange = (
     filterName: keyof ActivityFilters,
     value: any
@@ -341,6 +368,11 @@ const ActivityPage: React.FC = () => {
       ...prev,
       [filterName]: value,
     }));
+    // Do NOT trigger API call here - wait for search button click
+  };
+
+  const handleSearch = (): void => {
+    setSearchTriggered(true);
   };
 
   const resetFilters = (): void => {
@@ -353,6 +385,8 @@ const ActivityPage: React.FC = () => {
       participants: "",
       status: "",
     });
+    // Trigger search automatically after reset
+    setSearchTriggered(true);
   };
 
   const handleRetry = () => {
@@ -364,17 +398,17 @@ const ActivityPage: React.FC = () => {
     setReviewsLoading(true);
     setHistoryLoading(true);
     setHistoryImagesLoading(true);
-    fetchActivities();
+    setIsInitialLoad(true);
+    fetchFilterOptions();
+    fetchActivitiesWithFilters();
     fetchReviews();
     fetchActivityHistory();
     fetchActivityHistoryImages();
   };
 
   // Pagination calculations
-  const totalPages = Math.ceil(filteredActivities.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentActivities = filteredActivities.slice(startIndex, endIndex);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -387,7 +421,7 @@ const ActivityPage: React.FC = () => {
 
   const handleItemsPerPageChange = (value: number) => {
     setItemsPerPage(value);
-    setCurrentPage(1); // Reset to first page when changing items per page
+    // API call will be triggered by the useEffect that watches itemsPerPage
   };
 
   if (loading) {
@@ -416,7 +450,7 @@ const ActivityPage: React.FC = () => {
 
   return (
     <>
-      <NavBar />
+      <ActivityHeroSection />
       <div className="mx-auto px-4 py-8 bg-gradient-to-br from-blue-50 via-purple-50 to-amber-50 min-h-screen">
         {/* Page Header */}
         <div className="text-center mb-12">
@@ -432,6 +466,7 @@ const ActivityPage: React.FC = () => {
         <FilterSection
           filters={filters}
           onFilterChange={handleFilterChange}
+          onSearch={handleSearch}
           onResetFilters={resetFilters}
           categories={categories}
           seasons={seasons}
@@ -444,8 +479,8 @@ const ActivityPage: React.FC = () => {
         <div id="results-section" className="mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <h3 className="text-2xl font-semibold text-gray-900">
-              {filteredActivities.length} Activity
-              {filteredActivities.length !== 1 ? "s" : ""} Found
+              {totalActivities} Activity
+              {totalActivities !== 1 ? "s" : ""} Found
             </h3>
 
             {/* Items Per Page Selector */}
@@ -466,7 +501,6 @@ const ActivityPage: React.FC = () => {
               >
                 <option value={6}>6</option>
                 <option value={8}>8</option>
-                <option value={9}>9</option>
                 <option value={12}>12</option>
                 <option value={16}>16</option>
                 <option value={24}>24</option>
@@ -479,11 +513,11 @@ const ActivityPage: React.FC = () => {
           </div>
 
           {/* Activities Grid */}
-          {currentActivities.length > 0 ? (
+          {activities.length > 0 ? (
             <>
               <ActivitiesGrid
-                activities={currentActivities}
-                displayCount={currentActivities.length}
+                activities={activities}
+                displayCount={activities.length}
               />
 
               {/* Pagination Controls */}
@@ -492,10 +526,10 @@ const ActivityPage: React.FC = () => {
                   currentPage={currentPage}
                   totalPages={totalPages}
                   onPageChange={handlePageChange}
-                  totalItems={filteredActivities.length}
+                  totalItems={totalActivities}
                   itemsPerPage={itemsPerPage}
                   startIndex={startIndex}
-                  endIndex={Math.min(endIndex, filteredActivities.length)}
+                  endIndex={Math.min(endIndex, totalActivities)}
                 />
               )}
             </>
@@ -523,7 +557,6 @@ const ActivityPage: React.FC = () => {
           onRetry={fetchActivityHistoryImages}
         />
       </div>
-      <Footer />
     </>
   );
 };
@@ -591,7 +624,7 @@ const Pagination: React.FC<PaginationProps> = ({
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 pt-6 border-t border-gray-200">
       {/* Results info */}
       <div className="text-sm text-gray-600">
-        Showing {startIndex + 1} to {endIndex} of {totalItems} results
+        Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} results
       </div>
 
       {/* Pagination buttons */}

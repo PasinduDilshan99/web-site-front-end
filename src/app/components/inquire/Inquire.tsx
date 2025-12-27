@@ -106,8 +106,7 @@ const Inquire = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 xl:gap-16">
           {/* Left Column - Contact Form */}
-          <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl p-4 sm:p-6 md:p-8 lg:p-10">
-            {/* Header */}
+          {/* <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl p-4 sm:p-6 md:p-8 lg:p-10">
             <div className="mb-6 sm:mb-8 md:mb-10">
               <p className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 font-medium text-xs sm:text-sm md:text-base italic mb-2">
                 Contact Us
@@ -121,12 +120,10 @@ const Inquire = () => {
               </p>
             </div>
 
-            {/* Contact Form */}
             <form
               onSubmit={handleSubmit}
               className="space-y-4 sm:space-y-5 md:space-y-6"
             >
-              {/* First Row - First Name & Last Name */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <input
@@ -152,7 +149,6 @@ const Inquire = () => {
                 </div>
               </div>
 
-              {/* Second Row - Phone & Email */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <input
@@ -178,7 +174,6 @@ const Inquire = () => {
                 </div>
               </div>
 
-              {/* Service Dropdown */}
               <div>
                 <select
                   name="service"
@@ -201,7 +196,6 @@ const Inquire = () => {
                 </select>
               </div>
 
-              {/* Message Textarea */}
               <div>
                 <textarea
                   name="message"
@@ -213,7 +207,6 @@ const Inquire = () => {
                 ></textarea>
               </div>
 
-              {/* Submit Button */}
               <div>
                 <button
                   type="submit"
@@ -228,7 +221,6 @@ const Inquire = () => {
                 </button>
               </div>
 
-              {/* Submit Message */}
               {submitMessage && (
                 <div
                   className={`p-3 sm:p-4 rounded-lg text-xs sm:text-sm ${
@@ -241,7 +233,7 @@ const Inquire = () => {
                 </div>
               )}
             </form>
-          </div>
+          </div> */}
 
           {/* Right Column - Contact Information */}
           <div className="space-y-6 sm:space-y-8 md:space-y-10 lg:space-y-12">

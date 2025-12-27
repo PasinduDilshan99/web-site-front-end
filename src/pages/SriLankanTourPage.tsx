@@ -1,11 +1,13 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   ActiveToursType,
   TourFilters,
   TourHistory,
   TourHistoryImage,
   TourReview,
+  TourSearchRequest,
+  PaginatedTourResponse,
 } from "@/types/sri-lankan-tour-types";
 import Loading from "@/components/common-components/loading/Loading";
 import { ErrorState } from "@/components/common-components/error-state/ErrorState";
@@ -17,21 +19,33 @@ import ReviewsSection from "@/components/sri-lankan-tours-components/ReviewsSect
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";
 import TourHistorySection from "@/components/sri-lankan-tours-components/TourHistorySection";
 import TourHistoryGallery from "@/components/sri-lankan-tours-components/TourHistoryGallery";
+import LinkBar from "@/components/common-components/linkBar/LinkBar";
+import TourHeroSection from "@/components/sri-lankan-tours-components/TourHeroSection";
+import { useSearchParams } from "next/navigation";
 
 const SriLankanTourPage: React.FC = () => {
   const [tours, setTours] = useState<ActiveToursType[]>([]);
-  const [filteredTours, setFilteredTours] = useState<ActiveToursType[]>([]);
   const [reviews, setReviews] = useState<TourReview[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [reviewsLoading, setReviewsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [reviewsError, setReviewsError] = useState<string | null>(null);
-  const [histories, setHistories] = useState<TourHistory[]>([]); // Add this state
-  const [historyLoading, setHistoryLoading] = useState<boolean>(true); // Add this state
-  const [historyError, setHistoryError] = useState<string | null>(null); // Add this state
+  const [histories, setHistories] = useState<TourHistory[]>([]);
+  const [historyLoading, setHistoryLoading] = useState<boolean>(true);
+  const [historyError, setHistoryError] = useState<string | null>(null);
   const [galleryImages, setGalleryImages] = useState<TourHistoryImage[]>([]);
   const [galleryLoading, setGalleryLoading] = useState<boolean>(true);
   const [galleryError, setGalleryError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+
+  const tourType: string | null = searchParams.get("tourType");
+  const location: string | null = searchParams.get("location");
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [itemsPerPage, setItemsPerPage] = useState<number>(10); // Default page size
+  const [totalTours, setTotalTours] = useState<number>(0);
+  const [totalPages, setTotalPages] = useState<number>(0);
 
   // Filter states
   const [filters, setFilters] = useState<TourFilters>({
@@ -44,84 +58,249 @@ const SriLankanTourPage: React.FC = () => {
     location: "",
   });
 
-  // Pagination states
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [itemsPerPage, setItemsPerPage] = useState<number>(6); // Default for mobile
+  // Filter options from initial data
+  const [tourTypes, setTourTypes] = useState<string[]>([]);
+  const [tourCategories, setTourCategories] = useState<string[]>([]);
+  const [seasons, setSeasons] = useState<string[]>([]);
+  const [locations, setLocations] = useState<string[]>([]);
+  const [durations, setDurations] = useState<number[]>([]);
 
-  // Extract unique values for filter options from actual data
-  const tourTypes = [...new Set(tours.map((tour) => tour.tourTypeName))];
-  const tourCategories = [
-    ...new Set(tours.map((tour) => tour.tourCategoryName)),
-  ];
-  const seasons = [...new Set(tours.map((tour) => tour.seasonName))];
-  const locations = [
-    ...new Set(tours.flatMap((tour) => [tour.startLocation, tour.endLocation])),
-  ];
-  const durations = [...new Set(tours.map((tour) => tour.duration))].sort(
-    (a, b) => a - b
-  );
+  // Debounce timer for page size changes
+  const [pageSizeDebounceTimer, setPageSizeDebounceTimer] =
+    useState<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    fetchTours();
-    fetchReviews();
-    fetchTourHistory();
-    fetchTourHistoryImages();
-  }, []);
-
-  useEffect(() => {
-    applyFilters();
-  }, [filters, tours]);
-
-  // Reset to first page when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [filters]);
-
-  // Responsive items per page
-  useEffect(() => {
-    const handleResize = () => {
-      if (typeof window !== "undefined") {
-        const width = window.innerWidth;
-        if (width < 768) {
-          setItemsPerPage(6); // Mobile
-        } else if (width < 1024) {
-          setItemsPerPage(8); // Tablet
-        } else if (width < 1280) {
-          setItemsPerPage(9); // Laptop
-        } else if (width < 1536) {
-          setItemsPerPage(12); // PC
-        } else {
-          setItemsPerPage(16); // Large screens
-        }
-      }
-    };
-
-    handleResize(); // Set initial value
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  const fetchTours = async (): Promise<void> => {
+  // Fetch filter options (initial data)
+  const fetchFilterOptions = useCallback(async (): Promise<void> => {
     try {
-      const response = await fetch(
-        "http://localhost:8080/felicita/v0/api/tour/active"
-      );
-      const result = await response.json();
+      const requestBody: TourSearchRequest = {
+        name: null,
+        minPrice: null,
+        maxPrice: null,
+        duration: null,
+        tourType: null,
+        tourCategory: null,
+        season: null,
+        location: null,
+        pageNumber: 1,
+        pageSize: 100, // Fetch more for filter options
+      };
 
-      if (result.code === 200) {
-        setTours(result.data);
-      } else {
-        throw new Error(result.message);
+      const response = await fetch(
+        "http://localhost:8080/felicita/v0/api/tour/tours",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie:
+              "token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNpbmR1IiwidXNlcklkIjo0LCJ1c2VybmFtZSI6InBhc2luZHUiLCJpYXQiOjE3NjI2Njg5NjksImV4cCI6MTc2MjY2OTA4OX0.5wQ6QL3q2pvSoCEhDze6t_Aub3Vb8hlcMRQ3UQxu8yg",
+          },
+          body: JSON.stringify(requestBody),
+        }
+      );
+
+      const result: PaginatedTourResponse = await response.json();
+
+      if (result.code === 200 && result.data) {
+        // Extract unique values for filters
+        const types = [
+          ...new Set(
+            result.data.tourResponseDtoList.map((tour) => tour.tourTypeName)
+          ),
+        ];
+        const categories = [
+          ...new Set(
+            result.data.tourResponseDtoList.map((tour) => tour.tourCategoryName)
+          ),
+        ];
+        const seasonsList = [
+          ...new Set(
+            result.data.tourResponseDtoList.map((tour) => tour.seasonName)
+          ),
+        ];
+        const locationsList = [
+          ...new Set(
+            result.data.tourResponseDtoList.flatMap((tour) => [
+              tour.startLocation,
+              tour.endLocation,
+            ])
+          ),
+        ];
+        const durationsList = [
+          ...new Set(
+            result.data.tourResponseDtoList.map((tour) => tour.duration)
+          ),
+        ].sort((a, b) => a - b);
+
+        setTourTypes(types);
+        setTourCategories(categories);
+        setSeasons(seasonsList);
+        setLocations(locationsList);
+        setDurations(durationsList);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
-    } finally {
-      setLoading(false);
+      console.error("Error fetching filter options:", err);
     }
+  }, []);
+
+  // Fetch tours with filters - MAIN API CALL FUNCTION
+  const fetchToursWithFilters = useCallback(
+    async (
+      pageNum: number = currentPage,
+      pageSize: number = itemsPerPage
+    ): Promise<void> => {
+      try {
+        setLoading(true);
+
+        // Prepare API request
+        const requestBody: TourSearchRequest = {
+          name: filters.search || null,
+          minPrice: filters.priceRange[0] > 0 ? filters.priceRange[0] : null,
+          maxPrice: filters.priceRange[1] < 5000 ? filters.priceRange[1] : null,
+          duration: filters.duration ? parseInt(filters.duration) : null,
+          tourType: filters.tourType || tourType || null,
+          tourCategory: filters.tourCategory || null,
+          season: filters.season || null,
+          location: filters.location || location || null,
+          pageNumber: pageNum,
+          pageSize: pageSize,
+        };
+
+        const response = await fetch(
+          "http://localhost:8080/felicita/v0/api/tour/tours",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestBody),
+          }
+        );
+
+        const result: PaginatedTourResponse = await response.json();
+
+        if (result.code === 200) {
+          if (result.data) {
+            setTours(result.data.tourResponseDtoList);
+            setTotalTours(result.data.totalTours);
+            setTotalPages(Math.ceil(result.data.totalTours / pageSize));
+            setCurrentPage(pageNum); // Update current page after successful fetch
+          } else {
+            setTours([]);
+            setTotalTours(0);
+            setTotalPages(0);
+          }
+          setError(null);
+        } else {
+          throw new Error(result.message);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [filters, currentPage, itemsPerPage, tourType, location]
+  ); // Dependencies: filters, currentPage, itemsPerPage
+
+  // Add this useEffect to sync URL params on component mount
+  useEffect(() => {
+    if (tourType || location) {
+      setFilters((prev) => ({
+        ...prev,
+        ...(tourType && { tourType }),
+        ...(location && { location }),
+      }));
+    }
+  }, []); // Run only on initial mount
+
+  // Initial data fetch
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      try {
+        setLoading(true);
+
+        if (tourType || location) {
+          setFilters((prev) => ({
+            ...prev,
+            ...(tourType && { tourType }),
+            ...(location && { location }),
+          }));
+        }
+
+        await fetchFilterOptions();
+        await fetchToursWithFilters(1, itemsPerPage); // Fetch first page on initial load
+        fetchReviews();
+        fetchTourHistory();
+        fetchTourHistoryImages();
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInitialData();
+  }, [tourType, location]); // Empty dependency array - runs once on mount
+
+  // Fetch tours when page changes
+  useEffect(() => {
+    if (currentPage > 0 && !loading) {
+      fetchToursWithFilters(currentPage, itemsPerPage);
+    }
+  }, [currentPage]); // Only depends on currentPage
+
+  // Handle page size change with immediate API call
+  const handleItemsPerPageChange = (value: number) => {
+    // Clear any existing debounce timer
+    if (pageSizeDebounceTimer) {
+      clearTimeout(pageSizeDebounceTimer);
+    }
+
+    setItemsPerPage(value);
+
+    // Set a new debounce timer to call API after 300ms
+    const timer = setTimeout(() => {
+      setCurrentPage(1); // Reset to first page when changing items per page
+      fetchToursWithFilters(1, value);
+    }, 300);
+
+    setPageSizeDebounceTimer(timer);
   };
+
+  // Cleanup debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (pageSizeDebounceTimer) {
+        clearTimeout(pageSizeDebounceTimer);
+      }
+    };
+  }, [pageSizeDebounceTimer]);
+
+  // Handle search button click - resets to page 1
+  const handleSearch = useCallback(() => {
+    setCurrentPage(1);
+    fetchToursWithFilters(1, itemsPerPage);
+  }, [fetchToursWithFilters, itemsPerPage]);
+
+  // Handle reset filters - resets to page 1
+  const resetFilters = useCallback(() => {
+    setFilters({
+      search: "",
+      priceRange: [0, 5000],
+      duration: "",
+      tourType: "",
+      tourCategory: "",
+      season: "",
+      location: "",
+    });
+    setCurrentPage(1);
+
+    if (typeof window !== "undefined") {
+      window.history.replaceState({}, "", "/sri-lankan-tours");
+    }
+
+    fetchToursWithFilters(1, itemsPerPage);
+  }, [fetchToursWithFilters, itemsPerPage]);
 
   const fetchTourHistory = async (): Promise<void> => {
     try {
@@ -186,68 +365,6 @@ const SriLankanTourPage: React.FC = () => {
     }
   };
 
-  const applyFilters = (): void => {
-    let filtered = [...tours];
-
-    // Search filter
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      filtered = filtered.filter(
-        (tour) =>
-          tour.tourName.toLowerCase().includes(searchLower) ||
-          tour.tourDescription.toLowerCase().includes(searchLower) ||
-          tour.startLocation.toLowerCase().includes(searchLower) ||
-          tour.endLocation.toLowerCase().includes(searchLower)
-      );
-    }
-
-    // Price range filter (using calculated price)
-    filtered = filtered.filter((tour) => {
-      const price = calculatePrice(tour);
-      return price >= filters.priceRange[0] && price <= filters.priceRange[1];
-    });
-
-    // Duration filter
-    if (filters.duration) {
-      const duration = parseInt(filters.duration);
-      filtered = filtered.filter((tour) => tour.duration === duration);
-    }
-
-    // Tour Type filter
-    if (filters.tourType) {
-      filtered = filtered.filter(
-        (tour) => tour.tourTypeName === filters.tourType
-      );
-    }
-
-    // Tour Category filter
-    if (filters.tourCategory) {
-      filtered = filtered.filter(
-        (tour) => tour.tourCategoryName === filters.tourCategory
-      );
-    }
-
-    // Season filter
-    if (filters.season) {
-      filtered = filtered.filter((tour) => tour.seasonName === filters.season);
-    }
-
-    // Location filter
-    if (filters.location) {
-      filtered = filtered.filter(
-        (tour) =>
-          tour.startLocation
-            .toLowerCase()
-            .includes(filters.location.toLowerCase()) ||
-          tour.endLocation
-            .toLowerCase()
-            .includes(filters.location.toLowerCase())
-      );
-    }
-
-    setFilteredTours(filtered);
-  };
-
   // Price calculation (same as in TourCard)
   const calculatePrice = (tour: ActiveToursType): number => {
     const basePrice = 50;
@@ -268,18 +385,7 @@ const SriLankanTourPage: React.FC = () => {
       ...prev,
       [filterName]: value,
     }));
-  };
-
-  const resetFilters = (): void => {
-    setFilters({
-      search: "",
-      priceRange: [0, 5000],
-      duration: "",
-      tourType: "",
-      tourCategory: "",
-      season: "",
-      location: "",
-    });
+    // Note: Does NOT trigger API call - user must click Search button
   };
 
   const handleRetry = () => {
@@ -291,17 +397,12 @@ const SriLankanTourPage: React.FC = () => {
     setReviewsLoading(true);
     setHistoryLoading(true);
     setGalleryLoading(true);
-    fetchTours();
+    fetchFilterOptions();
+    fetchToursWithFilters(1, itemsPerPage);
     fetchReviews();
     fetchTourHistory();
     fetchTourHistoryImages();
   };
-
-  // Pagination calculations
-  const totalPages = Math.ceil(filteredTours.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentTours = filteredTours.slice(startIndex, endIndex);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -312,13 +413,16 @@ const SriLankanTourPage: React.FC = () => {
     }
   };
 
-  const handleItemsPerPageChange = (value: number) => {
-    setItemsPerPage(value);
-    setCurrentPage(1); // Reset to first page when changing items per page
-  };
-
   if (loading) {
-    return <Loading message="Loading tours..." variant="spinner" size="md" />;
+    return (
+      <div className="py-8">
+        <Loading
+          message="Loading destination history..."
+          variant="spinner"
+          size="md"
+        />
+      </div>
+    );
   }
 
   if (error) {
@@ -340,118 +444,109 @@ const SriLankanTourPage: React.FC = () => {
   }
 
   return (
-    <>
-      <NavBar />
-      <div className="mx-auto px-4 py-8 bg-gradient-to-br from-amber-50 via-purple-50 to-blue-50 min-h-screen">
-        {/* Page Header */}
-        <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
-          <SectionHeader
-            subtitle=""
-            title="Sri Lankan Tours"
-            description="Discover the beauty of Sri Lanka with our curated tour experiences"
-            fromColor="#A855F7"
-            toColor="#F59E0B"
-          />
-        </div>
-
-        {/* Filters Section */}
-        <FilterSection
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          onResetFilters={resetFilters}
-          tourTypes={tourTypes}
-          tourCategories={tourCategories}
-          seasons={seasons}
-          locations={locations}
-          durations={durations}
-        />
-
-        {/* Results Section */}
-        <div id="results-section" className="mb-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <h3 className="text-2xl font-semibold text-gray-900">
-              {filteredTours.length} Tour{filteredTours.length !== 1 ? "s" : ""}{" "}
-              Found
-            </h3>
-
-            {/* Items Per Page Selector */}
-            <div className="flex items-center gap-3">
-              <label
-                htmlFor="itemsPerPage"
-                className="text-sm font-medium text-gray-700 whitespace-nowrap"
-              >
-                Show:
-              </label>
-              <select
-                id="itemsPerPage"
-                value={itemsPerPage}
-                onChange={(e) =>
-                  handleItemsPerPageChange(Number(e.target.value))
-                }
-                className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-              >
-                <option value={6}>6</option>
-                <option value={8}>8</option>
-                <option value={9}>9</option>
-                <option value={12}>12</option>
-                <option value={16}>16</option>
-                <option value={24}>24</option>
-                <option value={32}>32</option>
-              </select>
-              <span className="text-sm text-gray-500 whitespace-nowrap">
-                per page
-              </span>
-            </div>
-          </div>
-
-          {/* Tours Grid */}
-          {currentTours.length > 0 ? (
-            <>
-              <ToursGrid
-                tours={currentTours}
-                displayCount={currentTours.length}
-              />
-
-              {/* Pagination Controls */}
-              {totalPages > 1 && (
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                  totalItems={filteredTours.length}
-                  itemsPerPage={itemsPerPage}
-                  startIndex={startIndex}
-                  endIndex={Math.min(endIndex, filteredTours.length)}
-                />
-              )}
-            </>
-          ) : (
-            <NoResults onResetFilters={resetFilters} />
-          )}
-        </div>
-
-        {/* Reviews Section */}
-        <ReviewsSection
-          reviews={reviews}
-          loading={reviewsLoading}
-          error={reviewsError}
-          onRetry={fetchReviews}
-        />
-        <TourHistorySection
-          histories={histories}
-          loading={historyLoading}
-          error={historyError}
-          onRetry={fetchTourHistory}
-        />
-        <TourHistoryGallery
-          images={galleryImages}
-          loading={galleryLoading}
-          error={galleryError}
-          onRetry={fetchTourHistoryImages}
+    <div className="mx-auto px-4 py-8 bg-gradient-to-br from-amber-50 via-purple-50 to-blue-50 min-h-screen">
+      {/* Page Header */}
+      <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
+        <SectionHeader
+          subtitle=""
+          title="Sri Lankan Tours"
+          description="Discover the beauty of Sri Lanka with our curated tour experiences"
+          fromColor="#A855F7"
+          toColor="#F59E0B"
         />
       </div>
-      <Footer />
-    </>
+
+      {/* Filters Section */}
+      <FilterSection
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        onSearch={handleSearch}
+        onResetFilters={resetFilters}
+        tourTypes={tourTypes}
+        tourCategories={tourCategories}
+        seasons={seasons}
+        locations={locations}
+        durations={durations}
+      />
+
+      {/* Results Section */}
+      <div id="results-section" className="mb-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <h3 className="text-2xl font-semibold text-gray-900">
+            {totalTours} Tour{totalTours !== 1 ? "s" : ""} Found
+          </h3>
+
+          {/* Items Per Page Selector */}
+          <div className="flex items-center gap-3">
+            <label
+              htmlFor="itemsPerPage"
+              className="text-sm font-medium text-gray-700 whitespace-nowrap"
+            >
+              Show:
+            </label>
+            <select
+              id="itemsPerPage"
+              value={itemsPerPage}
+              onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+              className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            >
+              <option value={6}>6</option>
+              <option value={8}>8</option>
+              <option value={10}>10</option>
+              <option value={12}>12</option>
+              <option value={16}>16</option>
+              <option value={20}>20</option>
+              <option value={24}>24</option>
+            </select>
+            <span className="text-sm text-gray-500 whitespace-nowrap">
+              per page
+            </span>
+          </div>
+        </div>
+
+        {/* Tours Grid */}
+        {tours.length > 0 ? (
+          <>
+            <ToursGrid tours={tours} displayCount={tours.length} />
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                totalItems={totalTours}
+                itemsPerPage={itemsPerPage}
+                startIndex={(currentPage - 1) * itemsPerPage + 1}
+                endIndex={Math.min(currentPage * itemsPerPage, totalTours)}
+              />
+            )}
+          </>
+        ) : (
+          <NoResults onResetFilters={resetFilters} />
+        )}
+      </div>
+
+      {/* Reviews Section */}
+      <ReviewsSection
+        reviews={reviews}
+        loading={reviewsLoading}
+        error={reviewsError}
+        onRetry={fetchReviews}
+      />
+      <TourHistorySection
+        histories={histories}
+        loading={historyLoading}
+        error={historyError}
+        onRetry={fetchTourHistory}
+      />
+      <TourHistoryGallery
+        images={galleryImages}
+        loading={galleryLoading}
+        error={galleryError}
+        onRetry={fetchTourHistoryImages}
+      />
+    </div>
   );
 };
 
@@ -518,7 +613,7 @@ const Pagination: React.FC<PaginationProps> = ({
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 pt-6 border-t border-gray-200">
       {/* Results info */}
       <div className="text-sm text-gray-600">
-        Showing {startIndex + 1} to {endIndex} of {totalItems} results
+        Showing {startIndex} to {endIndex} of {totalItems} results
       </div>
 
       {/* Pagination buttons */}

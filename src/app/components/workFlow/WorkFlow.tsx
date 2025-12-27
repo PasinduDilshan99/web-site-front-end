@@ -328,11 +328,11 @@ const WorkFlow = () => {
         </div>
 
         {/* CTA Button */}
-        <div className="text-center mt-8 sm:mt-12 md:mt-16">
+        {/* <div className="text-center mt-8 sm:mt-12 md:mt-16">
           <button className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-amber-600 to-purple-600 text-white font-semibold rounded-full hover:from-purple-700 hover:to-amber-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl text-sm sm:text-base">
             Get Start Now
           </button>
-        </div>
+        </div> */}
       </div>
     </section>
   );
