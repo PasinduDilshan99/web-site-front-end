@@ -55,7 +55,7 @@ export interface ActivePackagesType {
   hoverColor: string;
   minPersonCount: number;
   maxPersonCount: number;
-  pricePerPerson: number | null;
+  pricePerPerson: number;
   packageStatus: string;
   createdAt: string;
   createdBy: number;

@@ -28,13 +28,13 @@ useEffect(() => {
   const updateDisplayCount = () => {
     const width = window.innerWidth;
     if (width < 768) {           // Mobile: < 768px
-      setDisplayCount(3);
+      setDisplayCount(2);
     } else if (width < 1024) {   // Tablet: 768px - 1023px
       setDisplayCount(4);
-    } else if (width < 1280) {   // Laptop: 1024px - 1279px
+    } else if (width < 1536) {   // Laptop: 1024px - 1279px
       setDisplayCount(6);
     } else {                     // PC: ≥ 1280px
-      setDisplayCount(6);
+      setDisplayCount(8);
     }
   };
 

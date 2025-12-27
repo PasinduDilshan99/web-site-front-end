@@ -170,7 +170,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
         </div>
 
         {/* Requirements */}
-        {activity.requirements.length > 0 && (
+        {/* {activity.requirements.length > 0 && (
           <div className="mb-3 sm:mb-4">
             <div className="flex items-center space-x-1 sm:space-x-2 mb-1 sm:mb-2">
               <svg
@@ -210,10 +210,10 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
               )}
             </div>
           </div>
-        )}
+        )} */}
 
         {/* Schedules */}
-        {activity.schedules.length > 0 && (
+        {/* {activity.schedules.length > 0 && (
           <div className="mb-3 sm:mb-4">
             <div className="flex items-center space-x-1 sm:space-x-2 mb-1 sm:mb-2">
               <svg
@@ -260,22 +260,22 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
               )}
             </div>
           </div>
-        )}
+        )} */}
 
         {/* Availability Times */}
-        <div className="mb-3 sm:mb-4 bg-blue-50 rounded-lg p-2 sm:p-3">
+        {/* <div className="mb-3 sm:mb-4 bg-blue-50 rounded-lg p-2 sm:p-3">
           <div className="text-xs sm:text-sm text-gray-700">
             <span className="font-semibold">Available:</span>{" "}
             {activity.available_from} - {activity.available_to}
           </div>
-        </div>
+        </div> */}
 
         {/* Action Button */}
         <button
           onClick={handleBookNow}
           className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 sm:py-3 rounded-lg sm:rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 text-sm sm:text-base"
         >
-          Book Now
+          More Details
         </button>
       </div>
     </div>

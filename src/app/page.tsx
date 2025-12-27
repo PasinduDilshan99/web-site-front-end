@@ -27,6 +27,7 @@ import WhyChooseUs from "./components/whyChooseUs/WhyChooseUs";
 import WorkFlow from "./components/workFlow/WorkFlow";
 import NavBar from "@/components/common-components/navBar/NavBar";
 import Faq from "@/components/faq-components/Faq";
+import ContactForm from "@/components/contact-us-components/ContactForm";
 
 export default function Home() {
   return (
@@ -113,8 +114,11 @@ export default function Home() {
         <Faq />
       </div> */}
       <div>
-        <Inquire />
+        <ContactForm />
       </div>
+      {/* <div>
+        <Inquire />
+      </div> */}
     </div>
   );
 }

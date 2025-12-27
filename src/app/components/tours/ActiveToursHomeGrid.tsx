@@ -32,10 +32,10 @@ useEffect(() => {
       setDisplayCount(3);
     } else if (width < 768) { // Tablet: 640px - 767px
       setDisplayCount(4);
-    } else if (width < 1024) { // Laptop: 768px - 1023px
+    } else if (width < 1536) { // Laptop: 768px - 1023px
       setDisplayCount(6);
     } else { // PC: ≥ 1024px
-      setDisplayCount(9);
+      setDisplayCount(8);
     }
   };
 

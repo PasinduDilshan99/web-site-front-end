@@ -5,6 +5,8 @@ import ContactTimeZone from "./ContactTimeZone";
 import ContactResponseTime from "./ContactResponseTime";
 import ContactTipsForQuickResponse from "./ContactTipsForQuickResponse";
 import { countries, Country } from "@/utils/countries";
+import Inquire from "@/app/components/inquire/Inquire";
+import LocationDetails from "@/app/components/inquire/LocationDetails";
 
 interface FormData {
   fullName: string;
@@ -1037,7 +1039,9 @@ const ContactForm = () => {
             <ContactWorkingHours />
 
             {/* Timezone */}
-            <ContactTimeZone />
+            {/* <ContactTimeZone /> */}
+
+            <LocationDetails/>
           </div>
         </div>
       </div>
