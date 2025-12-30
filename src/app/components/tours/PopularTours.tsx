@@ -274,7 +274,11 @@ const PopularTours = () => {
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       onError={(e) => {
                         e.currentTarget.style.display = "none";
-                        e.currentTarget.nextSibling.style.display = "flex";
+                        const nextSibling = e.currentTarget
+                          .nextElementSibling as HTMLElement;
+                        if (nextSibling) {
+                          nextSibling.style.display = "flex";
+                        }
                       }}
                     />
                   ) : null}

@@ -8,6 +8,7 @@ import {
 } from "@/types/account-security";
 import { useState, useEffect } from "react";
 
+
 export default function AccountSecurityPage() {
   const [securityData, setSecurityData] = useState<AccountSecurityData | null>(
     null

@@ -59,7 +59,7 @@ interface Comment {
   commentReactions: CommentReaction[];
 }
 
-interface Reaction {
+export interface Reaction {
   reviewReactionId: number;
   reactionReviewId: number;
   userId: number;
@@ -362,7 +362,7 @@ const ActivityPage: React.FC = () => {
 
   const handleFilterChange = (
     filterName: keyof ActivityFilters,
-    value: any
+    value: unknown
   ): void => {
     setFilters((prev) => ({
       ...prev,

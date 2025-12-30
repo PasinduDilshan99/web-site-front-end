@@ -82,7 +82,7 @@ const DetailedRestaurantCard: React.FC<CulinaryRestaurantCardProps> = ({ restaur
               )}
             </div>
             <div className={`grid gap-2 ${showAllImages ? 'grid-cols-2' : 'grid-cols-3'}`}>
-              {displayImages.map((image, index) => (
+              {displayImages?.map((image, index) => (
                 <div key={index} className="relative aspect-square rounded-lg overflow-hidden group/image border-2 border-amber-200">
                   <Image
                     src={image.imageUrl}
@@ -136,7 +136,7 @@ const DetailedRestaurantCard: React.FC<CulinaryRestaurantCardProps> = ({ restaur
         </div>
 
         {/* Menu Highlights */}
-        {displayDishes.length > 0 && (
+        {displayDishes && (
           <div className="mb-4">
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-semibold text-gray-800 text-sm flex items-center">

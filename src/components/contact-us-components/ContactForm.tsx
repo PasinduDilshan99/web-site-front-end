@@ -10,12 +10,12 @@ import LocationDetails from "@/app/components/inquire/LocationDetails";
 
 interface FormData {
   fullName: string;
-  email: string;
-  phone: string;
-  country: string;
-  preferredContactMethod: string;
-  preferredDestination: string;
-  adults: number;
+  email: string | null;
+  phone: string | null;
+  country: string | null;
+  preferredContactMethod: string | null;
+  preferredDestination: string | null;
+  adults: number ;
   kids: number;
   arrivalDate: string;
   departureDate: string;
@@ -32,11 +32,11 @@ interface FormErrors {
 // Define the API request type
 interface InquiryRequest {
   name: string;
-  email: string;
-  phoneNumber: string;
-  country: string;
-  preferredContactMethod: string;
-  preferredDestination: string;
+  email: string | null;
+  phoneNumber: string | null;
+  country: string | null;
+  preferredContactMethod: string | null;
+  preferredDestination: string | null;
   adults: number;
   kids: number;
   arrivalDate: string | null;
@@ -152,7 +152,7 @@ const ContactForm = () => {
 
     // Email validation based on preferred contact method
     if (formData.preferredContactMethod === "EMAIL") {
-      if (!formData.email.trim()) {
+      if (!formData.email?.trim()) {
         newErrors.email = "Email is required when selecting email as contact method";
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
         newErrors.email = "Please enter a valid email address";
@@ -161,7 +161,7 @@ const ContactForm = () => {
 
     // Phone validation based on preferred contact method
     if (formData.preferredContactMethod === "WHATSAPP" || formData.preferredContactMethod === "CALL") {
-      if (!formData.phone.trim()) {
+      if (!formData.phone?.trim()) {
         newErrors.phone = "Phone number is required for WhatsApp or Phone Call contact methods";
       } 
       // else if (!/^[\d\s\+\-\(\)]{10,}$/.test(formData.phone)) {
@@ -171,7 +171,7 @@ const ContactForm = () => {
 
     // If no contact method selected, require either email or phone
     if (!formData.preferredContactMethod) {
-      if (!formData.email.trim() && !formData.phone.trim()) {
+      if (!formData.email?.trim() && !formData.phone?.trim()) {
         newErrors.email = "Please provide either email or phone number when no contact method is selected";
         newErrors.phone = "Please provide either email or phone number when no contact method is selected";
       }
@@ -252,19 +252,19 @@ const ContactForm = () => {
     }
 
     // Format phone number - remove country code if present and use only digits
-    let phoneNumber = formData.phone.replace(/\D/g, ''); // Remove all non-digits
+    let phoneNumber = formData.phone?.replace(/\D/g, ''); // Remove all non-digits
     
     // If we have a selected country with phone code, remove it from the beginning
     if (selectedCountry?.phoneCode) {
       const countryCode = selectedCountry.phoneCode.replace(/\D/g, '');
-      if (phoneNumber.startsWith(countryCode)) {
+      if (phoneNumber?.startsWith(countryCode)) {
         phoneNumber = phoneNumber.substring(countryCode.length);
       }
     }
 
     return {
       name: formData.fullName.trim(),
-      email: formData.email.trim() || null,
+      email: formData.email?.trim() || null,
       phoneNumber: phoneNumber || null,
       country: countryName || null,
       preferredContactMethod: formData.preferredContactMethod || null,
@@ -670,7 +670,7 @@ const ContactForm = () => {
                           type="email"
                           id="email"
                           name="email"
-                          value={formData.email}
+                          value={formData.email || ""}
                           onChange={handleChange}
                           className={`text-gray-500 w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all ${
                             errors.email ? "border-red-500" : "border-gray-300"
@@ -725,7 +725,7 @@ const ContactForm = () => {
                             type="tel"
                             id="phone"
                             name="phone"
-                            value={formData.phone}
+                            value={formData.phone || ""}
                             onChange={handleChange}
                             className={`text-gray-500 flex-1 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all ${
                               errors.phone ? "border-red-500" : "border-gray-300"
@@ -770,7 +770,7 @@ const ContactForm = () => {
                       <select
                         id="preferredContactMethod"
                         name="preferredContactMethod"
-                        value={formData.preferredContactMethod}
+                        value={formData.preferredContactMethod || ""}
                         onChange={handleChange}
                         className="text-gray-500 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-white"
                       >
@@ -818,7 +818,7 @@ const ContactForm = () => {
                           <select
                             id="preferredDestination"
                             name="preferredDestination"
-                            value={formData.preferredDestination}
+                            value={formData.preferredDestination || ""}
                             onChange={handleChange}
                             className="text-gray-500 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-white"
                           >

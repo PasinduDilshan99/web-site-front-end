@@ -52,8 +52,8 @@ const VillaDetailsContent: React.FC<VillaDetailsContentProps> = ({ villaData }) 
           <div className="space-y-8">
             {/* Location Section */}
             <VillaLocation 
-              villa={serviceProviderDetails}
-              nearbyDestinations={data.nearbyDestinations}
+              // villa={serviceProviderDetails}
+              // nearbyDestinations={data.nearbyDestinations}
             />
             
             {/* Amenities Summary */}

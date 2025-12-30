@@ -330,9 +330,9 @@ const PackagePage = () => {
           <div className="mt-8">
             <ReviewsSection
               reviews={reviews}
-              loading={reviewsLoading}
-              error={reviewsError}
-              onRetry={handleReviewsRetry}
+              // loading={reviewsLoading}
+              // error={reviewsError}
+              // onRetry={handleReviewsRetry}
             />
           </div>
           {/* History Section */}

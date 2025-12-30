@@ -61,12 +61,12 @@ const HotelRooms: React.FC<HotelRoomsProps> = ({ rooms }) => {
                     <span className="text-sm text-gray-600">{room.bedType} bed</span>
                   </div>
                   
-                  {room.wifiAvailable && (
+                  {/* {room.wifiAvailable && (
                     <div className="flex items-center gap-2">
                       <Wifi className="w-4 h-4 text-purple-600" />
                       <span className="text-sm text-gray-600">WiFi</span>
                     </div>
-                  )}
+                  )} */}
                 </div>
                 
                 <div className="flex flex-wrap gap-2">

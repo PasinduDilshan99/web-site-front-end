@@ -84,7 +84,7 @@ const SearchHeader: React.FC<SearchHeaderProps> = ({
                       {tour.tourDetails.endLocation}
                     </span>
                     <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
-                      {tour.tourDetails.tourCategory}
+                      {tour.tourDetails.tourCategoryName}
                     </span>
                   </div>
                 </button>

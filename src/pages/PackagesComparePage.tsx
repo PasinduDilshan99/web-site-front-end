@@ -9,16 +9,16 @@ import PackageSummaryCard from "@/components/package-comparison-components/Packa
 import DayComparisonTable from "@/components/package-comparison-components/DayComparisonTable";
 import ExtraDetailsComparison from "@/components/package-comparison-components/ExtraDetailsComparison";
 import {
-  Tour,
   Package,
   ApiResponse,
 } from "@/types/package-comparison-types";
+import { Tour } from "@/types/packages-types";
 
 const PackagesComparePage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [tourName, setTourName] = useState(searchParams.get("tour-name") || "");
-  const [tourId, setTourId] = useState(searchParams.get("tour-id") || "");
+  const [tourName, setTourName] = useState(searchParams?.get("tour-name") || "");
+  const [tourId, setTourId] = useState(searchParams?.get("tour-id") || "");
 
   // States for API data
   const [tours, setTours] = useState<Tour[]>([]);
@@ -119,10 +119,10 @@ const PackagesComparePage = () => {
           tour.tourDetails.tourDescription
             .toLowerCase()
             .includes(searchQuery.toLowerCase()) ||
-          tour.tourDetails.tourCategory
+          tour.tourDetails.tourCategoryName
             .toLowerCase()
             .includes(searchQuery.toLowerCase()) ||
-          tour.tourDetails.tourType
+          tour.tourDetails.tourTypeName
             .toLowerCase()
             .includes(searchQuery.toLowerCase())
       );
@@ -138,7 +138,7 @@ const PackagesComparePage = () => {
     setShowTourDropdown(false);
 
     // Update URL params
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(searchParams?.toString());
     params.set("tour-id", tour.tourDetails.tourId.toString());
     params.set("tour-name", tour.tourDetails.tourName);
     router.push(`?${params.toString()}`);

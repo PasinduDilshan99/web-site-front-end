@@ -512,9 +512,9 @@ const PackagePage: React.FC = () => {
         {/* Reviews Section */}
         <ReviewsSection
           reviews={reviews}
-          loading={reviewsLoading}
-          error={reviewsError}
-          onRetry={handleReviewsRetry}
+          // loading={reviewsLoading}
+          // error={reviewsError}
+          // onRetry={handleReviewsRetry}
         />
 
         {/* History Section */}

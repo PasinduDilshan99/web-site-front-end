@@ -29,6 +29,13 @@ export interface CommentReaction {
   commentReactionCreatedBy?: number;
   commentReactionCreatedAt?: string;
 }
+// export interface ReviewComment {
+//   id: number;
+//   commentText: string;
+//   parentId: number | null;
+//   commentedBy: UserInfo;
+//   createdAt: string;
+// }
 
 export interface ReviewComment {
   commentId?: number;
@@ -217,13 +224,7 @@ export interface ReviewReaction {
   reactedByUsername: string;
 }
 
-export interface ReviewComment {
-  id: number;
-  commentText: string;
-  parentId: number | null;
-  commentedBy: UserInfo;
-  createdAt: string;
-}
+
 
 
 // types/wallet.ts

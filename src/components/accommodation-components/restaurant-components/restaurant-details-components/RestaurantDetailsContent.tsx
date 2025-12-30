@@ -54,8 +54,8 @@ const RestaurantDetailsContent: React.FC<RestaurantDetailsContentProps> = ({ res
         <div className="space-y-8">
           {/* Location Section */}
           <RestaurantLocation 
-            restaurant={serviceProviderDetails}
-            nearbyDestinations={data.nearbyDestinations}
+            // restaurant={serviceProviderDetails}
+            // nearbyDestinations={data.nearbyDestinations}
           />
           
           {/* Contact & Info */}

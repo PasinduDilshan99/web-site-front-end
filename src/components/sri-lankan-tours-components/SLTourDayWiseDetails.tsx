@@ -26,7 +26,7 @@ interface SLTourDayWiseDetailsProps {
   loading?: boolean;
   error?: string | null;
   onRetry?: () => void;
-  extraDetails?: TourExtraDetailsType; // Add this
+  extraDetails?: TourExtraDetailsType | null; // Add this
   extraDetailsLoading?: boolean; // Add this
   extraDetailsError?: string | null; // Add this
 }

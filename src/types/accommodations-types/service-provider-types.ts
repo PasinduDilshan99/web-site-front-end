@@ -219,7 +219,6 @@ interface PackageDetails {
   specialNote?: string | null;
   requirements?: string | null;
   statusId?: number | null;
-  // FIXED: Added missing BaseEntity properties for PackageDetails
   createdAt?: string | null;
   createdBy?: number | null;
   updatedAt?: string | null;

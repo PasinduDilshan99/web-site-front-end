@@ -38,9 +38,15 @@ const SriLankanTourPage: React.FC = () => {
   const [galleryError, setGalleryError] = useState<string | null>(null);
   const searchParams = useSearchParams();
 
-  const tourType: string | null = searchParams.get("tourType");
-  const location: string | null = searchParams.get("location");
-
+  const [tourType, setTourType] = useState<string | null>(null);
+  const [location, setLocation] = useState<string | null>(null);
+  
+    useEffect(() => {
+    if (searchParams) {
+      setTourType(searchParams.get("tourType"));
+      setLocation(searchParams.get("location"));
+    }
+  }, [searchParams]);
   // Pagination states
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(10); // Default page size
@@ -444,109 +450,111 @@ const SriLankanTourPage: React.FC = () => {
   }
 
   return (
-    <div className="mx-auto px-4 py-8 bg-gradient-to-br from-amber-50 via-purple-50 to-blue-50 min-h-screen">
-      {/* Page Header */}
-      <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
-        <SectionHeader
-          subtitle=""
-          title="Sri Lankan Tours"
-          description="Discover the beauty of Sri Lanka with our curated tour experiences"
-          fromColor="#A855F7"
-          toColor="#F59E0B"
-        />
-      </div>
-
-      {/* Filters Section */}
-      <FilterSection
-        filters={filters}
-        onFilterChange={handleFilterChange}
-        onSearch={handleSearch}
-        onResetFilters={resetFilters}
-        tourTypes={tourTypes}
-        tourCategories={tourCategories}
-        seasons={seasons}
-        locations={locations}
-        durations={durations}
-      />
-
-      {/* Results Section */}
-      <div id="results-section" className="mb-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <h3 className="text-2xl font-semibold text-gray-900">
-            {totalTours} Tour{totalTours !== 1 ? "s" : ""} Found
-          </h3>
-
-          {/* Items Per Page Selector */}
-          <div className="flex items-center gap-3">
-            <label
-              htmlFor="itemsPerPage"
-              className="text-sm font-medium text-gray-700 whitespace-nowrap"
-            >
-              Show:
-            </label>
-            <select
-              id="itemsPerPage"
-              value={itemsPerPage}
-              onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
-              className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-            >
-              <option value={6}>6</option>
-              <option value={8}>8</option>
-              <option value={10}>10</option>
-              <option value={12}>12</option>
-              <option value={16}>16</option>
-              <option value={20}>20</option>
-              <option value={24}>24</option>
-            </select>
-            <span className="text-sm text-gray-500 whitespace-nowrap">
-              per page
-            </span>
+        <div className="mx-auto px-4 py-8 bg-gradient-to-br from-amber-50 via-purple-50 to-blue-50 min-h-screen">
+          {/* Page Header */}
+          <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
+            <SectionHeader
+              subtitle=""
+              title="Sri Lankan Tours"
+              description="Discover the beauty of Sri Lanka with our curated tour experiences"
+              fromColor="#A855F7"
+              toColor="#F59E0B"
+            />
           </div>
-        </div>
 
-        {/* Tours Grid */}
-        {tours.length > 0 ? (
-          <>
-            <ToursGrid tours={tours} displayCount={tours.length} />
+          {/* Filters Section */}
+          <FilterSection
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            onSearch={handleSearch}
+            onResetFilters={resetFilters}
+            tourTypes={tourTypes}
+            tourCategories={tourCategories}
+            seasons={seasons}
+            locations={locations}
+            durations={durations}
+          />
 
-            {/* Pagination Controls */}
-            {totalPages > 1 && (
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-                totalItems={totalTours}
-                itemsPerPage={itemsPerPage}
-                startIndex={(currentPage - 1) * itemsPerPage + 1}
-                endIndex={Math.min(currentPage * itemsPerPage, totalTours)}
-              />
+          {/* Results Section */}
+          <div id="results-section" className="mb-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+              <h3 className="text-2xl font-semibold text-gray-900">
+                {totalTours} Tour{totalTours !== 1 ? "s" : ""} Found
+              </h3>
+
+              {/* Items Per Page Selector */}
+              <div className="flex items-center gap-3">
+                <label
+                  htmlFor="itemsPerPage"
+                  className="text-sm font-medium text-gray-700 whitespace-nowrap"
+                >
+                  Show:
+                </label>
+                <select
+                  id="itemsPerPage"
+                  value={itemsPerPage}
+                  onChange={(e) =>
+                    handleItemsPerPageChange(Number(e.target.value))
+                  }
+                  className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                >
+                  <option value={6}>6</option>
+                  <option value={8}>8</option>
+                  <option value={10}>10</option>
+                  <option value={12}>12</option>
+                  <option value={16}>16</option>
+                  <option value={20}>20</option>
+                  <option value={24}>24</option>
+                </select>
+                <span className="text-sm text-gray-500 whitespace-nowrap">
+                  per page
+                </span>
+              </div>
+            </div>
+
+            {/* Tours Grid */}
+            {tours.length > 0 ? (
+              <>
+                <ToursGrid tours={tours} displayCount={tours.length} />
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                    totalItems={totalTours}
+                    itemsPerPage={itemsPerPage}
+                    startIndex={(currentPage - 1) * itemsPerPage + 1}
+                    endIndex={Math.min(currentPage * itemsPerPage, totalTours)}
+                  />
+                )}
+              </>
+            ) : (
+              <NoResults onResetFilters={resetFilters} />
             )}
-          </>
-        ) : (
-          <NoResults onResetFilters={resetFilters} />
-        )}
-      </div>
+          </div>
 
-      {/* Reviews Section */}
-      <ReviewsSection
-        reviews={reviews}
-        loading={reviewsLoading}
-        error={reviewsError}
-        onRetry={fetchReviews}
-      />
-      <TourHistorySection
-        histories={histories}
-        loading={historyLoading}
-        error={historyError}
-        onRetry={fetchTourHistory}
-      />
-      <TourHistoryGallery
-        images={galleryImages}
-        loading={galleryLoading}
-        error={galleryError}
-        onRetry={fetchTourHistoryImages}
-      />
-    </div>
+          {/* Reviews Section */}
+          <ReviewsSection
+            reviews={reviews}
+            loading={reviewsLoading}
+            error={reviewsError}
+            onRetry={fetchReviews}
+          />
+          <TourHistorySection
+            histories={histories}
+            loading={historyLoading}
+            error={historyError}
+            onRetry={fetchTourHistory}
+          />
+          <TourHistoryGallery
+            images={galleryImages}
+            loading={galleryLoading}
+            error={galleryError}
+            onRetry={fetchTourHistoryImages}
+          />
+        </div>
   );
 };
 

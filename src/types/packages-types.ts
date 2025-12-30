@@ -96,6 +96,12 @@ export interface Filters {
   endDate: string;
 }
 
+export interface Tour{
+    tourDetails: TourDetails;
+    images: TourImage[];
+
+}
+
 export interface TourImage {
   imageId: number;
   imageName: string;
@@ -276,11 +282,26 @@ export interface PackageHistory {
 }
 
 export interface PackageHistoryImage {
-  imageId: number | null;
-  name: string | null;
-  description: string | null;
-  imageUrl: string | null;
-  color: string | null;
+imageId: number;
+  imageName: string;
+  imageDescription: string;
+  imageUrl: string;
+  color: string;
+  imageStatusName: string;
+  createdAt: string;
+  packageSchedule: {
+    packageScheduleId: number;
+    packageScheduleName: string;
+  };
+  packageInfo: {
+    packageId: number;
+    packageName: string;
+    tourId: number;
+  };
+  createdByUser: {
+    fullName: string;
+    imageUrl: string | null;
+  };
 }
 
 export interface PackageHistoryResponse {

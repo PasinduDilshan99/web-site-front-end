@@ -16,6 +16,14 @@ export interface Schedule {
   scheduleDescription: string;
 }
 
+export interface ActiveToursAPIResponse{
+  code: number;
+  status: string;
+  message: string;
+  data: ActiveToursType[];
+  timestamp: string;
+}
+
 export interface ActiveToursType {
   tourId: number;
   tourName: string;

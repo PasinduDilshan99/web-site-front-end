@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 import { UNIQUE_CODE_NAME } from "@/utils/constant";
@@ -12,11 +12,16 @@ export default function Page() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [uniqueCode, setUniqueCode] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false);
 
   const router = useRouter();
   const { login } = useAuth();
 
-  const uniqueCode = sessionStorage.getItem(UNIQUE_CODE_NAME);
+  useEffect(() => {
+    setIsClient(true);
+    setUniqueCode(sessionStorage.getItem(UNIQUE_CODE_NAME));
+  }, []);
 
   const handleLogin = async () => {
     try {
@@ -38,8 +43,32 @@ export default function Page() {
     }
   };
 
+  useEffect(() => {
+    if (isClient && uniqueCode) {
+      router.push("/profile");
+    }
+  }, [isClient, uniqueCode, router]);
+
+  if (!isClient) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-amber-50/30 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (uniqueCode) {
-    router.push("/profile");
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-amber-50/30 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Redirecting to profile...</p>
+        </div>
+      </div>
+    );
   }
 
   return (

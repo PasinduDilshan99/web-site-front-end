@@ -76,7 +76,8 @@ const RestaurantHeader: React.FC<RestaurantHeaderProps> = ({ restaurant }) => {
         <div className="bg-gradient-to-r from-rose-500 to-orange-500 rounded-xl p-4 min-w-[200px] text-white">
           <div className="text-center">
             <div className="text-2xl font-bold">
-              {restaurant.cuisineType || "Multi-Cuisine"}
+              {/* {restaurant.cuisineType || "Multi-Cuisine"} */}
+              Multi-Cuisine
             </div>
             <div className="text-sm opacity-90 mt-1">Cuisine Type</div>
           </div>

@@ -33,7 +33,7 @@ interface BookingFormProps {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
   onTransportChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onInvoiceChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onInvoiceChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onParticipantChange: (
     index: number,
     field: keyof Participant,

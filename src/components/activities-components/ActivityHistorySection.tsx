@@ -6,17 +6,49 @@ import ActivityHistoryCarousel from "./ActivityHistoryCarousel";
 
 // Types for activity history
 export interface ActivityHistoryImage {
-  imageId: number;
+imageId: number;
   imageName: string;
   imageDescription: string;
   imageUrl: string;
-  statusName: string;
-  createdByUsername: string;
-  updatedByUsername: string | null;
-  terminatedByUsername: string | null;
-  createdAt: string;
-  updatedAt: string;
-  terminatedAt: string | null;
+  imageStatusName: string;
+  imageCreatedByUsername: string;
+  imageUpdatedByUsername: string | null;
+  imageTerminatedByUsername: string | null;
+  imageCreatedAt: string;
+  imageUpdatedAt: string;
+  imageTerminatedAt: string | null;
+  history: {
+    historyId: number;
+    historyName: string;
+    historyDescription: string;
+    numberOfParticipate: number;
+    activityStart: string;
+    activityEnd: string;
+    rating: number;
+    historySpecialNote: string;
+    historyStatusName: string;
+  };
+  schedule: {
+    scheduleId: number;
+    scheduleName: string;
+    scheduleDescription: string;
+    assumeStartDate: string;
+    assumeEndDate: string;
+    durationHoursStart: number;
+    durationHoursEnd: number;
+    scheduleSpecialNote: string;
+  };
+  activity: {
+    activityId: number;
+    activityName: string;
+    activityDescription: string;
+    activityCategory: string;
+    durationHours: number;
+    priceLocal: number;
+    priceForeigners: number;
+    minParticipate: number;
+    maxParticipate: number;
+  };
 }
 
 export interface Destination {

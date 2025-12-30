@@ -52,8 +52,8 @@ const ResortDetailsContent: React.FC<ResortDetailsContentProps> = ({ resortData 
           <div className="space-y-8">
             {/* Location Section */}
             <ResortLocation 
-              resort={serviceProviderDetails}
-              nearbyDestinations={data.nearbyDestinations}
+              // resort={serviceProviderDetails}
+              // nearbyDestinations={data.nearbyDestinations}
             />
             
             {/* Amenities Summary */}

@@ -216,7 +216,7 @@ const BookingPage = () => {
     }));
   };
 
-  const handleInvoiceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInvoiceChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,

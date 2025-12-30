@@ -96,20 +96,35 @@ export interface TourImage {
   imageDescription: string;
   imageUrl: string;
 }
+export interface Schedule {
+  scheduleId: number;
+  scheduleName: string;
+  assumeStartDate: string;
+  assumeEndDate: string;
+  durationStart: number;
+  durationEnd: number;
+  specialNote: string;
+  scheduleDescription: string;
+}
 
 export interface TourDetails {
   tourId: number;
   tourName: string;
   tourDescription: string;
-  tourCategory: string;
-  tourType: string;
   duration: number;
   latitude: number;
   longitude: number;
   startLocation: string;
   endLocation: string;
-  season: string | null;
-  status: string;
+  tourTypeName: string;
+  tourTypeDescription: string;
+  tourCategoryName: string;
+  tourCategoryDescription: string;
+  seasonName: string;
+  seasonDescription: string;
+  statusName: string;
+  schedules: Schedule[];
+  images: TourImage[];
 }
 
 export interface Tour {

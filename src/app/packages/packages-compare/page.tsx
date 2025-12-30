@@ -1,12 +1,22 @@
-import PackagesComparePage from "@/pages/PackagesComparePage";
-import React from "react";
+// app/packages/packages-compare/page.tsx
+"use client";
 
-const page = () => {
+import { Suspense } from 'react';
+import PackagesComparePage from "@/pages/PackagesComparePage";
+
+const Page = () => {
   return (
-    <div>
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading package comparison...</p>
+        </div>
+      </div>
+    }>
       <PackagesComparePage />
-    </div>
+    </Suspense>
   );
 };
 
-export default page;
+export default Page;

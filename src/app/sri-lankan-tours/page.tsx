@@ -1,17 +1,24 @@
-import LinkBar from "@/components/common-components/linkBar/LinkBar";
-import NavBar from "@/components/common-components/navBar/NavBar";
+// app/sri-lankan-tours/page.tsx
+"use client";
+
+import { Suspense } from 'react';
 import TourHeroSection from "@/components/sri-lankan-tours-components/TourHeroSection";
 import SriLankanTourPage from "@/pages/SriLankanTourPage";
-import React from "react";
-import Footer from "../components/footer/Footer";
 
-const page = () => {
+const Page = () => {
   return (
     <div>
       <TourHeroSection />
-      <SriLankanTourPage />
+      <Suspense fallback={
+        <div className="py-8">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
+          <p className="mt-4 text-center text-gray-600">Loading tours...</p>
+        </div>
+      }>
+        <SriLankanTourPage />
+      </Suspense>
     </div>
   );
 };
 
-export default page;
+export default Page;

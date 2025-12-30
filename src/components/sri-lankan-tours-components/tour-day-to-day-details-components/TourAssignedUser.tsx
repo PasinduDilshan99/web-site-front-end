@@ -19,7 +19,8 @@ interface TourAssignedUserProps {
 }
 
 const TourAssignedUser: React.FC<TourAssignedUserProps> = ({ assignUser }) => {
-  const { sriLankanTourId } = useParams();
+  const params = useParams();
+  const sriLankanTourId = params?.sriLankanTourId
   const [expandedTours, setExpandedTours] = useState(false);
   
   // Handle null/undefined assignUser

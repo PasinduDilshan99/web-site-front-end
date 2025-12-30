@@ -350,7 +350,7 @@ const TourPackageSchedulesHeroSection: React.FC<TourPackageSchedulesHeroSectionP
                 }`}
                 style={{
                   borderColor: selectedImageIndex === index ? packageData.color : '',
-                  ringColor: selectedImageIndex === index ? `${packageData.color}40` : ''
+                  // ringColor: selectedImageIndex === index ? `${packageData.color}40` : ''
                 }}
               >
                 <img

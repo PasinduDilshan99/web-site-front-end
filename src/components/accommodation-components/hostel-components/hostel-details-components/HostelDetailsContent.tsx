@@ -5,12 +5,12 @@ import { ServiceProviderAPIResponse } from '@/types/accommodations-types/service
 import React from 'react';
 import HostelHeader from './HostelHeader';
 import HostelRooms from './HostelRooms';
-import HostelPackages from './HostelRooms';
 import HostelLocation from './HostelLocation';
 import HostelGallery from './HostelGallery';
 import HostelOverview from './HostelOverview';
 import HostelReviews from './HostelReviews';
 import HostelAmenities from './HostelAmenities';
+import HostelPackages from './HostelPackage';
 
 
 interface HostelDetailsContentProps {
@@ -51,8 +51,8 @@ const HostelDetailsContent: React.FC<HostelDetailsContentProps> = ({ hostelData 
         <div className="space-y-8">
           {/* Location Section */}
           <HostelLocation 
-            hostel={serviceProviderDetails}
-            nearbyDestinations={data.nearbyDestinations}
+            // hostel={serviceProviderDetails}
+            // nearbyDestinations={data.nearbyDestinations}
           />
           
           {/* Amenities Summary */}
