@@ -1,6 +1,6 @@
 // app/blog/page.tsx
 "use client";
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect } from "react";
 import {
   BlogComment,
   BlogCommentReply,
@@ -464,7 +464,6 @@ const BlogPage: React.FC = () => {
 
   return (
     <div>
-      <Suspense fallback={<div>Loading search params...</div>}>
         <div>
           <BlogHeroSection />
         </div>
@@ -589,7 +588,6 @@ const BlogPage: React.FC = () => {
             )}
           </div>
         </div>
-      </Suspense>
     </div>
   );
 };
