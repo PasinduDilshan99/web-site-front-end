@@ -2,11 +2,10 @@
 import { GET_NEW_DESTINATIONS } from "@/utils/frontEndConstant";
 import React, { useEffect, useState } from "react";
 import Loading from "../../../components/common-components/loading/Loading";
-import { ErrorState } from "../../../components/common-components/error-state/ErrorState";
-import { EmptyState } from "../../../components/common-components/empty-state/EmptyState";
 import SectionHeader from "../../../components/common-components/section-header/SectionHeader";
 import AnimatedButton from "../../../components/common-components/buttons/AnimatedButton";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface ImageType {
   imageId: number;
@@ -95,9 +94,11 @@ const ImageCarousel: React.FC<{
             index === currentImageIndex ? "opacity-100" : "opacity-0"
           }`}
         >
-          <img
+          <Image
             src={image.imageUrl}
             alt={image.imageDescription}
+            width={400}
+            height={400}
             className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105"
           />
         </div>
@@ -221,11 +222,6 @@ const NewDestinations = () => {
     fetchNewDestinations();
   }, []);
 
-  const handleRetry = () => {
-    setError(null);
-    setLoading(true);
-    window.location.reload();
-  };
 
   if (loading) {
     return (

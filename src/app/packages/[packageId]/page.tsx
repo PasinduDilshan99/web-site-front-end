@@ -1,11 +1,8 @@
 "use client";
 
-import Footer from "@/app/components/footer/Footer";
 import { EmptyState } from "@/components/common-components/empty-state/EmptyState";
 import { ErrorState } from "@/components/common-components/error-state/ErrorState";
 import Loading from "@/components/common-components/loading/Loading";
-import NavBar from "@/components/common-components/navBar/NavBar";
-import ActivitiesSection from "@/components/packages-components/ActivitiesSection";
 import BookingSection from "@/components/packages-components/BookingSection";
 import DestinationsSection from "@/components/packages-components/DestinationsSection";
 import PackageGallery from "@/components/packages-components/PackageGallery";
@@ -45,7 +42,8 @@ interface PackageHistoryImagesResponse {
 }
 
 const PackagePage = () => {
-  const { packageId } = useParams();
+  const params = useParams();
+  const packageId =  params?.packageId || null;
   const [packageData, setPackageData] = useState<ActivePackagesType | null>(
     null
   );
@@ -292,7 +290,6 @@ const PackagePage = () => {
   ];
 
   return (
-    <>
       <div className="min-h-screen bg-gray-50">
         {/* Header Section */}
         <PackageHeader packageData={packageData} />
@@ -355,7 +352,6 @@ const PackagePage = () => {
           />
         </div>
       </div>
-    </>
   );
 };
 

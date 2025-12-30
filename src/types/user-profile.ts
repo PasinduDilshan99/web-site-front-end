@@ -71,6 +71,15 @@ export interface TourReview {
   images: ReviewImage[];
 }
 
+export interface TourReviewAPIResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: TourReview[];
+  timestamp: string;
+}
+
+
 export interface ActivityReview {
   reviewId: number;
   activityScheduleId: number;
@@ -91,6 +100,14 @@ export interface ActivityReview {
   comments: ReviewComment[];
 }
 
+export interface ActivityReviewAPIResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: ActivityReview[];
+  timestamp: string;
+}
+
 export interface DestinationReview {
   reviewId: number;
   destinationId: number;
@@ -107,6 +124,14 @@ export interface DestinationReview {
   images: ReviewImage[];
   reactions: ReviewReaction[];
   comments: ReviewComment[];
+}
+
+export interface DestinationReviewAPIResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: DestinationReview[];
+  timestamp: string;
 }
 
 export interface PackageReview {
@@ -128,6 +153,14 @@ export interface PackageReview {
   comments: ReviewComment[];
 }
 
+export interface PackageReviewAPIResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: PackageReview[];
+  timestamp: string;
+}
+
 // types/reviews.ts
 // Add these interfaces to your existing reviews.ts file
 
@@ -144,6 +177,14 @@ export interface UserProfileReviewResponse {
   images: ReviewImage[];
   reactions: ReviewReaction[];
   comments: ReviewComment[];
+}
+
+export interface UserProfileReviewAPIResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: UserProfileReviewResponse[];
+  timestamp: string;
 }
 
 export interface UserInfo {

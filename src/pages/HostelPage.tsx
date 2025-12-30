@@ -135,7 +135,7 @@ const HostelPage = () => {
     setFilteredHostels(filtered);
   }, [filters, hostels]);
 
-  const handleFilterChange = (filterName: keyof HostelFilters, value: any) => {
+  const handleFilterChange = (filterName: keyof HostelFilters, value: unknown) => {
     setFilters(prev => ({
       ...prev,
       [filterName]: value

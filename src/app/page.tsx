@@ -66,9 +66,9 @@ export default function Home() {
       <div>
         <ActivitiesHome />
       </div>
-      {/* <div>
+      <div>
         <ActivityCategoriesHome />
-      </div> */}
+      </div>
       <div>
         <PackagesHome />
       </div>

@@ -1,4 +1,5 @@
 import { ActivePackagesType } from "@/types/packages-types";
+import Link from "next/link";
 import React from "react";
 
 interface PackageHeaderProps {
@@ -29,9 +30,9 @@ const PackageHeader: React.FC<PackageHeaderProps> = ({ packageData }) => {
           <div className="flex-1">
             {/* Breadcrumb */}
             <nav className="flex text-sm text-white/80 mb-4">
-              <a href="/" className="hover:text-white transition-colors">Home</a>
+              <Link href="/" className="hover:text-white transition-colors">Home</Link>
               <span className="mx-2">/</span>
-              <a href="/packages" className="hover:text-white transition-colors">Packages</a>
+              <Link href="/packages" className="hover:text-white transition-colors">Packages</Link>
               <span className="mx-2">/</span>
               <span className="text-white">{packageData.packageName}</span>
             </nav>

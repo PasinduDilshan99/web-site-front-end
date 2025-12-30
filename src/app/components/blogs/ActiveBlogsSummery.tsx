@@ -2,6 +2,7 @@
 import AnimatedButton from "@/components/common-components/buttons/AnimatedButton";
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";
 import { GET_ALL_ACTIVE_BLOGS } from "@/utils/frontEndConstant";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -336,12 +337,14 @@ const ActiveBlogsSummery = () => {
                     className="relative overflow-hidden"
                     style={{ height: getImageHeight() }}
                   >
-                    <img
+                    <Image
                       src={
                         blogImages[0]?.image_url ||
                         "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=250&fit=crop"
                       }
                       alt={blog.title}
+                      width={400}
+                      height={400}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>

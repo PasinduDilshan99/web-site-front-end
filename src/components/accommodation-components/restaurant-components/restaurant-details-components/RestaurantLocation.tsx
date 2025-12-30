@@ -1,7 +1,7 @@
 // components/restaurant/RestaurantLocation.tsx
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useMemo, useCallback } from "react";
 import {
   MapPin,
   Navigation,
@@ -14,10 +14,33 @@ import {
 } from "lucide-react";
 import { NearbyDestination, ServiceProviderDetails } from "@/types/accommodations-types/service-provider-types";
 
+// Declare Leaflet types in the global scope
+declare global {
+  interface Window {
+    L: typeof import('leaflet');
+  }
+}
 
 interface RestaurantLocationProps {
   restaurant: ServiceProviderDetails;
   nearbyDestinations: NearbyDestination[];
+}
+
+// Define proper type for Leaflet map instance
+interface LeafletMap {
+  remove: () => void;
+  setView: (latlng: [number, number], zoom: number) => LeafletMap;
+  tileLayer: (url: string, options: object) => {
+    addTo: (map: LeafletMap) => void;
+  };
+  marker: (latlng: [number, number], options?: object) => {
+    addTo: (map: LeafletMap) => {
+      bindPopup: (content: string) => void;
+      openPopup: () => void;
+    };
+  };
+  divIcon: (options: object) => object;
+  fitBounds: (bounds: [number, number][], options?: object) => void;
 }
 
 const RestaurantLocation: React.FC<RestaurantLocationProps> = ({
@@ -25,16 +48,16 @@ const RestaurantLocation: React.FC<RestaurantLocationProps> = ({
   nearbyDestinations,
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
+  const mapInstanceRef = useRef<LeafletMap | null>(null);
 
   // HARDCODED: Restaurant coordinates (Colombo, Sri Lanka)
-  const restaurantCoords = {
+  const restaurantCoords = useMemo(() => ({
     latitude: 6.9271,
     longitude: 79.8612,
-  };
+  }), []);
 
   // Calculate distance between two coordinates using Haversine formula
-  const calculateDistance = (
+  const calculateDistance = useCallback((
     lat1: number,
     lon1: number,
     lat2: number,
@@ -55,18 +78,18 @@ const RestaurantLocation: React.FC<RestaurantLocationProps> = ({
     return distance < 1
       ? `${Math.round(distance * 1000)}m`
       : `${distance.toFixed(1)}km`;
-  };
+  }, []);
 
-  const calculateDriveTime = (distanceStr: string): string => {
+  const calculateDriveTime = useCallback((distanceStr: string): string => {
     const distance = parseFloat(distanceStr);
     if (distance <= 2) return "5-10 min";
     if (distance <= 5) return "10-15 min";
     if (distance <= 10) return "15-25 min";
     if (distance <= 20) return "25-40 min";
     return "40+ min";
-  };
+  }, []);
 
-  const calculateTransportationInfo = () => {
+  const calculateTransportationInfo = useCallback(() => {
     const transportation = [];
 
     const airportCoords = { lat: 7.18, lon: 79.8843 };
@@ -112,29 +135,29 @@ const RestaurantLocation: React.FC<RestaurantLocationProps> = ({
     });
 
     return transportation;
-  };
+  }, [restaurantCoords.latitude, restaurantCoords.longitude, calculateDistance, calculateDriveTime]);
 
   const transportation = calculateTransportationInfo();
 
-  const getDirectionsUrl = () => {
+  const getDirectionsUrl = useCallback(() => {
     return `https://www.openstreetmap.org/directions?engine=osrm_car&route=${restaurantCoords.latitude},${restaurantCoords.longitude}`;
-  };
+  }, [restaurantCoords.latitude, restaurantCoords.longitude]);
 
-  const getDestinationDistance = (destination: NearbyDestination) => {
+  const getDestinationDistance = useCallback((destination: NearbyDestination) => {
     return calculateDistance(
       restaurantCoords.latitude,
       restaurantCoords.longitude,
       destination.latitude,
       destination.longitude
     );
-  };
+  }, [restaurantCoords.latitude, restaurantCoords.longitude, calculateDistance]);
 
   // Initialize Leaflet map
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
 
     const loadLeaflet = async () => {
-      if (!(window as any).L) {
+      if (!window.L) {
         const link = document.createElement("link");
         link.rel = "stylesheet";
         link.href =
@@ -152,7 +175,7 @@ const RestaurantLocation: React.FC<RestaurantLocationProps> = ({
     };
 
     const initMap = () => {
-      const L = (window as any).L;
+      const L = window.L;
       if (!L || !mapRef.current) return;
 
       // Create map centered on restaurant
@@ -209,7 +232,7 @@ const RestaurantLocation: React.FC<RestaurantLocationProps> = ({
               <small style="color: #f97316;">${
                 dest.destinationCategory
               }</small><br/>
-              <small>${dest.description.substring(0, 100)}...</small><br/>
+              <small>${dest.description?.substring(0, 100) || ''}...</small><br/>
               <small style="color: #f43f5e;">${calculateDistance(
                 restaurantCoords.latitude,
                 restaurantCoords.longitude,
@@ -235,7 +258,13 @@ const RestaurantLocation: React.FC<RestaurantLocationProps> = ({
         mapInstanceRef.current = null;
       }
     };
-  }, [nearbyDestinations, restaurant.name]);
+  }, [
+    nearbyDestinations, 
+    restaurant.name, 
+    restaurantCoords.latitude, 
+    restaurantCoords.longitude,
+    calculateDistance
+  ]);
 
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6 border border-rose-100">

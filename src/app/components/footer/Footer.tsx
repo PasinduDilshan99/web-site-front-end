@@ -1,6 +1,5 @@
 "use client";
 import React, { JSX, useEffect, useState } from "react";
-import Image from "next/image";
 import { COMPANY_NAME } from "@/utils/constant";
 import { GET_ACTIVE_FOOTER_DATA } from "@/utils/frontEndConstant";
 

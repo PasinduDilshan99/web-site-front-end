@@ -2,10 +2,10 @@
 "use client";
 import React from 'react';
 import { Calendar, User, MessageCircle, Heart, Clock, ArrowRight } from 'lucide-react';
-import { Blog } from '@/types/blog-types';
+import { BlogCommentReply, BlogDetailsData } from '@/types/blog-types';
 
 interface BlogCardProps {
-  blog: Blog;
+  blog: BlogDetailsData;
   onClick?: (blogId: number) => void;
 }
 
@@ -53,7 +53,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog, onClick }) => {
     let total = blog.comments.length;
     
     // Count replies recursively
-    const countReplies = (replies: any[]): number => {
+    const countReplies = (replies: BlogCommentReply[]): number => {
       if (!replies || !Array.isArray(replies)) return 0;
       
       let count = replies.length;

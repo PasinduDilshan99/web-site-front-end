@@ -1,7 +1,7 @@
 "use client";
 import { useSearchParams, useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
-import { Tour, BookingFormData, ReceiptData } from "@/types/booking-types";
+import { Tour, BookingFormData, ReceiptData, PackageSchedule, Participant, BookingNote, AccommodationDetail, ActivityDetail, DestinationDetail } from "@/types/booking-types";
 import {
   LoadingSpinner,
   Toast,
@@ -15,8 +15,8 @@ import BookHeroSection from "@/components/booking-components/BookHeroSection";
 const BookingPage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const packageScheduleName = searchParams.get("packageScheduleName") || "";
-  const packageScheduleId = searchParams.get("packageScheduleId") || "";
+  const packageScheduleName = searchParams?.get("packageScheduleName") || "";
+  const packageScheduleId = searchParams?.get("packageScheduleId") || "";
 
   // States
   const [tours, setTours] = useState<Tour[]>([]);
@@ -127,13 +127,13 @@ const BookingPage = () => {
         setTours(data.data);
 
         if (packageScheduleId) {
-          const scheduleId = parseInt(packageScheduleId);
+          const scheduleId = Number.parseInt(packageScheduleId);
           let foundSchedule = false;
 
           for (const tour of data.data) {
             for (const pkg of tour.packageDetails) {
               const schedule = pkg.packageSchedulesDetails.find(
-                (s: any) => s.packageScheduleId === scheduleId
+                (s: PackageSchedule) => s.packageScheduleId === scheduleId
               );
               if (schedule) {
                 setSelectedTourId(tour.tourId.toString());
@@ -498,7 +498,7 @@ const BookingPage = () => {
     const participantsCount = receiptData.participentDetails.length;
 
     // Calculate totals
-    const calculateAccommodationTotalPerPerson = (accommodations: any[]) => {
+    const calculateAccommodationTotalPerPerson = (accommodations: AccommodationDetail[]) => {
       let totalAmount = 0.0;
       for (const p of accommodations) {
         const priceWithServiceCharge =
@@ -516,7 +516,7 @@ const BookingPage = () => {
       return totalAmount;
     };
 
-    const calculateActivityTotalPerPerson = (activities: any[]) => {
+    const calculateActivityTotalPerPerson = (activities: ActivityDetail[]) => {
       let totalAmount = 0.0;
       for (const p of activities) {
         totalAmount += p.pricePerPerson;
@@ -524,7 +524,7 @@ const BookingPage = () => {
       return totalAmount;
     };
 
-    const calculateDestinationExtraTotalPerPerson = (destinations: any[]) => {
+    const calculateDestinationExtraTotalPerPerson = (destinations: DestinationDetail[]) => {
       let totalAmount = 0.0;
       for (const p of destinations) {
         totalAmount += p.extraPrice;

@@ -1,5 +1,4 @@
 "use client";
-import Loading from "@/components/common-components/loading/Loading";
 import { HeroSlideData } from "@/types/hero-section-types";
 import { GET_ALL_HERO_SECTION_DATA } from "@/utils/frontEndConstant";
 import React, { useState, useEffect } from "react";

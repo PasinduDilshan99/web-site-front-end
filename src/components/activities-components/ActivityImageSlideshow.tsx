@@ -19,15 +19,6 @@ const ActivityImageSlideshow: React.FC<ActivityImageSlideshowProps> = ({
     (img) => img.image_url && img.image_url.trim() !== ""
   );
 
-  // If no valid images, use placeholder
-  if (validImages.length === 0) {
-    return (
-      <div className="relative w-full h-40 sm:h-48 md:h-56 bg-gray-200 rounded-t-xl sm:rounded-t-2xl flex items-center justify-center">
-        <span className="text-gray-500 text-sm">No Image Available</span>
-      </div>
-    );
-  }
-
   // Auto-rotate images every 4 seconds
   useEffect(() => {
     if (validImages.length <= 1) return;
@@ -42,6 +33,15 @@ const ActivityImageSlideshow: React.FC<ActivityImageSlideshowProps> = ({
 
     return () => clearInterval(interval);
   }, [validImages.length]);
+
+  // If no valid images, use placeholder
+  if (validImages.length === 0) {
+    return (
+      <div className="relative w-full h-40 sm:h-48 md:h-56 bg-gray-200 rounded-t-xl sm:rounded-t-2xl flex items-center justify-center">
+        <span className="text-gray-500 text-sm">No Image Available</span>
+      </div>
+    );
+  }
 
   const goToImage = (index: number) => {
     if (index === currentImageIndex) return;

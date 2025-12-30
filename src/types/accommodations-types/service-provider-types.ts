@@ -26,7 +26,7 @@ interface ServiceProviderImage extends BaseImage {
   imageStatusId: number;
 }
 
-interface MealImage extends BaseImage {}
+type MealImage = BaseImage
 
 interface RoomImage extends BaseImage {
   roomImageUrl: string;
@@ -40,7 +40,7 @@ interface PackageImage extends BaseImage {
   packageImageCaption: string;
 }
 
-interface FacilityImage extends BaseImage {}
+type FacilityImage = BaseImage
 
 // Operating Hours
 interface OperatingHours {

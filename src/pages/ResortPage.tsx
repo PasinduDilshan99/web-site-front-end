@@ -145,7 +145,7 @@ const ResortPage = () => {
     setFilteredResorts(filtered);
   }, [filters, resorts]);
 
-  const handleFilterChange = (filterName: keyof ResortFilters, value: any) => {
+  const handleFilterChange = (filterName: keyof ResortFilters, value: unknown) => {
     setFilters(prev => ({
       ...prev,
       [filterName]: value
@@ -215,7 +215,7 @@ const ResortPage = () => {
               Luxury Resorts
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Experience unparalleled luxury and all-inclusive amenities at the world's finest resorts. Your perfect getaway awaits.
+              Experience unparalleled luxury and all-inclusive amenities at the world&apos;s finest resorts. Your perfect getaway awaits.
             </p>
           </div>
 

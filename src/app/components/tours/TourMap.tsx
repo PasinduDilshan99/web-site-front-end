@@ -1,10 +1,8 @@
 "use client";
 
-import {
-  GET_ACTIVE_DESTINATIONS_LOCATIONS_CATEGORIES_FE,
-  GET_ACTIVE_DESTINATIONS_LOCATIONS_FE,
-} from "@/utils/frontEndConstant";
-import React, { useState, useEffect, useRef } from "react";
+import { GET_ACTIVE_DESTINATIONS_LOCATIONS_FE } from "@/utils/frontEndConstant";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import Image from "next/image";
 import SectionHeader from "../../../components/common-components/section-header/SectionHeader";
 
 // Define TypeScript interfaces based on new API response
@@ -47,10 +45,36 @@ interface ApiResponse {
   timestamp: string;
 }
 
+// Define proper types for Leaflet
+interface LeafletMap {
+  remove: () => void;
+  setView: (coords: [number, number], zoom: number) => LeafletMap;
+  removeLayer: (layer: unknown) => void;
+  fitBounds: (bounds: unknown) => void;
+}
+
+interface LeafletMarker {
+  bindPopup: (content: string) => LeafletMarker;
+  addTo: (map: LeafletMap) => LeafletMarker;
+  on: (event: string, handler: () => void) => LeafletMarker;
+  openPopup: () => void;
+  closePopup: () => void;
+}
+
+interface LeafletControl {
+  L: {
+    map: (element: HTMLElement) => LeafletMap;
+    tileLayer: (url: string, options: unknown) => { addTo: (map: LeafletMap) => unknown };
+    marker: (coords: [number, number], options: unknown) => LeafletMarker;
+    divIcon: (options: unknown) => unknown;
+    featureGroup: (markers: LeafletMarker[]) => { getBounds: () => { pad: (padding: number) => unknown } };
+  };
+}
+
 // Extend Window interface to include Leaflet
 declare global {
   interface Window {
-    L: any;
+    L: LeafletControl["L"] | undefined;
   }
 }
 
@@ -61,18 +85,87 @@ const AllPlacesIcon: React.FC = () => (
   </svg>
 );
 
+// Custom Image component with fallback
+const DestinationImageWithFallback = ({ src, alt }: { src: string; alt: string }) => {
+  const [imgSrc, setImgSrc] = useState(src);
+  
+  return (
+    <Image
+      src={imgSrc}
+      alt={alt}
+      fill
+      className="object-cover"
+      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+      onError={() => {
+        setImgSrc("/api/placeholder/400/300?text=Destination");
+      }}
+    />
+  );
+};
+
 const TourMap: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [map, setMap] = useState<any>(null);
-  const [markers, setMarkers] = useState<any[]>([]);
+  const [map, setMap] = useState<LeafletMap | null>(null);
+  const [markers, setMarkers] = useState<LeafletMarker[]>([]);
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
+  const mapInstanceRef = useRef<LeafletMap | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [destinations, setDestinations] = useState<Destination[]>([]);
-  const [selectedDestination, setSelectedDestination] =
-    useState<Destination | null>(null);
+  const [selectedDestination, setSelectedDestination] = useState<Destination | null>(null);
+
+  // Transform destinations to the format expected by the existing code
+  const places = useMemo(() => {
+    return destinations.map((destination) => ({
+      id: destination.destinationId,
+      name: destination.destinationName,
+      category: destination.destinationCategory,
+      lat: destination.destinationLatitude,
+      lng: destination.destinationLongitude,
+      description: destination.destinationDescription,
+      location: destination.destinationLocation,
+      images: destination.destinationImagesForTourMapDtos,
+    }));
+  }, [destinations]);
+
+  const filteredPlaces = useMemo(() => {
+    return selectedCategory === "all"
+      ? places
+      : places.filter((p) => p.category === selectedCategory);
+  }, [selectedCategory, places]);
+
+  // Get unique categories from destinations for dynamic category display
+  const allCategories = useMemo(() => {
+    const uniqueCategories = Array.from(
+      new Set(destinations.map((d) => d.destinationCategory))
+    ).map((category) => {
+      const categoryDestination = destinations.find(
+        (d) => d.destinationCategory === category
+      );
+      return {
+        id: category,
+        name: category,
+        color: "#3b82f6", // Default color
+        image:
+          categoryDestination?.destinationCategoryImageForTourMapDtos?.[0]
+            ?.imageUrl || "",
+      };
+    });
+
+    // Create "All Destinations" category
+    const allDestinationsCategory = {
+      id: "all",
+      name: "All Destinations",
+      color: "#3b82f6",
+      image: "",
+    };
+
+    return [allDestinationsCategory, ...uniqueCategories];
+  }, [destinations]);
+
+  const currentCategory = useMemo(() => {
+    return allCategories.find((c) => c.id === selectedCategory);
+  }, [selectedCategory, allCategories]);
 
   useEffect(() => {
     const fetchDestinationsLocations = async () => {
@@ -82,8 +175,7 @@ const TourMap: React.FC = () => {
         const data: ApiResponse = await response.json();
 
         if (response.ok && data.code === 200) {
-          const items: Destination[] = data.data || [];
-          setDestinations(items);
+          setDestinations(data.data || []);
           setError(null);
         } else {
           setError(data.message || "Failed to fetch destinations locations");
@@ -96,51 +188,30 @@ const TourMap: React.FC = () => {
       }
     };
 
-    // const fetchDestinationsLocationsCategories = async () => {
-    //   try {
-    //     setLoading(true);
-    //     const response = await fetch(
-    //       GET_ACTIVE_DESTINATIONS_LOCATIONS_CATEGORIES_FE
-    //     );
-    //     const data = await response.json();
-
-    //     if (response.ok) {
-    //       const items: Category[] = data.data || [];
-    //       setCategories((prev) => [...prev, ...items]);
-    //       setError(null);
-    //     } else {
-    //       setError(data.message || "Failed to fetch categories");
-    //     }
-    //   } catch (err) {
-    //     console.error("Error fetching categories:", err);
-    //     setError("Something went wrong while fetching categories");
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // };
-
-    // fetchDestinationsLocationsCategories();
     fetchDestinationsLocations();
   }, []);
 
-  // Transform destinations to the format expected by the existing code
-  const places = destinations.map((destination) => ({
-    id: destination.destinationId,
-    name: destination.destinationName,
-    category: destination.destinationCategory,
-    lat: destination.destinationLatitude,
-    lng: destination.destinationLongitude,
-    description: destination.destinationDescription,
-    location: destination.destinationLocation,
-    images: destination.destinationImagesForTourMapDtos,
-  }));
+  const initMap = useCallback((): void => {
+    if (!mapRef.current || !window.L) return;
 
-  const filteredPlaces =
-    selectedCategory === "all"
-      ? places
-      : places.filter((p) => p.category === selectedCategory);
+    // Clean up existing map
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.remove();
+      mapInstanceRef.current = null;
+    }
 
-  const currentCategory = categories.find((c) => c.id === selectedCategory);
+    // Initialize the map safely
+    const newMap = window.L.map(mapRef.current).setView([7.8731, 80.7718], 8);
+
+    window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      maxZoom: 18,
+    }).addTo(newMap);
+
+    setMap(newMap);
+    mapInstanceRef.current = newMap;
+  }, []);
 
   // Load Leaflet CSS and JS
   useEffect(() => {
@@ -175,43 +246,11 @@ const TourMap: React.FC = () => {
         mapInstanceRef.current.remove();
       }
     };
-  }, []);
-
-const initMap = (): void => {
-  if (!mapRef.current || !window.L) return;
-
-  // 🧹 FIX: Check if a map already exists on this container and remove it
-  if (mapInstanceRef.current) {
-    mapInstanceRef.current.remove();
-    mapInstanceRef.current = null;
-  }
-
-  // Leaflet sometimes attaches the map instance to the DOM element
-  if (mapRef.current._leaflet_id) {
-    try {
-      mapRef.current._leaflet_id = null;
-    } catch (e) {
-      console.warn("Failed to reset Leaflet ID:", e);
-    }
-  }
-
-  // ✅ Initialize the map safely
-  const newMap = window.L.map(mapRef.current).setView([7.8731, 80.7718], 8);
-
-  window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    maxZoom: 18,
-  }).addTo(newMap);
-
-  setMap(newMap);
-  mapInstanceRef.current = newMap;
-};
-
+  }, [initMap]);
 
   // Update markers when category changes or destinations update
-  useEffect(() => {
-    if (!map) return;
+  const updateMarkers = useCallback(() => {
+    if (!map || !window.L) return;
 
     // Clear existing markers
     markers.forEach((marker) => {
@@ -272,7 +311,7 @@ const initMap = (): void => {
       `);
 
       // Add click event
-      marker.on("click", function (this: any) {
+      marker.on("click", () => {
         const destination = destinations.find(
           (d) => d.destinationId === place.id
         );
@@ -282,12 +321,12 @@ const initMap = (): void => {
       });
 
       // Add hover effects for popup only
-      marker.on("mouseover", function (this: any) {
-        this.openPopup();
+      marker.on("mouseover", () => {
+        marker.openPopup();
       });
 
-      marker.on("mouseout", function (this: any) {
-        this.closePopup();
+      marker.on("mouseout", () => {
+        marker.closePopup();
       });
 
       return marker;
@@ -297,42 +336,14 @@ const initMap = (): void => {
 
     // Adjust map bounds to fit all markers
     if (newMarkers.length > 0) {
-      const group = new window.L.featureGroup(newMarkers);
+      const group = window.L.featureGroup(newMarkers);
       map.fitBounds(group.getBounds().pad(0.1));
     }
-  }, [map, selectedCategory, filteredPlaces.length, destinations.length]);
+  }, [map, currentCategory?.color, destinations, filteredPlaces]);
 
-  // Get unique categories from destinations for dynamic category display
-  const uniqueCategoriesFromDestinations = Array.from(
-    new Set(destinations.map((d) => d.destinationCategory))
-  ).map((category) => {
-    const matchingCategory = categories.find((c) => c.name === category);
-    const categoryDestination = destinations.find(
-      (d) => d.destinationCategory === category
-    );
-    return {
-      id: category,
-      name: category,
-      color: matchingCategory?.color || "#3b82f6",
-      image:
-        categoryDestination?.destinationCategoryImageForTourMapDtos?.[0]
-          ?.imageUrl || "",
-    };
-  });
-
-  // Create "All Destinations" category
-  const allDestinationsCategory = {
-    id: "all",
-    name: "All Destinations",
-    color: "#3b82f6",
-    image: "",
-  };
-
-  // Combine all categories
-  const allCategories = [
-    allDestinationsCategory,
-    ...uniqueCategoriesFromDestinations,
-  ];
+  useEffect(() => {
+    updateMarkers();
+  }, [updateMarkers]);
 
   return (
     <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-3 sm:p-4 md:p-6 lg:p-8">
@@ -378,7 +389,7 @@ const initMap = (): void => {
                 }`}
               >
                 <div
-                  className={`w-24 h-24 rounded-full overflow-hidden mb-3 transition-all duration-300 ${
+                  className={`w-24 h-24 rounded-full overflow-hidden mb-3 transition-all duration-300 relative ${
                     selectedCategory === cat.id
                       ? "ring-4 shadow-xl"
                       : "ring-2 ring-gray-200 hover:shadow-lg"
@@ -390,11 +401,7 @@ const initMap = (): void => {
                   }}
                 >
                   {cat.image ? (
-                    <img
-                      src={cat.image}
-                      alt={cat.name}
-                      className="w-full h-full object-cover"
-                    />
+                    <DestinationImageWithFallback src={cat.image} alt={cat.name} />
                   ) : (
                     <div
                       className="w-full h-full flex items-center justify-center"
@@ -517,15 +524,14 @@ const initMap = (): void => {
                           (img) => (
                             <div
                               key={img.id}
-                              className="rounded-lg overflow-hidden shadow-md"
+                              className="rounded-lg overflow-hidden shadow-md relative h-48"
                             >
-                              <img
+                              <DestinationImageWithFallback
                                 src={img.imageUrl}
                                 alt={img.name}
-                                className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
                               />
                               {img.description && (
-                                <p className="text-xs text-gray-600 p-2 bg-gray-50">
+                                <p className="text-xs text-gray-600 p-2 bg-gray-50 absolute bottom-0 left-0 right-0 bg-white/90">
                                   {img.description}
                                 </p>
                               )}
@@ -623,15 +629,14 @@ const initMap = (): void => {
                         (img) => (
                           <div
                             key={img.id}
-                            className="rounded-lg overflow-hidden shadow-md"
+                            className="rounded-lg overflow-hidden shadow-md relative h-48 sm:h-56"
                           >
-                            <img
+                            <DestinationImageWithFallback
                               src={img.imageUrl}
                               alt={img.name}
-                              className="w-full h-48 sm:h-56 object-cover"
                             />
                             {img.description && (
-                              <p className="text-xs text-gray-600 p-2 bg-gray-50">
+                              <p className="text-xs text-gray-600 p-2 bg-gray-50 absolute bottom-0 left-0 right-0 bg-white/90">
                                 {img.description}
                               </p>
                             )}

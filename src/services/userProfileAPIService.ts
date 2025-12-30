@@ -1,7 +1,15 @@
 // services/userProfileAPIService.ts
-import { UpdateNotificationRequest } from "@/types/user-notifications-permissions";
+import { NotificationResponse, UpdateNotificationRequest } from "@/types/user-notifications-permissions";
 import { SidebarResponse, UserProfileResponse } from "../types/sidebar";
-import { EmailUpdateRequest, EmailVerifyRequest, MobileUpdateRequest, MobileVerifyRequest } from "@/types/account-security";
+import { AccountSecurityResponse, EmailUpdateRequest, EmailVerifyRequest, MobileUpdateRequest, MobileVerifyRequest } from "@/types/account-security";
+import { CancelledTour, CancelledToursResponse } from "@/types/cancelled-tours";
+import { RequestedToursResponse } from "@/types/requested-tours";
+import { UserBenefitsResponse } from "@/types/user-benefits";
+import { UpcomingToursResponse } from "@/types/upcoming-tours";
+import { CompletedToursResponse } from "@/types/completed-tours";
+import { WishListResponse } from "@/types/wishlist";
+import { CouponsResponse } from "@/types/coupon";
+import { ActivityReviewAPIResponse, DestinationReviewAPIResponse, HistoryResponse, PackageReviewAPIResponse, TourReviewAPIResponse, UserProfileReviewAPIResponse, WalletResponse } from "@/types/user-profile";
 
 const API_BASE_URL = "http://localhost:8080/felicita/api/v0/user-profile";
 
@@ -52,7 +60,7 @@ export class UserProfileAPIService {
     }
   }
 
-  async fetchContentByUrl(url: string): Promise<any> {
+  async fetchContentByUrl(url: string): Promise<unknown> {
     if (!url) {
       return null;
     }
@@ -76,7 +84,7 @@ export class UserProfileAPIService {
   }
 
   // Specific review endpoints
-  async getTourReviews(): Promise<any> {
+  async getTourReviews(): Promise<TourReviewAPIResponse> {
     try {
       const response = await fetch(`${API_BASE_URL}/tour-reviews`, {
         method: "GET",
@@ -95,7 +103,7 @@ export class UserProfileAPIService {
     }
   }
 
-  async getActivityReviews(): Promise<any> {
+  async getActivityReviews(): Promise<ActivityReviewAPIResponse> {
     try {
       const response = await fetch(`${API_BASE_URL}/activity-reviews`, {
         method: "GET",
@@ -114,7 +122,7 @@ export class UserProfileAPIService {
     }
   }
 
-  async getDestinationReviews(): Promise<any> {
+  async getDestinationReviews(): Promise<DestinationReviewAPIResponse> {
     try {
       const response = await fetch(`${API_BASE_URL}/destination-reviews`, {
         method: "GET",
@@ -133,7 +141,7 @@ export class UserProfileAPIService {
     }
   }
 
-  async getPackageReviews(): Promise<any> {
+  async getPackageReviews(): Promise<PackageReviewAPIResponse> {
     try {
       const response = await fetch(`${API_BASE_URL}/package-reviews`, {
         method: "GET",
@@ -152,7 +160,7 @@ export class UserProfileAPIService {
     }
   }
 
-  async getAllReviews(): Promise<any> {
+  async getAllReviews(): Promise<UserProfileReviewAPIResponse> {
     try {
       const response = await fetch(`${API_BASE_URL}/reviews`, {
         method: "GET",
@@ -174,7 +182,7 @@ export class UserProfileAPIService {
   // services/userProfileAPIService.ts
   // Add this method to the existing class
 
-  async getWalletData(): Promise<any> {
+  async getWalletData(): Promise<WalletResponse> {
     try {
       const response = await fetch(`${API_BASE_URL}/wallet`, {
         method: "GET",
@@ -196,7 +204,7 @@ export class UserProfileAPIService {
   // services/userProfileAPIService.ts
 // Add this method to the existing class
 
-async getBrowsingHistory(): Promise<any> {
+async getBrowsingHistory(): Promise<HistoryResponse> {
   try {
     const response = await fetch('http://localhost:8080/felicita/api/v0/history-management/history-data', {
       method: 'GET',
@@ -215,7 +223,7 @@ async getBrowsingHistory(): Promise<any> {
   }
 }
 
-async getUserCoupons(): Promise<any> {
+async getUserCoupons(): Promise<CouponsResponse> {
   try {
     const response = await fetch('http://localhost:8080/felicita/api/v0/coupon/user-details', {
       method: 'GET',
@@ -238,7 +246,7 @@ async getUserCoupons(): Promise<any> {
 // services/userProfileAPIService.ts
 // Add these methods to the existing class
 
-async getNotificationPermissions(): Promise<any> {
+async getNotificationPermissions(): Promise<NotificationResponse> {
   try {
     const response = await fetch('http://localhost:8080/felicita/api/v0/user-notification-permissions/details', {
       method: 'GET',
@@ -257,7 +265,7 @@ async getNotificationPermissions(): Promise<any> {
   }
 }
 
-async updateNotificationPermission(request: UpdateNotificationRequest): Promise<any> {
+async updateNotificationPermission(request: UpdateNotificationRequest): Promise<unknown> {
   try {
     const response = await fetch('http://localhost:8080/felicita/api/v0/user-notification-permissions/update', {
       method: 'POST',
@@ -283,7 +291,7 @@ async updateNotificationPermission(request: UpdateNotificationRequest): Promise<
 // services/userProfileAPIService.ts
 // Add these methods to the existing class
 
-async getAccountSecurityDetails(): Promise<any> {
+async getAccountSecurityDetails(): Promise<AccountSecurityResponse> {
   try {
     const response = await fetch('http://localhost:8080/felicita/api/v0/account-security/details', {
       method: 'GET',
@@ -302,7 +310,7 @@ async getAccountSecurityDetails(): Promise<any> {
   }
 }
 
-async requestMobileVerification(request: MobileVerifyRequest): Promise<any> {
+async requestMobileVerification(request: MobileVerifyRequest): Promise<unknown> {
   try {
     const response = await fetch('http://localhost:8080/felicita/api/v0/account-security/mobile-verify', {
       method: 'POST',
@@ -325,7 +333,7 @@ async requestMobileVerification(request: MobileVerifyRequest): Promise<any> {
   }
 }
 
-async verifyMobileCode(request: MobileUpdateRequest): Promise<any> {
+async verifyMobileCode(request: MobileUpdateRequest): Promise<unknown> {
   try {
     const response = await fetch('http://localhost:8080/felicita/api/v0/account-security/mobile-update', {
       method: 'POST',
@@ -348,7 +356,7 @@ async verifyMobileCode(request: MobileUpdateRequest): Promise<any> {
   }
 }
 
-async requestEmailVerification(request: EmailVerifyRequest): Promise<any> {
+async requestEmailVerification(request: EmailVerifyRequest): Promise<unknown> {
   try {
     const response = await fetch('http://localhost:8080/felicita/api/v0/account-security/email-verify', {
       method: 'POST',
@@ -371,7 +379,7 @@ async requestEmailVerification(request: EmailVerifyRequest): Promise<any> {
   }
 }
 
-async verifyEmailCode(request: EmailUpdateRequest): Promise<any> {
+async verifyEmailCode(request: EmailUpdateRequest): Promise<unknown> {
   try {
     const response = await fetch('http://localhost:8080/felicita/api/v0/account-security/email-update', {
       method: 'POST',
@@ -397,7 +405,7 @@ async verifyEmailCode(request: EmailUpdateRequest): Promise<any> {
 // services/userProfileAPIService.ts
 // Add this method to the existing class
 
-async getWishListDetails(): Promise<any> {
+async getWishListDetails(): Promise<WishListResponse> {
   try {
     const response = await fetch('http://localhost:8080/felicita/api/v0/wish-list/details', {
       method: 'GET',
@@ -419,7 +427,7 @@ async getWishListDetails(): Promise<any> {
 // services/userProfileAPIService.ts
 // Add this method to the existing class
 
-async getCompletedTours(): Promise<any> {
+async getCompletedTours(): Promise<CompletedToursResponse> {
   try {
     const response = await fetch('http://localhost:8080/felicita/api/v0/booking/completed', {
       method: 'GET',
@@ -440,7 +448,7 @@ async getCompletedTours(): Promise<any> {
 // services/userProfileAPIService.ts
 // Add this method to the existing class
 
-async getUpcomingTours(): Promise<any> {
+async getUpcomingTours(): Promise<UpcomingToursResponse> {
   try {
     const response = await fetch('http://localhost:8080/felicita/api/v0/booking/upcoming', {
       method: 'GET',
@@ -462,7 +470,7 @@ async getUpcomingTours(): Promise<any> {
 // services/userProfileAPIService.ts
 // Add this method to the existing class
 
-async getUserBenefits(): Promise<any> {
+async getUserBenefits(): Promise<UserBenefitsResponse> {
   try {
     const response = await fetch('http://localhost:8080/felicita/api/v0/user-benefits/user-profile', {
       method: 'GET',
@@ -483,7 +491,7 @@ async getUserBenefits(): Promise<any> {
 
 // services/userProfileAPIService.ts
 // Add this method to your existing class
-async getRequestedTours(): Promise<any> {
+async getRequestedTours(): Promise<RequestedToursResponse> {
   try {
     const response = await fetch('http://localhost:8080/felicita/api/v0/booking/requested', {
       method: 'GET',
@@ -504,7 +512,7 @@ async getRequestedTours(): Promise<any> {
 
 // services/userProfileAPIService.ts
 // Add this method to your existing class
-async getCancelledTours(): Promise<any> {
+async getCancelledTours(): Promise<CancelledToursResponse> {
   try {
     const response = await fetch('http://localhost:8080/felicita/api/v0/booking/cancelled', {
       method: 'GET',

@@ -150,6 +150,8 @@ const Label = ({
   </label>
 );
 
+// Custom Components with proper TypeScript types
+
 const Select = ({
   id,
   name,
@@ -158,7 +160,15 @@ const Select = ({
   children,
   className = "",
   disabled = false,
-}: any) => (
+}: {
+  id?: string;
+  name?: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  children: React.ReactNode;
+  className?: string;
+  disabled?: boolean;
+}) => (
   <select
     id={id}
     name={name}
@@ -171,11 +181,19 @@ const Select = ({
   </select>
 );
 
-const SelectItem = ({ value, children }: any) => (
+const SelectItem = ({ 
+  value, 
+  children 
+}: { 
+  value: string; 
+  children: React.ReactNode 
+}) => (
   <option value={value} className="text-gray-900">
     {children}
   </option>
 );
+
+type ButtonVariant = "primary" | "secondary" | "outline" | "ghost";
 
 const Button = ({
   children,
@@ -184,11 +202,18 @@ const Button = ({
   variant = "primary",
   className = "",
   disabled = false,
-}: any) => {
+}: {
+  children: React.ReactNode;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  type?: "button" | "submit" | "reset";
+  variant?: ButtonVariant;
+  className?: string;
+  disabled?: boolean;
+}) => {
   const baseClasses =
     "px-4 py-2 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2";
 
-  const variantClasses = {
+  const variantClasses: Record<ButtonVariant, string> = {
     primary: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500",
     secondary: "bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500",
     outline:
@@ -254,7 +279,7 @@ const Separator = ({ className = "" }: { className?: string }) => (
 
 const BookedToursPage = () => {
   const searchParams = useSearchParams();
-  const bookingId = searchParams.get("bookingId") || "";
+  const bookingId = searchParams?.get("bookingId") || "";
 
   // States
   const [bookedTours, setBookedTours] = useState<BookedTour[]>([]);

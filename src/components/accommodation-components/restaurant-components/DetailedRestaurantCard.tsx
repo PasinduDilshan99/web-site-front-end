@@ -245,7 +245,7 @@ const DetailedRestaurantCard: React.FC<CulinaryRestaurantCardProps> = ({ restaur
             {displayReviews.length > 0 && (
               <div className="text-xs">
                 <p className="text-gray-600 italic line-clamp-2">
-                  "{displayReviews[0].comment}"
+                  {displayReviews[0].comment}
                 </p>
               </div>
             )}

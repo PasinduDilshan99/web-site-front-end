@@ -5,6 +5,7 @@ import Loading from "../../../components/common-components/loading/Loading";
 import { ErrorState } from "../../../components/common-components/error-state/ErrorState";
 import { EmptyState } from "../../../components/common-components/empty-state/EmptyState";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface Schedule {
   scheduleId: number;
@@ -47,7 +48,7 @@ interface ActiveToursType {
 const ActiveToursHome = () => {
   const router = useRouter();
 
-  const handleClick = (tourId) => {
+  const handleClick = (tourId: number) => {
     router.push(`/sri-lankan-tours/${tourId}`);
   };
   const [loading, setLoading] = useState(true);
@@ -280,11 +281,13 @@ const ActiveToursHome = () => {
                       <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 h-full flex flex-col border border-gray-100 overflow-hidden group">
                         {/* Tour Image */}
                         <div className="relative h-48 sm:h-56 md:h-64 lg:h-52 xl:h-56 2xl:h-60 overflow-hidden">
-                          <img
+                          <Image
                             src={
                               tour.images[0]?.imageUrl ||
                               "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=300&fit=crop"
                             }
+                            width={500}
+                            height={500}
                             alt={tour.tourName}
                             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                           />

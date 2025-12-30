@@ -243,7 +243,7 @@ const DetailedVillaCard: React.FC<CompactVillaCardProps> = ({ villa }) => {
                         {'⭐'.repeat(review.rating)}
                       </div>
                     </div>
-                    <p className="text-gray-600 italic line-clamp-2">"{review.comment}"</p>
+                    <p className="text-gray-600 italic line-clamp-2">{review.comment}</p>
                   </div>
                 ))}
               </div>

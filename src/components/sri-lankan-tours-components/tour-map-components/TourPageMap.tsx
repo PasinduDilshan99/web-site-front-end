@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import L, { Map as LeafletMap } from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -55,6 +55,14 @@ const MAP_CONFIG = {
   boundsPadding: [50, 50] as [number, number],
 };
 
+// Define proper route style interface
+interface RouteStyle {
+  color: string;
+  weight: number;
+  opacity: number;
+  dashArray?: string;
+}
+
 // Configuration
 const API_BASE_URL = "http://localhost:8080/felicita/v0/api";
 const ROUTING_API_URL = "https://router.project-osrm.org/route/v1/driving";
@@ -71,7 +79,7 @@ function TestMap({
   const routesRef = useRef<L.Polyline[]>([]);
 
   // Function to get route from OSRM
-  const getRoute = async (waypoints: L.LatLng[]): Promise<L.LatLng[]> => {
+  const getRoute = useCallback(async (waypoints: L.LatLng[]): Promise<L.LatLng[]> => {
     if (waypoints.length < 2) return waypoints;
 
     try {
@@ -102,13 +110,13 @@ function TestMap({
       // Fallback to straight line if routing fails
       return waypoints;
     }
-  };
+  }, []);
 
   // Function to draw route on map
-  const drawRoute = async (
+  const drawRoute = useCallback(async (
     map: LeafletMap,
     waypoints: L.LatLng[],
-    style: any
+    style: RouteStyle
   ) => {
     try {
       const routePoints = await getRoute(waypoints);
@@ -118,14 +126,15 @@ function TestMap({
     } catch (error) {
       console.error("Error drawing route:", error);
       // Fallback to straight line
-      const polyline = L.polyline(waypoints, {
+      const fallbackStyle = {
         ...style,
         dashArray: "5,5",
-      }).addTo(map);
+      } as L.PolylineOptions;
+      const polyline = L.polyline(waypoints, fallbackStyle).addTo(map);
       routesRef.current.push(polyline);
       return polyline;
     }
-  };
+  }, [getRoute]);
 
   useEffect(() => {
     if (!locations || locations.length < 2) return;
@@ -175,7 +184,7 @@ function TestMap({
       map.remove();
       mapRef.current = null;
     };
-  }, [locations, returnToStart]);
+  }, [locations, returnToStart, drawRoute]);
 
   return (
     <div

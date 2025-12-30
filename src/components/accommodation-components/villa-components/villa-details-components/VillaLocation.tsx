@@ -1,7 +1,7 @@
 // components/villa/VillaLocation.tsx
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useMemo, useCallback } from "react";
 import {
   MapPin,
   Navigation,
@@ -9,17 +9,39 @@ import {
   Train,
   Plane,
   Clock,
-  Star,
   Trees,
   Mountain,
   Waves,
 } from "lucide-react";
 import { NearbyDestination, ServiceProviderDetails } from "@/types/accommodations-types/service-provider-types";
 
+// Declare Leaflet types in the global scope
+declare global {
+  interface Window {
+    L: typeof import('leaflet');
+  }
+}
 
 interface VillaLocationProps {
   villa: ServiceProviderDetails;
   nearbyDestinations: NearbyDestination[];
+}
+
+// Define proper type for Leaflet map instance
+interface LeafletMap {
+  remove: () => void;
+  setView: (latlng: [number, number], zoom: number) => LeafletMap;
+  tileLayer: (url: string, options: object) => {
+    addTo: (map: LeafletMap) => void;
+  };
+  marker: (latlng: [number, number], options?: object) => {
+    addTo: (map: LeafletMap) => {
+      bindPopup: (content: string) => void;
+      openPopup: () => void;
+    };
+  };
+  divIcon: (options: object) => object;
+  fitBounds: (bounds: [number, number][], options?: object) => void;
 }
 
 const VillaLocation: React.FC<VillaLocationProps> = ({
@@ -27,16 +49,16 @@ const VillaLocation: React.FC<VillaLocationProps> = ({
   nearbyDestinations,
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
+  const mapInstanceRef = useRef<LeafletMap | null>(null);
 
   // HARDCODED: Villa coordinates (Ella, Sri Lanka - popular villa location)
-  const villaCoords = {
+  const villaCoords = useMemo(() => ({
     latitude: 6.8696,
     longitude: 81.0463,
-  };
+  }), []);
 
   // Calculate distance between two coordinates using Haversine formula
-  const calculateDistance = (
+  const calculateDistance = useCallback((
     lat1: number,
     lon1: number,
     lat2: number,
@@ -57,18 +79,18 @@ const VillaLocation: React.FC<VillaLocationProps> = ({
     return distance < 1
       ? `${Math.round(distance * 1000)}m`
       : `${distance.toFixed(1)}km`;
-  };
+  }, []);
 
-  const calculateDriveTime = (distanceStr: string): string => {
+  const calculateDriveTime = useCallback((distanceStr: string): string => {
     const distance = parseFloat(distanceStr);
     if (distance <= 2) return "5-10 min";
     if (distance <= 5) return "10-15 min";
     if (distance <= 10) return "15-25 min";
     if (distance <= 20) return "25-40 min";
     return "40+ min";
-  };
+  }, []);
 
-  const calculateTransportationInfo = () => {
+  const calculateTransportationInfo = useCallback(() => {
     const transportation = [];
 
     // Ella to Bandaranaike Airport
@@ -117,25 +139,25 @@ const VillaLocation: React.FC<VillaLocationProps> = ({
     });
 
     return transportation;
-  };
+  }, [villaCoords.latitude, villaCoords.longitude, calculateDistance, calculateDriveTime]);
 
   const transportation = calculateTransportationInfo();
 
-  const getDirectionsUrl = () => {
+  const getDirectionsUrl = useCallback(() => {
     return `https://www.openstreetmap.org/directions?engine=osrm_car&route=${villaCoords.latitude},${villaCoords.longitude}`;
-  };
+  }, [villaCoords.latitude, villaCoords.longitude]);
 
-  const getDestinationDistance = (destination: NearbyDestination) => {
+  const getDestinationDistance = useCallback((destination: NearbyDestination) => {
     return calculateDistance(
       villaCoords.latitude,
       villaCoords.longitude,
       destination.latitude,
       destination.longitude
     );
-  };
+  }, [villaCoords.latitude, villaCoords.longitude, calculateDistance]);
 
   // Get icon based on destination category
-  const getDestinationIcon = (category: string) => {
+  const getDestinationIcon = useCallback((category: string) => {
     switch (category.toLowerCase()) {
       case 'mountain':
       case 'hiking':
@@ -149,14 +171,14 @@ const VillaLocation: React.FC<VillaLocationProps> = ({
       default:
         return <MapPin className="w-4 h-4" />;
     }
-  };
+  }, []);
 
   // Initialize Leaflet map
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
 
     const loadLeaflet = async () => {
-      if (!(window as any).L) {
+      if (!window.L) {
         const link = document.createElement("link");
         link.rel = "stylesheet";
         link.href =
@@ -174,7 +196,7 @@ const VillaLocation: React.FC<VillaLocationProps> = ({
     };
 
     const initMap = () => {
-      const L = (window as any).L;
+      const L = window.L;
       if (!L || !mapRef.current) return;
 
       // Create map centered on villa
@@ -231,7 +253,7 @@ const VillaLocation: React.FC<VillaLocationProps> = ({
               <small style="color: #0d9488;">${
                 dest.destinationCategory
               }</small><br/>
-              <small>${dest.description.substring(0, 100)}...</small><br/>
+              <small>${dest.description?.substring(0, 100) || ''}...</small><br/>
               <small style="color: #10b981;">${calculateDistance(
                 villaCoords.latitude,
                 villaCoords.longitude,
@@ -257,7 +279,13 @@ const VillaLocation: React.FC<VillaLocationProps> = ({
         mapInstanceRef.current = null;
       }
     };
-  }, [nearbyDestinations, villa.name]);
+  }, [
+    nearbyDestinations, 
+    villa.name, 
+    villaCoords.latitude, 
+    villaCoords.longitude,
+    calculateDistance
+  ]);
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-6 border border-emerald-200">

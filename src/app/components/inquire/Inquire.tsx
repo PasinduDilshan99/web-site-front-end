@@ -106,13 +106,13 @@ const Inquire = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 xl:gap-16">
           {/* Left Column - Contact Form */}
-          {/* <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl p-4 sm:p-6 md:p-8 lg:p-10">
+          <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl p-4 sm:p-6 md:p-8 lg:p-10">
             <div className="mb-6 sm:mb-8 md:mb-10">
               <p className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 font-medium text-xs sm:text-sm md:text-base italic mb-2">
                 Contact Us
               </p>
               <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
-                Don't Hesitate To Contact Us
+                Don&apos;t Hesitate To Contact Us
               </h2>
               <p className="text-gray-600 text-xs sm:text-sm md:text-base leading-relaxed">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
@@ -233,7 +233,7 @@ const Inquire = () => {
                 </div>
               )}
             </form>
-          </div> */}
+          </div>
 
           {/* Right Column - Contact Information */}
           <div className="space-y-6 sm:space-y-8 md:space-y-10 lg:space-y-12">

@@ -3,8 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { GET_ALL_ACTIVE_TOUR_FE } from "@/utils/frontEndConstant";
 import Loading from "../../../components/common-components/loading/Loading";
-import { ErrorState } from "../../../components/common-components/error-state/ErrorState";
-import { EmptyState } from "../../../components/common-components/empty-state/EmptyState";
 import SectionHeader from "../../../components/common-components/section-header/SectionHeader";
 import AnimatedButton from "../../../components/common-components/buttons/AnimatedButton";
 import { ActiveToursType, ApiResponse } from "@/types/sri-lankan-tour-types";
@@ -73,11 +71,6 @@ useEffect(() => {
     fetchActiveTours();
   }, []);
 
-  const handleRetry = () => {
-    setError(null);
-    setLoading(true);
-    window.location.reload();
-  };
 
   const displayedTours = activeTours.slice(0, displayCount);
 

@@ -136,9 +136,7 @@ export type ActiveVehiclesResponse = ApiResponse<Vehicle[]>;
 // Vehicle API Types - Additional types for GET_VEHICLES_BY_ID response
 
 // New types for the specific API response structure
-export interface VehicleByIdResponse extends ApiResponse<VehicleById[]> {
-  // This inherits from ApiResponse but uses VehicleById[] for data
-}
+export type VehicleByIdResponse = ApiResponse<VehicleById[]>
 
 export interface VehicleById {
   vehicleId: number;

@@ -1,6 +1,7 @@
 "use client";
 
 import { GET_ALL_ACTIVE_REVIEW_FE } from "@/utils/frontEndConstant";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
 interface ReviewImage {
@@ -234,9 +235,11 @@ const ReviewsCarousel = () => {
             <div className="lg:w-2/5 border-b lg:border-b-0 lg:border-r border-gray-100 relative min-h-[200px] sm:min-h-[250px] lg:min-h-auto">
               <div className="absolute inset-0 flex items-center justify-center p-3 sm:p-4 lg:p-6">
                 <div className="relative w-full h-full max-w-xs sm:max-w-sm lg:max-w-md max-h-48 sm:max-h-64 lg:max-h-80">
-                  <img
+                  <Image
                     src={currentImage?.imageUrl}
                     alt={currentImage?.imageDescription || "Review image"}
+                    height={500}
+                    width={500}
                     className="w-full h-full object-contain rounded-lg cursor-pointer"
                     onClick={() => {
                       setSelectedImage(currentImage?.imageUrl);
@@ -318,9 +321,11 @@ const ReviewsCarousel = () => {
                           : "border-transparent hover:border-gray-300"
                       }`}
                     >
-                      <img
+                      <Image
                         src={img.imageUrl}
                         alt={img.imageDescription || `Thumbnail ${index + 1}`}
+                        width={500}
+                        height={500}
                         className="w-full h-full object-cover rounded"
                       />
                     </button>
@@ -538,9 +543,11 @@ const ReviewsCarousel = () => {
           onClick={() => setImageModalOpen(false)}
         >
           <div className="relative max-w-4xl max-h-full">
-            <img
+            <Image
               src={selectedImage}
               alt="Review Image"
+              width={500}
+              height={500}
               className="max-w-full max-h-full object-contain rounded-lg"
             />
             <button

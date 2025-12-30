@@ -9,7 +9,7 @@ import Footer from "@/app/components/footer/Footer";
 import LinkBar from "@/components/common-components/linkBar/LinkBar";
 import Loading from "@/components/common-components/loading/Loading";
 import { ErrorState } from "@/components/common-components/error-state/ErrorState";
-import { BlogDetailsData, BlogTag } from "@/types/blog-types";
+import { BlogComment, BlogDetailsData, BlogTag } from "@/types/blog-types";
 import {
   fetchBlogDetails,
   fetchRelatedBlogs,
@@ -32,9 +32,9 @@ import BlogLoginDialog from "@/components/blog-components/BlogLoginDialog";
 import { useAuth } from "@/context/AuthContext";
 
 const BlogDetailsPage = () => {
-  const { blogId } = useParams();
+  const params = useParams();
   const router = useRouter();
-  const id = blogId;
+  const id = params?.blogId;
   const { user } = useAuth();
 
   const [loading, setLoading] = useState(true);
@@ -74,7 +74,7 @@ const BlogDetailsPage = () => {
       // Extract comment reactions
       const reactions: Record<number, string | null> = {};
       if (blogDetails.comments) {
-        const extractReactions = (comments: any[]) => {
+        const extractReactions = (comments: BlogComment[]) => {
           comments.forEach((comment) => {
             if (comment.userReactionType) {
               reactions[comment.comment_id] = comment.userReactionType;
@@ -99,7 +99,7 @@ const BlogDetailsPage = () => {
       setRelatedBlogs(related);
       // const tagsData = await fetchTags();
       // setTags(tagsData);
-      handleGetTags(blogId)
+      handleGetTags(id);
     } catch (err) {
       console.error("Error loading blog data:", err);
       setError(
@@ -418,11 +418,23 @@ const BlogDetailsPage = () => {
     router.push(`/blogs?search=${encodeURIComponent(tagName)}`);
   };
 
-    const handleGetTags = async (blogId: number) => {
+  const handleGetTags = async (blogId: string | string[] | undefined) => {
     if (!blogId) return;
+
     try {
       setLoadingTags(true);
-      const blogTags = await fetchBlogTags(blogId);
+
+      // Convert blogId to number
+      let blogIdNumber: number;
+      if (Array.isArray(blogId)) {
+        blogIdNumber = parseInt(blogId[0]);
+      } else {
+        blogIdNumber = parseInt(blogId);
+      }
+
+      if (isNaN(blogIdNumber)) return;
+
+      const blogTags = await fetchBlogTags(blogIdNumber);
       setTags(blogTags);
     } catch (error) {
       console.error("Error fetching blog tags:", error);
@@ -438,7 +450,6 @@ const BlogDetailsPage = () => {
     }
   };
 
-  
   useEffect(() => {
     if (id) {
       loadBlogData();

@@ -16,9 +16,32 @@ import {
   ServiceProviderDetails,
 } from "@/types/accommodations-types/service-provider-types";
 
+// Declare Leaflet types in the global scope
+declare global {
+  interface Window {
+    L: typeof import('leaflet');
+  }
+}
+
 interface HotelLocationProps {
   hotel: ServiceProviderDetails;
   nearbyDestinations: NearbyDestination[];
+}
+
+// Define proper type for Leaflet map instance
+interface LeafletMap {
+  remove: () => void;
+  setView: (latlng: [number, number], zoom: number) => LeafletMap;
+  tileLayer: (url: string, options: object) => {
+    addTo: (map: LeafletMap) => void;
+  };
+  marker: (latlng: [number, number], options?: object) => {
+    addTo: (map: LeafletMap) => {
+      bindPopup: (content: string) => void;
+    };
+  };
+  divIcon: (options: object) => object;
+  fitBounds: (bounds: [number, number][], options?: object) => void;
 }
 
 const HotelLocation: React.FC<HotelLocationProps> = ({
@@ -26,13 +49,13 @@ const HotelLocation: React.FC<HotelLocationProps> = ({
   nearbyDestinations,
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
+  const mapInstanceRef = useRef<LeafletMap | null>(null);
 
   // HARDCODED: Hotel coordinates (Colombo, Sri Lanka)
-  const hotelCoords = {
+  const hotelCoords = React.useMemo(() => ({
     latitude: 6.9271,
     longitude: 79.8612,
-  };
+  }), []);
 
   // Calculate distance between two coordinates using Haversine formula
   const calculateDistance = (
@@ -67,7 +90,7 @@ const HotelLocation: React.FC<HotelLocationProps> = ({
     return "40+ min";
   };
 
-  const calculateTransportationInfo = () => {
+  const calculateTransportationInfo = React.useCallback(() => {
     const transportation = [];
 
     const airportCoords = { lat: 7.18, lon: 79.8843 };
@@ -113,7 +136,7 @@ const HotelLocation: React.FC<HotelLocationProps> = ({
     });
 
     return transportation;
-  };
+  }, [hotelCoords.latitude, hotelCoords.longitude]);
 
   const transportation = calculateTransportationInfo();
 
@@ -121,14 +144,14 @@ const HotelLocation: React.FC<HotelLocationProps> = ({
     return `https://www.openstreetmap.org/directions?engine=osrm_car&route=${hotelCoords.latitude},${hotelCoords.longitude}`;
   };
 
-  const getDestinationDistance = (destination: NearbyDestination) => {
+  const getDestinationDistance = React.useCallback((destination: NearbyDestination) => {
     return calculateDistance(
       hotelCoords.latitude,
       hotelCoords.longitude,
       destination.latitude,
       destination.longitude
     );
-  };
+  }, [hotelCoords.latitude, hotelCoords.longitude]);
 
   // Initialize Leaflet map
   useEffect(() => {
@@ -136,7 +159,7 @@ const HotelLocation: React.FC<HotelLocationProps> = ({
 
     // Load Leaflet CSS and JS
     const loadLeaflet = async () => {
-      if (!(window as any).L) {
+      if (!window.L) {
         const link = document.createElement("link");
         link.rel = "stylesheet";
         link.href =
@@ -154,7 +177,7 @@ const HotelLocation: React.FC<HotelLocationProps> = ({
     };
 
     const initMap = () => {
-      const L = (window as any).L;
+      const L = window.L;
       if (!L || !mapRef.current) return;
 
       // Create map centered on hotel
@@ -207,7 +230,7 @@ const HotelLocation: React.FC<HotelLocationProps> = ({
               <small style="color: #8b5cf6;">${
                 dest.destinationCategory
               }</small><br/>
-              <small>${dest.description.substring(0, 100)}...</small><br/>
+              <small>${dest.description?.substring(0, 100) || ''}...</small><br/>
               <small style="color: #f59e0b;">${calculateDistance(
                 hotelCoords.latitude,
                 hotelCoords.longitude,
@@ -233,7 +256,12 @@ const HotelLocation: React.FC<HotelLocationProps> = ({
         mapInstanceRef.current = null;
       }
     };
-  }, [nearbyDestinations, hotel.name]);
+  }, [
+    nearbyDestinations, 
+    hotel.name, 
+    hotelCoords.latitude, 
+    hotelCoords.longitude
+  ]);
 
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6 border border-amber-100">

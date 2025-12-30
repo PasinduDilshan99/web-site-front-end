@@ -1,45 +1,57 @@
-"use client"
-import React from 'react';
-import { 
-  Tour, 
-  BookingFormData, 
-  Participant, 
-  BookingPrice, 
-  Activity, 
-  BookingNote 
-} from '@/types/booking-types';
-import { 
-  Card, 
-  CardHeader, 
-  CardTitle, 
-  CardContent, 
-  Label, 
-  Input, 
-  Textarea, 
-  Select, 
-  SelectItem, 
-  Button, 
-  Switch 
-} from './BookingComponents';
+"use client";
+import React from "react";
+import {
+  Tour,
+  BookingFormData,
+  Participant,
+  BookingPrice,
+  Activity,
+  BookingNote,
+} from "@/types/booking-types";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  Label,
+  Input,
+  Textarea,
+  Select,
+  SelectItem,
+  Button,
+  Switch,
+} from "./BookingComponents";
 
 interface BookingFormProps {
   formData: BookingFormData;
   selectedTour: Tour | undefined;
-  selectedPackage: Tour['packageDetails'][0] | undefined;
-  selectedSchedule: Tour['packageDetails'][0]['packageSchedulesDetails'][0] | undefined;
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  selectedPackage: Tour["packageDetails"][0] | undefined;
+  selectedSchedule:
+    | Tour["packageDetails"][0]["packageSchedulesDetails"][0]
+    | undefined;
+  onInputChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
   onTransportChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onInvoiceChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onParticipantChange: (index: number, field: keyof Participant, value: string | boolean) => void;
+  onParticipantChange: (
+    index: number,
+    field: keyof Participant,
+    value: string | boolean
+  ) => void;
   onAddParticipant: () => void;
   onRemoveParticipant: (index: number) => void;
-//   onBookingPriceChange: (index: number, field: keyof BookingPrice, value: string | number) => void;
-//   onAddBookingPrice: () => void;
-//   onRemoveBookingPrice: (index: number) => void;
-//   onActivityChange: (index: number, field: keyof Activity, value: number) => void;
-//   onAddActivity: () => void;
-//   onRemoveActivity: (index: number) => void;
-  onBookingNoteChange: (index: number, field: keyof BookingNote, value: string) => void;
+  //   onBookingPriceChange: (index: number, field: keyof BookingPrice, value: string | number) => void;
+  //   onAddBookingPrice: () => void;
+  //   onRemoveBookingPrice: (index: number) => void;
+  //   onActivityChange: (index: number, field: keyof Activity, value: number) => void;
+  //   onAddActivity: () => void;
+  //   onRemoveActivity: (index: number) => void;
+  onBookingNoteChange: (
+    index: number,
+    field: keyof BookingNote,
+    value: string
+  ) => void;
   onAddBookingNote: () => void;
   onRemoveBookingNote: (index: number) => void;
   onSubmit: (e: React.FormEvent) => void;
@@ -57,17 +69,17 @@ const BookingForm: React.FC<BookingFormProps> = ({
   onParticipantChange,
   onAddParticipant,
   onRemoveParticipant,
-//   onBookingPriceChange,
-//   onAddBookingPrice,
-//   onRemoveBookingPrice,
-//   onActivityChange,
-//   onAddActivity,
-//   onRemoveActivity,
+  //   onBookingPriceChange,
+  //   onAddBookingPrice,
+  //   onRemoveBookingPrice,
+  //   onActivityChange,
+  //   onAddActivity,
+  //   onRemoveActivity,
   onBookingNoteChange,
   onAddBookingNote,
   onRemoveBookingNote,
   onSubmit,
-  onBackToSelection
+  onBackToSelection,
 }) => {
   return (
     <form onSubmit={onSubmit} className="space-y-8">
@@ -80,22 +92,25 @@ const BookingForm: React.FC<BookingFormProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label>Tour Name</Label>
-              <Input value={selectedTour?.tourName || ''} readOnly />
+              <Input value={selectedTour?.tourName || ""} readOnly />
             </div>
             <div>
               <Label>Package Name</Label>
-              <Input value={selectedPackage?.packageName || ''} readOnly />
+              <Input value={selectedPackage?.packageName || ""} readOnly />
             </div>
             <div>
               <Label>Schedule Name</Label>
-              <Input value={selectedSchedule?.packageScheduleName || ''} readOnly />
+              <Input
+                value={selectedSchedule?.packageScheduleName || ""}
+                readOnly
+              />
             </div>
             <div>
               <Label>Package Schedule ID</Label>
-              <Input 
+              <Input
                 name="packageScheduleId"
                 value={formData.packageScheduleId}
-                readOnly 
+                readOnly
               />
             </div>
           </div>
@@ -119,7 +134,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
               rows={3}
             />
           </div>
-          
+
           <div>
             <Label htmlFor="dietaryRestrictions">Dietary Restrictions</Label>
             <Input
@@ -130,14 +145,22 @@ const BookingForm: React.FC<BookingFormProps> = ({
               placeholder="e.g., Vegetarian, Vegan, Gluten-free"
             />
           </div>
-          
+
           <div className="flex items-center space-x-3">
             <Switch
               id="insuranceRequired"
               checked={formData.insuranceRequired}
-              onCheckedChange={(checked: boolean) => 
-                onInputChange({ target: { name: 'insuranceRequired', value: checked.toString() } } as any)
-              }
+              onCheckedChange={(checked: boolean) => {
+                // Create a proper event-like object that matches the expected type
+                const syntheticEvent = {
+                  target: {
+                    name: "insuranceRequired",
+                    value: checked.toString(),
+                    type: "checkbox",
+                  },
+                } as React.ChangeEvent<HTMLInputElement>;
+                onInputChange(syntheticEvent);
+              }}
             />
             <Label htmlFor="insuranceRequired">Travel Insurance Required</Label>
           </div>
@@ -162,7 +185,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
                 required
               />
             </div>
-            
+
             <div>
               <Label htmlFor="departureTime">Departure Time</Label>
               <Input
@@ -174,7 +197,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
                 required
               />
             </div>
-            
+
             <div>
               <Label htmlFor="arrivalDate">Arrival Date</Label>
               <Input
@@ -186,7 +209,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
                 required
               />
             </div>
-            
+
             <div>
               <Label htmlFor="arrivalTime">Arrival Time</Label>
               <Input
@@ -198,7 +221,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
                 required
               />
             </div>
-            
+
             <div>
               <Label htmlFor="departureLocation">Departure Location</Label>
               <Input
@@ -210,7 +233,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
                 required
               />
             </div>
-            
+
             <div>
               <Label htmlFor="arrivalLocation">Arrival Location</Label>
               <Input
@@ -332,9 +355,14 @@ const BookingForm: React.FC<BookingFormProps> = ({
         </CardHeader>
         <CardContent>
           {formData.participants.map((participant, index) => (
-            <div key={index} className="mb-6 p-4 border border-purple-300 rounded-lg">
+            <div
+              key={index}
+              className="mb-6 p-4 border border-purple-300 rounded-lg"
+            >
               <div className="flex justify-between items-start mb-4">
-                <h4 className="font-medium text-gray-900">Participant {index + 1}</h4>
+                <h4 className="font-medium text-gray-900">
+                  Participant {index + 1}
+                </h4>
                 {formData.participants.length > 1 && (
                   <Button
                     type="button"
@@ -346,41 +374,49 @@ const BookingForm: React.FC<BookingFormProps> = ({
                   </Button>
                 )}
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label>First Name</Label>
                   <Input
                     value={participant.firstName}
-                    onChange={(e) => onParticipantChange(index, 'firstName', e.target.value)}
+                    onChange={(e) =>
+                      onParticipantChange(index, "firstName", e.target.value)
+                    }
                     required
                   />
                 </div>
-                
+
                 <div>
                   <Label>Last Name</Label>
                   <Input
                     value={participant.lastName}
-                    onChange={(e) => onParticipantChange(index, 'lastName', e.target.value)}
+                    onChange={(e) =>
+                      onParticipantChange(index, "lastName", e.target.value)
+                    }
                     required
                   />
                 </div>
-                
+
                 <div>
                   <Label>Date of Birth</Label>
                   <Input
                     type="date"
                     value={participant.dateOfBirth}
-                    onChange={(e) => onParticipantChange(index, 'dateOfBirth', e.target.value)}
+                    onChange={(e) =>
+                      onParticipantChange(index, "dateOfBirth", e.target.value)
+                    }
                     required
                   />
                 </div>
-                
+
                 <div>
                   <Label>Gender</Label>
                   <Select
                     value={participant.gender}
-                    onChange={(e) => onParticipantChange(index, 'gender', e.target.value)}
+                    onChange={(e) =>
+                      onParticipantChange(index, "gender", e.target.value)
+                    }
                   >
                     <SelectItem value="">Select gender</SelectItem>
                     <SelectItem value="MALE">Male</SelectItem>
@@ -388,94 +424,136 @@ const BookingForm: React.FC<BookingFormProps> = ({
                     <SelectItem value="OTHER">Other</SelectItem>
                   </Select>
                 </div>
-                
+
                 <div>
                   <Label>Passport Number</Label>
                   <Input
                     value={participant.passportNumber}
-                    onChange={(e) => onParticipantChange(index, 'passportNumber', e.target.value)}
+                    onChange={(e) =>
+                      onParticipantChange(
+                        index,
+                        "passportNumber",
+                        e.target.value
+                      )
+                    }
                     required
                   />
                 </div>
-                
+
                 <div>
                   <Label>Country</Label>
                   <Input
                     value={participant.country}
-                    onChange={(e) => onParticipantChange(index, 'country', e.target.value)}
+                    onChange={(e) =>
+                      onParticipantChange(index, "country", e.target.value)
+                    }
                     required
                   />
                 </div>
-                
+
                 <div>
                   <Label>Email</Label>
                   <Input
                     type="email"
                     value={participant.email}
-                    onChange={(e) => onParticipantChange(index, 'email', e.target.value)}
+                    onChange={(e) =>
+                      onParticipantChange(index, "email", e.target.value)
+                    }
                     required
                   />
                 </div>
-                
+
                 <div>
                   <Label>Mobile Number</Label>
                   <Input
                     value={participant.mobileNumber}
-                    onChange={(e) => onParticipantChange(index, 'mobileNumber', e.target.value)}
+                    onChange={(e) =>
+                      onParticipantChange(index, "mobileNumber", e.target.value)
+                    }
                     required
                   />
                 </div>
-                
+
                 <div>
                   <Label>Emergency Contact Name</Label>
                   <Input
                     value={participant.emergencyContactName}
-                    onChange={(e) => onParticipantChange(index, 'emergencyContactName', e.target.value)}
+                    onChange={(e) =>
+                      onParticipantChange(
+                        index,
+                        "emergencyContactName",
+                        e.target.value
+                      )
+                    }
                     required
                   />
                 </div>
-                
+
                 <div>
                   <Label>Emergency Contact Phone</Label>
                   <Input
                     value={participant.emergencyContactPhone}
-                    onChange={(e) => onParticipantChange(index, 'emergencyContactPhone', e.target.value)}
+                    onChange={(e) =>
+                      onParticipantChange(
+                        index,
+                        "emergencyContactPhone",
+                        e.target.value
+                      )
+                    }
                     required
                   />
                 </div>
-                
+
                 <div>
                   <Label>Emergency Contact Relationship</Label>
                   <Input
                     value={participant.emergencyContactRelationship}
-                    onChange={(e) => onParticipantChange(index, 'emergencyContactRelationship', e.target.value)}
+                    onChange={(e) =>
+                      onParticipantChange(
+                        index,
+                        "emergencyContactRelationship",
+                        e.target.value
+                      )
+                    }
                     required
                   />
                 </div>
-                
+
                 <div>
                   <Label>Medical Conditions</Label>
                   <Input
                     value={participant.medicalConditions}
-                    onChange={(e) => onParticipantChange(index, 'medicalConditions', e.target.value)}
+                    onChange={(e) =>
+                      onParticipantChange(
+                        index,
+                        "medicalConditions",
+                        e.target.value
+                      )
+                    }
                     placeholder="None"
                   />
                 </div>
-                
+
                 <div>
                   <Label>Allergies</Label>
                   <Input
                     value={participant.allergies}
-                    onChange={(e) => onParticipantChange(index, 'allergies', e.target.value)}
+                    onChange={(e) =>
+                      onParticipantChange(index, "allergies", e.target.value)
+                    }
                     placeholder="None"
                   />
                 </div>
-                
+
                 <div className="flex items-center space-x-3">
                   <Switch
                     checked={participant.specialAssistanceRequired}
-                    onCheckedChange={(checked: boolean) => 
-                      onParticipantChange(index, 'specialAssistanceRequired', checked)
+                    onCheckedChange={(checked: boolean) =>
+                      onParticipantChange(
+                        index,
+                        "specialAssistanceRequired",
+                        checked
+                      )
                     }
                   />
                   <Label>Special Assistance Required?</Label>
@@ -552,7 +630,10 @@ const BookingForm: React.FC<BookingFormProps> = ({
         </CardHeader>
         <CardContent>
           {formData.bookingNotes.map((note, index) => (
-            <div key={index} className="mb-4 p-4 border border-purple-300 rounded-lg">
+            <div
+              key={index}
+              className="mb-4 p-4 border border-purple-300 rounded-lg"
+            >
               <div className="flex justify-between items-start mb-4">
                 <h4 className="font-medium text-gray-900">Note {index + 1}</h4>
                 {formData.bookingNotes.length > 1 && (
@@ -566,25 +647,29 @@ const BookingForm: React.FC<BookingFormProps> = ({
                   </Button>
                 )}
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label>Note Type</Label>
                   <Select
                     value={note.noteType}
-                    onChange={(e) => onBookingNoteChange(index, 'noteType', e.target.value)}
+                    onChange={(e) =>
+                      onBookingNoteChange(index, "noteType", e.target.value)
+                    }
                   >
                     <SelectItem value="CUSTOMER">Customer</SelectItem>
                     <SelectItem value="AGENT">Agent</SelectItem>
                     <SelectItem value="SYSTEM">System</SelectItem>
                   </Select>
                 </div>
-                
+
                 <div className="md:col-span-2">
                   <Label>Note Text</Label>
                   <Textarea
                     value={note.noteText}
-                    onChange={(e) => onBookingNoteChange(index, 'noteText', e.target.value)}
+                    onChange={(e) =>
+                      onBookingNoteChange(index, "noteText", e.target.value)
+                    }
                     placeholder="Enter note here..."
                     rows={2}
                   />
@@ -612,7 +697,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
                 required
               />
             </div>
-            
+
             <div>
               <Label htmlFor="billingEmail">Email</Label>
               <Input
@@ -624,7 +709,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
                 required
               />
             </div>
-            
+
             <div>
               <Label htmlFor="billingPhone">Phone</Label>
               <Input
@@ -635,7 +720,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
                 required
               />
             </div>
-            
+
             <div className="md:col-span-2">
               <Label htmlFor="billingAddress">Address</Label>
               <Textarea
@@ -656,9 +741,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
         <Button type="button" variant="outline" onClick={onBackToSelection}>
           Back to Selection
         </Button>
-        <Button type="submit">
-          Submit Booking
-        </Button>
+        <Button type="submit">Submit Booking</Button>
       </div>
     </form>
   );

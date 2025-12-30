@@ -31,6 +31,7 @@ const DecemberSnowfall = () => {
         try {
           play();
         } catch (error) {
+          console.log(error);
           console.log("Autoplay might be blocked. User interaction required.");
         }
       }, 1500);

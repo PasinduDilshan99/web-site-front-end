@@ -3,8 +3,6 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { WhyChooseUsCardAPI } from "@/types/why-choose-us-types";
 import { GET_ALL_WHY_CHOOSE_US_DATA } from "@/utils/frontEndConstant";
-import { ErrorState } from "../../../components/common-components/error-state/ErrorState";
-import { EmptyState } from "../../../components/common-components/empty-state/EmptyState";
 import Loading from "../../../components/common-components/loading/Loading";
 import AnimatedButton from "../../../components/common-components/buttons/AnimatedButton";
 import { useRouter } from "next/navigation"; // Import useRouter for navigation
@@ -94,11 +92,6 @@ const WhyChooseUs = () => {
     fetchCardsData();
   }, []);
 
-  // Handle retry for error state
-  const handleRetry = () => {
-    fetchCardsData();
-  };
-
   // Handle Learn More button click - navigate to about-us page
   const handleLearnMoreClick = () => {
     router.push("/about-us");
@@ -160,8 +153,10 @@ const WhyChooseUs = () => {
                 {/* Card Image - Responsive Heights */}
                 <div className="relative h-32 sm:h-36 md:h-40 lg:h-44 xl:h-48 overflow-hidden bg-gradient-to-br from-purple-100 to-amber-100 flex-shrink-0">
                   {imageUrl === getDefaultImage() ? (
-                    <img
+                    <Image
                       src={imageUrl}
+                      width={500}
+                      height={500}
                       alt={card.cardTitle}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />

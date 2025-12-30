@@ -14,9 +14,17 @@ interface ResortFilters {
   hasBeachAccess: boolean | null;
 }
 
+// Define a type for all possible filter values
+type FilterValue = 
+  | string 
+  | number 
+  | [number, number] 
+  | boolean | null 
+  | string[];
+
 interface ResortFilterSectionProps {
   filters: ResortFilters;
-  onFilterChange: (filterName: keyof ResortFilters, value: any) => void;
+  onFilterChange: (filterName: keyof ResortFilters, value: FilterValue) => void;
   onResetFilters: () => void;
   locations: string[];
   resortTypes: string[];
@@ -89,7 +97,7 @@ const ResortFilterSection: React.FC<ResortFilterSectionProps> = ({
             step="100"
             value={filters.priceRange[1]}
             onChange={(e) =>
-              onFilterChange("priceRange", [filters.priceRange[0], parseInt(e.target.value)])
+              onFilterChange("priceRange", [filters.priceRange[0], parseInt(e.target.value, 10)])
             }
             className="w-full h-3 bg-gradient-to-r from-cyan-300 to-purple-300 rounded-lg appearance-none cursor-pointer accent-cyan-600"
           />
@@ -172,7 +180,10 @@ const ResortFilterSection: React.FC<ResortFilterSectionProps> = ({
             </label>
             <select
               value={filters.hasSpa === null ? "" : filters.hasSpa.toString()}
-              onChange={(e) => onFilterChange("hasSpa", e.target.value === "" ? null : e.target.value === "true")}
+              onChange={(e) => {
+                const value = e.target.value === "" ? null : e.target.value === "true";
+                onFilterChange("hasSpa", value);
+              }}
               className="w-full px-4 py-2 border-2 border-cyan-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all"
             >
               <option value="">Any</option>
@@ -188,7 +199,10 @@ const ResortFilterSection: React.FC<ResortFilterSectionProps> = ({
             </label>
             <select
               value={filters.hasPool === null ? "" : filters.hasPool.toString()}
-              onChange={(e) => onFilterChange("hasPool", e.target.value === "" ? null : e.target.value === "true")}
+              onChange={(e) => {
+                const value = e.target.value === "" ? null : e.target.value === "true";
+                onFilterChange("hasPool", value);
+              }}
               className="w-full px-4 py-2 border-2 border-cyan-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all"
             >
               <option value="">Any</option>
@@ -204,7 +218,10 @@ const ResortFilterSection: React.FC<ResortFilterSectionProps> = ({
             </label>
             <select
               value={filters.hasBeachAccess === null ? "" : filters.hasBeachAccess.toString()}
-              onChange={(e) => onFilterChange("hasBeachAccess", e.target.value === "" ? null : e.target.value === "true")}
+              onChange={(e) => {
+                const value = e.target.value === "" ? null : e.target.value === "true";
+                onFilterChange("hasBeachAccess", value);
+              }}
               className="w-full px-4 py-2 border-2 border-cyan-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all"
             >
               <option value="">Any</option>
@@ -251,10 +268,15 @@ const ResortFilterSection: React.FC<ResortFilterSectionProps> = ({
 };
 
 // Active Filters Summary Component
-const ActiveFiltersSummary: React.FC<{
+interface ActiveFiltersSummaryProps {
   filters: ResortFilters;
-  onFilterChange: (filterName: keyof ResortFilters, value: any) => void;
-}> = ({ filters, onFilterChange }) => {
+  onFilterChange: (filterName: keyof ResortFilters, value: FilterValue) => void;
+}
+
+const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({ 
+  filters, 
+  onFilterChange 
+}) => {
   const formatPrice = (price: number): string => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -262,63 +284,96 @@ const ActiveFiltersSummary: React.FC<{
     }).format(price);
   };
 
-  const activeFilters = [
-    filters.search && {
+  interface ActiveFilter {
+    name: keyof ResortFilters;
+    label: string;
+    value: FilterValue;
+  }
+
+  // Build active filters array with proper typing
+  const activeFilters: ActiveFilter[] = [];
+  
+  if (filters.search) {
+    activeFilters.push({
       name: "search",
       label: `Search: "${filters.search}"`,
       value: filters.search,
-    },
-    filters.starRating > 0 && {
+    });
+  }
+  
+  if (filters.starRating > 0) {
+    activeFilters.push({
       name: "starRating",
       label: `Rating: ${filters.starRating}+ stars`,
       value: filters.starRating,
-    },
-    filters.resortType && {
+    });
+  }
+  
+  if (filters.resortType) {
+    activeFilters.push({
       name: "resortType",
       label: `Type: ${filters.resortType}`,
       value: filters.resortType,
-    },
-    filters.location && {
+    });
+  }
+  
+  if (filters.location) {
+    activeFilters.push({
       name: "location",
       label: `Location: ${filters.location}`,
       value: filters.location,
-    },
-    filters.hasSpa !== null && {
+    });
+  }
+  
+  if (filters.hasSpa !== null) {
+    activeFilters.push({
       name: "hasSpa",
       label: `Spa: ${filters.hasSpa ? 'Yes' : 'No'}`,
       value: filters.hasSpa,
-    },
-    filters.hasPool !== null && {
+    });
+  }
+  
+  if (filters.hasPool !== null) {
+    activeFilters.push({
       name: "hasPool",
       label: `Pool: ${filters.hasPool ? 'Yes' : 'No'}`,
       value: filters.hasPool,
-    },
-    filters.hasBeachAccess !== null && {
+    });
+  }
+  
+  if (filters.hasBeachAccess !== null) {
+    activeFilters.push({
       name: "hasBeachAccess",
       label: `Beach: ${filters.hasBeachAccess ? 'Yes' : 'No'}`,
       value: filters.hasBeachAccess,
-    },
-    filters.priceRange[1] < 2000 && {
+    });
+  }
+  
+  if (filters.priceRange[1] < 2000) {
+    activeFilters.push({
       name: "priceRange",
       label: `Price up to: ${formatPrice(filters.priceRange[1])}`,
       value: filters.priceRange,
-    },
-  ].filter(Boolean);
+    });
+  }
 
   if (activeFilters.length === 0) return null;
 
-  const removeFilter = (filterName: string) => {
-    const resetValues: { [key: string]: any } = {
-      search: "",
-      starRating: 0,
-      resortType: "",
-      location: "",
-      hasSpa: null,
-      hasPool: null,
-      hasBeachAccess: null,
-      priceRange: [0, 2000],
-    };
-    onFilterChange(filterName as keyof ResortFilters, resetValues[filterName]);
+  const resetValues: Record<keyof ResortFilters, FilterValue> = {
+    search: "",
+    priceRange: [0, 2000],
+    starRating: 0,
+    location: "",
+    resortType: "",
+    amenities: [],
+    hasSpa: null,
+    hasPool: null,
+    isAllInclusive: null,
+    hasBeachAccess: null,
+  };
+
+  const removeFilter = (filterName: keyof ResortFilters) => {
+    onFilterChange(filterName, resetValues[filterName]);
   };
 
   return (
@@ -330,7 +385,7 @@ const ActiveFiltersSummary: React.FC<{
         <span className="text-sm text-gray-600">({activeFilters.length})</span>
       </div>
       <div className="flex flex-wrap gap-2">
-        {activeFilters.map((filter: any) => (
+        {activeFilters.map((filter) => (
           <span
             key={filter.name}
             className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-cyan-100 to-purple-100 text-cyan-800 rounded-full text-xs font-medium border border-cyan-200 transition-all duration-200 hover:shadow-md"

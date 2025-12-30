@@ -1,7 +1,7 @@
 "use client";
 
 import { GET_PLAN_YOUR_TRIP_DESTINATIONS_TOURS_FE } from "@/utils/frontEndConstant";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 
 // Type Definitions
 interface Location {
@@ -72,9 +72,40 @@ interface APIResponse {
   timestamp: string;
 }
 
+// Leaflet Type Definitions
+interface LeafletMap {
+  remove: () => void;
+  setView: (coords: [number, number], zoom: number) => LeafletMap;
+  removeLayer: (layer: unknown) => void;
+  fitBounds: (bounds: unknown) => void;
+}
+
+interface LeafletMarker {
+  bindPopup: (content: string) => LeafletMarker;
+  addTo: (map: LeafletMap) => LeafletMarker;
+  on: (event: string, handler: () => void) => LeafletMarker;
+  openPopup: () => void;
+  closePopup: () => void;
+}
+
+interface LeafletPolyline {
+  addTo: (map: LeafletMap) => LeafletPolyline;
+}
+
+interface LeafletControl {
+  L: {
+    map: (element: HTMLElement) => LeafletMap;
+    tileLayer: (url: string, options: unknown) => { addTo: (map: LeafletMap) => unknown };
+    marker: (coords: [number, number], options: unknown) => LeafletMarker;
+    divIcon: (options: unknown) => unknown;
+    polyline: (coordinates: [number, number][], options: unknown) => LeafletPolyline;
+    featureGroup: (markers: LeafletMarker[]) => { getBounds: () => { pad: (padding: number) => unknown } };
+  };
+}
+
 declare global {
   interface Window {
-    L: any;
+    L: LeafletControl["L"] | undefined;
     selectLocationFromMap: (locationId: number) => void;
   }
 }
@@ -87,14 +118,14 @@ const PlanYourTripMap: React.FC = () => {
   const [selectedLocations, setSelectedLocations] = useState<Location[]>([]);
   const [selectedActivities, setSelectedActivities] = useState<Activity[]>([]);
   const [availableLocations, setAvailableLocations] = useState<Location[]>([]);
-  const [map, setMap] = useState<any>(null);
-  const [markers, setMarkers] = useState<any[]>([]);
+  const [map, setMap] = useState<LeafletMap | null>(null);
+  const [markers, setMarkers] = useState<(LeafletMarker | LeafletPolyline)[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [mapLoaded, setMapLoaded] = useState<boolean>(false);
   
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
+  const mapInstanceRef = useRef<LeafletMap | null>(null);
 
   const currentLocation = selectedLocations[selectedLocations.length - 1];
   const currentLocationActivities = currentLocation
@@ -119,7 +150,7 @@ const PlanYourTripMap: React.FC = () => {
           const transformedLocations: Location[] = result.data.planYourTripDestinationDtos.map(dest => ({
             id: dest.id,
             name: dest.name,
-            category: dest.category.toLowerCase(),
+            category: dest.category?.toLowerCase(),
             lat: parseFloat(dest.latitude.toString()),
             lng: parseFloat(dest.longitude.toString()),
             description: dest.description
@@ -168,6 +199,46 @@ const PlanYourTripMap: React.FC = () => {
     fetchData();
   }, []);
 
+  const selectLocation = useCallback((location: Location) => {
+    setSelectedLocations(prev => [...prev, location]);
+  }, []);
+
+  const removeLocation = useCallback((locationId: number) => {
+    setSelectedLocations(prev => {
+      const index = prev.findIndex((loc) => loc.id === locationId);
+      if (index === -1) return prev;
+
+      const newSelectedLocations = prev.slice(0, index);
+      
+      // Update selected activities based on remaining locations
+      const remainingLocationIds = newSelectedLocations.map((loc) => loc.id);
+      setSelectedActivities(prevActivities => 
+        prevActivities.filter((act) =>
+          remainingLocationIds.includes(
+            activities.find((a) => a.id === act.id)?.destinationId || 0
+          )
+        )
+      );
+
+      return newSelectedLocations;
+    });
+  }, [activities]);
+
+  const toggleActivity = useCallback((activity: Activity) => {
+    setSelectedActivities(prev => {
+      const exists = prev.find((a) => a.id === activity.id);
+      if (exists) {
+        return prev.filter((a) => a.id !== activity.id);
+      } else {
+        return [...prev, activity];
+      }
+    });
+  }, []);
+
+  const isActivitySelected = useCallback((activityId: string): boolean => {
+    return selectedActivities.some((a) => a.id === activityId);
+  }, [selectedActivities]);
+
   // Update available locations based on last selected location
   useEffect(() => {
     if (locations.length === 0) return;
@@ -184,41 +255,6 @@ const PlanYourTripMap: React.FC = () => {
       setAvailableLocations(nearby);
     }
   }, [selectedLocations, locations, nearbyLocationsMap]);
-
-  const selectLocation = (location: Location) => {
-    setSelectedLocations([...selectedLocations, location]);
-  };
-
-  const removeLocation = (locationId: number) => {
-    const index = selectedLocations.findIndex((loc) => loc.id === locationId);
-    if (index === -1) return;
-
-    const newSelectedLocations = selectedLocations.slice(0, index);
-    setSelectedLocations(newSelectedLocations);
-
-    const remainingLocationIds = newSelectedLocations.map((loc) => loc.id);
-    const newActivities = selectedActivities.filter((act) =>
-      remainingLocationIds.includes(
-        activities.find((a) => a.id === act.id)?.destinationId || 0
-      )
-    );
-    setSelectedActivities(newActivities);
-  };
-
-  const toggleActivity = (activity: Activity) => {
-    const exists = selectedActivities.find((a) => a.id === activity.id);
-    if (exists) {
-      setSelectedActivities(
-        selectedActivities.filter((a) => a.id !== activity.id)
-      );
-    } else {
-      setSelectedActivities([...selectedActivities, activity]);
-    }
-  };
-
-  const isActivitySelected = (activityId: string): boolean => {
-    return selectedActivities.some((a) => a.id === activityId);
-  };
 
   // Load Leaflet CSS and JS
   useEffect(() => {
@@ -247,7 +283,7 @@ const PlanYourTripMap: React.FC = () => {
         mapInstanceRef.current = null;
       }
     };
-  }, []);
+  }, [mapLoaded]); // Added mapLoaded to dependencies
 
   // Initialize map only after Leaflet is loaded and data is ready
   useEffect(() => {
@@ -276,152 +312,160 @@ const PlanYourTripMap: React.FC = () => {
   }, [mapLoaded, locations, map]);
 
   // Update markers when available locations change
-  useEffect(() => {
-    if (!map || !window.L || locations.length === 0) return;
+  const updateMarkers = useCallback(() => {
+  if (!map || !window.L || locations.length === 0) return;
 
-    // Clear existing markers
-    markers.forEach((marker) => {
-      try {
-        map.removeLayer(marker);
-      } catch (e) {
-        console.error('Error removing marker:', e);
-      }
-    });
-
-    const createCustomIcon = (isSelected: boolean) => {
-      return window.L.divIcon({
-        html: `
-          <div style="
-            background-color: ${isSelected ? "#ef4444" : "#3b82f6"};
-            width: ${isSelected ? "30px" : "24px"};
-            height: ${isSelected ? "30px" : "24px"};
-            border: 3px solid white;
-            border-radius: 50%;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-          "></div>
-        `,
-        className: "custom-marker",
-        iconSize: [isSelected ? 30 : 24, isSelected ? 30 : 24],
-        iconAnchor: [isSelected ? 15 : 12, isSelected ? 15 : 12],
-      });
-    };
-
-    const newMarkers: any[] = [];
-
-    // Add selected location markers
-    selectedLocations.forEach((place, index) => {
-      const marker = window.L.marker([place.lat, place.lng], {
-        icon: createCustomIcon(true),
-      }).addTo(map);
-
-      marker.bindPopup(`
-        <div style="padding: 8px; max-width: 200px;">
-          <div style="background: #ef4444; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; margin-bottom: 6px;">
-            Stop ${index + 1}
-          </div>
-          <h3 style="margin: 0 0 6px 0; font-weight: bold; color: #ef4444;">
-            ${place.name}
-          </h3>
-          <p style="margin: 0; font-size: 13px; color: #666;">
-            ${place.description}
-          </p>
-        </div>
-      `);
-
-      newMarkers.push(marker);
-    });
-
-    // Add route line if multiple locations selected
-    if (selectedLocations.length > 1) {
-      const routeCoordinates = selectedLocations.map((loc) => [
-        loc.lat,
-        loc.lng,
-      ] as [number, number]);
-      const polyline = window.L.polyline(routeCoordinates, {
-        color: "#ef4444",
-        weight: 3,
-        opacity: 0.7,
-        dashArray: "10, 10",
-      }).addTo(map);
-      newMarkers.push(polyline);
-    }
-
-    // Add available location markers
-    availableLocations.forEach((place) => {
-      const marker = window.L.marker([place.lat, place.lng], {
-        icon: createCustomIcon(false),
-      }).addTo(map);
-
-      marker.bindPopup(`
-        <div style="padding: 8px; max-width: 200px;">
-          <h3 style="margin: 0 0 6px 0; font-weight: bold; color: #3b82f6;">
-            ${place.name}
-          </h3>
-          <p style="margin: 0 0 4px 0; font-size: 12px; color: #999;">
-            ${place.category}
-          </p>
-          <p style="margin: 0; font-size: 13px; color: #666;">
-            ${place.description}
-          </p>
-          <button 
-            onclick="window.selectLocationFromMap(${place.id})"
-            style="
-              margin-top: 8px;
-              background: #3b82f6;
-              color: white;
-              border: none;
-              padding: 6px 12px;
-              border-radius: 4px;
-              cursor: pointer;
-              width: 100%;
-              font-size: 14px;
-            "
-          >
-            Select Location
-          </button>
-        </div>
-      `);
-
-      marker.on("mouseover", function () {
-        this.openPopup();
-      });
-
-      newMarkers.push(marker);
-    });
-
-    setMarkers(newMarkers);
-
-    // Fit map bounds to show all markers
-    if (newMarkers.length > 0) {
-      const locationMarkers = newMarkers.filter(
-        (m) => m instanceof window.L.Marker
-      );
-      if (locationMarkers.length > 0) {
+  // Clear all existing layers except tile layers
+  if (map.eachLayer) {
+    map.eachLayer((layer: unknown) => {
+      // Type guard to check if it's a TileLayer
+      const isTileLayer = layer instanceof window.L.TileLayer;
+      if (!isTileLayer) {
         try {
-          const group = new window.L.featureGroup(locationMarkers);
-          map.fitBounds(group.getBounds().pad(0.1));
+          map.removeLayer(layer);
         } catch (e) {
-          console.error('Error fitting bounds:', e);
+          // Ignore errors for layers that might have been already removed
         }
       }
+    });
+  }
+
+  const createCustomIcon = (isSelected: boolean) => {
+    return window.L.divIcon({
+      html: `
+        <div style="
+          background-color: ${isSelected ? "#ef4444" : "#3b82f6"};
+          width: ${isSelected ? "30px" : "24px"};
+          height: ${isSelected ? "30px" : "24px"};
+          border: 3px solid white;
+          border-radius: 50%;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        "></div>
+      `,
+      className: "custom-marker",
+      iconSize: [isSelected ? 30 : 24, isSelected ? 30 : 24],
+      iconAnchor: [isSelected ? 15 : 12, isSelected ? 15 : 12],
+    });
+  };
+
+  const newMarkers: (LeafletMarker | LeafletPolyline)[] = [];
+
+  // Add selected location markers
+  selectedLocations.forEach((place, index) => {
+    const marker = window.L.marker([place.lat, place.lng], {
+      icon: createCustomIcon(true),
+    }).addTo(map);
+
+    marker.bindPopup(`
+      <div style="padding: 8px; max-width: 200px;">
+        <div style="background: #ef4444; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; margin-bottom: 6px;">
+          Stop ${index + 1}
+        </div>
+        <h3 style="margin: 0 0 6px 0; font-weight: bold; color: #ef4444;">
+          ${place.name}
+        </h3>
+        <p style="margin: 0; font-size: 13px; color: #666;">
+          ${place.description}
+        </p>
+      </div>
+    `);
+
+    newMarkers.push(marker);
+  });
+
+  // Add route line if multiple locations selected
+  if (selectedLocations.length > 1) {
+    const routeCoordinates = selectedLocations.map((loc) => [
+      loc.lat,
+      loc.lng,
+    ] as [number, number]);
+    const polyline = window.L.polyline(routeCoordinates, {
+      color: "#ef4444",
+      weight: 3,
+      opacity: 0.7,
+      dashArray: "10, 10",
+    }).addTo(map);
+    newMarkers.push(polyline);
+  }
+
+  // Add available location markers
+  availableLocations.forEach((place) => {
+    const marker = window.L.marker([place.lat, place.lng], {
+      icon: createCustomIcon(false),
+    }).addTo(map);
+
+    marker.bindPopup(`
+      <div style="padding: 8px; max-width: 200px;">
+        <h3 style="margin: 0 0 6px 0; font-weight: bold; color: #3b82f6;">
+          ${place.name}
+        </h3>
+        <p style="margin: 0 0 4px 0; font-size: 12px; color: #999;">
+          ${place.category}
+        </p>
+        <p style="margin: 0; font-size: 13px; color: #666;">
+          ${place.description}
+        </p>
+        <button 
+          onclick="window.selectLocationFromMap(${place.id})"
+          style="
+            margin-top: 8px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 14px;
+          "
+        >
+          Select Location
+        </button>
+      </div>
+    `);
+
+    marker.on("mouseover", function (this: LeafletMarker) {
+      this.openPopup();
+    });
+
+    newMarkers.push(marker);
+  });
+
+  // Update markers state (optional - only if you need it elsewhere)
+  setMarkers(newMarkers);
+
+  // Fit map bounds to show all markers
+  if (newMarkers.length > 0) {
+    const locationMarkers = newMarkers.filter(
+      (m) => 'bindPopup' in m // Check if it's a marker by looking for marker-specific property
+    ) as LeafletMarker[];
+    
+    if (locationMarkers.length > 0) {
+      try {
+        const group = window.L.featureGroup(locationMarkers);
+        map.fitBounds(group.getBounds().pad(0.1));
+      } catch (e) {
+        console.error('Error fitting bounds:', e);
+      }
     }
-  }, [map, availableLocations, selectedLocations, locations]);
+  }
+}, [map, availableLocations, selectedLocations, locations]); // Removed markers dependency
+
+  // Effect to update markers
+  useEffect(() => {
+    updateMarkers();
+  }, [updateMarkers]);
 
   // Expose select function to window for popup button
   useEffect(() => {
     if (locations.length === 0) return;
 
-    window.selectLocationFromMap = (locationId: number) => {
-      const location = locations.find((loc) => loc.id === locationId);
-      if (location) {
-        selectLocation(location);
-      }
-    };
+    window.selectLocationFromMap = selectLocation;
 
     return () => {
       delete window.selectLocationFromMap;
     };
-  }, [selectedLocations, locations]);
+  }, [selectLocation, locations]);
 
   // Loading state
   if (loading) {

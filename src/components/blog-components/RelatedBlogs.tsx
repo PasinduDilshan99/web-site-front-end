@@ -2,9 +2,10 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { formatDate } from "@/utils/blog-utils";
+import { BlogDetailsData, BlogImage } from "@/types/blog-types";
 
 interface RelatedBlogsProps {
-  relatedBlogs: any[];
+  relatedBlogs: BlogDetailsData[];
   writerName: string;
 }
 
@@ -13,7 +14,7 @@ const RelatedBlogs: React.FC<RelatedBlogsProps> = ({ relatedBlogs, writerName })
 
   if (relatedBlogs.length === 0) return null;
 
-  const getImageUrl = (image: any) => {
+  const getImageUrl = (image: BlogImage) => {
     if (!image?.image_url) {
       return "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=300&q=80";
     }

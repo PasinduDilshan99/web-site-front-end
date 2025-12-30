@@ -1,7 +1,7 @@
 // components/resort/ResortLocation.tsx
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useMemo, useCallback } from "react";
 import {
   MapPin,
   Navigation,
@@ -9,17 +9,38 @@ import {
   Train,
   Plane,
   Clock,
-  Star,
   Waves,
-  Mountain,
   Palmtree,
 } from "lucide-react";
 import { NearbyDestination, ServiceProviderDetails } from "@/types/accommodations-types/service-provider-types";
 
+// Declare Leaflet types in the global scope
+declare global {
+  interface Window {
+    L: typeof import('leaflet');
+  }
+}
 
 interface ResortLocationProps {
   resort: ServiceProviderDetails;
   nearbyDestinations: NearbyDestination[];
+}
+
+// Define proper type for Leaflet map instance
+interface LeafletMap {
+  remove: () => void;
+  setView: (latlng: [number, number], zoom: number) => LeafletMap;
+  tileLayer: (url: string, options: object) => {
+    addTo: (map: LeafletMap) => void;
+  };
+  marker: (latlng: [number, number], options?: object) => {
+    addTo: (map: LeafletMap) => {
+      bindPopup: (content: string) => void;
+      openPopup: () => void;
+    };
+  };
+  divIcon: (options: object) => object;
+  fitBounds: (bounds: [number, number][], options?: object) => void;
 }
 
 const ResortLocation: React.FC<ResortLocationProps> = ({
@@ -27,16 +48,16 @@ const ResortLocation: React.FC<ResortLocationProps> = ({
   nearbyDestinations,
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
+  const mapInstanceRef = useRef<LeafletMap | null>(null);
 
   // HARDCODED: Resort coordinates (Coastal area, Sri Lanka)
-  const resortCoords = {
+  const resortCoords = useMemo(() => ({
     latitude: 6.0535,
     longitude: 80.2210,
-  };
+  }), []);
 
   // Calculate distance between two coordinates using Haversine formula
-  const calculateDistance = (
+  const calculateDistance = useCallback((
     lat1: number,
     lon1: number,
     lat2: number,
@@ -57,18 +78,18 @@ const ResortLocation: React.FC<ResortLocationProps> = ({
     return distance < 1
       ? `${Math.round(distance * 1000)}m`
       : `${distance.toFixed(1)}km`;
-  };
+  }, []);
 
-  const calculateDriveTime = (distanceStr: string): string => {
+  const calculateDriveTime = useCallback((distanceStr: string): string => {
     const distance = parseFloat(distanceStr);
     if (distance <= 2) return "5-10 min";
     if (distance <= 5) return "10-15 min";
     if (distance <= 10) return "15-25 min";
     if (distance <= 20) return "25-40 min";
     return "40+ min";
-  };
+  }, []);
 
-  const calculateTransportationInfo = () => {
+  const calculateTransportationInfo = useCallback(() => {
     const transportation = [];
 
     const airportCoords = { lat: 6.1249, lon: 81.1221 };
@@ -114,29 +135,29 @@ const ResortLocation: React.FC<ResortLocationProps> = ({
     });
 
     return transportation;
-  };
+  }, [resortCoords.latitude, resortCoords.longitude, calculateDistance, calculateDriveTime]);
 
   const transportation = calculateTransportationInfo();
 
-  const getDirectionsUrl = () => {
+  const getDirectionsUrl = useCallback(() => {
     return `https://www.openstreetmap.org/directions?engine=osrm_car&route=${resortCoords.latitude},${resortCoords.longitude}`;
-  };
+  }, [resortCoords.latitude, resortCoords.longitude]);
 
-  const getDestinationDistance = (destination: NearbyDestination) => {
+  const getDestinationDistance = useCallback((destination: NearbyDestination) => {
     return calculateDistance(
       resortCoords.latitude,
       resortCoords.longitude,
       destination.latitude,
       destination.longitude
     );
-  };
+  }, [resortCoords.latitude, resortCoords.longitude, calculateDistance]);
 
   // Initialize Leaflet map
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
 
     const loadLeaflet = async () => {
-      if (!(window as any).L) {
+      if (!window.L) {
         const link = document.createElement("link");
         link.rel = "stylesheet";
         link.href =
@@ -154,7 +175,7 @@ const ResortLocation: React.FC<ResortLocationProps> = ({
     };
 
     const initMap = () => {
-      const L = (window as any).L;
+      const L = window.L;
       if (!L || !mapRef.current) return;
 
       // Create map centered on resort
@@ -212,7 +233,7 @@ const ResortLocation: React.FC<ResortLocationProps> = ({
               <small style="color: #0d9488; font-weight: 500;">${
                 dest.destinationCategory
               }</small><br/>
-              <small style="color: #6b7280;">${dest.description.substring(0, 120)}...</small><br/>
+              <small style="color: #6b7280;">${dest.description?.substring(0, 120) || ''}...</small><br/>
               <small style="color: #f59e0b; font-weight: 600;">${calculateDistance(
                 resortCoords.latitude,
                 resortCoords.longitude,
@@ -238,7 +259,13 @@ const ResortLocation: React.FC<ResortLocationProps> = ({
         mapInstanceRef.current = null;
       }
     };
-  }, [nearbyDestinations, resort.name]);
+  }, [
+    nearbyDestinations, 
+    resort.name, 
+    resortCoords.latitude, 
+    resortCoords.longitude,
+    calculateDistance
+  ]);
 
   return (
     <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-teal-200">

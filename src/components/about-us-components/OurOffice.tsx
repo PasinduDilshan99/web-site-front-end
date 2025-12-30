@@ -1,6 +1,37 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { MapPin, Phone, Mail, Clock, Globe, Users, Car, Wifi, Coffee } from 'lucide-react';
+
+// Define Leaflet types to avoid any
+interface LeafletMap {
+  remove: () => void;
+  setView: (coords: [number, number], zoom: number) => LeafletMap;
+}
+
+interface LeafletTileLayer {
+  addTo: (map: LeafletMap) => void;
+}
+
+interface LeafletMarker {
+  addTo: (map: LeafletMap) => LeafletMarker;
+  bindPopup: (content: string) => LeafletMarker;
+}
+
+interface LeafletControl {
+  L: {
+    map: (element: HTMLElement) => LeafletMap;
+    tileLayer: (url: string, options: unknown) => LeafletTileLayer;
+    marker: (coords: [number, number], options: unknown) => LeafletMarker;
+    divIcon: (options: unknown) => unknown;
+  };
+}
+
+declare global {
+  interface Window {
+    L: LeafletControl["L"] | undefined;
+  }
+}
 
 interface OfficeLocation {
   id: number;
@@ -22,6 +53,7 @@ interface OfficeLocation {
 const OurOffice = () => {
   const [selectedOffice, setSelectedOffice] = useState<number>(0);
   const [mapLoaded, setMapLoaded] = useState<boolean>(false);
+  const mapRef = useRef<LeafletMap | null>(null);
 
   // Office locations data
   const offices: OfficeLocation[] = [
@@ -77,6 +109,26 @@ const OurOffice = () => {
 
   const currentOffice = offices[selectedOffice];
 
+  // Image component with fallback
+  const OfficeImage = ({ src, alt }: { src: string; alt: string }) => {
+    const [imgSrc, setImgSrc] = useState(src);
+    
+    return (
+      <div className="relative w-full h-64 md:h-80">
+        <Image
+          src={imgSrc}
+          alt={alt}
+          fill
+          className="object-cover transform group-hover:scale-105 transition-transform duration-700"
+          sizes="(max-width: 768px) 100vw, 50vw"
+          onError={() => {
+            setImgSrc("/images/default-office.jpg");
+          }}
+        />
+      </div>
+    );
+  };
+
   // Initialize OpenStreetMap
   useEffect(() => {
     if (typeof window !== 'undefined' && !mapLoaded) {
@@ -103,17 +155,23 @@ const OurOffice = () => {
 
   // Initialize map when component mounts or office changes
   useEffect(() => {
-    if (mapLoaded && typeof window !== 'undefined') {
-      const L = (window as any).L;
-      if (L && document.getElementById('map')) {
+    if (mapLoaded && typeof window !== 'undefined' && window.L) {
+      const L = window.L;
+      const mapContainer = document.getElementById('map');
+      
+      if (L && mapContainer) {
         // Remove existing map if any
-        const mapContainer = document.getElementById('map');
-        if (mapContainer) {
-          mapContainer.innerHTML = '';
+        if (mapRef.current) {
+          mapRef.current.remove();
+          mapRef.current = null;
         }
 
+        // Clear container
+        mapContainer.innerHTML = '';
+
         // Initialize map
-        const map = L.map('map').setView([currentOffice.lat, currentOffice.lng], 15);
+        const map = L.map(mapContainer).setView([currentOffice.lat, currentOffice.lng], 15);
+        mapRef.current = map;
 
         // Add OpenStreetMap tiles
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -126,7 +184,10 @@ const OurOffice = () => {
           html: `
             <div class="relative">
               <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold shadow-lg border-4 border-white">
-                <MapPin className="w-6 h-6" />
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
               </div>
               <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-blue-600 rotate-45"></div>
             </div>
@@ -138,7 +199,7 @@ const OurOffice = () => {
         });
 
         // Add marker
-        L.marker([currentOffice.lat, currentOffice.lng], { icon: customIcon })
+        const marker = L.marker([currentOffice.lat, currentOffice.lng], { icon: customIcon })
           .addTo(map)
           .bindPopup(`
             <div class="p-2">
@@ -150,8 +211,9 @@ const OurOffice = () => {
 
         // Cleanup
         return () => {
-          if (map) {
-            map.remove();
+          if (mapRef.current) {
+            mapRef.current.remove();
+            mapRef.current = null;
           }
         };
       }
@@ -198,11 +260,7 @@ const OurOffice = () => {
           <div className="space-y-8">
             {/* Office Image */}
             <div className="relative rounded-2xl overflow-hidden shadow-xl group">
-              <img
-                src={currentOffice.imageUrl}
-                alt={currentOffice.name}
-                className="w-full h-64 md:h-80 object-cover transform group-hover:scale-105 transition-transform duration-700"
-              />
+              <OfficeImage src={currentOffice.imageUrl} alt={currentOffice.name} />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
               <div className="absolute bottom-6 left-6">
                 <span className="inline-block px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full text-gray-900 font-semibold shadow-lg">

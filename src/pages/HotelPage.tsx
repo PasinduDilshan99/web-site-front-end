@@ -166,7 +166,7 @@ const HotelPage = () => {
     setFilteredHotels(filtered);
   }, [filters, hotels]);
 
-  const handleFilterChange = (filterName: keyof HotelFilters, value: any) => {
+  const handleFilterChange = (filterName: keyof HotelFilters, value: unknown) => {
     setFilters((prev) => ({
       ...prev,
       [filterName]: value,

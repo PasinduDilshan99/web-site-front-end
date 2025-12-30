@@ -17,7 +17,8 @@ import NavBar from "@/components/common-components/navBar/NavBar";
 import Footer from "@/app/components/footer/Footer";
 
 const DestinationDetailsPage = () => {
-  const { destinationId } = useParams();
+const params = useParams();
+const destinationId = params?.destinationId || null;
 
   const [destination, setDestination] = useState<DestinationData | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -43,7 +44,7 @@ const DestinationDetailsPage = () => {
       fetchDestinationHistory();
       fetchDestinationHistoryImages(); // Fetch history images data
     }
-  }, [destinationId]);
+  }, [destinationId,]);
 
   const fetchDestinationReviews = async () => {
     try {

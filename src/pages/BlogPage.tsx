@@ -1,7 +1,7 @@
 // app/blog/page.tsx
 "use client";
 import React, { useState, useEffect } from "react";
-import { Blog, BlogFilters, PaginationState } from "@/types/blog-types";
+import { BlogComment, BlogCommentReply, BlogDetailsData, BlogFilters, BlogReaction, PaginationState } from "@/types/blog-types";
 import Loading from "@/components/common-components/loading/Loading";
 import { ErrorState } from "@/components/common-components/error-state/ErrorState";
 import NavBar from "@/components/common-components/navBar/NavBar";
@@ -16,14 +16,14 @@ import { useSearchParams } from "next/navigation";
 const BlogPage: React.FC = () => {
   const searchParams = useSearchParams();
 
-  const writerParam: string | null = searchParams.get("writer");
-  const searchParam: string | null = searchParams.get("search");
+  const writerParam: string | null = searchParams?.get("writer") || null;
+  const searchParam: string | null = searchParams?.get("search") || null;
 
   console.log("Writer Param:", writerParam);
   console.log("Search Param:", searchParam);
 
-  const [blogs, setBlogs] = useState<Blog[]>([]);
-  const [filteredBlogs, setFilteredBlogs] = useState<Blog[]>([]);
+  const [blogs, setBlogs] = useState<BlogDetailsData[]>([]);
+  const [filteredBlogs, setFilteredBlogs] = useState<BlogDetailsData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [categories, setCategories] = useState<string[]>([]);
@@ -50,12 +50,12 @@ const BlogPage: React.FC = () => {
   const writers = [...new Set(blogs.map((blog) => blog.writer_name))];
 
   // Helper function to count total comments including replies
-  const countTotalComments = (comments: any[] | null): number => {
+  const countTotalComments = (comments: BlogComment[] | null): number => {
     if (!comments || !Array.isArray(comments)) return 0;
     
     let total = comments.length;
     
-    const countReplies = (replies: any[]): number => {
+    const countReplies = (replies: BlogCommentReply[]): number => {
       if (!replies || !Array.isArray(replies)) return 0;
       
       let replyCount = replies.length;
@@ -77,7 +77,7 @@ const BlogPage: React.FC = () => {
   };
 
   // Helper function to calculate total reactions
-  const calculateTotalReactions = (blogReactions: any[] | null): number => {
+  const calculateTotalReactions = (blogReactions: BlogReaction[] | null): number => {
     if (!blogReactions || !Array.isArray(blogReactions)) return 0;
     
     // Sum all reaction counts
@@ -85,7 +85,7 @@ const BlogPage: React.FC = () => {
   };
 
   // Enhance blog data with calculated properties
-  const enhanceBlogData = (blog: any): Blog => {
+  const enhanceBlogData = (blog: BlogDetailsData): BlogDetailsData => {
     // Use likeCount from API if available, otherwise calculate from blog_reactions
     const totalReactions = blog.likeCount || calculateTotalReactions(blog.blog_reactions);
     
@@ -207,17 +207,17 @@ const BlogPage: React.FC = () => {
         
         // Extract unique categories from blogs
         const uniqueCategories = [...new Set(result.data
-          .map((blog: any) => blog.blogCategory)
+          .map((blog: BlogDetailsData) => blog.blogCategory)
           .filter((category: string | null) => category && category.trim() !== '')
         )] as string[];
         
-        console.log('Enhanced Blogs:', enhancedBlogs.map(blog => ({
-          title: blog.title,
-          category: blog.blogCategory,
-          totalReactions: blog.totalReactions,
-          commentCount: blog.commentCount,
-          date: blog.blog_created_at
-        })));
+        // console.log('Enhanced Blogs:', enhancedBlogs.map(blog => ({
+        //   title: blog.title,
+        //   category: blog.blogCategory,
+        //   totalReactions: blog.totalReactions,
+        //   commentCount: blog.commentCount,
+        //   date: blog.blog_created_at
+        // })));
         
         console.log('Extracted Categories:', uniqueCategories); // Debug log
         
@@ -336,7 +336,7 @@ const BlogPage: React.FC = () => {
     setFilteredBlogs(filtered);
   };
 
-  const handleFilterChange = (filterName: keyof BlogFilters, value: any): void => {
+  const handleFilterChange = (filterName: keyof BlogFilters, value: unknown): void => {
     console.log(`Filter changed: ${filterName} =`, value); // Debug log
     
     // If changing writer or search and we have URL params, navigate to remove them
@@ -386,7 +386,7 @@ const BlogPage: React.FC = () => {
   };
 
   // Calculate paginated blogs
-  const getPaginatedBlogs = (): Blog[] => {
+  const getPaginatedBlogs = (): BlogDetailsData[] => {
     const startIndex = (pagination.currentPage - 1) * pagination.itemsPerPage;
     const endIndex = startIndex + pagination.itemsPerPage;
     return filteredBlogs.slice(startIndex, endIndex);

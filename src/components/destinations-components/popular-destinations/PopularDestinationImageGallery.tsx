@@ -1,4 +1,4 @@
-import { PopularDestinationsType } from "@/types/destinations-types";
+import { PopularDestinationImage, PopularDestinationsType } from "@/types/destinations-types";
 import React from "react";
 
 interface ImageGalleryProps {
@@ -87,7 +87,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
 
 // Thumbnail Grid Sub-component
 interface ThumbnailGridProps {
-  images: any[];
+  images: PopularDestinationImage[];
   activeImageIndex: number;
   onImageSwitch: (index: number) => void;
 }
@@ -115,7 +115,7 @@ const ThumbnailGrid: React.FC<ThumbnailGridProps> = ({
 
 // Individual Thumbnail Component
 interface ThumbnailProps {
-  image: any;
+  image: PopularDestinationImage;
   index: number;
   isActive: boolean;
   onImageSwitch: (index: number) => void;

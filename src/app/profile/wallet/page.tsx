@@ -109,7 +109,7 @@ export default function WalletPage() {
           <div className="bg-white rounded-2xl shadow-lg border border-amber-200 p-8 text-center">
             <div className="text-amber-400 text-6xl mb-4">💳</div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">No Wallet Found</h3>
-            <p className="text-gray-600">You don't have a wallet set up yet.</p>
+            <p className="text-gray-600">You don&apos;t have a wallet set up yet.</p>
           </div>
         </div>
       </div>

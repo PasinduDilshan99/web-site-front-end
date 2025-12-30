@@ -322,7 +322,7 @@ const PackagePage: React.FC = () => {
     }
   };
 
-  const handleFilterChange = (filterName: keyof Filters, value: any): void => {
+  const handleFilterChange = (filterName: keyof Filters,value: Filters[keyof Filters]): void => {
     setFilters((prev) => ({
       ...prev,
       [filterName]: value,

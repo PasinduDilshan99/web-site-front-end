@@ -9,12 +9,20 @@ import {
   Train,
   Plane,
   Clock,
-  Star,
   Users,
   Coffee,
 } from "lucide-react";
-import { NearbyDestination, ServiceProviderDetails } from "@/types/accommodations-types/service-provider-types";
+import {
+  NearbyDestination,
+  ServiceProviderDetails,
+} from "@/types/accommodations-types/service-provider-types";
 
+// Declare Leaflet types in the global scope
+declare global {
+  interface Window {
+    L: typeof import('leaflet');
+  }
+}
 
 interface HostelLocationProps {
   hostel: ServiceProviderDetails | null;
@@ -26,7 +34,7 @@ const HostelLocation: React.FC<HostelLocationProps> = ({
   nearbyDestinations,
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
+  const mapInstanceRef = useRef<L.Map | null>(null);
 
   // HARDCODED: Hostel coordinates (Colombo, Sri Lanka)
   const hostelCoords = {
@@ -135,7 +143,7 @@ const HostelLocation: React.FC<HostelLocationProps> = ({
     if (!mapRef.current || mapInstanceRef.current) return;
 
     const loadLeaflet = async () => {
-      if (!(window as any).L) {
+      if (!window.L) {
         const link = document.createElement("link");
         link.rel = "stylesheet";
         link.href =
@@ -153,7 +161,7 @@ const HostelLocation: React.FC<HostelLocationProps> = ({
     };
 
     const initMap = () => {
-      const L = (window as any).L;
+      const L = window.L;
       if (!L || !mapRef.current) return;
 
       // Create map centered on hostel
@@ -191,7 +199,9 @@ const HostelLocation: React.FC<HostelLocationProps> = ({
       })
         .addTo(map)
         .bindPopup(
-          `<div style="text-align: center;"><strong>${hostel?.name || 'Hostel Location'}</strong><br/><small>Hostel Location</small></div>`
+          `<div style="text-align: center;"><strong>${
+            hostel?.name || "Hostel Location"
+          }</strong><br/><small>Hostel Location</small></div>`
         );
 
       // Add nearby destination markers
@@ -207,7 +217,10 @@ const HostelLocation: React.FC<HostelLocationProps> = ({
               <small style="color: #6366f1;">${
                 dest.destinationCategory
               }</small><br/>
-              <small>${dest.description?.substring(0, 100) || 'No description available'}...</small><br/>
+              <small>${
+                dest.description?.substring(0, 100) ||
+                "No description available"
+              }...</small><br/>
               <small style="color: #3b82f6;">${calculateDistance(
                 hostelCoords.latitude,
                 hostelCoords.longitude,
@@ -262,7 +275,7 @@ const HostelLocation: React.FC<HostelLocationProps> = ({
           <div>
             <h3 className="font-semibold text-gray-800 mb-1">Address</h3>
             <p className="text-gray-600 leading-relaxed">
-              {hostel.address || 'Address not available'}
+              {hostel.address || "Address not available"}
             </p>
             <p className="text-sm text-gray-500 mt-1">
               Coordinates: {hostelCoords.latitude.toFixed(4)},{" "}
@@ -332,13 +345,15 @@ const HostelLocation: React.FC<HostelLocationProps> = ({
                 </div>
 
                 <p className="text-sm text-blue-700 mb-3 line-clamp-2">
-                  {destination.description || 'No description available'}
+                  {destination.description || "No description available"}
                 </p>
 
                 <div className="flex items-center justify-between text-xs text-blue-600">
                   <div className="flex items-center gap-1">
                     <MapPin className="w-3 h-3" />
-                    <span>{destination.location || 'Location not specified'}</span>
+                    <span>
+                      {destination.location || "Location not specified"}
+                    </span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Clock className="w-3 h-3" />
@@ -416,11 +431,11 @@ const HostelLocation: React.FC<HostelLocationProps> = ({
       </div>
 
       {/* Additional Location Info */}
-      {(hostel.parkingFacility || hostel.wifiAvailable || hostel.petFriendly) && (
+      {(hostel.parkingFacility ||
+        hostel.wifiAvailable ||
+        hostel.petFriendly) && (
         <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
-          <h4 className="font-semibold text-gray-800 mb-2">
-            Hostel Features
-          </h4>
+          <h4 className="font-semibold text-gray-800 mb-2">Hostel Features</h4>
           <div className="flex flex-wrap gap-2">
             {hostel.parkingFacility && (
               <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">
