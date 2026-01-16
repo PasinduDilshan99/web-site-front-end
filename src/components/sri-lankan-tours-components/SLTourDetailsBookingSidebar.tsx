@@ -34,7 +34,7 @@ const SLTourDetailsBookingSidebar: React.FC<
   return (
     <>
       {/* Booking Card */}
-      <div className="bg-white rounded-2xl shadow-lg p-6 top-6">
+      <div className="bg-white rounded-2xl shadow-lg p-6 top-6 mt-4">
         <h3 className="text-xl font-bold text-gray-800 mb-4">Book This Tour</h3>
 
         {/* Package Info if selected */}
@@ -68,13 +68,13 @@ const SLTourDetailsBookingSidebar: React.FC<
               <span className="text-gray-600 block">Starting from</span>
               {hasDiscount && (
                 <span className="text-xs text-gray-500 line-through">
-                  ${originalPrice?.toLocaleString()}
+                  ${price?.toLocaleString()}
                 </span>
               )}
             </div>
             <div className="text-right">
               <span className="text-3xl font-bold text-amber-600">
-                ${price.toLocaleString()}
+                ${(price-price*discount/100).toLocaleString()}
               </span>
               {hasDiscount && (
                 <div className="text-xs text-green-600 font-medium bg-green-100 px-2 py-1 rounded-full inline-block mt-1">
@@ -84,9 +84,9 @@ const SLTourDetailsBookingSidebar: React.FC<
               <p className="text-xs text-gray-500 mt-1">per person</p>
             </div>
           </div>
-          <button className="w-full bg-gradient-to-r from-amber-600 to-purple-600 hover:from-purple-700 hover:to-amber-700 text-white py-4 rounded-xl font-semibold text-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
+          {/* <button className="w-full bg-gradient-to-r from-amber-600 to-purple-600 hover:from-purple-700 hover:to-amber-700 text-white py-4 rounded-xl font-semibold text-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
             {selectedPackage ? "Book This Package" : "Book Now"}
-          </button>
+          </button> */}
 
           <p className="text-xs text-gray-500 text-center">
             Secure your spot with easy booking

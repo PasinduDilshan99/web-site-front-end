@@ -466,8 +466,6 @@ const DestinationPage: React.FC = () => {
 
   return (
     <>
-      <LinkBar />
-      <NavBar />
       <DestinationHeroSection />
       <div className="mx-auto px-4 py-8 bg-gradient-to-br from-purple-100 via-purple-100 to-amber-100 min-h-screen">
         {/* Page Header */}
@@ -573,7 +571,6 @@ const DestinationPage: React.FC = () => {
           description="Browse through captivating photographs that capture the essence of our destinations' history"
         />
       </div>
-      <Footer />
     </>
   );
 };

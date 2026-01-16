@@ -1093,7 +1093,7 @@ const SriLankanTourDetailsPage = () => {
           </div>
 
           {/* Sidebar */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 gap-12">
             {/* Show package schedules if available, otherwise show general tour schedules */}
             {packageSchedulesLoading ? (
               <div className="mt-6 p-6 bg-white rounded-2xl shadow-lg">

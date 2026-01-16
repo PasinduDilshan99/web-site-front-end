@@ -120,10 +120,10 @@ const PackagesComparePage = () => {
             .toLowerCase()
             .includes(searchQuery.toLowerCase()) ||
           tour.tourDetails.tourCategoryName
-            .toLowerCase()
+            ?.toLowerCase()
             .includes(searchQuery.toLowerCase()) ||
           tour.tourDetails.tourTypeName
-            .toLowerCase()
+            ?.toLowerCase()
             .includes(searchQuery.toLowerCase())
       );
       setFilteredTours(filtered);

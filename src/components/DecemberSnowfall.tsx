@@ -21,7 +21,7 @@ const DecemberSnowfall = () => {
   
   useEffect(() => {
     const currentMonth = new Date().getMonth() + 1;
-    setIsDecember(currentMonth === 12);
+    setIsDecember(true);
   }, []);
   
   // Auto-play when December starts
