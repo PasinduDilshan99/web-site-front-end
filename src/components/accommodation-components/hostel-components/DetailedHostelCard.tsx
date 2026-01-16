@@ -86,7 +86,7 @@ const DetailedHostelCard: React.FC<AdventureHostelCardProps> = ({ hostel }) => {
               )}
             </div>
             <div className={`grid gap-2 ${showAllImages ? 'grid-cols-2' : 'grid-cols-3'}`}>
-              {displayImages.map((image, index) => (
+              {displayImages?.map((image, index) => (
                 <div key={index} className="relative aspect-square rounded-lg overflow-hidden group/image border-2 border-green-200">
                   <Image
                     src={image.imageUrl}
@@ -142,7 +142,7 @@ const DetailedHostelCard: React.FC<AdventureHostelCardProps> = ({ hostel }) => {
         </div>
 
         {/* Room Types - Adventure Categorized */}
-        {displayRooms.length > 0 && (
+        {displayRooms && (
           <div className="mb-4">
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-semibold text-gray-800 text-sm flex items-center">
@@ -159,7 +159,7 @@ const DetailedHostelCard: React.FC<AdventureHostelCardProps> = ({ hostel }) => {
               )}
             </div>
             <div className="space-y-2">
-              {displayRooms.map((room, index) => {
+              {displayRooms?.map((room, index) => {
                 const isDorm = room.capacity > 4 || room.roomType.toLowerCase().includes('dorm');
                 return (
                   <div

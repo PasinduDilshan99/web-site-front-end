@@ -148,7 +148,7 @@ const RestaurantPage = () => {
     setFilteredRestaurants(filtered);
   }, [filters, restaurants]);
 
-  const handleFilterChange = (filterName: keyof RestaurantFilters, value: any) => {
+  const handleFilterChange = (filterName: keyof RestaurantFilters, value: unknown) => {
     setFilters(prev => ({
       ...prev,
       [filterName]: value
@@ -229,7 +229,7 @@ const RestaurantPage = () => {
             onResetFilters={resetFilters}
             locations={locations}
             cuisineTypes={cuisineTypes}
-            mealTypes={mealTypes}
+            amenities={mealTypes}
           />
 
           {/* Results Count */}

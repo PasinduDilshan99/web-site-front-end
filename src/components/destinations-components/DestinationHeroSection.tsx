@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import React, { useState, useEffect } from "react";
 
 export interface DestinationHeroData {
@@ -231,12 +232,12 @@ const DestinationHeroSection = () => {
             >
               Retry
             </button>
-            <a
+            <Link
               href="/destinations/all"
               className="px-6 py-3 border-2 border-white text-white rounded-lg hover:bg-white hover:text-gray-900 transition-all duration-300"
             >
               View All Destinations
-            </a>
+            </Link>
           </div>
         </div>
       </div>

@@ -157,7 +157,7 @@ const VehiclePage: React.FC = () => {
   }, [filteredVehicles, pagination.currentPage, pagination.itemsPerPage]);
 
   // Filter handlers
-  const handleFilterChange = (filterName: keyof VehicleFilters, value: any) => {
+  const handleFilterChange = (filterName: keyof VehicleFilters, value: unknown) => {
     setFilters((prev) => ({ ...prev, [filterName]: value }));
   };
 

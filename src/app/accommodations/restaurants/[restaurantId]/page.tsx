@@ -42,6 +42,8 @@ export default async function RestaurantDetailsPage({
       </div>
     );
   } catch (error) {
+        console.error("Error loading restaurant details:", error);
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-rose-50 to-orange-50">
         <NavBar />

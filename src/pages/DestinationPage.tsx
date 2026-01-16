@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import {
-  PopularDestinationsType,
+  PopularDestinationsDetailsType,
   Filters,
   EnhancedDestination,
   DestinationHistoryType,
@@ -24,7 +24,7 @@ import LinkBar from "@/components/common-components/linkBar/LinkBar";
 // Define API response interface
 interface DestinationListResponse {
   destinationCount: number;
-  destinationResponseDtos: PopularDestinationsType[];
+  destinationResponseDtos: PopularDestinationsDetailsType[];
 }
 
 interface PaginatedDestinationResponse {
@@ -228,7 +228,7 @@ const DestinationPage: React.FC = () => {
         if (result.data) {
           // Enhance destinations with mock rating and popularity data
           const enhancedDestinations: EnhancedDestination[] = result.data.destinationResponseDtos.map(
-            (destination: PopularDestinationsType) => ({
+            (destination: PopularDestinationsDetailsType) => ({
               ...destination,
               rating: generateMockRating(destination.destinationId),
               popularity: generateMockPopularity(destination.destinationId),
@@ -379,7 +379,7 @@ const DestinationPage: React.FC = () => {
     return Math.round(basePrice);
   };
 
-  const handleFilterChange = (filterName: keyof Filters, value: any): void => {
+  const handleFilterChange = (filterName: keyof Filters,value: Filters[keyof Filters]): void => {
     setFilters((prev) => ({
       ...prev,
       [filterName]: value,
@@ -466,8 +466,6 @@ const DestinationPage: React.FC = () => {
 
   return (
     <>
-      <LinkBar />
-      <NavBar />
       <DestinationHeroSection />
       <div className="mx-auto px-4 py-8 bg-gradient-to-br from-purple-100 via-purple-100 to-amber-100 min-h-screen">
         {/* Page Header */}
@@ -560,20 +558,19 @@ const DestinationPage: React.FC = () => {
 
         <DestinationHistory
           historyData={history}
-          loading={historyLoading}
-          error={historyError}
+          // loading={historyLoading}
+          // error={historyError}
           title="Destination History & Heritage"
           description="Discover the fascinating stories and historical events that shaped these amazing destinations"
         />
         <DestinationHistoryGallery
           imagesData={historyImages}
-          loading={historyImagesLoading}
-          error={historyImagesError}
+          // loading={historyImagesLoading}
+          // error={historyImagesError}
           title="Historical Images Collection"
           description="Browse through captivating photographs that capture the essence of our destinations' history"
         />
       </div>
-      <Footer />
     </>
   );
 };

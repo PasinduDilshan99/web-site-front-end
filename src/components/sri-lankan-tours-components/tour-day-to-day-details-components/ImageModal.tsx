@@ -135,7 +135,8 @@ const ImageModal: React.FC<ImageModalProps> = ({
                 <button
                   key={idx}
                   onClick={() => {
-                    onNavigate("goto");
+                    // onNavigate("goto");
+                    onNavigate("next");
                     // You might want to add a separate handler for direct thumbnail click
                   }}
                   className={`relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 transition-all duration-300 ${

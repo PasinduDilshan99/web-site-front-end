@@ -217,7 +217,10 @@ interface PackageSchedulesApiResponse {
 }
 
 const SriLankanTourDetailsPage = () => {
-  const { sriLankanTourId } = useParams();
+  const params = useParams();
+  const sriLankanTourId = params?.sriLankanTourId || null;
+  const tourId = sriLankanTourId?.[0] || "0"; // Default to "0" if null/undefined
+
   const [tour, setTour] = React.useState<TourDetails | null>(null);
   const [reviews, setReviews] = React.useState<TourReview[]>([]);
   const [tourLoading, setTourLoading] = React.useState(true);
@@ -1090,7 +1093,7 @@ const SriLankanTourDetailsPage = () => {
           </div>
 
           {/* Sidebar */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 gap-12">
             {/* Show package schedules if available, otherwise show general tour schedules */}
             {packageSchedulesLoading ? (
               <div className="mt-6 p-6 bg-white rounded-2xl shadow-lg">
@@ -1142,7 +1145,7 @@ const SriLankanTourDetailsPage = () => {
         error={reviewsError}
         onRetry={handleRetryReviews}
       />
-      <TourMapContainer tourId={sriLankanTourId} />
+      <TourMapContainer tourId={Number.parseInt(tourId[0])} />
       <TourHistorySection
         histories={histories}
         loading={historyLoading}

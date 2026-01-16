@@ -19,7 +19,19 @@ export interface PopularDestinationImage {
   imageStatus: string;
   imageCreatedAt: string;
 }
-
+export interface PopularDestinationsDetailsType {
+  destinationId: number;
+  destinationName: string;
+  destinationDescription: string;
+  location: string;
+  latitude: number;
+  longitude: number;
+  categoryName: string;
+  categoryDescription: string;
+  statusName: string;
+  activities: Activity[];
+  images: DestinationImage[];
+}
 export interface PopularDestinationsType {
   popularId: number;
   rating: number;
@@ -61,19 +73,7 @@ export interface Activity {
   season: string;
 }
 
-export interface PopularDestinationsType {
-  destinationId: number;
-  destinationName: string;
-  destinationDescription: string;
-  location: string;
-  latitude: number;
-  longitude: number;
-  categoryName: string;
-  categoryDescription: string;
-  statusName: string;
-  activities: Activity[];
-  images: DestinationImage[];
-}
+
 
 export interface ApiResponse {
   code: number;
@@ -93,7 +93,7 @@ export interface Filters {
 }
 
 // Mock data for rating and popularity since they're not in the API
-export interface EnhancedDestination extends PopularDestinationsType {
+export interface EnhancedDestination extends PopularDestinationsDetailsType {
   rating: number;
   popularity: number;
 }

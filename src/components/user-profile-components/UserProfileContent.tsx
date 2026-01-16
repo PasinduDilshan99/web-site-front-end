@@ -1,13 +1,13 @@
 // components/UserProfileContent.tsx
 "use client";
 import { UserProfileAPIService } from "@/services/userProfileAPIService";
-import { UserProfile } from "@/types/sidebar";
+import { UserProfile, UserProfileResponse } from "@/types/sidebar";
 import { UNIQUE_CODE_NAME } from "@/utils/constant";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
 interface UserProfileContentProps {
-  profileData?: any;
+  profileData?: UserProfileResponse;
 }
 
 export default function UserProfileContent({

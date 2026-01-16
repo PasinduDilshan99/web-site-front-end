@@ -26,7 +26,7 @@ interface ServiceProviderImage extends BaseImage {
   imageStatusId: number;
 }
 
-interface MealImage extends BaseImage {}
+type MealImage = BaseImage
 
 interface RoomImage extends BaseImage {
   roomImageUrl: string;
@@ -40,7 +40,7 @@ interface PackageImage extends BaseImage {
   packageImageCaption: string;
 }
 
-interface FacilityImage extends BaseImage {}
+type FacilityImage = BaseImage
 
 // Operating Hours
 interface OperatingHours {
@@ -219,7 +219,6 @@ interface PackageDetails {
   specialNote?: string | null;
   requirements?: string | null;
   statusId?: number | null;
-  // FIXED: Added missing BaseEntity properties for PackageDetails
   createdAt?: string | null;
   createdBy?: number | null;
   updatedAt?: string | null;

@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState } from 'react';
-import { Calendar, Users, Award, MapPin, Heart, Globe } from 'lucide-react';
+import { Calendar, Users, Award, MapPin, Heart, Globe, LucideIcon } from 'lucide-react';
 
 // Define types for the API response
 interface TimelineItem {
@@ -35,8 +35,8 @@ interface ApiResponse {
   timestamp: string;
 }
 
-// Icon mapping
-const iconMap: { [key: string]: React.ComponentType<any> } = {
+// Icon mapping with proper LucideIcon type
+const iconMap: Record<string, LucideIcon> = {
   Calendar,
   Users,
   Award,

@@ -85,6 +85,53 @@ export interface ApiResponse {
   timestamp: string;
 }
 
+export interface BlogReactApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: {message:string};
+  timestamp: string;
+}
+
+export interface BlogCommentReactApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: {message:string};
+  timestamp: string;
+}
+
+export interface BlogCommentApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: {message:string};
+  timestamp: string;
+}
+
+export interface BlogTagAPIResponse{
+  code: number;
+  status: string;
+  message: string;
+  data: BlogTagResponse;
+  timestamp: string;
+}
+
+export interface BlogTagResponse {
+  id: number;
+  name: string;
+  description: string;
+  statusId: number;
+  statusName: "ACTIVE" | "INACTIVE"; // extend if needed
+  createdAt: string;   // ISO date string
+  createdBy: string | null;
+  updatedAt: string;
+  updatedBy: string | null;
+  terminatedAt: string | null;
+  terminatedBy: string | null;
+}
+
+
 export interface BlogTag {
   id: number;
   name: string;
@@ -189,7 +236,7 @@ export interface CommentItemProps {
 export interface SidebarProps {
   writerName: string;
   blogCount: number;
-  relatedBlogs: any[];
+  relatedBlogs: BlogDetailsData[];
   tags: BlogTag[];
   loadingTags: boolean;
   onTagClick: (tagName: string) => void;

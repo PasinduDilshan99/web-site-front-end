@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import TourScheduleHeroSection from "@/components/sri-lankan-tours-components/TourSchedulesHeroSection";
 
@@ -198,7 +198,9 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule, tourName }) => {
                   <p className="text-sm font-semibold text-amber-800 mb-1">
                     Special Note
                   </p>
-                  <p className="text-sm text-amber-700">{schedule.specialNote}</p>
+                  <p className="text-sm text-amber-700">
+                    {schedule.specialNote}
+                  </p>
                 </div>
               </div>
             </div>
@@ -278,8 +280,8 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule, tourName }) => {
 // ========== Main TourSchedulePage Component ==========
 const TourSchedulePage = () => {
   const searchParams = useSearchParams();
-  const tourName = searchParams.get("tourName") || "";
-  const id = searchParams.get("id") || "";
+  const [tourName, setTourName] = useState<string | null>(null);
+  const [id, setId] = useState<string | null>(null);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -289,6 +291,13 @@ const TourSchedulePage = () => {
   const [filter, setFilter] = useState<
     "all" | "active" | "upcoming" | "ongoing"
   >("all");
+
+  useEffect(() => {
+    if (searchParams) {
+      setTourName(searchParams.get("tourName"));
+      setId(searchParams.get("id"));
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const fetchTourSchedule = async () => {
@@ -414,7 +423,8 @@ const TourSchedulePage = () => {
                 className={getFilterButtonClass("active")}
                 onClick={() => setFilter("active")}
               >
-                Active ({schedules.filter((s) => s.statusName === "ACTIVE").length})
+                Active (
+                {schedules.filter((s) => s.statusName === "ACTIVE").length})
               </button>
               <button
                 className={getFilterButtonClass("upcoming")}
@@ -535,7 +545,7 @@ const TourSchedulePage = () => {
                   <ScheduleCard
                     key={schedule.scheduleId}
                     schedule={schedule}
-                    tourName={tourData?.tourName || tourName}
+                    tourName={tourData?.tourName || ""}
                   />
                 ))}
               </div>
@@ -545,9 +555,14 @@ const TourSchedulePage = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                   <div className="text-center">
                     <div className="text-3xl font-bold text-emerald-600 mb-2">
-                      {schedules.filter((s) => s.statusName === "ACTIVE").length}
+                      {
+                        schedules.filter((s) => s.statusName === "ACTIVE")
+                          .length
+                      }
                     </div>
-                    <div className="text-sm text-gray-600">Active Schedules</div>
+                    <div className="text-sm text-gray-600">
+                      Active Schedules
+                    </div>
                   </div>
                   <div className="text-center">
                     <div className="text-3xl font-bold text-blue-600 mb-2">
@@ -559,7 +574,9 @@ const TourSchedulePage = () => {
                         ).length
                       }
                     </div>
-                    <div className="text-sm text-gray-600">Upcoming Schedules</div>
+                    <div className="text-sm text-gray-600">
+                      Upcoming Schedules
+                    </div>
                   </div>
                   <div className="text-center">
                     <div className="text-3xl font-bold text-green-600 mb-2">
@@ -572,7 +589,9 @@ const TourSchedulePage = () => {
                         ).length
                       }
                     </div>
-                    <div className="text-sm text-gray-600">Currently Ongoing</div>
+                    <div className="text-sm text-gray-600">
+                      Currently Ongoing
+                    </div>
                   </div>
                 </div>
               </div>

@@ -3,11 +3,9 @@
 import React, { useEffect, useState } from "react";
 import { GET_ALL_ACTIVE_TOUR_FE } from "@/utils/frontEndConstant";
 import Loading from "../../../components/common-components/loading/Loading";
-import { ErrorState } from "../../../components/common-components/error-state/ErrorState";
-import { EmptyState } from "../../../components/common-components/empty-state/EmptyState";
 import SectionHeader from "../../../components/common-components/section-header/SectionHeader";
 import AnimatedButton from "../../../components/common-components/buttons/AnimatedButton";
-import { ActiveToursType, ApiResponse } from "@/types/sri-lankan-tour-types";
+import { ActiveToursType, ActiveToursAPIResponse } from "@/types/sri-lankan-tour-types";
 import ToursGrid from "@/components/sri-lankan-tours-components/ToursGrid";
 import { useRouter } from "next/navigation";
 
@@ -50,7 +48,7 @@ useEffect(() => {
       try {
         setLoading(true);
         const response = await fetch(GET_ALL_ACTIVE_TOUR_FE);
-        const data: ApiResponse = await response.json();
+        const data: ActiveToursAPIResponse = await response.json();
 
         if (response.ok && data.code === 200) {
           const items: ActiveToursType[] = data.data || [];
@@ -73,11 +71,6 @@ useEffect(() => {
     fetchActiveTours();
   }, []);
 
-  const handleRetry = () => {
-    setError(null);
-    setLoading(true);
-    window.location.reload();
-  };
 
   const displayedTours = activeTours.slice(0, displayCount);
 
@@ -117,7 +110,7 @@ useEffect(() => {
 
         <ToursGrid
           tours={displayedTours}
-          allTours={activeTours}
+          // allTours={activeTours}
           displayCount={displayCount}
         />
       </div>

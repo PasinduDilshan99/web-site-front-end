@@ -137,7 +137,7 @@ const VillaPage = () => {
     setFilteredVillas(filtered);
   }, [filters, villas]);
 
-  const handleFilterChange = (filterName: keyof VillaFilters, value: any) => {
+  const handleFilterChange = (filterName: keyof VillaFilters, value: unknown) => {
     setFilters(prev => ({
       ...prev,
       [filterName]: value

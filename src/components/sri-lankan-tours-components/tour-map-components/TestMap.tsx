@@ -1,7 +1,7 @@
 // components/TestMap.tsx
 "use client";
-import { useEffect, useRef } from "react";
-import L, { Map as LeafletMap } from "leaflet";
+import { useEffect, useRef, useCallback } from "react";
+import L, { Map as LeafletMap, LatLngTuple } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { createPhotoMarker } from "./map-utils";
 
@@ -42,6 +42,24 @@ interface TestMapProps {
   returnToStart?: boolean;
 }
 
+// Define proper route style interface
+interface RouteStyle {
+  color: string;
+  weight: number;
+  opacity: number;
+  dashArray?: string;
+}
+
+// Type for OSRM API response
+interface OSRMRouteResponse {
+  routes: Array<{
+    geometry: {
+      coordinates: [number, number][];
+      type: string;
+    };
+  }>;
+}
+
 export default function TestMap({
   locations,
   returnToStart = false,
@@ -49,7 +67,7 @@ export default function TestMap({
   const mapRef = useRef<LeafletMap | null>(null);
   const routesRef = useRef<L.Polyline[]>([]);
 
-  const getRoute = async (waypoints: L.LatLng[]): Promise<L.LatLng[]> => {
+  const getRoute = useCallback(async (waypoints: L.LatLng[]): Promise<L.LatLng[]> => {
     if (waypoints.length < 2) return waypoints;
 
     try {
@@ -65,11 +83,11 @@ export default function TestMap({
         throw new Error(`Routing API error: ${response.status}`);
       }
 
-      const data = await response.json();
+      const data: OSRMRouteResponse = await response.json();
 
       if (data.routes && data.routes.length > 0) {
         return data.routes[0].geometry.coordinates.map(
-          ([lng, lat]) => new L.LatLng(lat, lng)
+          ([lng, lat]: [number, number]) => new L.LatLng(lat, lng)
         );
       } else {
         throw new Error("No route found");
@@ -78,12 +96,12 @@ export default function TestMap({
       console.error("Error fetching route:", error);
       return waypoints;
     }
-  };
+  }, []);
 
-  const drawRoute = async (
+  const drawRoute = useCallback(async (
     map: LeafletMap,
     waypoints: L.LatLng[],
-    style: any
+    style: RouteStyle
   ) => {
     try {
       const routePoints = await getRoute(waypoints);
@@ -92,14 +110,15 @@ export default function TestMap({
       return polyline;
     } catch (error) {
       console.error("Error drawing route:", error);
-      const polyline = L.polyline(waypoints, {
+      const fallbackStyle = {
         ...style,
         dashArray: "5,5",
-      }).addTo(map);
+      } as L.PolylineOptions;
+      const polyline = L.polyline(waypoints, fallbackStyle).addTo(map);
       routesRef.current.push(polyline);
       return polyline;
     }
-  };
+  }, [getRoute]);
 
   useEffect(() => {
     if (!locations || locations.length < 2) return;
@@ -111,10 +130,10 @@ export default function TestMap({
       attribution: MAP_CONFIG.attribution,
     }).addTo(map);
 
-    const bounds: L.LatLngExpression[] = [];
+    const markers: L.Marker[] = [];
     locations.forEach((location, index) => {
-      createPhotoMarker(map, location, index, locations.length);
-      bounds.push([location.lat, location.lng]);
+      const marker = createPhotoMarker(map, location, index, locations.length);
+      if (marker) markers.push(marker);
     });
 
     if (locations.length >= 2) {
@@ -133,7 +152,13 @@ export default function TestMap({
       drawRoute(map, returnWaypoints, MAP_CONFIG.returnRouteStyle);
     }
 
-    map.fitBounds(bounds, { padding: MAP_CONFIG.boundsPadding });
+    // Create a LatLngBounds object from all locations
+    if (locations.length > 0) {
+      const bounds = L.latLngBounds(
+        locations.map(loc => [loc.lat, loc.lng] as LatLngTuple)
+      );
+      map.fitBounds(bounds, { padding: MAP_CONFIG.boundsPadding });
+    }
 
     return () => {
       routesRef.current.forEach((route) => {
@@ -143,10 +168,17 @@ export default function TestMap({
       });
       routesRef.current = [];
 
+      // Remove markers
+      markers.forEach(marker => {
+        if (map.hasLayer(marker)) {
+          map.removeLayer(marker);
+        }
+      });
+
       map.remove();
       mapRef.current = null;
     };
-  }, [locations, returnToStart]);
+  }, [locations, returnToStart, drawRoute]);
 
   return (
     <div

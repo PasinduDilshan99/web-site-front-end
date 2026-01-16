@@ -81,7 +81,7 @@ export default function PackageReviewsPage() {
           <div className="bg-white rounded-2xl shadow-lg border border-amber-200 p-8 text-center">
             <div className="text-amber-400 text-6xl mb-4">📦</div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">No Package Reviews Yet</h3>
-            <p className="text-gray-600">You haven't reviewed any packages yet.</p>
+            <p className="text-gray-600">You haven&apos;t reviewed any packages yet.</p>
           </div>
         ) : (
           <div className="space-y-6">
@@ -118,7 +118,7 @@ export default function PackageReviewsPage() {
                           >
                             <img
                               src={image.imageUrl}
-                              alt={image.name}
+                              alt={image.imageUrl}
                               className="w-full h-full object-cover"
                             />
                           </div>

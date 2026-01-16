@@ -405,9 +405,11 @@ const CreateBlogPage = () => {
 
   const previewContent = getPreviewContent();
 
-  if(!user){
-    router.push("/login")
-  }
+  useEffect(() => {
+    if (!user) {
+      router.push("/login");
+    }
+  }, [user, router]);
 
   return (
     <>

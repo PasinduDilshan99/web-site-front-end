@@ -1,9 +1,7 @@
 "use client";
 import { GET_AVAILABLE_ACCOMMODATION } from "@/utils/frontEndConstant";
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
 import SectionHeader from "../../../components/common-components/section-header/SectionHeader";
-import AnimatedButton from "../../../components/common-components/buttons/AnimatedButton";
 
 // Interface for accommodation based on your API response
 interface AccommodationsType {
@@ -31,13 +29,12 @@ const Accommodations = () => {
   const [accommodations, setAccommodations] = useState<AccommodationsType[]>(
     []
   );
-  const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
   // Get valid image URL - now using accommodationImageUrl instead of accommodationIconUrl
   const getValidImageUrl = (originalUrl: string): string => {
-    if (!originalUrl || imageErrors.has(originalUrl)) {
+    if (!originalUrl) {
       return getDefaultImage();
     }
     return originalUrl;
@@ -112,20 +109,6 @@ const Accommodations = () => {
   const handleAccommodationClick = (linkUrl: string) => {
     if (linkUrl) {
       window.location.href = linkUrl;
-    }
-  };
-
-  // Function to get status badge color
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "AVAILABLE":
-        return "bg-green-100 text-green-800";
-      case "BOOKED":
-        return "bg-red-100 text-red-800";
-      case "UNDER_MAINTENANCE":
-        return "bg-yellow-100 text-yellow-800";
-      default:
-        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -469,7 +452,7 @@ const Accommodations = () => {
         )}
 
         {/* Call to Action */}
-          {/* <div className="text-center mt-6 sm:mt-8 md:mt-10 lg:mt-12 xl:mt-16">
+        {/* <div className="text-center mt-6 sm:mt-8 md:mt-10 lg:mt-12 xl:mt-16">
             <AnimatedButton onClick={() => console.log("View all clicked")}>
               View All Accommodations
             </AnimatedButton>

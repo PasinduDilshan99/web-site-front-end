@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import {
-  DestinationHistory,
+  DestinationHistoryType,
   HistoryApiResponse,
 } from "@/types/destinations-types";
 import Loading from "@/components/common-components/loading/Loading";
@@ -9,7 +9,7 @@ import { ErrorState } from "@/components/common-components/error-state/ErrorStat
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";
 
 interface DestinationHistoryCarouselProps {
-  historyData?: DestinationHistory[];
+  historyData?: DestinationHistoryType[];
   title?: string;
   description?: string;
   maxItems?: number;
@@ -27,7 +27,7 @@ const DestinationHistoryCarousel: React.FC<DestinationHistoryCarouselProps> = ({
   autoPlay = true,
   autoPlayInterval = 5000,
 }) => {
-  const [history, setHistory] = useState<DestinationHistory[]>([]);
+  const [history, setHistory] = useState<DestinationHistoryType[]>([]);
   const [loading, setLoading] = useState<boolean>(!historyData);
   const [error, setError] = useState<string | null>(null);
   const [currentSlide, setCurrentSlide] = useState<number>(0);

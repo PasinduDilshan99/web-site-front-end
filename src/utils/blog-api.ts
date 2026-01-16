@@ -1,5 +1,5 @@
 // utils/blog-api.ts
-import { BlogReactRequest, CommentRequest, CommentReactRequest } from '@/types/blog-types';
+import { BlogReactRequest, CommentRequest, CommentReactRequest, BlogReactApiResponse, BlogCommentApiResponse, BlogCommentReactApiResponse, BlogTagAPIResponse } from '@/types/blog-types';
 
 const API_BASE_URL = 'http://localhost:8080/felicita/v0/api/blog';
 
@@ -14,7 +14,7 @@ const getHeaders = (): HeadersInit => {
 };
 
 // Blog reaction API
-export const blogReact = async (data: BlogReactRequest): Promise<any> => {
+export const blogReact = async (data: BlogReactRequest): Promise<BlogReactApiResponse> => {
   try {
     const response = await fetch(`${API_BASE_URL}/react`, {
       method: 'POST',
@@ -37,7 +37,7 @@ export const blogReact = async (data: BlogReactRequest): Promise<any> => {
 };
 
 // Comment API (for both comments and replies)
-export const addComment = async (data: CommentRequest): Promise<any> => {
+export const addComment = async (data: CommentRequest): Promise<BlogCommentApiResponse> => {
   try {
     // If parentId is undefined, send null
     const requestData = {
@@ -66,7 +66,7 @@ export const addComment = async (data: CommentRequest): Promise<any> => {
 };
 
 // Comment reaction API
-export const commentReact = async (data: CommentReactRequest): Promise<any> => {
+export const commentReact = async (data: CommentReactRequest): Promise<BlogCommentReactApiResponse> => {
   try {
     const response = await fetch(`${API_BASE_URL}/comment-react`, {
       method: 'POST',
@@ -89,7 +89,7 @@ export const commentReact = async (data: CommentReactRequest): Promise<any> => {
 };
 
 // Bookmark API (existing, but adding here for completeness)
-export const toggleBookmark = async (blogId: number): Promise<any> => {
+export const toggleBookmark = async (blogId: number): Promise<BlogTagAPIResponse> => {
   try {
     const response = await fetch(`${API_BASE_URL}/bookmark`, {
       method: 'POST',

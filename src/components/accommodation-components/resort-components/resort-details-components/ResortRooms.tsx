@@ -98,7 +98,7 @@ const ResortRooms: React.FC<ResortRoomsProps> = ({ rooms }) => {
                     </div>
                   </div>
                   
-                  {room.wifiAvailable && (
+                  {/* {room.wifiAvailable && (
                     <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-xl border border-blue-200">
                       <Wifi className="w-5 h-5 text-blue-600" />
                       <div>
@@ -106,7 +106,7 @@ const ResortRooms: React.FC<ResortRoomsProps> = ({ rooms }) => {
                         <div className="font-semibold text-gray-800">Free</div>
                       </div>
                     </div>
-                  )}
+                  )} */}
                 </div>
                 
                 {room.features.length > 0 && (

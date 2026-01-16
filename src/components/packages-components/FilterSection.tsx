@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 interface FilterSectionProps {
   filters: Filters;
-  onFilterChange: (filterName: keyof Filters, value: any) => void;
+  onFilterChange: (filterName: keyof Filters, value: Filters[keyof Filters]) => void;
   onSearch: () => void;
   onResetFilters: () => void;
   packageTypes: string[];
@@ -112,7 +112,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
               min="0"
               max="100000"
               value={filters.priceRange[0]}
-              onChange={(e) => handlePriceChange('min', parseInt(e.target.value) || 0)}
+              onChange={(e) => handlePriceChange('min', parseInt(e.target.value, 10) || 0)}
               className="w-1/2 px-3 py-1 border border-purple-300 rounded-md text-sm"
               placeholder="Min"
             />
@@ -121,7 +121,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
               min="0"
               max="100000"
               value={filters.priceRange[1]}
-              onChange={(e) => handlePriceChange('max', parseInt(e.target.value) || 100000)}
+              onChange={(e) => handlePriceChange('max', parseInt(e.target.value, 10) || 100000)}
               className="w-1/2 px-3 py-1 border border-purple-300 rounded-md text-sm"
               placeholder="Max"
             />
@@ -333,10 +333,15 @@ const FilterSection: React.FC<FilterSectionProps> = ({
 };
 
 // Active Filters Summary Component
-const ActiveFiltersSummary: React.FC<{
+interface ActiveFiltersSummaryProps {
   filters: Filters;
-  onFilterChange: (filterName: keyof Filters, value: any) => void;
-}> = ({ filters, onFilterChange }) => {
+  onFilterChange: (filterName: keyof Filters, value: Filters[keyof Filters]) => void;
+}
+
+const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({ 
+  filters, 
+  onFilterChange 
+}) => {
   const formatPrice = (price: number): string => {
     return new Intl.NumberFormat("en-LK", {
       style: "currency",
@@ -344,69 +349,106 @@ const ActiveFiltersSummary: React.FC<{
     }).format(price);
   };
 
-  const activeFilters = [
-    filters.search && {
+  interface ActiveFilter {
+    name: keyof Filters;
+    label: string;
+    value: Filters[keyof Filters];
+  }
+
+  // Build active filters array with proper typing
+  const activeFilters: ActiveFilter[] = [];
+  
+  if (filters.search) {
+    activeFilters.push({
       name: "search",
       label: `Search: "${filters.search}"`,
       value: filters.search,
-    },
-    filters.duration && {
+    });
+  }
+  
+  if (filters.duration) {
+    activeFilters.push({
       name: "duration",
       label: `Duration: ${filters.duration} days`,
       value: filters.duration,
-    },
-    filters.packageType && {
+    });
+  }
+  
+  if (filters.packageType) {
+    activeFilters.push({
       name: "packageType",
       label: `Type: ${filters.packageType}`,
       value: filters.packageType,
-    },
-    filters.location && {
+    });
+  }
+  
+  if (filters.location) {
+    activeFilters.push({
       name: "location",
       label: `Location: ${filters.location}`,
       value: filters.location,
-    },
-    filters.minPersons && {
+    });
+  }
+  
+  if (filters.minPersons) {
+    activeFilters.push({
       name: "minPersons",
       label: `Min Persons: ${filters.minPersons}`,
       value: filters.minPersons,
-    },
-    filters.maxPersons && {
+    });
+  }
+  
+  if (filters.maxPersons) {
+    activeFilters.push({
       name: "maxPersons",
       label: `Max Persons: ${filters.maxPersons}`,
       value: filters.maxPersons,
-    },
-    filters.startDate && {
+    });
+  }
+  
+  if (filters.startDate) {
+    activeFilters.push({
       name: "startDate",
       label: `From: ${new Date(filters.startDate).toLocaleDateString()}`,
       value: filters.startDate,
-    },
-    filters.endDate && {
+    });
+  }
+  
+  if (filters.endDate) {
+    activeFilters.push({
       name: "endDate",
       label: `To: ${new Date(filters.endDate).toLocaleDateString()}`,
       value: filters.endDate,
-    },
-    (filters.priceRange[0] > 0 || filters.priceRange[1] < 100000) && {
+    });
+  }
+  
+  if (filters.priceRange[0] > 0 || filters.priceRange[1] < 100000) {
+    activeFilters.push({
       name: "priceRange",
       label: `Price: ${formatPrice(filters.priceRange[0])} - ${formatPrice(filters.priceRange[1])}`,
       value: filters.priceRange,
-    },
-  ].filter(Boolean);
+    });
+  }
 
   if (activeFilters.length === 0) return null;
 
-  const removeFilter = (filterName: string) => {
-    const resetValues: { [key: string]: any } = {
-      search: "",
-      duration: "",
-      packageType: "",
-      location: "",
-      minPersons: "",
-      maxPersons: "",
-      startDate: "",
-      endDate: "",
-      priceRange: [0, 100000],
-    };
-    onFilterChange(filterName as keyof Filters, resetValues[filterName]);
+  const resetValues: Partial<Filters> = {
+    search: "",
+    duration: "",
+    packageType: "",
+    location: "",
+    minPersons: "",
+    maxPersons: "",
+    startDate: "",
+    endDate: "",
+    priceRange: [0, 100000],
+  };
+
+  const removeFilter = (filterName: keyof Filters) => {
+    const resetValue = resetValues[filterName];
+    if (resetValue !== undefined) {
+      onFilterChange(filterName, resetValue as Filters[keyof Filters]);
+    }
   };
 
   return (
@@ -418,7 +460,7 @@ const ActiveFiltersSummary: React.FC<{
         <span className="text-sm text-gray-600">({activeFilters.length})</span>
       </div>
       <div className="flex flex-wrap gap-2">
-        {activeFilters.map((filter: any) => (
+        {activeFilters.map((filter) => (
           <span
             key={filter.name}
             className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-purple-100 to-amber-100 text-purple-800 rounded-full text-xs font-medium border border-purple-200 transition-all duration-200 hover:shadow-md"

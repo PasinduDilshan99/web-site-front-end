@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 interface FilterSectionProps {
   filters: Filters;
-  onFilterChange: (filterName: keyof Filters, value: any) => void;
+  onFilterChange: (filterName: keyof Filters, value: Filters[keyof Filters]) => void;
   onSearch: () => void;
   onResetFilters: () => void;
   categories: string[];
@@ -112,7 +112,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
               min="0"
               max="10000"
               value={filters.priceRange[0]}
-              onChange={(e) => handlePriceChange('min', parseInt(e.target.value) || 0)}
+              onChange={(e) => handlePriceChange('min', parseInt(e.target.value, 10) || 0)}
               className="w-1/2 px-3 py-1 border border-purple-300 rounded-md text-sm"
               placeholder="Min"
             />
@@ -121,7 +121,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
               min="0"
               max="10000"
               value={filters.priceRange[1]}
-              onChange={(e) => handlePriceChange('max', parseInt(e.target.value) || 10000)}
+              onChange={(e) => handlePriceChange('max', parseInt(e.target.value, 10) || 10000)}
               className="w-1/2 px-3 py-1 border border-purple-300 rounded-md text-sm"
               placeholder="Max"
             />
@@ -309,10 +309,15 @@ const FilterSection: React.FC<FilterSectionProps> = ({
 };
 
 // Active Filters Summary Component
-const ActiveFiltersSummary: React.FC<{
+interface ActiveFiltersSummaryProps {
   filters: Filters;
-  onFilterChange: (filterName: keyof Filters, value: any) => void;
-}> = ({ filters, onFilterChange }) => {
+  onFilterChange: (filterName: keyof Filters, value: Filters[keyof Filters]) => void;
+}
+
+const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({ 
+  filters, 
+  onFilterChange 
+}) => {
   const formatPrice = (price: number): string => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -320,51 +325,79 @@ const ActiveFiltersSummary: React.FC<{
     }).format(price);
   };
 
-  const activeFilters = [
-    filters.search && {
+  interface ActiveFilter {
+    name: keyof Filters;
+    label: string;
+    value: Filters[keyof Filters];
+  }
+
+  // Build active filters array with proper typing
+  const activeFilters: ActiveFilter[] = [];
+  
+  if (filters.search) {
+    activeFilters.push({
       name: "search",
       label: `Search: "${filters.search}"`,
       value: filters.search,
-    },
-    filters.duration && {
+    });
+  }
+  
+  if (filters.duration) {
+    activeFilters.push({
       name: "duration",
       label: `Duration: ${filters.duration} days`,
       value: filters.duration,
-    },
-    filters.category && {
+    });
+  }
+  
+  if (filters.category) {
+    activeFilters.push({
       name: "category",
       label: `Category: ${filters.category}`,
       value: filters.category,
-    },
-    filters.location && {
+    });
+  }
+  
+  if (filters.location) {
+    activeFilters.push({
       name: "location",
       label: `Location: ${filters.location}`,
       value: filters.location,
-    },
-    filters.rating > 0 && {
+    });
+  }
+  
+  if (filters.rating > 0) {
+    activeFilters.push({
       name: "rating",
       label: `Rating: ${filters.rating}+ stars`,
       value: filters.rating,
-    },
-    (filters.priceRange[0] > 0 || filters.priceRange[1] < 10000) && {
+    });
+  }
+  
+  if (filters.priceRange[0] > 0 || filters.priceRange[1] < 10000) {
+    activeFilters.push({
       name: "priceRange",
       label: `Price: ${formatPrice(filters.priceRange[0])} - ${formatPrice(filters.priceRange[1])}`,
       value: filters.priceRange,
-    },
-  ].filter(Boolean);
+    });
+  }
 
   if (activeFilters.length === 0) return null;
 
-  const removeFilter = (filterName: string) => {
-    const resetValues: { [key: string]: any } = {
-      search: "",
-      duration: "",
-      category: "",
-      location: "",
-      rating: 0,
-      priceRange: [0, 10000],
-    };
-    onFilterChange(filterName as keyof Filters, resetValues[filterName]);
+  const resetValues: Partial<Filters> = {
+    search: "",
+    duration: "",
+    category: "",
+    location: "",
+    rating: 0,
+    priceRange: [0, 10000],
+  };
+
+  const removeFilter = (filterName: keyof Filters) => {
+    const resetValue = resetValues[filterName];
+    if (resetValue !== undefined) {
+      onFilterChange(filterName, resetValue as Filters[keyof Filters]);
+    }
   };
 
   return (
@@ -376,7 +409,7 @@ const ActiveFiltersSummary: React.FC<{
         <span className="text-sm text-gray-600">({activeFilters.length})</span>
       </div>
       <div className="flex flex-wrap gap-2">
-        {activeFilters.map((filter: any) => (
+        {activeFilters.map((filter) => (
           <span
             key={filter.name}
             className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-purple-100 to-amber-100 text-purple-800 rounded-full text-xs font-medium border border-purple-200 transition-all duration-200 hover:shadow-md"

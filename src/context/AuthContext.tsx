@@ -131,7 +131,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     try {
-      const res = await fetch("http://localhost:8080/felicita/api/v0/auth/me", {
+      const res = await fetch("/api/me", {
         method: "GET",
         credentials: "include",
         headers: { "Content-Type": "application/json" },

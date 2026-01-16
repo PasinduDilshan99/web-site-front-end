@@ -93,10 +93,10 @@ export const GET_HOSTEL_DETAILS_SECTION_BE = `${BASE_PATH}${VERSION}${API}${ACCO
 export const GET_RESTAURANT_DETAILS_SECTION_BE = `${BASE_PATH}${VERSION}${API}${ACCOMMODATION}/restaurants-section`;
 
 // Service Providers
-export const GET_SERVICE_PROVIDER_DETAILS = (id) => 
+export const GET_SERVICE_PROVIDER_DETAILS = (id: string) => 
   `${BASE_PATH}${API}${VERSION}${SERVICE_PROVIDER}/${id}`;
 
 // vehicles
 export const GET_ACTIVE_VEHICLES_BE = `${BASE_PATH}${API}${VERSION}${VEHICLES}/active-vehicles`;
-export const GET_VEHICLES_BY_ID_BE = (id) => 
+export const GET_VEHICLES_BY_ID_BE = (id: string) => 
   `${BASE_PATH}${API}${VERSION}${VEHICLES}/${id}`;

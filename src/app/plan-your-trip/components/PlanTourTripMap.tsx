@@ -119,7 +119,7 @@ const PlanYourTripMap: React.FC = () => {
           const transformedLocations: Location[] = result.data.planYourTripDestinationDtos.map(dest => ({
             id: dest.id,
             name: dest.name,
-            category: dest.category.toLowerCase(),
+            category: dest.category?.toLowerCase(),
             lat: parseFloat(dest.latitude.toString()),
             lng: parseFloat(dest.longitude.toString()),
             description: dest.description

@@ -36,6 +36,8 @@ export default async function VillaDetailsPage({ params }: VillaDetailsPageProps
       </div>
     );
   } catch (error) {
+        console.error("Error loading villa details:", error);
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
         <NavBar />

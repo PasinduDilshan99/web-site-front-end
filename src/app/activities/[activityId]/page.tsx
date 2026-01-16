@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { ActivityData, Review } from "@/types/activities-types";
+import { ActivityData } from "@/types/activities-types";
 import LoadingState from "@/components/activities-components/LoadingState";
 import ErrorState from "@/components/activities-components/ErrorState";
 import ActivityHeader from "@/components/activities-components/ActivityHeader";
@@ -17,11 +17,12 @@ import ActivityHistorySection, {
   ActivityHistoryImage,
 } from "@/components/activities-components/ActivityHistorySection";
 import ActivityHistoryGallery from "@/components/activities-components/ActivityHistoryGallery";
-import NavBar from "@/components/common-components/navBar/NavBar";
-import Footer from "@/app/components/footer/Footer";
+import { Review } from "@/pages/ActivityPage";
+
 
 const ActivityDetailsPage = () => {
-  const { activityId } = useParams();
+  const params = useParams();
+  const activityId = params?.activityId;
   const [activity, setActivity] = useState<ActivityData | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [histories, setHistories] = useState<ActivityHistory[]>([]);
@@ -275,7 +276,7 @@ const ActivityDetailsPage = () => {
             Activity Not Found
           </h1>
           <p className="text-gray-600">
-            The activity you're looking for doesn't exist.
+            The activity you&apos;re looking for doesn&apos;t exist.
           </p>
         </div>
       </div>
@@ -283,7 +284,6 @@ const ActivityDetailsPage = () => {
   }
 
   return (
-    <>
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-purple-50">
         <ActivityHeader activity={activity} />
 
@@ -333,7 +333,6 @@ const ActivityDetailsPage = () => {
           />
         </div>
       </div>
-    </>
   );
 };
 

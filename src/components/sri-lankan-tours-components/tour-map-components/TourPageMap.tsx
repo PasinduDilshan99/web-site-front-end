@@ -1,6 +1,6 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
-import L, { Map as LeafletMap } from "leaflet";
+import { useEffect, useRef, useState, useCallback } from "react";
+import L, { Map as LeafletMap, LatLngTuple } from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 type Image = {
@@ -55,6 +55,14 @@ const MAP_CONFIG = {
   boundsPadding: [50, 50] as [number, number],
 };
 
+// Define proper route style interface
+interface RouteStyle {
+  color: string;
+  weight: number;
+  opacity: number;
+  dashArray?: string;
+}
+
 // Configuration
 const API_BASE_URL = "http://localhost:8080/felicita/v0/api";
 const ROUTING_API_URL = "https://router.project-osrm.org/route/v1/driving";
@@ -71,61 +79,64 @@ function TestMap({
   const routesRef = useRef<L.Polyline[]>([]);
 
   // Function to get route from OSRM
-  const getRoute = async (waypoints: L.LatLng[]): Promise<L.LatLng[]> => {
-    if (waypoints.length < 2) return waypoints;
+  const getRoute = useCallback(
+    async (waypoints: L.LatLng[]): Promise<L.LatLng[]> => {
+      if (waypoints.length < 2) return waypoints;
 
-    try {
-      const coordinates = waypoints
-        .map((point) => `${point.lng},${point.lat}`)
-        .join(";");
+      try {
+        const coordinates = waypoints
+          .map((point) => `${point.lng},${point.lat}`)
+          .join(";");
 
-      const response = await fetch(
-        `${ROUTING_API_URL}/${coordinates}?overview=full&geometries=geojson`
-      );
-
-      if (!response.ok) {
-        throw new Error(`Routing API error: ${response.status}`);
-      }
-
-      const data: RouteResponse = await response.json();
-
-      if (data.routes && data.routes.length > 0) {
-        // Convert GeoJSON coordinates to LatLng array
-        return data.routes[0].geometry.coordinates.map(
-          ([lng, lat]) => new L.LatLng(lat, lng)
+        const response = await fetch(
+          `${ROUTING_API_URL}/${coordinates}?overview=full&geometries=geojson`
         );
-      } else {
-        throw new Error("No route found");
+
+        if (!response.ok) {
+          throw new Error(`Routing API error: ${response.status}`);
+        }
+
+        const data: RouteResponse = await response.json();
+
+        if (data.routes && data.routes.length > 0) {
+          // Convert GeoJSON coordinates to LatLng array
+          return data.routes[0].geometry.coordinates.map(
+            ([lng, lat]) => new L.LatLng(lat, lng)
+          );
+        } else {
+          throw new Error("No route found");
+        }
+      } catch (error) {
+        console.error("Error fetching route:", error);
+        // Fallback to straight line if routing fails
+        return waypoints;
       }
-    } catch (error) {
-      console.error("Error fetching route:", error);
-      // Fallback to straight line if routing fails
-      return waypoints;
-    }
-  };
+    },
+    []
+  );
 
   // Function to draw route on map
-  const drawRoute = async (
-    map: LeafletMap,
-    waypoints: L.LatLng[],
-    style: any
-  ) => {
-    try {
-      const routePoints = await getRoute(waypoints);
-      const polyline = L.polyline(routePoints, style).addTo(map);
-      routesRef.current.push(polyline);
-      return polyline;
-    } catch (error) {
-      console.error("Error drawing route:", error);
-      // Fallback to straight line
-      const polyline = L.polyline(waypoints, {
-        ...style,
-        dashArray: "5,5",
-      }).addTo(map);
-      routesRef.current.push(polyline);
-      return polyline;
-    }
-  };
+  const drawRoute = useCallback(
+    async (map: LeafletMap, waypoints: L.LatLng[], style: RouteStyle) => {
+      try {
+        const routePoints = await getRoute(waypoints);
+        const polyline = L.polyline(routePoints, style).addTo(map);
+        routesRef.current.push(polyline);
+        return polyline;
+      } catch (error) {
+        console.error("Error drawing route:", error);
+        // Fallback to straight line
+        const fallbackStyle = {
+          ...style,
+          dashArray: "5,5",
+        } as L.PolylineOptions;
+        const polyline = L.polyline(waypoints, fallbackStyle).addTo(map);
+        routesRef.current.push(polyline);
+        return polyline;
+      }
+    },
+    [getRoute]
+  );
 
   useEffect(() => {
     if (!locations || locations.length < 2) return;
@@ -161,8 +172,12 @@ function TestMap({
       drawRoute(map, returnWaypoints, MAP_CONFIG.returnRouteStyle);
     }
 
-    map.fitBounds(bounds, { padding: MAP_CONFIG.boundsPadding });
-
+    if (locations.length > 0) {
+      const bounds = L.latLngBounds(
+        locations.map((loc) => [loc.lat, loc.lng] as LatLngTuple)
+      );
+      map.fitBounds(bounds, { padding: MAP_CONFIG.boundsPadding });
+    }
     return () => {
       // Clean up routes
       routesRef.current.forEach((route) => {
@@ -175,7 +190,7 @@ function TestMap({
       map.remove();
       mapRef.current = null;
     };
-  }, [locations, returnToStart]);
+  }, [locations, returnToStart, drawRoute]);
 
   return (
     <div

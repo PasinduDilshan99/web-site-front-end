@@ -188,7 +188,7 @@ export default function CancelledToursPage() {
           <div className="bg-white rounded-2xl shadow-lg border border-amber-200 p-8 text-center">
             <div className="text-gray-400 text-6xl mb-4">📝</div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">No Cancelled Tours</h3>
-            <p className="text-gray-600 mb-6">You haven't cancelled any tours yet.</p>
+            <p className="text-gray-600 mb-6">You haven&apos;t cancelled any tours yet.</p>
             <button className="px-6 py-3 bg-gradient-to-r from-amber-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all duration-300">
               View Current Bookings
             </button>

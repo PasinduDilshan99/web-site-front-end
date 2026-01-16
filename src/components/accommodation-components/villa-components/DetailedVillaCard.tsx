@@ -74,7 +74,7 @@ const DetailedVillaCard: React.FC<CompactVillaCardProps> = ({ villa }) => {
               )}
             </div>
             <div className={`grid gap-2 ${showAllImages ? 'grid-cols-2' : 'grid-cols-3'}`}>
-              {displayImages.map((image, index) => (
+              {displayImages?.map((image, index) => (
                 <div key={index} className="relative aspect-square rounded-lg overflow-hidden group/image border-2 border-teal-100">
                   <Image
                     src={image.imageUrl}
@@ -134,7 +134,7 @@ const DetailedVillaCard: React.FC<CompactVillaCardProps> = ({ villa }) => {
         </div>
 
         {/* Villa Suites */}
-        {displayRooms.length > 0 && (
+        {displayRooms && (
           <div className="mb-4">
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-semibold text-gray-800 text-sm flex items-center">
@@ -234,7 +234,7 @@ const DetailedVillaCard: React.FC<CompactVillaCardProps> = ({ villa }) => {
                 <span className="ml-1 text-gray-600">({villa.reviews.totalReviews})</span>
               </div>
             </div>
-            {displayReviews.length > 0 && (
+            {displayReviews && (
               <div className="space-y-2">
                 {displayReviews.map((review, index) => (
                   <div key={index} className="text-xs">
@@ -243,7 +243,7 @@ const DetailedVillaCard: React.FC<CompactVillaCardProps> = ({ villa }) => {
                         {'⭐'.repeat(review.rating)}
                       </div>
                     </div>
-                    <p className="text-gray-600 italic line-clamp-2">"{review.comment}"</p>
+                    <p className="text-gray-600 italic line-clamp-2">{review.comment}</p>
                   </div>
                 ))}
               </div>

@@ -1,10 +1,25 @@
 // components/TourControls.tsx
-
+type Image = {
+  id: number;
+  url: string;
+  name: string;
+  description?: string;
+};
+type Location = {
+  id: number;
+  name: string;
+  lat: number;
+  lng: number;
+  description?: string;
+  images: Image[];
+};
 interface TourControlsProps {
   returnToStart: boolean;
   onReturnToStartChange: (value: boolean) => void;
   locations: Location[];
 }
+
+
 
 export default function TourControls({
   returnToStart,

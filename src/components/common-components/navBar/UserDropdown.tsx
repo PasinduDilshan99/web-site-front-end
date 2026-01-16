@@ -23,7 +23,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
     await onLogout();
     setIsDropdownOpen(false);
     onCloseAll();
-    if (pathname.startsWith("/profile")) {
+    if (pathname?.startsWith("/profile")) {
       router.push("/login");
     }
   };

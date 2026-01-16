@@ -59,11 +59,12 @@ export default function SignupPage() {
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !loading) {
-      handleSubmit(e as any);
-    }
-  };
+const handleKeyPress = (e: React.KeyboardEvent) => {
+  if (e.key === "Enter" && !loading) {
+    e.preventDefault();
+    handleSubmit(e as React.FormEvent);
+  }
+};
 
   return (
     <>

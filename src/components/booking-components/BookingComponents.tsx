@@ -32,6 +32,20 @@ export const Label = ({ children, htmlFor, className = '' }: { children: React.R
   </label>
 );
 
+interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
+  type?: string;
+  id?: string;
+  name?: string;
+  value?: string | number;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
+  className?: string;
+  required?: boolean;
+  readOnly?: boolean;
+  min?: string | number;
+  step?: string | number;
+}
+
 export const Input = ({ 
   type = 'text', 
   id, 
@@ -43,8 +57,9 @@ export const Input = ({
   required = false,
   readOnly = false,
   min,
-  step
-}: any) => (
+  step,
+  ...props
+}: InputProps) => (
   <input
     type={type}
     id={id}
@@ -57,8 +72,20 @@ export const Input = ({
     min={min}
     step={step}
     className={`w-full px-3 py-2 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900 ${className}`}
+    {...props}
   />
 );
+
+interface TextareaProps extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'onChange'> {
+  id?: string;
+  name?: string;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  placeholder?: string;
+  className?: string;
+  rows?: number;
+  required?: boolean;
+}
 
 export const Textarea = ({ 
   id, 
@@ -68,8 +95,9 @@ export const Textarea = ({
   placeholder, 
   className = '', 
   rows = 3,
-  required = false 
-}: any) => (
+  required = false,
+  ...props
+}: TextareaProps) => (
   <textarea
     id={id}
     name={name}
@@ -79,8 +107,19 @@ export const Textarea = ({
     rows={rows}
     required={required}
     className={`w-full px-3 py-2 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900 ${className}`}
+    {...props}
   />
 );
+
+interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'onChange'> {
+  id?: string;
+  name?: string;
+  value?: string | number;
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  children?: React.ReactNode;
+  className?: string;
+  disabled?: boolean;
+}
 
 export const Select = ({ 
   id, 
@@ -89,8 +128,9 @@ export const Select = ({
   onChange, 
   children, 
   className = '', 
-  disabled = false 
-}: any) => (
+  disabled = false,
+  ...props
+}: SelectProps) => (
   <select
     id={id}
     name={name}
@@ -98,14 +138,24 @@ export const Select = ({
     onChange={onChange}
     disabled={disabled}
     className={`w-full px-3 py-2 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900 ${className}`}
+    {...props}
   >
     {children}
   </select>
 );
 
-export const SelectItem = ({ value, children }: any) => (
+export const SelectItem = ({ value, children }: { value: string | number; children: React.ReactNode }) => (
   <option value={value} className="text-gray-900">{children}</option>
 );
+
+interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'> {
+  children: React.ReactNode;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  type?: 'button' | 'submit' | 'reset';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  className?: string;
+  disabled?: boolean;
+}
 
 export const Button = ({ 
   children, 
@@ -113,8 +163,9 @@ export const Button = ({
   type = 'button', 
   variant = 'primary', 
   className = '',
-  disabled = false 
-}: any) => {
+  disabled = false,
+  ...props
+}: ButtonProps) => {
   const baseClasses = 'px-4 py-2 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2';
   
   const variantClasses = {
@@ -130,13 +181,20 @@ export const Button = ({
       onClick={onClick}
       disabled={disabled}
       className={`${baseClasses} ${variantClasses[variant]} ${className}`}
+      {...props}
     >
       {children}
     </button>
   );
 };
 
-export const Switch = ({ checked, onCheckedChange, id }: any) => (
+interface SwitchProps {
+  checked: boolean;
+  onCheckedChange: (checked: boolean) => void;
+  id?: string;
+}
+
+export const Switch = ({ checked, onCheckedChange, id }: SwitchProps) => (
   <button
     type="button"
     id={id}
@@ -159,7 +217,13 @@ export const LoadingSpinner = () => (
   </div>
 );
 
-export const Toast = ({ message, type = 'error', onClose }: { message: string; type?: 'success' | 'error'; onClose: () => void }) => {
+interface ToastProps {
+  message: string;
+  type?: 'success' | 'error';
+  onClose: () => void;
+}
+
+export const Toast = ({ message, type = 'error', onClose }: ToastProps) => {
   React.useEffect(() => {
     const timer = setTimeout(() => {
       onClose();

@@ -3,6 +3,7 @@ import { GET_ACTIVE_ACTIVITIES_CATEGORIES_FE } from "@/utils/frontEndConstant";
 import React, { useEffect, useState } from "react";
 import AnimatedButton from "../../../../components/common-components/buttons/AnimatedButton";
 import SectionHeader from "../../../../components/common-components/section-header/SectionHeader";
+import Image from "next/image";
 
 // Updated interfaces based on new API response
 interface CategoryImage {
@@ -267,10 +268,12 @@ const ActivityCategoriesHome = () => {
               >
                 {/* Category Image Container */}
                 <div className="relative h-40 sm:h-48 md:h-56 lg:h-64 overflow-hidden">
-                  <img
+                  <Image
                     src={primaryImage}
                     alt={category.categoryName}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    width={400}
+                    height={400}
                     onError={(e) => {
                       e.currentTarget.src =
                         "/api/placeholder/400/300?text=Activity";
@@ -412,7 +415,7 @@ const ActivityCategoriesHome = () => {
               Popular Activity Types
             </h3>
             <div className="flex flex-wrap justify-center gap-3 sm:gap-4 lg:gap-6">
-              {activeActivitiesCategories.slice(0, 4).map((category, index) => {
+              {activeActivitiesCategories.slice(0, 4).map((category) => {
                 const colors = getCategoryColors(category.categoryName);
                 return (
                   <div

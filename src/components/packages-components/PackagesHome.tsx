@@ -53,7 +53,7 @@ const PackagesHome = () => {
       try {
         setLoading(true);
         const response = await fetch(GET_ALL_ACTIVE_PACKAGES_FE);
-        const data: ApiResponse<ActivePackagesType> = await response.json();
+        const data: ApiResponse<ActivePackagesType[]> = await response.json();
 
         if (response.ok && data.code === 200) {
           setActivePackages(data.data || []);

@@ -1,5 +1,5 @@
 // app/blog/[id]/components/Sidebar.tsx
-import { BlogTag } from "@/types/blog-types";
+import { BlogDetailsData, BlogTag } from "@/types/blog-types";
 import React, { useEffect, useState } from "react";
 import AuthorCard from "./AuthorCard";
 import RelatedBlogs from "./RelatedBlogs";
@@ -9,7 +9,7 @@ import { fetchTags } from "@/utils/blog-utils";
 interface SidebarProps {
   writerName: string;
   blogCount: number;
-  relatedBlogs: any[];
+  relatedBlogs: BlogDetailsData[];
   tags: BlogTag[];
   loadingTags: boolean;
   onTagClick: (tagName: string) => void;

@@ -1,12 +1,12 @@
 // components/blog-components/BlogFilter.tsx
 "use client";
 import React from 'react';
-import { Search, User, Tag, Calendar, X, RotateCcw, Filter, TrendingUp, Hash, MessageSquare, Heart } from 'lucide-react';
+import { Search, User, Tag, Calendar, X, RotateCcw, Filter, TrendingUp } from 'lucide-react';
 import { BlogFilters } from '@/types/blog-types';
 
 interface BlogFilterProps {
   filters: BlogFilters;
-  onFilterChange: (filterName: keyof BlogFilters, value: any) => void;
+  onFilterChange: (filterName: keyof BlogFilters, value: string | [string, string]) => void;
   onResetFilters: () => void;
   writers: string[];
   categories: string[];

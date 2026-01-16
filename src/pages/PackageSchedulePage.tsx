@@ -56,8 +56,8 @@ interface ApiResponse {
 // ========== Main PackageSchedulePage Component ==========
 const PackageSchedulePage = () => {
   const searchParams = useSearchParams();
-  const packageName = searchParams.get("packageName") || "";
-  const packageId = searchParams.get("packageId") || "";
+  const packageName = searchParams?.get("packageName") || "";
+  const packageId = searchParams?.get("packageId") || "";
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

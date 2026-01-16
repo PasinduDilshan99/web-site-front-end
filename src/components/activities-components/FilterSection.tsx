@@ -1,9 +1,18 @@
 import { ActivityFilters } from "@/types/activities-types";
 import React, { useState } from "react";
 
+// Define a type for all possible filter values
+type FilterValue = 
+  | string 
+  | number 
+  | [number, number] 
+  | boolean 
+  | null 
+  | string[];
+
 interface FilterSectionProps {
   filters: ActivityFilters;
-  onFilterChange: (filterName: keyof ActivityFilters, value: any) => void;
+  onFilterChange: (filterName: keyof ActivityFilters, value: FilterValue) => void;
   onSearch: () => void;
   onResetFilters: () => void;
   categories: string[];
@@ -325,10 +334,15 @@ const FilterSection: React.FC<FilterSectionProps> = ({
 };
 
 // Active Filters Summary Component
-const ActiveFiltersSummary: React.FC<{
+interface ActiveFiltersSummaryProps {
   filters: ActivityFilters;
-  onFilterChange: (filterName: keyof ActivityFilters, value: any) => void;
-}> = ({ filters, onFilterChange }) => {
+  onFilterChange: (filterName: keyof ActivityFilters, value: FilterValue) => void;
+}
+
+const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({ 
+  filters, 
+  onFilterChange 
+}) => {
   const formatPrice = (price: number): string => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -336,60 +350,85 @@ const ActiveFiltersSummary: React.FC<{
     }).format(price);
   };
 
-  const activeFilters = [
-    filters.search && {
+  interface ActiveFilter {
+    name: keyof ActivityFilters;
+    label: string;
+    value: FilterValue;
+  }
+
+  // Build active filters array with proper typing
+  const activeFilters: ActiveFilter[] = [];
+  
+  if (filters.search) {
+    activeFilters.push({
       name: "search",
       label: `Search: "${filters.search}"`,
       value: filters.search,
-    },
-    filters.duration && {
+    });
+  }
+  
+  if (filters.duration) {
+    activeFilters.push({
       name: "duration",
       label: `Duration: ${filters.duration} hours`,
       value: filters.duration,
-    },
-    filters.category && {
+    });
+  }
+  
+  if (filters.category) {
+    activeFilters.push({
       name: "category",
       label: `Category: ${filters.category}`,
       value: filters.category,
-    },
-    filters.season && {
+    });
+  }
+  
+  if (filters.season) {
+    activeFilters.push({
       name: "season",
       label: `Season: ${filters.season}`,
       value: filters.season,
-    },
-    filters.participants && {
+    });
+  }
+  
+  if (filters.participants) {
+    activeFilters.push({
       name: "participants",
       label: `Max Participants: ${filters.participants}`,
       value: filters.participants,
-    },
-    filters.status && {
+    });
+  }
+  
+  if (filters.status) {
+    activeFilters.push({
       name: "status",
       label: `Status: ${filters.status}`,
       value: filters.status,
-    },
-    (filters.priceRange[0] > 0 || filters.priceRange[1] < 10000) && {
+    });
+  }
+  
+  if (filters.priceRange[0] > 0 || filters.priceRange[1] < 10000) {
+    activeFilters.push({
       name: "priceRange",
       label: `Price: ${formatPrice(filters.priceRange[0])} - ${formatPrice(filters.priceRange[1])}`,
       value: filters.priceRange,
-    },
-  ].filter(Boolean);
+    });
+  }
 
   if (activeFilters.length === 0) return null;
 
-  const removeFilter = (filterName: string) => {
-    const resetValues: { [key: string]: any } = {
-      search: "",
-      duration: "",
-      category: "",
-      season: "",
-      participants: "",
-      status: "",
-      priceRange: [0, 10000],
-    };
-    onFilterChange(
-      filterName as keyof ActivityFilters,
-      resetValues[filterName]
-    );
+  const resetValues: Record<keyof ActivityFilters, FilterValue> = {
+    search: "",
+    duration: "",
+    category: "",
+    season: "",
+    participants: "",
+    status: "",
+    priceRange: [0, 10000],
+  };
+
+  const removeFilter = (filterName: keyof ActivityFilters) => {
+    onFilterChange(filterName, resetValues[filterName]);
   };
 
   return (
@@ -401,7 +440,7 @@ const ActiveFiltersSummary: React.FC<{
         <span className="text-sm text-gray-600">({activeFilters.length})</span>
       </div>
       <div className="flex flex-wrap gap-2">
-        {activeFilters.map((filter: any) => (
+        {activeFilters.map((filter) => (
           <span
             key={filter.name}
             className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800 rounded-full text-xs font-medium border border-blue-200 transition-all duration-200 hover:shadow-md"

@@ -2,6 +2,7 @@
 "use client"
 import { UserProfileAPIService } from '@/services/userProfileAPIService';
 import { ActivityReview } from '@/types/user-profile';
+import Image from 'next/image';
 import { useState, useEffect } from 'react';
 
 export default function ActivityReviewsPage() {
@@ -147,9 +148,11 @@ export default function ActivityReviewsPage() {
                             key={image.imageId}
                             className="flex-shrink-0 w-20 h-20 bg-gray-200 rounded-lg overflow-hidden"
                           >
-                            <img
+                            <Image
                               src={image.imageUrl}
                               alt={image.imageName}
+                              width={500}
+                              height={500}
                               className="w-full h-full object-cover"
                             />
                           </div>

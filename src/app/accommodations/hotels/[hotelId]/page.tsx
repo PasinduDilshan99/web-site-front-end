@@ -36,6 +36,8 @@ export default async function HotelDetailsPage({ params }: HotelDetailsPageProps
       </div>
     );
   } catch (error) {
+        console.error("Error loading hotel details:", error);
+
     return (
       <div className="min-h-screen bg-gray-50">
         <NavBar />

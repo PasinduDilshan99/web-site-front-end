@@ -9,7 +9,7 @@ import {
   AlertCircle,
   MessageCircle,
 } from "lucide-react";
-import { Review } from "@/pages/ActivityPage";
+import { Reaction, Review } from "@/pages/ActivityPage";
 
 // Props interface
 interface ReviewsSectionProps {
@@ -56,7 +56,7 @@ const ReviewsSection: React.FC<ReviewsSectionProps> = ({
     }
   };
 
-  const getReactionCounts = (reactions: any[]) => {
+  const getReactionCounts = (reactions: Reaction[]) => {
     const counts: { [key: string]: number } = {};
     reactions.forEach((reaction) => {
       counts[reaction.reactionType] = (counts[reaction.reactionType] || 0) + 1;

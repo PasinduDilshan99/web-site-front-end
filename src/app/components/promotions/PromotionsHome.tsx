@@ -198,7 +198,7 @@ const PromotionsHome = () => {
   // Loading skeleton
   if (loading) {
     const skeletonItems = getFilteredPackages().length || 6;
-    
+
     return (
       <div className="min-h-screen bg-white py-6 sm:py-8 lg:py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
@@ -208,11 +208,11 @@ const PromotionsHome = () => {
           </div>
           <div className="grid gap-4 sm:gap-6 lg:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6">
             {[...Array(skeletonItems)].map((_, i) => (
-              <div 
-                key={i} 
+              <div
+                key={i}
                 className="bg-gray-50 rounded-lg p-4 sm:p-6 animate-pulse"
               >
-                <div 
+                <div
                   className="bg-gray-300 rounded mb-4"
                   style={{ height: getImageHeight() }}
                 ></div>
@@ -300,7 +300,9 @@ const PromotionsHome = () => {
               <h3 className="text-lg sm:text-xl font-medium text-gray-900 mb-2">
                 No packages available
               </h3>
-              <p className="text-gray-600 text-sm sm:text-base">Check back later for new offers.</p>
+              <p className="text-gray-600 text-sm sm:text-base">
+                Check back later for new offers.
+              </p>
             </div>
           </div>
         ) : (
@@ -313,10 +315,6 @@ const PromotionsHome = () => {
                 pkg.discountPercentage
               );
               const currentIndex = currentImageIndex[pkg.packageId] || 0;
-              const currentImage = pkg.images[currentIndex];
-              const mainImage = currentImage
-                ? getImageUrl(currentImage.imageUrl)
-                : "/images/placeholder.jpg";
               const isHovered = hoveredPackage === pkg.packageId;
 
               return (
@@ -327,7 +325,7 @@ const PromotionsHome = () => {
                   onMouseLeave={handlePackageLeave}
                 >
                   {/* Package Image */}
-                  <div 
+                  <div
                     className="rounded-t-lg sm:rounded-t-xl overflow-hidden relative bg-gray-200"
                     style={{ height: getImageHeight() }}
                   >
@@ -450,9 +448,14 @@ const PromotionsHome = () => {
                             isExpiring ? "text-red-600" : "text-gray-900"
                           }`}
                         >
-                          <span className="hidden sm:inline">{formatDate(pkg.endDate)}</span>
+                          <span className="hidden sm:inline">
+                            {formatDate(pkg.endDate)}
+                          </span>
                           <span className="sm:hidden text-xs">
-                            {new Date(pkg.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                            {new Date(pkg.endDate).toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                            })}
                           </span>
                           {isExpiring && (
                             <span className="ml-1 text-xs bg-red-100 text-red-800 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded transform group-hover:scale-110 transition-transform duration-300">
@@ -466,23 +469,28 @@ const PromotionsHome = () => {
                     {/* Features */}
                     {pkg.features.length > 0 && (
                       <div className="mt-3 sm:mt-4 flex flex-wrap gap-1 sm:gap-2">
-                        {pkg.features.slice(0, window.innerWidth >= 1024 ? 3 : 2).map((feature) => (
-                          <span
-                            key={feature.featureId}
-                            className="inline-flex items-center text-xs text-gray-600 bg-gray-50 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded border transform group-hover:scale-105 transition-transform duration-300"
-                            style={{ borderColor: feature.color }}
-                          >
-                            <span className="hidden sm:inline">
-                              {feature.featureName}: {feature.featureValue}
+                        {pkg.features
+                          .slice(0, window.innerWidth >= 1024 ? 3 : 2)
+                          .map((feature) => (
+                            <span
+                              key={feature.featureId}
+                              className="inline-flex items-center text-xs text-gray-600 bg-gray-50 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded border transform group-hover:scale-105 transition-transform duration-300"
+                              style={{ borderColor: feature.color }}
+                            >
+                              <span className="hidden sm:inline">
+                                {feature.featureName}: {feature.featureValue}
+                              </span>
+                              <span className="sm:hidden">
+                                {feature.featureName}
+                              </span>
                             </span>
-                            <span className="sm:hidden">
-                              {feature.featureName}
-                            </span>
-                          </span>
-                        ))}
-                        {pkg.features.length > (window.innerWidth >= 1024 ? 3 : 2) && (
+                          ))}
+                        {pkg.features.length >
+                          (window.innerWidth >= 1024 ? 3 : 2) && (
                           <span className="inline-flex items-center text-xs text-gray-500 bg-gray-50 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded transform group-hover:scale-105 transition-transform duration-300">
-                            +{pkg.features.length - (window.innerWidth >= 1024 ? 3 : 2)}
+                            +
+                            {pkg.features.length -
+                              (window.innerWidth >= 1024 ? 3 : 2)}
                           </span>
                         )}
                       </div>

@@ -10,14 +10,16 @@ import DestinationDetailsMain from "@/components/destinations-components/destina
 import DestinationDetailsSidebar from "@/components/destinations-components/destinaton-details/DestinationDetailsSidebar";
 import DestinationHistory from "@/components/destinations-components/DestinationHistory";
 import DestinationHistoryGallery from "@/components/destinations-components/DestinationHistoryGallery";
-import { DestinationData, Review } from "@/types/destination-details-types";
+import { DestinationData } from "@/types/destination-details-types";
 import { DestinationHistoryType } from "@/types/destinations-types";
 import { DestinationHistoryImage } from "@/types/destinations-types";
 import NavBar from "@/components/common-components/navBar/NavBar";
 import Footer from "@/app/components/footer/Footer";
+import { Review } from "@/pages/DestinationPage";
 
 const DestinationDetailsPage = () => {
-  const { destinationId } = useParams();
+const params = useParams();
+const destinationId = params?.destinationId || null;
 
   const [destination, setDestination] = useState<DestinationData | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -43,7 +45,7 @@ const DestinationDetailsPage = () => {
       fetchDestinationHistory();
       fetchDestinationHistoryImages(); // Fetch history images data
     }
-  }, [destinationId]);
+  }, [destinationId,]);
 
   const fetchDestinationReviews = async () => {
     try {
@@ -194,11 +196,11 @@ const DestinationDetailsPage = () => {
           <div className="mt-12">
             <DestinationHistory
               historyData={history}
-              loading={historyLoading}
-              error={historyError}
+              // loading={historyLoading}
+              // error={historyError}
               title="Destination History & Heritage"
               description="Discover the fascinating stories and historical events that shaped this amazing destination"
-              onRetry={handleRetryHistory}
+              // onRetry={handleRetryHistory}
             />
           </div>
 
@@ -254,11 +256,11 @@ const DestinationDetailsPage = () => {
           <div className="mt-12">
             <DestinationHistoryGallery
               imagesData={historyImages}
-              loading={historyImagesLoading}
-              error={historyImagesError}
+              // loading={historyImagesLoading}
+              // error={historyImagesError}
               title="Historical Images Collection"
               description="Browse through captivating photographs that capture the essence of this destination's history"
-              onRetry={handleRetryHistoryImages}
+              // onRetry={handleRetryHistoryImages}
             />
           </div>
         </div>

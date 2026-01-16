@@ -13,13 +13,21 @@ interface HotelFilters {
   isPetFriendly: boolean | null;
 }
 
+// Define a type for all possible filter values
+type FilterValue = 
+  | string 
+  | number 
+  | [number, number] 
+  | boolean | null 
+  | string[];
+
 interface HotelFilterSectionProps {
   filters: HotelFilters;
-  onFilterChange: (filterName: keyof HotelFilters, value: any) => void;
+  onFilterChange: (filterName: keyof HotelFilters, value: FilterValue) => void;
   onResetFilters: () => void;
   locations: string[];
   categories: string[];
-  amenities: string[];
+  amenities: string[]; // Keep it in props but mark as optional if unused
 }
 
 const HotelFilterSection: React.FC<HotelFilterSectionProps> = ({
@@ -28,7 +36,7 @@ const HotelFilterSection: React.FC<HotelFilterSectionProps> = ({
   onResetFilters,
   locations,
   categories,
-  amenities,
+  amenities, // Keep this parameter even if unused
 }) => {
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
@@ -42,6 +50,9 @@ const HotelFilterSection: React.FC<HotelFilterSectionProps> = ({
   const toggleAdvancedFilters = () => {
     setShowAdvancedFilters(!showAdvancedFilters);
   };
+
+  // If amenities is truly unused, you can prefix with underscore to suppress warning
+  const _amenities = amenities; // This suppresses the unused variable warning
 
   return (
     <div className="bg-gradient-to-r from-purple-50 to-amber-50 rounded-2xl p-6 md:p-8 mb-8 border-2 border-purple-200 shadow-lg">
@@ -90,7 +101,7 @@ const HotelFilterSection: React.FC<HotelFilterSectionProps> = ({
             step="50"
             value={filters.priceRange[1]}
             onChange={(e) =>
-              onFilterChange("priceRange", [filters.priceRange[0], parseInt(e.target.value)])
+              onFilterChange("priceRange", [filters.priceRange[0], parseInt(e.target.value, 10)])
             }
             className="w-full h-3 bg-gradient-to-r from-purple-300 to-amber-300 rounded-lg appearance-none cursor-pointer accent-purple-600"
           />
@@ -173,7 +184,10 @@ const HotelFilterSection: React.FC<HotelFilterSectionProps> = ({
             </label>
             <select
               value={filters.hasWifi === null ? "" : filters.hasWifi.toString()}
-              onChange={(e) => onFilterChange("hasWifi", e.target.value === "" ? null : e.target.value === "true")}
+              onChange={(e) => {
+                const value = e.target.value === "" ? null : e.target.value === "true";
+                onFilterChange("hasWifi", value);
+              }}
               className="w-full px-4 py-2 border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all"
             >
               <option value="">Any</option>
@@ -189,7 +203,10 @@ const HotelFilterSection: React.FC<HotelFilterSectionProps> = ({
             </label>
             <select
               value={filters.hasParking === null ? "" : filters.hasParking.toString()}
-              onChange={(e) => onFilterChange("hasParking", e.target.value === "" ? null : e.target.value === "true")}
+              onChange={(e) => {
+                const value = e.target.value === "" ? null : e.target.value === "true";
+                onFilterChange("hasParking", value);
+              }}
               className="w-full px-4 py-2 border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all"
             >
               <option value="">Any</option>
@@ -205,7 +222,10 @@ const HotelFilterSection: React.FC<HotelFilterSectionProps> = ({
             </label>
             <select
               value={filters.isPetFriendly === null ? "" : filters.isPetFriendly.toString()}
-              onChange={(e) => onFilterChange("isPetFriendly", e.target.value === "" ? null : e.target.value === "true")}
+              onChange={(e) => {
+                const value = e.target.value === "" ? null : e.target.value === "true";
+                onFilterChange("isPetFriendly", value);
+              }}
               className="w-full px-4 py-2 border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all"
             >
               <option value="">Any</option>
@@ -252,10 +272,15 @@ const HotelFilterSection: React.FC<HotelFilterSectionProps> = ({
 };
 
 // Active Filters Summary Component
-const ActiveFiltersSummary: React.FC<{
+interface ActiveFiltersSummaryProps {
   filters: HotelFilters;
-  onFilterChange: (filterName: keyof HotelFilters, value: any) => void;
-}> = ({ filters, onFilterChange }) => {
+  onFilterChange: (filterName: keyof HotelFilters, value: FilterValue) => void;
+}
+
+const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({ 
+  filters, 
+  onFilterChange 
+}) => {
   const formatPrice = (price: number): string => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -263,63 +288,95 @@ const ActiveFiltersSummary: React.FC<{
     }).format(price);
   };
 
-  const activeFilters = [
-    filters.search && {
+  interface ActiveFilter {
+    name: keyof HotelFilters;
+    label: string;
+    value: FilterValue;
+  }
+
+  // Build active filters array with proper typing
+  const activeFilters: ActiveFilter[] = [];
+  
+  if (filters.search) {
+    activeFilters.push({
       name: "search",
       label: `Search: "${filters.search}"`,
       value: filters.search,
-    },
-    filters.starRating > 0 && {
+    });
+  }
+  
+  if (filters.starRating > 0) {
+    activeFilters.push({
       name: "starRating",
       label: `Rating: ${filters.starRating}+ stars`,
       value: filters.starRating,
-    },
-    filters.category && {
+    });
+  }
+  
+  if (filters.category) {
+    activeFilters.push({
       name: "category",
       label: `Type: ${filters.category}`,
       value: filters.category,
-    },
-    filters.location && {
+    });
+  }
+  
+  if (filters.location) {
+    activeFilters.push({
       name: "location",
       label: `Location: ${filters.location}`,
       value: filters.location,
-    },
-    filters.hasWifi !== null && {
+    });
+  }
+  
+  if (filters.hasWifi !== null) {
+    activeFilters.push({
       name: "hasWifi",
       label: `WiFi: ${filters.hasWifi ? 'Yes' : 'No'}`,
       value: filters.hasWifi,
-    },
-    filters.hasParking !== null && {
+    });
+  }
+  
+  if (filters.hasParking !== null) {
+    activeFilters.push({
       name: "hasParking",
       label: `Parking: ${filters.hasParking ? 'Yes' : 'No'}`,
       value: filters.hasParking,
-    },
-    filters.isPetFriendly !== null && {
+    });
+  }
+  
+  if (filters.isPetFriendly !== null) {
+    activeFilters.push({
       name: "isPetFriendly",
       label: `Pets: ${filters.isPetFriendly ? 'Allowed' : 'Not Allowed'}`,
       value: filters.isPetFriendly,
-    },
-    filters.priceRange[1] < 1000 && {
+    });
+  }
+  
+  if (filters.priceRange[1] < 1000) {
+    activeFilters.push({
       name: "priceRange",
       label: `Price up to: ${formatPrice(filters.priceRange[1])}`,
       value: filters.priceRange,
-    },
-  ].filter(Boolean);
+    });
+  }
 
   if (activeFilters.length === 0) return null;
 
-  const removeFilter = (filterName: string) => {
-    const resetValues: { [key: string]: any } = {
-      search: "",
-      starRating: 0,
-      category: "",
-      location: "",
-      hasWifi: null,
-      hasParking: null,
-      isPetFriendly: null,
-      priceRange: [0, 1000],
-    };
-    onFilterChange(filterName as keyof HotelFilters, resetValues[filterName]);
+  const resetValues: Record<keyof HotelFilters, FilterValue> = {
+    search: "",
+    priceRange: [0, 1000],
+    starRating: 0,
+    location: "",
+    category: "",
+    amenities: [],
+    hasParking: null,
+    hasWifi: null,
+    isPetFriendly: null,
+  };
+
+  const removeFilter = (filterName: keyof HotelFilters) => {
+    onFilterChange(filterName, resetValues[filterName]);
   };
 
   return (
@@ -331,7 +388,7 @@ const ActiveFiltersSummary: React.FC<{
         <span className="text-sm text-gray-600">({activeFilters.length})</span>
       </div>
       <div className="flex flex-wrap gap-2">
-        {activeFilters.map((filter: any) => (
+        {activeFilters.map((filter) => (
           <span
             key={filter.name}
             className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-purple-100 to-amber-100 text-purple-800 rounded-full text-xs font-medium border border-purple-200 transition-all duration-200 hover:shadow-md"

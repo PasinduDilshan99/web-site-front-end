@@ -124,12 +124,12 @@ const HostelRooms: React.FC<HostelRoomsProps> = ({ rooms }) => {
                     </div>
                   )}
                   
-                  {room.wifiAvailable && (
+                  {/* {room.wifiAvailable && (
                     <div className="flex items-center gap-2">
                       <Wifi className="w-4 h-4 text-indigo-600" />
                       <span className="text-sm text-gray-600">Free WiFi</span>
                     </div>
-                  )}
+                  )} */}
                 </div>
                 
                 {room.amenities && room.amenities.length > 0 && (

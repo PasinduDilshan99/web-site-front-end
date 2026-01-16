@@ -95,7 +95,7 @@ const DetailedResortCard: React.FC<LuxuryResortCardProps> = ({ resort }) => {
               )}
             </div>
             <div className={`grid gap-3 ${showAllImages ? 'grid-cols-2' : 'grid-cols-3'}`}>
-              {displayImages.map((image, index) => (
+              {displayImages?.map((image, index) => (
                 <div key={index} className="relative aspect-square rounded-xl overflow-hidden group/image border-2 border-cyan-200">
                   <Image
                     src={image.imageUrl}
@@ -155,7 +155,7 @@ const DetailedResortCard: React.FC<LuxuryResortCardProps> = ({ resort }) => {
         </div>
 
         {/* Luxury Accommodations */}
-        {displayAccommodations.length > 0 && (
+        {displayAccommodations && (
           <div className="mb-5">
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold text-gray-800 text-base flex items-center">

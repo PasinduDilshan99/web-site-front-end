@@ -20,13 +20,12 @@ export const PackageSchedulesComponent: React.FC<
     });
   };
 
-  const formatDuration = (days: number) => {
-    const nights = days - 1;
-    return `${nights < 10 ? "0" + nights : nights} Days ${
-      days < 10 ? "0" + days : days
-    } Nights`;
-  };
-
+const formatDuration = (days: number) => {
+  const nights = days - 1;
+  return `${days < 10 ? "0" + days : days} Days ${
+    nights < 10 ? "0" + nights : nights
+  } Nights`;
+};
   if (schedules.length === 0) return null;
 
   return (
@@ -57,13 +56,13 @@ export const PackageSchedulesComponent: React.FC<
       `/package-schedules?packageName=${packageName}&packageId=${packageId}`
     )
   }
-  className="w-full relative px-6 py-3 bg-white border-2 border-purple-500 text-purple-600 font-semibold rounded-xl hover:bg-purple-50 hover:text-purple-700 hover:border-purple-600 transition-all duration-300 group"
+  className="mt-2 w-full relative px-6 py-3 bg-white border-2 border-purple-500 text-purple-600 font-semibold rounded-xl hover:bg-purple-50 hover:text-purple-700 hover:border-purple-600 transition-all duration-300 group"
 >
   <span className="flex items-center justify-center gap-3">
     <svg className="w-5 h-5 text-purple-500 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
     </svg>
-    <span className="text-base font-semibold">Show All Available Schedules</span>
+    <span className="text-base font-semibold">Book Schedule</span>
   </span>
   <span className="absolute right-4 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 group-hover:right-6 transition-all duration-300">
     <svg className="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -84,9 +83,9 @@ const PackageScheduleCard: React.FC<{
   <div className="border border-gray-200 rounded-xl p-4 hover:border-purple-300 transition-colors">
     <div className="flex justify-between items-start mb-3">
       <h3 className="text-lg font-semibold text-gray-800">{schedule.name}</h3>
-      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-        {formatDuration(schedule.durationStart)}
-      </span>
+      {/* <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+        {formatDuration(schedule.durationStart)} 
+      </span> */}
     </div>
 
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">

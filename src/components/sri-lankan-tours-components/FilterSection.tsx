@@ -1,9 +1,9 @@
 import { TourFilters } from "@/types/sri-lankan-tour-types";
-import React, { useState, FormEvent } from "react";
+import React, { useState } from "react";
 
 interface FilterSectionProps {
   filters: TourFilters;
-  onFilterChange: (filterName: keyof TourFilters, value: any) => void;
+  onFilterChange: (filterName: keyof TourFilters, value: TourFilters[keyof TourFilters]) => void;
   onSearch: () => void;
   onResetFilters: () => void;
   tourTypes: string[];
@@ -26,12 +26,13 @@ const FilterSection: React.FC<FilterSectionProps> = ({
 }) => {
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
-  const formatPrice = (price: number): string => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(price);
-  };
+  // Remove unused formatPrice function or use it somewhere
+  // const formatPrice = (price: number): string => {
+  //   return new Intl.NumberFormat("en-US", {
+  //     style: "currency",
+  //     currency: "USD",
+  //   }).format(price);
+  // };
 
   const toggleAdvancedFilters = () => {
     setShowAdvancedFilters(!showAdvancedFilters);
@@ -46,7 +47,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
     }
   };
 
-  const handleSearchClick = (e?: React.MouseEvent | FormEvent) => {
+  const handleSearchClick = (e?: React.MouseEvent) => {
     // Prevent default form submission behavior
     if (e) {
       e.preventDefault();
@@ -63,11 +64,11 @@ const FilterSection: React.FC<FilterSectionProps> = ({
     }
   };
 
-  // Handle form submission
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    handleSearchClick(e);
-  };
+  // Remove unused handleSubmit or use it
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   handleSearchClick();
+  // };
 
   return (
     <div className="bg-gradient-to-r from-amber-50 to-purple-50 rounded-2xl p-6 md:p-8 mb-8 border-2 border-amber-200 shadow-lg">
@@ -128,10 +129,6 @@ const FilterSection: React.FC<FilterSectionProps> = ({
           <label className="block text-sm font-semibold text-gray-800">
             Price Range $
           </label>
-          {/* <div className="flex justify-between text-sm font-medium text-amber-700 mb-2">
-            <span>{formatPrice(filters.priceRange[0])}</span>
-            <span>{formatPrice(filters.priceRange[1])}</span>
-          </div> */}
           <div className="flex gap-4">
             <input
               type="number"
@@ -139,7 +136,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
               max="5000"
               value={filters.priceRange[0]}
               onChange={(e) =>
-                handlePriceChange("min", parseInt(e.target.value) || 0)
+                handlePriceChange("min", parseInt(e.target.value, 10) || 0)
               }
               className="text-gray-600 w-1/2 px-3 py-1 border border-amber-300 rounded-md text-sm"
               placeholder="Min"
@@ -150,7 +147,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
               max="5000"
               value={filters.priceRange[1]}
               onChange={(e) =>
-                handlePriceChange("max", parseInt(e.target.value) || 5000)
+                handlePriceChange("max", parseInt(e.target.value, 10) || 5000)
               }
               className="text-gray-600 w-1/2 px-3 py-1 border border-amber-300 rounded-md text-sm"
               placeholder="Max"
@@ -352,10 +349,15 @@ const FilterSection: React.FC<FilterSectionProps> = ({
 };
 
 // Active Filters Summary Component
-const ActiveFiltersSummary: React.FC<{
+interface ActiveFiltersSummaryProps {
   filters: TourFilters;
-  onFilterChange: (filterName: keyof TourFilters, value: any) => void;
-}> = ({ filters, onFilterChange }) => {
+  onFilterChange: (filterName: keyof TourFilters, value: TourFilters[keyof TourFilters]) => void;
+}
+
+const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({ 
+  filters, 
+  onFilterChange 
+}) => {
   const formatPrice = (price: number): string => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -363,59 +365,90 @@ const ActiveFiltersSummary: React.FC<{
     }).format(price);
   };
 
-  const activeFilters = [
-    filters.search && {
+  interface ActiveFilter {
+    name: keyof TourFilters;
+    label: string;
+    value: TourFilters[keyof TourFilters];
+  }
+
+  // Build active filters array with proper typing
+  const activeFilters: ActiveFilter[] = [];
+  
+  if (filters.search) {
+    activeFilters.push({
       name: "search",
       label: `Search: "${filters.search}"`,
       value: filters.search,
-    },
-    filters.duration && {
+    });
+  }
+  
+  if (filters.duration) {
+    activeFilters.push({
       name: "duration",
       label: `Duration: ${filters.duration} days`,
       value: filters.duration,
-    },
-    filters.tourType && {
+    });
+  }
+  
+  if (filters.tourType) {
+    activeFilters.push({
       name: "tourType",
       label: `Tour Type: ${filters.tourType}`,
       value: filters.tourType,
-    },
-    filters.tourCategory && {
+    });
+  }
+  
+  if (filters.tourCategory) {
+    activeFilters.push({
       name: "tourCategory",
       label: `Category: ${filters.tourCategory}`,
       value: filters.tourCategory,
-    },
-    filters.season && {
+    });
+  }
+  
+  if (filters.season) {
+    activeFilters.push({
       name: "season",
       label: `Season: ${filters.season}`,
       value: filters.season,
-    },
-    filters.location && {
+    });
+  }
+  
+  if (filters.location) {
+    activeFilters.push({
       name: "location",
       label: `Location: ${filters.location}`,
       value: filters.location,
-    },
-    (filters.priceRange[0] > 0 || filters.priceRange[1] < 5000) && {
+    });
+  }
+  
+  if (filters.priceRange[0] > 0 || filters.priceRange[1] < 5000) {
+    activeFilters.push({
       name: "priceRange",
       label: `Price: ${formatPrice(filters.priceRange[0])} - ${formatPrice(
         filters.priceRange[1]
       )}`,
       value: filters.priceRange,
-    },
-  ].filter(Boolean);
+    });
+  }
 
   if (activeFilters.length === 0) return null;
 
-  const removeFilter = (filterName: string) => {
-    const resetValues: { [key: string]: any } = {
-      search: "",
-      duration: "",
-      tourType: "",
-      tourCategory: "",
-      season: "",
-      location: "",
-      priceRange: [0, 5000],
-    };
-    onFilterChange(filterName as keyof TourFilters, resetValues[filterName]);
+  const resetValues: Partial<TourFilters> = {
+    search: "",
+    duration: "",
+    tourType: "",
+    tourCategory: "",
+    season: "",
+    location: "",
+    priceRange: [0, 5000],
+  };
+
+  const removeFilter = (filterName: keyof TourFilters) => {
+    const resetValue = resetValues[filterName];
+    if (resetValue !== undefined) {
+      onFilterChange(filterName, resetValue as TourFilters[keyof TourFilters]);
+    }
   };
 
   return (
@@ -427,7 +460,7 @@ const ActiveFiltersSummary: React.FC<{
         <span className="text-sm text-gray-600">({activeFilters.length})</span>
       </div>
       <div className="flex flex-wrap gap-2">
-        {activeFilters.map((filter: any) => (
+        {activeFilters.map((filter) => (
           <span
             key={filter.name}
             className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-amber-100 to-purple-100 text-amber-800 rounded-full text-xs font-medium border border-amber-200 transition-all duration-200 hover:shadow-md"

@@ -6,6 +6,7 @@ import SectionHeader from "../../../components/common-components/section-header/
 import Loading from "../../../components/common-components/loading/Loading";
 import { ErrorState } from "../../../components/common-components/error-state/ErrorState";
 import { EmptyState } from "../../../components/common-components/empty-state/EmptyState";
+import Image from "next/image";
 
 // Updated TypeScript interfaces based on new API response
 interface Review {
@@ -196,11 +197,7 @@ const PopularTours = () => {
 
   if (loading) {
     return (
-      <Loading
-        message="Loading popular tours..."
-        variant="spinner"
-        size="md"
-      />
+      <Loading message="Loading popular tours..." variant="spinner" size="md" />
     );
   }
 
@@ -253,7 +250,7 @@ const PopularTours = () => {
 
         {/* Tours Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5 md:gap-6 lg:gap-7 xl:gap-8">
-          {popularTours.slice(0, 3).map((tour, index) => {
+          {popularTours.slice(0, 3).map((tour) => {
             const discount = calculateDiscount(tour);
             const averageRating = getAverageRating(tour);
             const totalReviews = getTotalReviews(tour);
@@ -269,23 +266,33 @@ const PopularTours = () => {
                 {/* Tour Image */}
                 <div className="relative overflow-hidden h-48 xs:h-52 sm:h-56 md:h-60 lg:h-64 xl:h-72">
                   {tourImage ? (
-                    <img
+                    <Image
                       src={tourImage}
                       alt={tour.tourName}
+                      width={500}
+                      height={500}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       onError={(e) => {
-                        e.currentTarget.style.display = 'none';
-                        e.currentTarget.nextSibling.style.display = 'flex';
+                        e.currentTarget.style.display = "none";
+                        const nextSibling = e.currentTarget
+                          .nextElementSibling as HTMLElement;
+                        if (nextSibling) {
+                          nextSibling.style.display = "flex";
+                        }
                       }}
                     />
                   ) : null}
-                  
+
                   {/* Fallback Gradient Background */}
-                  <div 
-                    className={`w-full h-full bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center ${tourImage ? 'hidden' : 'flex'}`}
+                  <div
+                    className={`w-full h-full bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center ${
+                      tourImage ? "hidden" : "flex"
+                    }`}
                   >
                     <div className="text-white text-center px-3 sm:px-4">
-                      <div className="text-2xl sm:text-3xl md:text-4xl mb-2">🏞️</div>
+                      <div className="text-2xl sm:text-3xl md:text-4xl mb-2">
+                        🏞️
+                      </div>
                       <h3 className="text-base sm:text-lg md:text-xl font-bold">
                         {tour.tourName}
                       </h3>

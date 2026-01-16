@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 
 interface FilterSectionProps {
   filters: VehicleFilters;
-  onFilterChange: (filterName: keyof VehicleFilters, value: any) => void;
+  onFilterChange: (filterName: keyof VehicleFilters, value: VehicleFilters[keyof VehicleFilters]) => void;
   onResetFilters: () => void;
   vehicles: Vehicle[];
 }
@@ -18,7 +18,7 @@ const VehicleFilterSection: React.FC<FilterSectionProps> = ({
 
   // Extract unique values for filter options from vehicles data
   const makes = Array.from(new Set(vehicles.map(v => v.specification.make)));
-  const models = Array.from(new Set(vehicles.map(v => v.specification.model)));
+  const _models = Array.from(new Set(vehicles.map(v => v.specification.model))); // Prefix with underscore since unused
   const bodyTypes = Array.from(new Set(vehicles.map(v => v.specification.bodyType)));
   const engineTypes = Array.from(new Set(vehicles.map(v => v.specification.engineType)));
   const statuses = Array.from(new Set(vehicles.map(v => v.status)));
@@ -156,7 +156,7 @@ const VehicleFilterSection: React.FC<FilterSectionProps> = ({
                 onChange={(e) =>
                   onFilterChange('yearRange', [
                     filters.yearRange[0],
-                    parseInt(e.target.value),
+                    parseInt(e.target.value, 10),
                   ])
                 }
                 className="w-full h-2 bg-gradient-to-r from-amber-300 to-purple-300 rounded-lg appearance-none cursor-pointer accent-amber-600"
@@ -178,7 +178,7 @@ const VehicleFilterSection: React.FC<FilterSectionProps> = ({
               onChange={(e) =>
                 onFilterChange('priceRange', [
                   filters.priceRange[0],
-                  parseInt(e.target.value),
+                  parseInt(e.target.value, 10),
                 ])
               }
               className="w-full h-2 bg-gradient-to-r from-amber-300 to-purple-300 rounded-lg appearance-none cursor-pointer accent-purple-600"
@@ -216,7 +216,7 @@ const VehicleFilterSection: React.FC<FilterSectionProps> = ({
               step="10"
               value={filters.maxHorsepower}
               onChange={(e) =>
-                onFilterChange('maxHorsepower', parseInt(e.target.value))
+                onFilterChange('maxHorsepower', parseInt(e.target.value, 10))
               }
               className="w-full h-2 bg-gradient-to-r from-amber-300 to-purple-300 rounded-lg appearance-none cursor-pointer accent-amber-600"
             />
@@ -280,10 +280,15 @@ const VehicleFilterSection: React.FC<FilterSectionProps> = ({
 };
 
 // Active Filters Summary Component
-const ActiveFiltersSummary: React.FC<{
+interface ActiveFiltersSummaryProps {
   filters: VehicleFilters;
-  onFilterChange: (filterName: keyof VehicleFilters, value: any) => void;
-}> = ({ filters, onFilterChange }) => {
+  onFilterChange: (filterName: keyof VehicleFilters, value: VehicleFilters[keyof VehicleFilters]) => void;
+}
+
+const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({ 
+  filters, 
+  onFilterChange 
+}) => {
   const formatPrice = (price: number): string => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -292,66 +297,97 @@ const ActiveFiltersSummary: React.FC<{
     }).format(price);
   };
 
-  const activeFilters = [
-    filters.search && {
+  interface ActiveFilter {
+    name: keyof VehicleFilters;
+    label: string;
+    value: VehicleFilters[keyof VehicleFilters];
+  }
+
+  // Build active filters array with proper typing
+  const activeFilters: ActiveFilter[] = [];
+  
+  if (filters.search) {
+    activeFilters.push({
       name: 'search',
       label: `Search: "${filters.search}"`,
       value: filters.search,
-    },
-    filters.make && {
+    });
+  }
+  
+  if (filters.make) {
+    activeFilters.push({
       name: 'make',
       label: `Make: ${filters.make}`,
       value: filters.make,
-    },
-    filters.status && {
+    });
+  }
+  
+  if (filters.status) {
+    activeFilters.push({
       name: 'status',
       label: `Status: ${filters.status}`,
       value: filters.status,
-    },
-    filters.bodyType && {
+    });
+  }
+  
+  if (filters.bodyType) {
+    activeFilters.push({
       name: 'bodyType',
       label: `Body Type: ${filters.bodyType}`,
       value: filters.bodyType,
-    },
-    filters.engineType && {
+    });
+  }
+  
+  if (filters.engineType) {
+    activeFilters.push({
       name: 'engineType',
       label: `Engine: ${filters.engineType}`,
       value: filters.engineType,
-    },
-    filters.yearRange[1] < 2023 && {
+    });
+  }
+  
+  if (filters.yearRange[1] < 2023) {
+    activeFilters.push({
       name: 'yearRange',
       label: `Year up to: ${filters.yearRange[1]}`,
       value: filters.yearRange,
-    },
-    filters.priceRange[1] < 100000 && {
+    });
+  }
+  
+  if (filters.priceRange[1] < 100000) {
+    activeFilters.push({
       name: 'priceRange',
       label: `Price up to: ${formatPrice(filters.priceRange[1])}`,
       value: filters.priceRange,
-    },
-    filters.maxHorsepower < 500 && {
+    });
+  }
+  
+  if (filters.maxHorsepower < 500) {
+    activeFilters.push({
       name: 'maxHorsepower',
       label: `Horsepower up to: ${filters.maxHorsepower} HP`,
       value: filters.maxHorsepower,
-    },
-  ].filter(Boolean);
+    });
+  }
 
   if (activeFilters.length === 0) return null;
 
-  const removeFilter = (filterName: string) => {
-    const resetValues: { [key: string]: any } = {
-      search: '',
-      make: '',
-      status: '',
-      bodyType: '',
-      engineType: '',
-      yearRange: [2000, 2023],
-      priceRange: [0, 100000],
-      maxHorsepower: 500,
-    };
-    onFilterChange(
-      filterName as keyof VehicleFilters,
-      resetValues[filterName]
-    );
+  const resetValues: Partial<VehicleFilters> = {
+    search: '',
+    make: '',
+    status: '',
+    bodyType: '',
+    engineType: '',
+    yearRange: [2000, 2023],
+    priceRange: [0, 100000],
+    maxHorsepower: 500,
+  };
+
+  const removeFilter = (filterName: keyof VehicleFilters) => {
+    const resetValue = resetValues[filterName];
+    if (resetValue !== undefined) {
+      onFilterChange(filterName, resetValue as VehicleFilters[keyof VehicleFilters]);
+    }
   };
 
   return (
@@ -363,7 +399,7 @@ const ActiveFiltersSummary: React.FC<{
         <span className="text-sm text-gray-600">({activeFilters.length})</span>
       </div>
       <div className="flex flex-wrap gap-2">
-        {activeFilters.map((filter: any) => (
+        {activeFilters.map((filter) => (
           <span
             key={filter.name}
             className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-amber-100 to-purple-100 text-amber-800 rounded-full text-xs font-medium border border-amber-200 transition-all duration-200 hover:shadow-md"
