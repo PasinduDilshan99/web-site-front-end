@@ -39,12 +39,13 @@
 //   );
 // }
 
+import BasicLoading from '@/components/common-components/basic-loading/BasicLoading'
 import React from 'react'
 
 const page = () => {
   return (
-    <div>
-      
+    <div className='flex items-center'>
+      <BasicLoading width="w-full" height="h-8" />
     </div>
   )
 }

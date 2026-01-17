@@ -22,8 +22,8 @@ const ACTIVITIES = "/activities";
 const FOOTER = "/footer";
 const PLAN_YOUR_TRIP = "/plan-your-trip";
 
-
-export const GET_ALL_LINK_BAR_DATA = `${API}${LINK_BAR}`;
+// Link Bar
+export const GET_ACTIVE_LINK_BAR_DATA = `${API}${LINK_BAR}`;
 
 export const GET_ALL_NAV_BAR_DATA = `${API}${NAV_BAR}`;
 
