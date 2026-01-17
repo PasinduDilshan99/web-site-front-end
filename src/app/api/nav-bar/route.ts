@@ -1,9 +1,10 @@
-import { GET_VISIBLE_NAV_BAR_DATA } from "@/utils/backEndConstant";
+import { NavBarApiResponse } from "@/types/nav-bar-types";
+import { GET_ACTIVE_NAV_BAR_DATA } from "@/utils/backEndConstant";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const response = await fetch(GET_VISIBLE_NAV_BAR_DATA, {
+    const response = await fetch(GET_ACTIVE_NAV_BAR_DATA, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -19,7 +20,7 @@ export async function GET() {
       );
     }
 
-    const data = await response.json();
+    const data: NavBarApiResponse = await response.json();
     return NextResponse.json(data, { status: response.status });
 
   } catch (error) {

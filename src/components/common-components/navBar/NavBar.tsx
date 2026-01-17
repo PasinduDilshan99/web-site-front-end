@@ -2,14 +2,14 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { NavBarItem } from "@/types/nav-bar-types";
-import { GET_ALL_NAV_BAR_DATA } from "@/utils/frontEndConstant";
-import { COMPANY_NAME, UNIQUE_CODE_NAME } from "@/utils/constant";
-import Loading from "../initial-loading/InitialLoading";
+import { COMPANY_NAME} from "@/utils/constant";
 import NavBarContainer from "./NavBarContainer";
 import DesktopNav from "./DesktopNav";
 import MobileNav from "./MobileNav";
 import ScrolledDesktopNav from "./ScrolledDesktopNav";
 import ScrolledMobileNav from "./ScrolledMobileNav";
+import { NavBarService } from "@/services/navBarService";
+import BasicLoading from "../basic-loading/BasicLoading";
 
 const NavBar = () => {
   const [loading, setLoading] = useState(true);
@@ -62,14 +62,12 @@ const NavBar = () => {
   useEffect(() => {
     const fetchNavBarItems = async () => {
       try {
-        const response = await fetch(GET_ALL_NAV_BAR_DATA);
-        const data = await response.json();
+        const { data: items, error } = await NavBarService.fetchAllNavBarData();
 
-        if (response.ok) {
-          const items: NavBarItem[] = data.data || [];
-          setNavBarData(items);
+        if (error) {
+          setError(error);
         } else {
-          setError(data.error || "Failed to fetch nav bar items");
+          setNavBarData(items);
         }
       } catch (err) {
         console.error("Error fetching nav bar items:", err);
@@ -99,8 +97,8 @@ const NavBar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isScrolled]);
 
-  // if (loading || authLoading) return <Loading />;
-  if (error) return <div className="text-red-400">Error: {error}</div>;
+  if (loading || authLoading) return <BasicLoading width="w-full" height="h-16" />;
+  if (error) return null;
 
   // Filter only visible items
   const visibleNavBarItems = navBarData.filter(

@@ -32,3 +32,11 @@ export interface NavBarItem {
   terminatedBy: number | null;
   submenus: NavBarSubmenuItem[];
 }
+
+export interface NavBarApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: NavBarItem[];
+  timestamp: string;
+}

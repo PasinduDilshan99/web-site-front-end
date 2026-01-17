@@ -25,6 +25,7 @@ const PLAN_YOUR_TRIP = "/plan-your-trip";
 // Link Bar
 export const GET_ACTIVE_LINK_BAR_DATA = `${API}${LINK_BAR}`;
 
+// Nav Bar
 export const GET_ALL_NAV_BAR_DATA = `${API}${NAV_BAR}`;
 
 export const GET_ALL_HERO_SECTION_DATA = `${API}${HERO_SECTION}`;
