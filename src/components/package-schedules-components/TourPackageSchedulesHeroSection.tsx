@@ -386,4 +386,4 @@ const TourPackageSchedulesHeroSection: React.FC<TourPackageSchedulesHeroSectionP
   );
 };
 
-export default TourPackageSchedulesHeroSection;
+export default TourPackageSchedulesHeroSection; 

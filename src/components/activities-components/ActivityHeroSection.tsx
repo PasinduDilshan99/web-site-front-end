@@ -1,35 +1,8 @@
 "use client";
+import { HeroSectionService } from "@/services/heroSectionService";
+import { ActivityHeroData } from "@/types/hero-section-types";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
-
-export interface ActivityHeroData {
-  id: number;
-  name: string;
-  imageUrl: string;
-  title?: string;
-  subtitle?: string;
-  description?: string;
-  primaryButtonText?: string;
-  primaryButtonLink?: string;
-  secondaryButtonText?: string;
-  secondaryButtonLink?: string;
-  order?: number;
-  createdAt?: string;
-  updatedAt?: string;
-  status?: string;
-  createdBy?: number;
-  updatedBy?: number | null;
-  terminatedAt?: string | null;
-  terminatedBy?: number | null;
-}
-
-interface ApiResponse {
-  code: number;
-  status: string;
-  message: string;
-  data: ActivityHeroData[];
-  timestamp: string;
-}
 
 const ActivityHeroSection = () => {
   const [loading, setLoading] = useState(true);
@@ -46,41 +19,17 @@ const ActivityHeroSection = () => {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(
-          "http://localhost:8080/felicita/v0/api/hero-section/activity",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
-          }
-        );
+        // USING THE SERVICE INSTEAD OF DIRECT FETCH
+        const { data: items, error } = await HeroSectionService.fetchActivityHeroData();
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const apiResponse: ApiResponse = await response.json();
-
-        if (apiResponse.code === 200 && apiResponse.data) {
-          const activeItems = apiResponse.data.filter(
-            (item) => item.status === "ACTIVE"
-          );
-
-          const sortedItems = [...activeItems].sort(
-            (a, b) => (a.order || 0) - (b.order || 0)
-          );
-
-          setHeroData(sortedItems);
+        if (error) {
+          setError(error);
         } else {
-          setError(apiResponse.message || "Failed to fetch activities content");
+          setHeroData(items);
         }
       } catch (err) {
-        console.error("Error fetching activities hero data:", err);
-        setError(
-          err instanceof Error ? err.message : "Failed to load activities content"
-        );
+        console.error("Error in component:", err);
+        setError("Failed to load activities content");
       } finally {
         setLoading(false);
       }
@@ -231,7 +180,7 @@ const ActivityHeroSection = () => {
   const currentDifficulty = getActivityDifficulty(currentSlideData);
 
   return (
-    <div className="relative w-full h-[800px]  overflow-hidden bg-gradient-to-br from-purple-900 via-indigo-800 to-blue-800">
+    <div className="relative w-full h-[800px] overflow-hidden bg-gradient-to-br from-purple-900 via-indigo-800 to-blue-800">
       {/* Image Slider */}
       <div className="relative w-full h-full">
         {heroData.map((item, index) => (

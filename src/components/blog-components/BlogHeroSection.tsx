@@ -1,31 +1,8 @@
 "use client";
+import { HeroSectionService } from "@/services/heroSectionService";
+import { BlogHeroData } from "@/types/hero-section-types";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
-
-export interface BlogHeroData {
-  id: number;
-  name: string;
-  imageUrl: string;
-  title?: string;
-  subtitle?: string;
-  description?: string;
-  primaryButtonText?: string;
-  primaryButtonLink?: string;
-  secondaryButtonText?: string;
-  secondaryButtonLink?: string;
-  order?: number;
-  createdAt?: string;
-  updatedAt?: string;
-  statusName?: string;
-}
-
-interface ApiResponse {
-  code: number;
-  status: string;
-  message: string;
-  data: BlogHeroData[];
-  timestamp: string;
-}
 
 const BlogHeroSection = () => {
   const [loading, setLoading] = useState(true);
@@ -39,42 +16,16 @@ const BlogHeroSection = () => {
       try {
         setLoading(true);
         setError(null);
+        const { data: items, error } = await HeroSectionService.fetchBlogHeroData();
 
-        const response = await fetch(
-          "http://localhost:8080/felicita/v0/api/hero-section/blog",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const apiResponse: ApiResponse = await response.json();
-
-        if (apiResponse.code === 200 && apiResponse.data) {
-          const activeItems = apiResponse.data.filter(
-            (item) => item.statusName === "ACTIVE"
-          );
-
-          const sortedItems = [...activeItems].sort(
-            (a, b) => (a.order || 0) - (b.order || 0)
-          );
-
-          setHeroData(sortedItems);
+        if (error) {
+          setError(error);
         } else {
-          setError(apiResponse.message || "Failed to fetch blog content");
+          setHeroData(items);
         }
       } catch (err) {
-        console.error("Error fetching blog hero data:", err);
-        setError(
-          err instanceof Error ? err.message : "Failed to load blog content"
-        );
+        console.error("Error in component:", err);
+        setError("Failed to load blog content");
       } finally {
         setLoading(false);
       }
@@ -464,24 +415,6 @@ const BlogHeroSection = () => {
           </span>
         </div>
       </div>
-
-      {/* Category Tags (Bottom Left) */}
-      {/* <div className="absolute bottom-6 left-6 hidden md:block">
-        <div className="flex flex-wrap gap-2">
-          {heroData.slice(0, 5).map((item, index) => (
-            <span
-              key={index}
-              className={`px-3 py-1 rounded-full text-xs font-medium backdrop-blur-sm transition-all duration-300 ${
-                index === currentSlide
-                  ? "bg-white text-amber-800 scale-105"
-                  : "bg-white/20 text-white/80 hover:bg-white/30"
-              }`}
-            >
-              {item.name.replace('Blog Hero ', '')}
-            </span>
-          ))}
-        </div>
-      </div> */}
     </div>
   );
 };

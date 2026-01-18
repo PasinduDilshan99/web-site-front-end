@@ -1,6 +1,6 @@
 "use client";
+import { HeroSectionService } from "@/services/heroSectionService";
 import { HeroSlideData } from "@/types/hero-section-types";
-import { GET_ALL_HERO_SECTION_DATA } from "@/utils/frontEndConstant";
 import React, { useState, useEffect } from "react";
 
 const HeroSection = () => {
@@ -14,16 +14,12 @@ const HeroSection = () => {
     const fetchHeroData = async () => {
       try {
         setLoading(true);
-
-        const response = await fetch(GET_ALL_HERO_SECTION_DATA);
-        const data = await response.json();
-
-        if (response.ok) {
-          const items: HeroSlideData[] = data.data || [];
+        const { data: items, error } = await HeroSectionService.fetchAllHeroData();
+        if (error) {
+          setError(error);
+        } else {
           setHeroData(items);
           setError(null);
-        } else {
-          setError(data.error || "Failed to fetch hero section items");
         }
       } catch (err) {
         console.error("Error fetching hero data:", err);

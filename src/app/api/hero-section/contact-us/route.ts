@@ -1,9 +1,9 @@
-import { GET_VISIBLE_HERO_SECTION_DATA } from "@/utils/backEndConstant";
+import { GET_ACTIVE_CONTACT_US_HERO_SECTION_DATA } from "@/utils/backEndConstant";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const response = await fetch(GET_VISIBLE_HERO_SECTION_DATA, {
+    const response = await fetch(GET_ACTIVE_CONTACT_US_HERO_SECTION_DATA, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

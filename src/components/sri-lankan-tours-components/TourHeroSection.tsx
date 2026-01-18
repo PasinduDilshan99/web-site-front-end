@@ -1,35 +1,8 @@
 "use client";
+import { HeroSectionService } from "@/services/heroSectionService";
+import { TourHeroData } from "@/types/hero-section-types";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
-
-export interface TourHeroData {
-  id: number;
-  name: string;
-  imageUrl: string;
-  title?: string;
-  subtitle?: string;
-  description?: string;
-  primaryButtonText?: string;
-  primaryButtonLink?: string;
-  secondaryButtonText?: string;
-  secondaryButtonLink?: string;
-  order?: number;
-  createdAt?: string;
-  updatedAt?: string;
-  status?: string;
-  createdBy?: number;
-  updatedBy?: number | null;
-  terminatedAt?: string | null;
-  terminatedBy?: number | null;
-}
-
-interface ApiResponse {
-  code: number;
-  status: string;
-  message: string;
-  data: TourHeroData[];
-  timestamp: string;
-}
 
 const TourHeroSection = () => {
   const [loading, setLoading] = useState(true);
@@ -45,41 +18,16 @@ const TourHeroSection = () => {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(
-          "http://localhost:8080/felicita/v0/api/hero-section/tour",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
-          }
-        );
+        const { data: items, error } = await HeroSectionService.fetchTourHeroData();
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const apiResponse: ApiResponse = await response.json();
-
-        if (apiResponse.code === 200 && apiResponse.data) {
-          const activeItems = apiResponse.data.filter(
-            (item) => item.status === "ACTIVE"
-          );
-
-          const sortedItems = [...activeItems].sort(
-            (a, b) => (a.order || 0) - (b.order || 0)
-          );
-
-          setHeroData(sortedItems);
+        if (error) {
+          setError(error);
         } else {
-          setError(apiResponse.message || "Failed to fetch tour content");
+          setHeroData(items);
         }
       } catch (err) {
-        console.error("Error fetching tour hero data:", err);
-        setError(
-          err instanceof Error ? err.message : "Failed to load tour content"
-        );
+        console.error("Error in component:", err);
+        setError("Failed to load tour content");
       } finally {
         setLoading(false);
       }
