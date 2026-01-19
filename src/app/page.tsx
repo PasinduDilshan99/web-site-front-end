@@ -9,9 +9,8 @@ import PopularDestinations from "../components/destinations-components/popular-d
 import TrendingDestinations from "./components/destinations/TrendingDestinations";
 import Footer from "./components/footer/Footer";
 import GalleryHome from "./components/gallery/GalleryHome";
-import HeroSection from "./components/heroSection/HeroSection";
+import HeroSection from "../components/home-page-components/heroSection/HeroSection";
 import Inquire from "./components/inquire/Inquire";
-import OurServices from "./components/ourServices/OurServices";
 import PackagesHome from "../components/packages-components/PackagesHome";
 import Partners from "./components/partners/Partners";
 import PromotionsHome from "./components/promotions/PromotionsHome";
@@ -23,11 +22,12 @@ import TourMap from "./components/tours/TourMap";
 import UserBenefitsHome from "./components/user-benefits/UserBenefitsHome";
 import { UserLevelsWithBenefitsHome } from "./components/user-levels/benefits/UserLevelsWithBenefitsHome";
 import UserLevelsHome from "./components/user-levels/UserLevelsHome";
-import WhyChooseUs from "./components/whyChooseUs/WhyChooseUs";
 import WorkFlow from "./components/workFlow/WorkFlow";
 import NavBar from "@/components/common-components/navBar/NavBar";
 import Faq from "@/components/faq-components/Faq";
 import ContactForm from "@/components/contact-us-components/ContactForm";
+import WhyChooseUs from "@/components/home-page-components/whyChooseUs/WhyChooseUs";
+import OurServices from "@/components/home-page-components/ourServices/OurServices";
 
 export default function Home() {
   return (

@@ -50,13 +50,18 @@ export const GET_ACTIVE_ACTIVITY_HERO_SECTION_DATA = `${BASE_PATH}${API}${VERSIO
 export const GET_ACTIVE_PACKAGE_SCHEDULE_HERO_SECTION_DATA = `${BASE_PATH}${API}${VERSION}${HERO_SECTION}/package-schedule`;
 export const GET_ACTIVE_BOOKED_TOUR_HERO_SECTION_DATA = `${BASE_PATH}${API}${VERSION}${HERO_SECTION}/booked-tour`;
 
-export const GET_VISIBLE_WHY_CHOOSE_US_DATA = `${BASE_PATH}${VERSION}${API}${WHY_CHOOSE_US}/visible`;
+// Why Choose Us
+export const GET_ACTIVE_WHY_CHOOSE_US_DATA = `${BASE_PATH}${API}${VERSION}${WHY_CHOOSE_US}/active`;
+
+// Our Services
+export const GET_ACTIVE_OUR_SERVICES_DATA = `${BASE_PATH}${API}${VERSION}${OUR_SERVICES}/active`;
+
+
 
 export const UPDATE_FAQ_VIEW_COUNT = `${BASE_PATH}${VERSION}${API}${FAQ}/view-count`;
 
 export const GET_VISIBLE_PARTNERS = `${BASE_PATH}${VERSION}${API}${PARTNERS}/visible`;
 
-export const GET_VISIBLE_OUR_SERVICES = `${BASE_PATH}${VERSION}${API}${OUR_SERVICES}/visible`;
 
 export const GET_ACTIVE_WORK_FLOW = `${BASE_PATH}${VERSION}${API}${WORK_FLOW}/active`;
 

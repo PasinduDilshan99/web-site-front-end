@@ -2,12 +2,10 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { WhyChooseUsCardAPI } from "@/types/why-choose-us-types";
-import { GET_ALL_WHY_CHOOSE_US_DATA } from "@/utils/frontEndConstant";
 import Loading from "../../../components/common-components/loading/Loading";
 import AnimatedButton from "../../../components/common-components/buttons/AnimatedButton";
-import { useRouter } from "next/navigation"; // Import useRouter for navigation
-
-// Import state components
+import { useRouter } from "next/navigation";
+import { WhyChooseUsService } from "@/services/whyChooseUsService";
 
 // Default icon SVG component with Sunset Purple theme
 const DefaultIcon = ({ color = "#A855F7" }: { color?: string }) => (
@@ -31,7 +29,7 @@ const getDefaultImage = () => {
 };
 
 const WhyChooseUs = () => {
-  const router = useRouter(); // Initialize router
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [cardsData, setCardsData] = useState<WhyChooseUsCardAPI[]>([]);
@@ -56,32 +54,16 @@ const WhyChooseUs = () => {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(GET_ALL_WHY_CHOOSE_US_DATA);
+      // USING THE SERVICE INSTEAD OF DIRECT FETCH
+      const { data: items, error } = await WhyChooseUsService.fetchCardsData();
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (error) {
+        throw new Error(error);
+      } else {
+        setCardsData(items);
       }
-
-      const data = await response.json();
-
-      const cards = data.data || data;
-
-      const activeCards = Array.isArray(cards)
-        ? cards
-            .filter(
-              (card: WhyChooseUsCardAPI) =>
-                card.cardStatus === "VISIBLE" &&
-                card.cardStatusStatus === "ACTIVE"
-            )
-            .sort(
-              (a: WhyChooseUsCardAPI, b: WhyChooseUsCardAPI) =>
-                a.cardOrder - b.cardOrder
-            )
-        : [];
-
-      setCardsData(activeCards);
     } catch (err) {
-      console.error("Error fetching cards data:", err);
+      console.error("Error in component:", err);
       setError("Failed to load content. Please try again.");
     } finally {
       setLoading(false);
@@ -147,7 +129,6 @@ const WhyChooseUs = () => {
             return (
               <div
                 key={card.cardId}
-                // Removed onClick handler from card
                 className="group bg-white rounded-xl sm:rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 sm:hover:-translate-y-3 md:hover:-translate-y-4 overflow-hidden border border-white/10 backdrop-blur-sm h-full flex flex-col"
               >
                 {/* Card Image - Responsive Heights */}

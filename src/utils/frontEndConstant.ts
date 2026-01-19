@@ -41,14 +41,16 @@ export const GET_ACTIVE_ACTIVITY_HERO_SECTION_DATA_FE = `${API}${HERO_SECTION}/a
 export const GET_ACTIVE_PACKAGE_SCHEDULE_HERO_SECTION_DATA_FE = `${API}${HERO_SECTION}/package-schedule`;
 export const GET_ACTIVE_BOOKED_TOUR_HERO_SECTION_DATA_FE = `${API}${HERO_SECTION}/booked-tour`;
 
-export const GET_ALL_WHY_CHOOSE_US_DATA = `${API}${WHY_CHOOSE_US}`;
+// Why Choose Us
+export const GET_ACTIVE_WHY_CHOOSE_US_DATA_FE = `${API}${WHY_CHOOSE_US}`;
+
+// Our Services
+export const GET_ACTIVE_OUR_SERVICES_DATA_FE = `${API}${OUR_SERVICES}`;
 
 export const GET_ALL_FAQ_DATA = `${API}${FAQ}`;
 
-
 export const GET_ALL_PARTNERS = `${API}${PARTNERS}`;
 
-export const GET_ALL_OUR_SERVICES = `${API}${OUR_SERVICES}`;
 
 export const GET_ACTIVE_WORK_FLOW_STEPS = `${API}${WORK_FLOW}`;
 

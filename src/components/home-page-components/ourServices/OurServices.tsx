@@ -1,28 +1,11 @@
 "use client";
-import { GET_ALL_OUR_SERVICES } from "@/utils/frontEndConstant";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import Loading from "../../../components/common-components/loading/Loading";
 import { ErrorState } from "../../../components/common-components/error-state/ErrorState";
 import { EmptyState } from "../../../components/common-components/empty-state/EmptyState";
-
-interface OurServiceDataType {
-  serviceId: number;
-  serviceTitle: string;
-  serviceSubTitle: string;
-  serviceDescription: string;
-  serviceImageUrl: string;
-  serviceIconUrl: string;
-  serviceColor: string;
-  serviceStatus: string;
-  serviceStatusStatus: string;
-  serviceCreatedAt: string;
-  serviceCreatedBy: number;
-  serviceUpdatedAt: string | null;
-  serviceUpdatedBy: number | null;
-  serviceTerminatedAt: string | null;
-  serviceTerminatedBy: number | null;
-}
+import { OurServiceDataType } from "@/types/our-services-types";
+import { OurServicesService } from "@/services/OurServicesService";
 
 const OurServices = () => {
   const [loading, setLoading] = useState(true);
@@ -33,17 +16,17 @@ const OurServices = () => {
     const fetchOurServices = async () => {
       try {
         setLoading(true);
-        const response = await fetch(GET_ALL_OUR_SERVICES);
-        const data = await response.json();
+        
+        const { data: services, error } = await OurServicesService.fetchOurServicesData();
 
-        if (response.ok) {
-          setOurServices(data.data || []);
-          setError(null);
+        if (error) {
+          setError(error);
         } else {
-          setError(data.error || "Failed to fetch services");
+          setOurServices(services);
+          setError(null);
         }
       } catch (err) {
-        console.error("Error fetching services:", err);
+        console.error("Error in component:", err);
         setError("Something went wrong while fetching services");
       } finally {
         setLoading(false);

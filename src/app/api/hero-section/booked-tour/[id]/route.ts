@@ -17,7 +17,7 @@ export async function GET(
         },
       }
     );
-
+ 
     if (!response.ok) {
       const text = await response.text();
       console.error("Backend returned error:", text);
