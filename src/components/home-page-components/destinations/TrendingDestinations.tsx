@@ -1,65 +1,13 @@
 "use client";
-import { GET_TRENDING_DESTINATIONS } from "@/utils/frontEndConstant";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import Loading from "../../../components/common-components/loading/Loading";
-import { ErrorState } from "../../../components/common-components/error-state/ErrorState";
-import { EmptyState } from "../../../components/common-components/empty-state/EmptyState";
-import SectionHeader from "../../../components/common-components/section-header/SectionHeader";
-import AnimatedButton from "../../../components/common-components/buttons/AnimatedButton";
-
-// Updated TypeScript interfaces based on new API response
-interface DestinationImage {
-  imageId: number;
-  imageName: string;
-  imageDescription: string;
-  imageUrl: string;
-  imageStatus: string;
-  imageCreatedAt: string;
-}
-
-interface Activity {
-  activityId: number;
-  activityName: string;
-  activityDescription: string;
-  activitiesCategory: string;
-  durationHours: number;
-  availableFrom: string;
-  availableTo: string;
-  priceLocal: number;
-  priceForeigners: number;
-  minParticipate: number;
-  maxParticipate: number;
-  season: string;
-}
-
-interface TrendingDestinationType {
-  popularId: number;
-  rating: number;
-  popularity: number;
-  popularCreatedAt: string;
-  destinationId: number;
-  destinationName: string;
-  destinationDescription: string;
-  location: string;
-  latitude: number;
-  longitude: number;
-  destinationStatus: string;
-  categoryId: number;
-  categoryName: string;
-  categoryDescription: string;
-  categoryStatus: string;
-  images: DestinationImage[];
-  activities: Activity[];
-}
-
-interface ApiResponse {
-  code: number;
-  status: string;
-  message: string;
-  data: TrendingDestinationType[];
-  timestamp: string;
-}
+import Loading from "../../common-components/loading/Loading";
+import { ErrorState } from "../../common-components/error-state/ErrorState";
+import { EmptyState } from "../../common-components/empty-state/EmptyState";
+import SectionHeader from "../../common-components/section-header/SectionHeader";
+import AnimatedButton from "../../common-components/buttons/AnimatedButton";
+import { DestinationService } from "@/services/destinationService";
+import { TrendingDestinationType } from "@/types/destination-types";
 
 const TrendingDestinations = () => {
   const [loading, setLoading] = useState(true);
@@ -78,39 +26,24 @@ const TrendingDestinations = () => {
     const fetchTrendingDestinations = async () => {
       try {
         setLoading(true);
-        const response = await fetch(GET_TRENDING_DESTINATIONS);
-        const data: ApiResponse = await response.json();
+        
+        const { 
+          data: destinations, 
+          error, 
+          currentImageIndexes: initialIndexes,
+          isTransitioning: initialTransitions
+        } = await DestinationService.fetchTrendingDestinations();
 
-        if (response.ok && data.code === 200) {
-          const items: TrendingDestinationType[] = data.data || [];
-          // Filter only active destinations that have valid images
-          const activeTrendingDestinations = items.filter(
-            (item) =>
-              item.destinationStatus === "ACTIVE" &&
-              item.images &&
-              item.images.length > 0 &&
-              item.images.some(
-                (img) => img.imageUrl && img.imageUrl.trim() !== ""
-              )
-          );
-          setTrendingDestinations(activeTrendingDestinations);
-
-          // Initialize current image indexes and transition states
-          const initialIndexes: { [key: number]: number } = {};
-          const initialTransitions: { [key: number]: boolean } = {};
-          activeTrendingDestinations.forEach((item) => {
-            initialIndexes[item.destinationId] = 0;
-            initialTransitions[item.destinationId] = false;
-          });
+        if (error) {
+          setError(error);
+        } else {
+          setTrendingDestinations(destinations);
           setCurrentImageIndexes(initialIndexes);
           setIsTransitioning(initialTransitions);
-
           setError(null);
-        } else {
-          setError(data.message || "Failed to fetch trending destinations");
         }
       } catch (err) {
-        console.error("Error fetching trending destinations:", err);
+        console.error("Error in component:", err);
         setError("Something went wrong while fetching trending destinations");
       } finally {
         setLoading(false);

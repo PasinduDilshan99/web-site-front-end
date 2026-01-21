@@ -1,4 +1,4 @@
-import { DestinationData } from "@/types/destination-details-types";
+import { DestinationData } from "@/types/destination-types";
 import React from "react";
 import QuickInfoCard from "./QuickInfoCard";
 import BookingCard from "./BookingCard";

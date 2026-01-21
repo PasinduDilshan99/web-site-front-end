@@ -1,11 +1,20 @@
-import { GET_DESTINATIONS_DETAILS_BY_TOUR_ID_BE } from "@/utils/backEndConstant";
+import { GET_DESTINATIONS_DETAILS_BY_TOUR_ID_DATA } from "@/utils/backEndConstant";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: NextRequest) {
-  try {
-    const { tourId } = await request.json();
+type RouteParams = {
+  params: {
+    tourId: string;
+  };
+};
 
-    console.log('Destinations API Route - Received tourId:', tourId);
+export async function GET(
+  request: NextRequest,
+  { params }: RouteParams
+) {
+  try {
+    const { tourId } = params;
+
+    console.log("Destinations API Route - tourId:", tourId);
 
     if (!tourId) {
       return NextResponse.json(
@@ -14,14 +23,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const backendUrl = `${GET_DESTINATIONS_DETAILS_BY_TOUR_ID_BE}/tour-id/${tourId}`;
-    console.log('Backend URL:', backendUrl);
+    if (!GET_DESTINATIONS_DETAILS_BY_TOUR_ID_DATA) {
+      throw new Error("Backend base URL is not defined");
+    }
+
+    const backendUrl = `${GET_DESTINATIONS_DETAILS_BY_TOUR_ID_DATA}/${tourId}`;
+    console.log("Backend URL:", backendUrl);
 
     const response = await fetch(backendUrl, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
+      cache: "no-store", // optional but recommended for dynamic data
     });
 
     if (!response.ok) {
@@ -34,7 +48,7 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await response.json();
-    return NextResponse.json(data, { status: response.status });
+    return NextResponse.json(data);
   } catch (error) {
     console.error("Error fetching destinations:", error);
     return NextResponse.json(

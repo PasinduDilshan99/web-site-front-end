@@ -1,9 +1,9 @@
-import { GET_NEW_DESTINATIONS_DATA } from "@/utils/backEndConstant";
+import { GET_ACTIVE_DESTINATIONS_DATA } from "@/utils/backEndConstant";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const response = await fetch(GET_NEW_DESTINATIONS_DATA, {
+    const response = await fetch(GET_ACTIVE_DESTINATIONS_DATA, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

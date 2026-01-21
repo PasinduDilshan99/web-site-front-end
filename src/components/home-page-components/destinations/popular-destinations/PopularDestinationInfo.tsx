@@ -1,4 +1,4 @@
-import { PopularDestinationsType } from "@/types/destinations-types";
+import { PopularDestinationsType } from "@/types/destination-types";
 import React from "react";
 
 interface DestinationInfoProps {

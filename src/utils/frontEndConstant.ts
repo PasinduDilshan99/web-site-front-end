@@ -47,6 +47,21 @@ export const GET_ACTIVE_WHY_CHOOSE_US_DATA_FE = `${API}${WHY_CHOOSE_US}`;
 // Our Services
 export const GET_ACTIVE_OUR_SERVICES_DATA_FE = `${API}${OUR_SERVICES}`;
 
+// Destinations
+export const GET_DESTINATIONS_DETAILS_BY_ID_DATA_FE = `${API}${DESTINATIONS}`;
+export const GET_ACTIVE_DESTINATIONS_DATA_FE = `${API}${DESTINATIONS}/active-destinations`;
+export const GET_ACTIVE_DESTINATIONS_CATEGORIES_FE = `${API}${DESTINATIONS}${CATEGORIES}`;
+export const GET_POPULAR_DESTINATIONS_DATA_FE = `${API}${DESTINATIONS}/popular-destinations`;
+export const GET_NEW_DESTINATIONS_DATA_FE = `${API}${DESTINATIONS}/new-destinations`;
+export const GET_TRENDING_DESTINATIONS_DATA_FE = `${API}${DESTINATIONS}/trending-destinations`;
+export const GET_ACTIVE_DESTINATIONS_FOR_TOUR_MAP_DATA_DE = `${API}${DESTINATIONS}/tour-map`;
+export const GET_DESTINATIONS_DETAILS_BY_TOUR_ID_DATA_FE = `${API}${DESTINATIONS}/destinations-by-tour-id`;
+export const GET_DESTINATIONS_DETAILS_BY_REQUEST_DATA_FE = `${API}${DESTINATIONS}/destinations-for-request`;
+export const GET_DESTINATIONS_HISTORY_DETAILS_DATA_FE = `${API}${DESTINATIONS}/history-details`;
+export const GET_DESTINATIONS_HISTORY_IMAGES_DETAILS_DATA_FE = `${API}${DESTINATIONS}/history-images`;
+export const GET_DESTINATIONS_REVIEWS_DETAILS_DATA_FE = `${API}${DESTINATIONS}/reviews`;
+
+
 export const GET_ALL_FAQ_DATA = `${API}${FAQ}`;
 
 export const GET_ALL_PARTNERS = `${API}${PARTNERS}`;
@@ -54,14 +69,8 @@ export const GET_ALL_PARTNERS = `${API}${PARTNERS}`;
 
 export const GET_ACTIVE_WORK_FLOW_STEPS = `${API}${WORK_FLOW}`;
 
-export const GET_ALL_DESTINATIONS_CATEGORIES = `${API}${DESTINATIONS}${CATEGORIES}`;
-export const GET_POPULAR_DESTINATIONS = `${API}${DESTINATIONS}/popular-destinations`;
-export const GET_ACTIVE_DESTINATIONS_FE = `${API}${DESTINATIONS}`;
-export const GET_TRENDING_DESTINATIONS = `${API}${DESTINATIONS}/trending-destinations`;
-export const GET_NEW_DESTINATIONS = `${API}${DESTINATIONS}/new-destinations`;
-export const GET_DESTINATIONS_DETAILS_BY_TOUR_ID_FE =  `${API}${DESTINATIONS}/destinations-by-tour-id`;
 
-export const GET_ACTIVE_DESTINATIONS_LOCATIONS_FE = `${API}${DESTINATIONS}/locations-for-map`;
+
 export const GET_ACTIVE_DESTINATIONS_LOCATIONS_CATEGORIES_FE = `${API}${DESTINATIONS}/locations-categories`;
 
 export const GET_ALL_ACTIVE_BLOGS = `${API}${BLOGS}`;

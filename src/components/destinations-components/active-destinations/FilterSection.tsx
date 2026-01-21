@@ -1,4 +1,4 @@
-import { Filters } from "@/types/destinations-types";
+import { Filters } from "@/types/destination-types";
 import React, { useState } from "react";
 
 interface FilterSectionProps {

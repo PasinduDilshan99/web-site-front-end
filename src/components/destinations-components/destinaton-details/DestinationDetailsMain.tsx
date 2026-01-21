@@ -1,4 +1,4 @@
-import { DestinationData, Review } from "@/types/destination-details-types";
+import { DestinationData, Review } from "@/types/destination-types";
 import React, { useState } from "react";
 import DestinationImageGallery from "./DestinationImageGallery";
 import DestinationTabs from "./DestinationTabs";

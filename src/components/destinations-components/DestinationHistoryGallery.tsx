@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import {
   DestinationHistoryImage,
   HistoryImagesApiResponse,
-} from "@/types/destinations-types";
+} from "@/types/destination-types";
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";
 import Loading from "@/components/common-components/loading/Loading";
 import { ErrorState } from "@/components/common-components/error-state/ErrorState";

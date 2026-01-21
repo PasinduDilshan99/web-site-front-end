@@ -1,80 +1,27 @@
 "use client";
 
-import { GET_ACTIVE_DESTINATIONS_LOCATIONS_FE } from "@/utils/frontEndConstant";
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import Image from "next/image";
 import SectionHeader from "../../../components/common-components/section-header/SectionHeader";
-
-// Define TypeScript interfaces based on new API response
-interface DestinationImage {
-  id: number;
-  name: string;
-  description: string;
-  imageUrl: string;
-  status: string;
-}
-
-interface Destination {
-  destinationId: number;
-  destinationName: string;
-  destinationDescription: string;
-  destinationStatus: string;
-  destinationCategory: string;
-  destinationCategoryStatus: string;
-  destinationLocation: string;
-  destinationLatitude: number;
-  destinationLongitude: number;
-  destinationCreatedAt: string;
-  destinationCreatedBy: number;
-  destinationImagesForTourMapDtos: DestinationImage[];
-  destinationCategoryImageForTourMapDtos: DestinationImage[];
-}
-
-interface Category {
-  id: string;
-  name: string;
-  color: string;
-  image?: string;
-}
-
-interface ApiResponse {
-  code: number;
-  status: string;
-  message: string;
-  data: Destination[];
-  timestamp: string;
-}
+import { 
+  TourMapDestination, 
+  TourMapCategory, 
+  TourMapPlace,
+  TourMapLeafletMap,
+  TourMapLeafletMarker 
+} from "@/types/destination-types"; // Import types
+import { DestinationService } from "@/services/destinationService";
 
 // Define proper types for Leaflet
-interface LeafletMap {
-  remove: () => void;
-  setView: (coords: [number, number], zoom: number) => LeafletMap;
-  removeLayer: (layer: unknown) => void;
-  fitBounds: (bounds: unknown) => void;
-}
-
-interface LeafletMarker {
-  bindPopup: (content: string) => LeafletMarker;
-  addTo: (map: LeafletMap) => LeafletMarker;
-  on: (event: string, handler: () => void) => LeafletMarker;
-  openPopup: () => void;
-  closePopup: () => void;
-}
-
-interface LeafletControl {
-  L: {
-    map: (element: HTMLElement) => LeafletMap;
-    tileLayer: (url: string, options: unknown) => { addTo: (map: LeafletMap) => unknown };
-    marker: (coords: [number, number], options: unknown) => LeafletMarker;
-    divIcon: (options: unknown) => unknown;
-    featureGroup: (markers: LeafletMarker[]) => { getBounds: () => { pad: (padding: number) => unknown } };
-  };
-}
-
-// Extend Window interface to include Leaflet
 declare global {
   interface Window {
-    L: LeafletControl["L"] | undefined;
+    L: {
+      map: (element: HTMLElement) => TourMapLeafletMap;
+      tileLayer: (url: string, options: unknown) => { addTo: (map: TourMapLeafletMap) => unknown };
+      marker: (coords: [number, number], options: unknown) => TourMapLeafletMarker;
+      divIcon: (options: unknown) => unknown;
+      featureGroup: (markers: TourMapLeafletMarker[]) => { getBounds: () => { pad: (padding: number) => unknown } };
+    } | undefined;
   }
 }
 
@@ -105,17 +52,17 @@ const DestinationImageWithFallback = ({ src, alt }: { src: string; alt: string }
 
 const TourMap: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [map, setMap] = useState<LeafletMap | null>(null);
-  const [markers, setMarkers] = useState<LeafletMarker[]>([]);
+  const [map, setMap] = useState<TourMapLeafletMap | null>(null);
+  const [markers, setMarkers] = useState<TourMapLeafletMarker[]>([]);
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<LeafletMap | null>(null);
+  const mapInstanceRef = useRef<TourMapLeafletMap | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [destinations, setDestinations] = useState<Destination[]>([]);
-  const [selectedDestination, setSelectedDestination] = useState<Destination | null>(null);
+  const [destinations, setDestinations] = useState<TourMapDestination[]>([]);
+  const [selectedDestination, setSelectedDestination] = useState<TourMapDestination | null>(null);
 
   // Transform destinations to the format expected by the existing code
-  const places = useMemo(() => {
+  const places = useMemo((): TourMapPlace[] => {
     return destinations.map((destination) => ({
       id: destination.destinationId,
       name: destination.destinationName,
@@ -135,7 +82,7 @@ const TourMap: React.FC = () => {
   }, [selectedCategory, places]);
 
   // Get unique categories from destinations for dynamic category display
-  const allCategories = useMemo(() => {
+  const allCategories = useMemo((): TourMapCategory[] => {
     const uniqueCategories = Array.from(
       new Set(destinations.map((d) => d.destinationCategory))
     ).map((category) => {
@@ -153,7 +100,7 @@ const TourMap: React.FC = () => {
     });
 
     // Create "All Destinations" category
-    const allDestinationsCategory = {
+    const allDestinationsCategory: TourMapCategory = {
       id: "all",
       name: "All Destinations",
       color: "#3b82f6",
@@ -171,17 +118,18 @@ const TourMap: React.FC = () => {
     const fetchDestinationsLocations = async () => {
       try {
         setLoading(true);
-        const response = await fetch(GET_ACTIVE_DESTINATIONS_LOCATIONS_FE);
-        const data: ApiResponse = await response.json();
+        
+        // USING THE SERVICE INSTEAD OF DIRECT FETCH
+        const { data: destinationsData, error } = await DestinationService.fetchActiveDestinationsLocations();
 
-        if (response.ok && data.code === 200) {
-          setDestinations(data.data || []);
-          setError(null);
+        if (error) {
+          setError(error);
         } else {
-          setError(data.message || "Failed to fetch destinations locations");
+          setDestinations(destinationsData);
+          setError(null);
         }
       } catch (err) {
-        console.error("Error fetching destinations locations:", err);
+        console.error("Error in component:", err);
         setError("Something went wrong while fetching destinations locations");
       } finally {
         setLoading(false);

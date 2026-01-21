@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { DestinationData } from "@/types/destination-details-types";
+import { DestinationData } from "@/types/destination-types";
 
 interface GalleryPreviewProps {
   destination: DestinationData;

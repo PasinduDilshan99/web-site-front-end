@@ -1,0 +1,60 @@
+import { GET_DESTINATIONS_HISTORY_DETAILS_DATA } from "@/utils/backEndConstant";
+import { NextRequest, NextResponse } from "next/server";
+
+type RouteParams = {
+  params: {
+    destinationId: string;
+  };
+};
+
+export async function GET(
+  request: NextRequest,
+  { params }: RouteParams
+) {
+  try {
+    const { destinationId } = params;
+
+    console.log("Destination history API - destinationId:", destinationId);
+
+    if (!destinationId) {
+      return NextResponse.json(
+        { error: "Destination ID is required" },
+        { status: 400 }
+      );
+    }
+
+    if (!GET_DESTINATIONS_HISTORY_DETAILS_DATA) {
+      throw new Error("Backend URL is not defined");
+    }
+
+    const backendUrl = `${GET_DESTINATIONS_HISTORY_DETAILS_DATA}/${destinationId}`;
+
+    console.log("Backend URL:", backendUrl);
+
+    const response = await fetch(backendUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      const text = await response.text();
+      console.error("Backend returned error:", text);
+      return NextResponse.json(
+        { error: "Failed to fetch destination history details" },
+        { status: response.status }
+      );
+    }
+
+    const data = await response.json();
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error("Error fetching destination history data:", error);
+    return NextResponse.json(
+      { error: "Something went wrong" },
+      { status: 500 }
+    );
+  }
+}

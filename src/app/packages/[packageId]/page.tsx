@@ -25,12 +25,12 @@ import {
   PackageHistoryImage,
 } from "@/types/packages-types";
 import {
-  GET_DESTINATIONS_DETAILS_BY_TOUR_ID_BE,
   GET_PACKAGE_DETAILS_BY_ID_BE,
   GET_TOUR_DETAILS_BY_ID_BE,
 } from "@/utils/backEndConstant";
 import { useParams } from "next/navigation";
 import React, { useState, useEffect } from "react";
+import { DestinationService } from "@/services/destinationService";
 
 // Add these interfaces for the API responses
 interface PackageHistoryImagesResponse {
@@ -107,25 +107,15 @@ const PackagePage = () => {
         setTourData(tourResult.data);
       }
 
-      // Fetch destinations for the tour
-      const destinationsResponse = await fetch(
-        `${GET_DESTINATIONS_DETAILS_BY_TOUR_ID_BE}/${packageResult.data.tourId}`
-      );
-      const destinationsResult: ApiResponse<Destination[]> =
-        await destinationsResponse.json();
+      // USING THE SERVICE INSTEAD OF DIRECT FETCH FOR DESTINATIONS
+      const { data: destinationsData, activities, error: destinationsError } = 
+        await DestinationService.fetchDestinationsByTourId(packageResult.data.tourId);
 
-      if (destinationsResult.code === 200) {
-        setDestinations(destinationsResult.data);
-
-        // Create ExtendedActivity objects with destination information
-        const activities: ExtendedActivity[] = destinationsResult.data.flatMap(
-          (destination) =>
-            destination.activities.map((activity) => ({
-              ...activity,
-              destinationName: destination.destinationName,
-              destinationId: destination.destinationId,
-            }))
-        );
+      if (destinationsError) {
+        console.error("Error fetching destinations:", destinationsError);
+        // Don't throw error, just log it - destinations might be optional
+      } else {
+        setDestinations(destinationsData);
         setAllActivities(activities);
       }
     } catch (err) {

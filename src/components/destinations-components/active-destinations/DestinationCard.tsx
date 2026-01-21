@@ -1,4 +1,4 @@
-import { EnhancedDestination } from "@/types/destinations-types";
+import { EnhancedDestination } from "@/types/destination-types";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 

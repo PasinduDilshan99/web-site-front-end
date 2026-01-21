@@ -1,4 +1,4 @@
-import { PopularDestinationImage, PopularDestinationsType } from "@/types/destinations-types";
+import { PopularDestinationImage, PopularDestinationsType } from "@/types/destination-types";
 import React from "react";
 
 interface ImageGalleryProps {

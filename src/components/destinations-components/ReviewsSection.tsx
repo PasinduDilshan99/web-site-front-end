@@ -12,8 +12,8 @@ import {
   Calendar,
   MapPin,
 } from "lucide-react";
-import { Review } from "@/pages/DestinationPage";
 import SectionHeader from "../common-components/section-header/SectionHeader";
+import { Review } from "@/types/destination-types";
 
 interface ReviewsSectionProps {
   reviews: Review[];

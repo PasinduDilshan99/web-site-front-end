@@ -1,4 +1,4 @@
-import { Activity } from "@/types/destination-details-types";
+import { Activity } from "@/types/destination-types";
 import React from "react";
 
 interface ActivitiesTabProps {

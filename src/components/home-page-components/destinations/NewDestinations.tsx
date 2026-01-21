@@ -1,39 +1,12 @@
 "use client";
-import { GET_NEW_DESTINATIONS } from "@/utils/frontEndConstant";
 import React, { useEffect, useState } from "react";
-import Loading from "../../../components/common-components/loading/Loading";
-import SectionHeader from "../../../components/common-components/section-header/SectionHeader";
-import AnimatedButton from "../../../components/common-components/buttons/AnimatedButton";
+import Loading from "../../common-components/loading/Loading";
+import SectionHeader from "../../common-components/section-header/SectionHeader";
+import AnimatedButton from "../../common-components/buttons/AnimatedButton";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-
-interface ImageType {
-  imageId: number;
-  imageName: string;
-  imageDescription: string;
-  imageUrl: string;
-  imageStatus: string;
-  imageCreatedAt: string;
-}
-
-interface NewDestinationsType {
-  popularId: number;
-  rating: number;
-  popularity: number;
-  popularCreatedAt: string;
-  destinationId: number;
-  destinationName: string;
-  destinationDescription: string;
-  location: string;
-  latitude: number;
-  longitude: number;
-  destinationStatus: string;
-  categoryId: number;
-  categoryName: string;
-  categoryDescription: string;
-  categoryStatus: string;
-  images: ImageType[];
-}
+import { ImageType, NewDestinationsType } from "@/types/destination-types";
+import { DestinationService } from "@/services/destinationService";
 
 // Image Carousel Component for each destination
 const ImageCarousel: React.FC<{
@@ -189,30 +162,25 @@ const NewDestinations = () => {
   };
 
   const handleMoreDetails = (destinationId: number) => {
-        router.push(`/destinations/${destinationId}`);
-
-  }
+    router.push(`/destinations/${destinationId}`);
+  };
 
   useEffect(() => {
     const fetchNewDestinations = async () => {
       try {
         setLoading(true);
-        const response = await fetch(GET_NEW_DESTINATIONS);
-        const data = await response.json();
+        
+        // USING THE SERVICE INSTEAD OF DIRECT FETCH
+        const { data: destinations, error } = await DestinationService.fetchNewDestinations();
 
-        if (response.ok) {
-          const items: NewDestinationsType[] = data.data || [];
-          // Filter only active destinations
-          const activeDestinations = items.filter(
-            (item) => item.destinationStatus === "ACTIVE"
-          );
-          setNewDestinations(activeDestinations);
-          setError(null);
+        if (error) {
+          setError(error);
         } else {
-          setError(data.message || "Failed to fetch new destinations");
+          setNewDestinations(destinations);
+          setError(null);
         }
       } catch (err) {
-        console.error("Error fetching new destinations:", err);
+        console.error("Error in component:", err);
         setError("Something went wrong while fetching new destinations");
       } finally {
         setLoading(false);
@@ -221,7 +189,6 @@ const NewDestinations = () => {
 
     fetchNewDestinations();
   }, []);
-
 
   if (loading) {
     return (
@@ -281,7 +248,7 @@ const NewDestinations = () => {
                   </span>
                 </div>
 
-                <p className="text-gray-600 mb-4 sm:mb-5 md:mb-6 line-clamp-2 text-xs sm:text-sm md:text-md lg:text-lg xl:text-xl 2xl:text-2xl  leading-relaxed">
+                <p className="text-gray-600 mb-4 sm:mb-5 md:mb-6 line-clamp-2 text-xs sm:text-sm md:text-md lg:text-lg xl:text-xl 2xl:text-2xl leading-relaxed">
                   {destination.destinationDescription}
                 </p>
 
@@ -295,7 +262,10 @@ const NewDestinations = () => {
                     </p>
                   </div>
 
-                  <button onClick={()=>handleMoreDetails(destination.destinationId)} className="px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-amber-600 to-purple-600 text-white text-xs sm:text-sm md:text-base font-medium rounded-lg sm:rounded-xl hover:from-purple-700 hover:to-amber-700 transition-colors">
+                  <button
+                    onClick={() => handleMoreDetails(destination.destinationId)}
+                    className="px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-amber-600 to-purple-600 text-white text-xs sm:text-sm md:text-base font-medium rounded-lg sm:rounded-xl hover:from-purple-700 hover:to-amber-700 transition-colors"
+                  >
                     Read more
                   </button>
                 </div>

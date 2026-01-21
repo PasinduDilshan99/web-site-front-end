@@ -1,17 +1,17 @@
 "use client";
-import { GET_POPULAR_DESTINATIONS } from "@/utils/frontEndConstant";
 import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import SectionHeader from "../../common-components/section-header/SectionHeader";
-import Loading from "../../common-components/loading/Loading";
-import { ErrorState } from "../../common-components/error-state/ErrorState";
-import { EmptyState } from "../../common-components/empty-state/EmptyState";
-import AnimatedButton from "../../common-components/buttons/AnimatedButton";
-import { PopularDestinationsType } from "@/types/destinations-types";
-import { sliderSettings } from "@/components/destinations-components/popular-destinations/sliderSettings";
+import SectionHeader from "../../../common-components/section-header/SectionHeader";
+import Loading from "../../../common-components/loading/Loading";
+import { ErrorState } from "../../../common-components/error-state/ErrorState";
+import { EmptyState } from "../../../common-components/empty-state/EmptyState";
+import AnimatedButton from "../../../common-components/buttons/AnimatedButton";
+import { PopularDestinationsType } from "@/types/destination-types";
+import { sliderSettings } from "@/components/home-page-components/destinations/popular-destinations/sliderSettings";
 import DestinationCard from "@/components/destinations-components/DestinationCard";
+import { DestinationService } from "@/services/destinationService";
 
 const PopularDestinations = () => {
   const [loading, setLoading] = useState(true);
@@ -24,21 +24,18 @@ const PopularDestinations = () => {
     const fetchPopularDestinations = async () => {
       try {
         setLoading(true);
-        const response = await fetch(GET_POPULAR_DESTINATIONS);
-        const data = await response.json();
+        
+        // USING THE SERVICE INSTEAD OF DIRECT FETCH
+        const { data: destinations, error } = await DestinationService.fetchPopularDestinations();
 
-        if (response.ok) {
-          const items: PopularDestinationsType[] = data.data || [];
-          const activePopularDestinations = items.filter(
-            (item) => item.destinationStatus === "ACTIVE"
-          );
-          setPopularDestinations(activePopularDestinations);
-          setError(null);
+        if (error) {
+          setError(error);
         } else {
-          setError(data.message || "Failed to fetch popular destinations");
+          setPopularDestinations(destinations);
+          setError(null);
         }
       } catch (err) {
-        console.error("Error fetching popular destinations:", err);
+        console.error("Error in component:", err);
         setError("Something went wrong while fetching popular destinations");
       } finally {
         setLoading(false);

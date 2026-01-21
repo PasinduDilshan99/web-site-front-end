@@ -1,30 +1,10 @@
 "use client";
 
-import { GET_ALL_DESTINATIONS_CATEGORIES } from "@/utils/frontEndConstant";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import AnimatedButton from "../../../components/common-components/buttons/AnimatedButton";
-
-// Define the interface for image
-interface ImageType {
-  imageId: number;
-  imageName: string;
-  imageDescription: string;
-  imageUrl: string;
-  imageStatus: string;
-  imageCreatedAt: string;
-}
-
-// Define the interface for a single destination category
-interface DestinationCategoryType {
-  categoryId: number;
-  category: string;
-  categoryDescription: string;
-  categoryStatus: string;
-  createdAt: string;
-  updatedAt: string;
-  images: ImageType[];
-}
+import AnimatedButton from "../../common-components/buttons/AnimatedButton";
+import { DestinationCategoryType } from "@/types/destination-types";
+import { DestinationService } from "@/services/destinationService";
 
 const DestinationsCategories = () => {
   const [loading, setLoading] = useState(true);
@@ -65,22 +45,18 @@ const DestinationsCategories = () => {
     const fetchDestinationsCategories = async () => {
       try {
         setLoading(true);
-        const response = await fetch(GET_ALL_DESTINATIONS_CATEGORIES);
-        const data = await response.json();
+        
+        // USING THE SERVICE INSTEAD OF DIRECT FETCH
+        const { data: categories, error } = await DestinationService.fetchAllDestinationCategories();
 
-        if (response.ok) {
-          const items: DestinationCategoryType[] = data.data || [];
-          // Filter only active categories
-          const activeCategories = items.filter(
-            (item) => item.categoryStatus === "ACTIVE"
-          );
-          setDestinationsCategories(activeCategories);
-          setError(null);
+        if (error) {
+          setError(error);
         } else {
-          setError(data.message || "Failed to fetch destinations categories");
+          setDestinationsCategories(categories);
+          setError(null);
         }
       } catch (err) {
-        console.error("Error fetching destinations categories:", err);
+        console.error("Error in component:", err);
         setError("Something went wrong while fetching destinations categories");
       } finally {
         setLoading(false);

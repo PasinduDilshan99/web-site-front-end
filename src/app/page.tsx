@@ -3,10 +3,10 @@ import Accommodations from "./components/accommodations/Accommodations";
 import ActivitiesHome from "./components/activities/ActivitiesHome";
 import ActivityCategoriesHome from "./components/activities/categories/ActivityCategoriesHome";
 import ActiveBlogsSummery from "./components/blogs/ActiveBlogsSummery";
-import DestinationsCategories from "./components/destinations/DestinationsCategories";
-import NewDestinations from "./components/destinations/NewDestinations";
-import PopularDestinations from "../components/destinations-components/popular-destinations/PopularDestinations";
-import TrendingDestinations from "./components/destinations/TrendingDestinations";
+import DestinationsCategories from "../components/home-page-components/destinations/DestinationsCategories";
+import NewDestinations from "../components/home-page-components/destinations/NewDestinations";
+import PopularDestinations from "../components/home-page-components/destinations/popular-destinations/PopularDestinations";
+import TrendingDestinations from "../components/home-page-components/destinations/TrendingDestinations";
 import Footer from "./components/footer/Footer";
 import GalleryHome from "./components/gallery/GalleryHome";
 import HeroSection from "../components/home-page-components/heroSection/HeroSection";
@@ -44,15 +44,15 @@ export default function Home() {
       <div>
         <OurServices />
       </div>
-      {/* <div>
+      <div>
         <PopularDestinations />
       </div>
-      <div>
+      {/* <div>
         <TrendingDestinations />
-      </div> */}
+      </div>
       <div>
         <NewDestinations />
-      </div>
+      </div> */}
       <div>{/* <PopularTours /> */}</div>
       {/* <div>
         <ActiveToursHome />
