@@ -1,5 +1,6 @@
 import {
   GET_ACTIVE_TOUR_DATA_FE,
+  GET_ALL_TOURS_BASIC_DETAILS_DATA_FE,
   GET_POPULAR_TOUR_DATA_FE,
   GET_TOUR_DAY_TO_DAY_DETAILS_BY_ID_DATA_FE,
   GET_TOUR_DETAILS_BY_ID_DATA_FE,
@@ -19,6 +20,7 @@ import {
   PopularTourApiResponse,
   PopularTourType,
   ReviewsApiResponse,
+  Tour,
   TourDetails,
   TourExtraDetails,
   TourHistory,
@@ -451,5 +453,39 @@ export class TourService {
   }
 
 
+    static async fetchAllToursBasicDetails(): Promise<{
+    tours: Tour[];
+    error: string | null;
+  }> {
+    try {
+      const response = await fetch(
+        GET_ALL_TOURS_BASIC_DETAILS_DATA_FE,
+        {
+          headers: {
+           
+          },
+        }
+      );
+      const result = await response.json();
+
+      if (result.code === 200) {
+        return {
+          tours: result.data || [],
+          error: null,
+        };
+      } else {
+        return {
+          tours: [],
+          error: result.message || "Failed to fetch tours",
+        };
+      }
+    } catch (err) {
+      console.error("Error fetching tours:", err);
+      return {
+        tours: [],
+        error: err instanceof Error ? err.message : "Failed to fetch tours",
+      };
+    }
+  }
   
 }

@@ -1,9 +1,9 @@
-import { GET_ALL_PACKAGES_DETAILS_DATA } from "@/utils/backEndConstant";
+import { GET_PACKAGE_HISTORY_IMAGES_DETAILS_DATA } from "@/utils/backEndConstant";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const response = await fetch(GET_ALL_PACKAGES_DETAILS_DATA, {
+    const response = await fetch(GET_PACKAGE_HISTORY_IMAGES_DETAILS_DATA, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -21,7 +21,6 @@ export async function GET() {
 
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
-
   } catch (error) {
     console.error("Error fetching backend data:", error);
     return NextResponse.json(

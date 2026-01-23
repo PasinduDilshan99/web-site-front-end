@@ -1,27 +1,41 @@
-import { GET_PACKAGE_DETAILS_BY_ID_BE } from "@/utils/backEndConstant";
+import { GET_PACKAGE_HISTORY_IMAGES_DETAILS_DATA } from "@/utils/backEndConstant";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: NextRequest) {
-  try {
-    const { packageId } = await request.json();
+type RouteParams = {
+  params: {
+    packageId: string;
+  };
+};
 
-    console.log('Package API Route - Received packageId:', packageId);
+export async function GET(
+  request: NextRequest,
+  { params }: RouteParams
+) {
+  try {
+    const { packageId } = params;
+
+    console.log("package  API - packageId:", packageId);
 
     if (!packageId) {
       return NextResponse.json(
-        { error: "Package ID is required" },
+        { error: "package ID is required" },
         { status: 400 }
       );
     }
 
-    const backendUrl = `${GET_PACKAGE_DETAILS_BY_ID_BE}/${packageId}`;
-    console.log('Backend URL:', backendUrl);
+    if (!GET_PACKAGE_HISTORY_IMAGES_DETAILS_DATA) {
+      throw new Error("Backend URL is not defined");
+    }
+
+    const backendUrl = `${GET_PACKAGE_HISTORY_IMAGES_DETAILS_DATA}/${packageId}`;
+    console.log("Backend URL:", backendUrl);
 
     const response = await fetch(backendUrl, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
+      cache: "no-store",
     });
 
     if (!response.ok) {
@@ -34,11 +48,11 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await response.json();
-    return NextResponse.json(data, { status: response.status });
+    return NextResponse.json(data);
   } catch (error) {
     console.error("Error fetching package details:", error);
     return NextResponse.json(
-      { error: "Something went wrong while fetching package details" },
+      { error: "Something went wrong" },
       { status: 500 }
     );
   }

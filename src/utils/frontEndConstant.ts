@@ -73,11 +73,21 @@ export const GET_TOURS_HISTORY_IMAGES_DETAILS_DATA_FE = `${API}${TOUR}/history-i
 export const GET_TOURS_REVIEWS_DETAILS_DATA_FE = `${API}${TOUR}/reviews`;
 export const GET_TOUR_EXTRA_DETAILS_BY_ID_DATA_FE = `${API}${TOUR}/extra-details`;
 export const GET_TOUR_DAY_TO_DAY_DETAILS_BY_ID_DATA_FE = `${API}${TOUR}/day-to-day-details`;
+export const GET_ALL_TOURS_BASIC_DETAILS_DATA_FE = `${API}${TOUR}/basic-details`;
 
 // Packages
+export const GET_ALL_PACKAGES_DETAILS_DATA_FE = `${API}${PACKAGES}`;
+export const GET_ACTIVE_PACKAGE_DETAILS_DATA_FE = `${API}${PACKAGES}/active-packages`;
+export const GET_PACKAGE_DETAILS_BY_ID_DATA_FE = `${API}${PACKAGES}`;
+export const GET_PACKAGES_DETAILS_FOR_REQUEST_DATA_FE = `${API}${PACKAGES}/packages-for-request`;
+export const GET_PACKAGE_REVIEWS_DETAILS_DATA_FE = `${API}${PACKAGES}/reviews`;
+export const GET_PACKAGE_HISTORY_DETAILS_DATA_FE = `${API}${PACKAGES}/history-details`;
+export const GET_PACKAGE_HISTORY_IMAGES_DETAILS_DATA_FE = `${API}${PACKAGES}/history-images`;
 export const GET_PACKAGE_DETAILS_BY_TOUR_ID_DATA_FE = `${API}${PACKAGES}/package-details-by-tour-id`;
 export const GET_PACKAGE_EXTRA_DETAILS_BY_TOUR_ID_DATA_FE = `${API}${PACKAGES}/package-extra-details-by-tour-id`;
 export const GET_PACKAGE_SCHEDULES_DETAILS_BY_TOUR_ID_DATA_FE = `${API}${PACKAGES}/package-schedules-by-tour-id`;
+export const GET_PACKAGE_DETAILS_FOR_COMPARE_BY_TOUR_ID_DATA_FE = `${API}${PACKAGES}/compare`;
+export const GET_PACKAGE_SCHEDULES_DETAILS_BY_PACKAGE_ID_DATA_FE = `${API}${PACKAGES}/schedule-details`;
 
 // Employees
 export const GET_EMPLOYEE_DETAILS_BY_TOUR_ID_DATA_FE = `${API}${EMPLOYEES}/employees-details-by-tour-id`;
@@ -99,9 +109,7 @@ export const GET_ACTIVE_DESTINATIONS_LOCATIONS_CATEGORIES_FE = `${API}${DESTINAT
 export const GET_ALL_ACTIVE_BLOGS = `${API}${BLOGS}`;
 
 
-export const GET_ALL_ACTIVE_PACKAGES_FE = `${API}${PACKAGES}`;
-export const GET_PACKAGE_DETAILS_BY_ID_FE = `${API}${PACKAGES}`;
-export const GET_PACKAGE_REVIEWS_FE = `${API}${PACKAGES}/reviews`;
+
 
 export const GET_ALL_ACTIVE_REVIEW_FE = `${API}${REVIEW}`;
 

@@ -76,7 +76,7 @@ export interface PackageDayByDay {
   airCondition: boolean;
 }
 
-export interface Package {
+export interface PackageComparison {
   packageId: number;
   packageName: string;
   packageDescription: string;

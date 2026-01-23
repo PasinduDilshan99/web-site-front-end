@@ -1,16 +1,11 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
-import { GET_ALL_ACTIVE_PACKAGES_FE } from "@/utils/frontEndConstant";
 import {
   ActivePackagesType,
-  ApiResponse,
   Filters,
   PackageReview,
-  ReviewsResponse,
   PackageHistory,
-  PackageHistoryResponse,
   PackageHistoryImage,
-  PackageSearchRequest,
 } from "@/types/packages-types";
 import Loading from "@/components/common-components/loading/Loading";
 import { ErrorState } from "@/components/common-components/error-state/ErrorState";
@@ -19,11 +14,9 @@ import PackageGrid from "@/components/packages-components/PackageGrid";
 import ReviewsSection from "@/components/packages-components/ReviewsSection";
 import HistoryCarousel from "@/components/packages-components/HistoryCarousel";
 import PackageHistoryGallery from "@/components/packages-components/PackageHistoryGallery";
-import NavBar from "@/components/common-components/navBar/NavBar";
-import Footer from "@/app/components/footer/Footer";
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";
 import PackageHeroSection from "@/components/packages-components/PackageHeroSection";
-import LinkBar from "@/components/common-components/linkBar/LinkBar";
+import { PackageService } from "@/services/packageService";
 
 // Define API response interface for packages
 interface PackageListResponse {
@@ -87,57 +80,14 @@ const PackagePage: React.FC = () => {
   // Fetch filter options (initial data)
   const fetchFilterOptions = useCallback(async (): Promise<void> => {
     try {
-      const requestBody: PackageSearchRequest = {
-        name: null,
-        minPrice: null,
-        maxPrice: null,
-        duration: null,
-        packageType: null,
-        location: null,
-        minGroupSize: null,
-        maxGroupSize: null,
-        fromDate: null,
-        toDate: null,
-        pageSize: 100, // Fetch more for filter options
-        pageNumber: 1,
-      };
-
-      const response = await fetch(
-        "http://localhost:8080/felicita/v0/api/package/packages",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Cookie:
-              "token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNpbmR1IiwidXNlcklkIjo0LCJ1c2VybmFtZSI6InBhc2luZHUiLCJpYXQiOjE3NjI2Njg5NjksImV4cCI6MTc2MjY2OTA4OX0.5wQ6QL3q2pvSoCEhDze6t_Aub3Vb8hlcMRQ3UQxu8yg",
-          },
-          body: JSON.stringify(requestBody),
-        }
-      );
-
-      const result: PaginatedPackageResponse = await response.json();
-
-      if (result.code === 200 && result.data) {
-        // Extract unique values for filters
-        const types = [
-          ...new Set(
-            result.data.packageResponseDtos.map((pkg) => pkg.packageTypeName)
-          ),
-        ];
-        const locationsList = [
-          ...new Set(
-            result.data.packageResponseDtos.map((pkg) => pkg.startLocation)
-          ),
-        ];
-        const durationsList = [
-          ...new Set(
-            result.data.packageResponseDtos.map((pkg) => pkg.duration)
-          ),
-        ].sort((a, b) => a - b);
-
-        setPackageTypes(types);
-        setLocations(locationsList);
-        setDurations(durationsList);
+      const { packageTypes, locations, durations, error } = await PackageService.fetchFilterOptions();
+      
+      if (error) {
+        console.error("Error fetching filter options:", error);
+      } else {
+        setPackageTypes(packageTypes);
+        setLocations(locations);
+        setDurations(durations);
       }
     } catch (err) {
       console.error("Error fetching filter options:", err);
@@ -149,50 +99,24 @@ const PackagePage: React.FC = () => {
     try {
       setLoading(true);
 
-      // Prepare API request
-      const requestBody: PackageSearchRequest = {
-        name: filters.search || null,
-        minPrice: filters.priceRange[0] > 0 ? filters.priceRange[0] : null,
-        maxPrice: filters.priceRange[1] < 100000 ? filters.priceRange[1] : null,
-        duration: filters.duration ? parseInt(filters.duration) : null,
-        packageType: filters.packageType || null,
-        location: filters.location || null,
-        minGroupSize: filters.minPersons ? parseInt(filters.minPersons) : null,
-        maxGroupSize: filters.maxPersons ? parseInt(filters.maxPersons) : null,
-        fromDate: filters.startDate || null,
-        toDate: filters.endDate || null,
-        pageSize: itemsPerPage,
-        pageNumber: currentPage,
-      };
+      // Prepare API request using service helper
+      const requestBody = PackageService.buildSearchRequest(filters);
+      
+      // USING THE SERVICE INSTEAD OF DIRECT FETCH
+      const { packages: fetchedPackages, totalPackages: total, error } = 
+        await PackageService.fetchPackagesWithFilters(
+          requestBody,
+          itemsPerPage,
+          currentPage
+        );
 
-      const response = await fetch(
-        "http://localhost:8080/felicita/v0/api/package/packages",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Cookie:
-              "token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNpbmR1IiwidXNlcklkIjo0LCJ1c2VybmFtZSI6InBhc2luZHUiLCJpYXQiOjE3NjI2Njg5NjksImV4cCI6MTc2MjY2OTA4OX0.5wQ6QL3q2pvSoCEhDze6t_Aub3Vb8hlcMRQ3UQxu8yg",
-          },
-          body: JSON.stringify(requestBody),
-        }
-      );
-
-      const result: PaginatedPackageResponse = await response.json();
-
-      if (result.code === 200) {
-        if (result.data) {
-          setPackages(result.data.packageResponseDtos);
-          setTotalPackages(result.data.packageCount);
-          setTotalPages(Math.ceil(result.data.packageCount / itemsPerPage));
-        } else {
-          setPackages([]);
-          setTotalPackages(0);
-          setTotalPages(0);
-        }
-        setError(null);
+      if (error) {
+        setError(error);
       } else {
-        throw new Error(result.message);
+        setPackages(fetchedPackages);
+        setTotalPackages(total);
+        setTotalPages(Math.ceil(total / itemsPerPage));
+        setError(null);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -249,15 +173,14 @@ const PackagePage: React.FC = () => {
       setReviewsLoading(true);
       setReviewsError(null);
 
-      const response = await fetch(
-        "http://localhost:8080/felicita/v0/api/package/reviews"
-      );
-      const result: ReviewsResponse = await response.json();
+      // USING THE SERVICE INSTEAD OF DIRECT FETCH
+      const { reviews: fetchedReviews, error } = await PackageService.fetchReviews();
 
-      if (result.code === 200) {
-        setReviews(result.data);
+      if (error) {
+        setReviewsError(error);
       } else {
-        throw new Error(result.message);
+        setReviews(fetchedReviews);
+        setReviewsError(null);
       }
     } catch (err) {
       setReviewsError(
@@ -275,15 +198,14 @@ const PackagePage: React.FC = () => {
       setHistoryLoading(true);
       setHistoryError(null);
 
-      const response = await fetch(
-        "http://localhost:8080/felicita/v0/api/package/history"
-      );
-      const result: PackageHistoryResponse = await response.json();
+      // USING THE SERVICE INSTEAD OF DIRECT FETCH
+      const { history: fetchedHistory, error } = await PackageService.fetchHistory();
 
-      if (result.code === 200) {
-        setHistory(result.data);
+      if (error) {
+        setHistoryError(error);
       } else {
-        throw new Error(result.message);
+        setHistory(fetchedHistory);
+        setHistoryError(null);
       }
     } catch (err) {
       setHistoryError(
@@ -301,15 +223,14 @@ const PackagePage: React.FC = () => {
       setHistoryImagesLoading(true);
       setHistoryImagesError(null);
 
-      const response = await fetch(
-        "http://localhost:8080/felicita/v0/api/package/history-images"
-      );
-      const result = await response.json();
+      // USING THE SERVICE INSTEAD OF DIRECT FETCH
+      const { historyImages: fetchedImages, error } = await PackageService.fetchHistoryImages();
 
-      if (result.code === 200) {
-        setHistoryImages(result.data);
+      if (error) {
+        setHistoryImagesError(error);
       } else {
-        throw new Error(result.message);
+        setHistoryImages(fetchedImages);
+        setHistoryImagesError(null);
       }
     } catch (err) {
       setHistoryImagesError(

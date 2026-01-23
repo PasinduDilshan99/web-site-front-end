@@ -16,34 +16,20 @@ import {
   Destination,
   TourDetails,
   ActivePackagesType,
-  ApiResponse,
   ExtendedActivity,
   PackageReview,
-  ReviewsResponse,
   PackageHistory,
-  PackageHistoryResponse,
   PackageHistoryImage,
-} from "@/types/packages-types";
-import {
-  GET_PACKAGE_DETAILS_BY_ID_BE,
-  GET_TOUR_DETAILS_BY_ID_BE,
-} from "@/utils/backEndConstant";
+} from "@/types/package-types";
 import { useParams } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { DestinationService } from "@/services/destinationService";
-
-// Add these interfaces for the API responses
-interface PackageHistoryImagesResponse {
-  code: number;
-  status: string;
-  message: string;
-  data: PackageHistoryImage[];
-  timestamp: string;
-}
+import { PackageService } from "@/services/packageService";
+import { TourService } from "@/services/tourService";
 
 const PackagePage = () => {
   const params = useParams();
-  const packageId =  params?.packageId || null;
+  const packageId = params?.packageId || "1";
   const [packageData, setPackageData] = useState<ActivePackagesType | null>(
     null
   );
@@ -72,8 +58,8 @@ const PackagePage = () => {
     if (packageId) {
       fetchPackageData();
       fetchReviews();
-      fetchHistory(); // Fetch history when component mounts
-      fetchHistoryImages(); // Fetch history images when component mounts
+      fetchHistory();
+      fetchHistoryImages();
     }
   }, [packageId]);
 
@@ -82,34 +68,34 @@ const PackagePage = () => {
       setLoading(true);
       setError(null);
 
-      // Fetch package details
-      const packageResponse = await fetch(
-        `${GET_PACKAGE_DETAILS_BY_ID_BE}/${packageId}`
-      );
-      const packageResult: ApiResponse<ActivePackagesType> =
-        await packageResponse.json();
+      // USING THE SERVICE INSTEAD OF DIRECT FETCH
+      const { data: fetchedPackage, error: packageError } = 
+        await PackageService.fetchPackageDetails(packageId[0]);
 
-      if (packageResult.code !== 200) {
-        throw new Error(
-          packageResult.message || "Failed to fetch package details"
-        );
+      if (packageError) {
+        throw new Error(packageError);
       }
 
-      setPackageData(packageResult.data);
-
-      // Fetch tour details using tourId from package
-      const tourResponse = await fetch(
-        `${GET_TOUR_DETAILS_BY_ID_BE}/${packageResult.data.tourId}`
-      );
-      const tourResult: ApiResponse<TourDetails> = await tourResponse.json();
-
-      if (tourResult.code === 200) {
-        setTourData(tourResult.data);
+      if (!fetchedPackage) {
+        throw new Error("No package data found");
       }
 
-      // USING THE SERVICE INSTEAD OF DIRECT FETCH FOR DESTINATIONS
+      setPackageData(fetchedPackage);
+
+      // USING THE SERVICE FOR TOUR DETAILS
+      const { data: fetchedTour, error: tourError } = 
+        await TourService.getTourDetails(fetchedPackage.tourId.toString());
+
+      if (tourError) {
+        console.error("Error fetching tour details:", tourError);
+        // Don't throw error, just log it
+      } else {
+        setTourData(fetchedTour);
+      }
+
+      // USING THE DESTINATION SERVICE
       const { data: destinationsData, activities, error: destinationsError } = 
-        await DestinationService.fetchDestinationsByTourId(packageResult.data.tourId);
+        await DestinationService.fetchDestinationsByTourId(fetchedPackage.tourId);
 
       if (destinationsError) {
         console.error("Error fetching destinations:", destinationsError);
@@ -135,15 +121,15 @@ const PackagePage = () => {
       setReviewsLoading(true);
       setReviewsError(null);
 
-      const response = await fetch(
-        `http://localhost:8080/felicita/v0/api/package/reviews/${packageId}`
-      );
-      const result: ReviewsResponse = await response.json();
+      if (!packageId) return;
 
-      if (result.code === 200) {
-        setReviews(result.data);
+      // USING THE SERVICE INSTEAD OF DIRECT FETCH
+      const { reviews: fetchedReviews, error } = await PackageService.fetchPackageReviewsById(packageId[0]);
+
+      if (error) {
+        setReviewsError(error);
       } else {
-        throw new Error(result.message);
+        setReviews(fetchedReviews);
       }
     } catch (err) {
       setReviewsError(
@@ -161,15 +147,15 @@ const PackagePage = () => {
       setHistoryLoading(true);
       setHistoryError(null);
 
-      const response = await fetch(
-        `http://localhost:8080/felicita/v0/api/package/history/${packageId}`
-      );
-      const result: PackageHistoryResponse = await response.json();
+      if (!packageId) return;
 
-      if (result.code === 200) {
-        setHistory(result.data);
+      // USING THE SERVICE INSTEAD OF DIRECT FETCH
+      const { history: fetchedHistory, error } = await PackageService.fetchPackageHistoryById(packageId[0]);
+
+      if (error) {
+        setHistoryError(error);
       } else {
-        throw new Error(result.message);
+        setHistory(fetchedHistory);
       }
     } catch (err) {
       setHistoryError(
@@ -187,15 +173,15 @@ const PackagePage = () => {
       setHistoryImagesLoading(true);
       setHistoryImagesError(null);
 
-      const response = await fetch(
-        `http://localhost:8080/felicita/v0/api/package/history-images/${packageId}`
-      );
-      const result: PackageHistoryImagesResponse = await response.json();
+      if (!packageId) return;
 
-      if (result.code === 200) {
-        setHistoryImages(result.data);
+      // USING THE SERVICE INSTEAD OF DIRECT FETCH
+      const { historyImages: fetchedImages, error } = await PackageService.fetchPackageHistoryImagesById(packageId[0]);
+
+      if (error) {
+        setHistoryImagesError(error);
       } else {
-        throw new Error(result.message);
+        setHistoryImages(fetchedImages);
       }
     } catch (err) {
       setHistoryImagesError(
@@ -211,7 +197,10 @@ const PackagePage = () => {
   const handleRetry = () => {
     setError(null);
     setLoading(true);
-    window.location.reload();
+    fetchPackageData();
+    fetchReviews();
+    fetchHistory();
+    fetchHistoryImages();
   };
 
   const handleReviewsRetry = () => {
