@@ -1,6 +1,6 @@
 // components/sri-lankan-tours-components/ReviewsSection.tsx
 import React, { useState, useEffect, useCallback, JSX } from "react";
-import { TourReview } from "@/types/sri-lankan-tour-types";
+import { TourReview } from "@/types/tour-types";
 import Image from "next/image";
 import SectionHeader from "../common-components/section-header/SectionHeader";
 

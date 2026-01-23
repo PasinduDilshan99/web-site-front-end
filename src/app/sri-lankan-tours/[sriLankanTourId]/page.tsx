@@ -2,16 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import ReviewsSection from "@/components/sri-lankan-tours-components/ReviewsSection";
-import {
-  TourHistory,
-  TourHistoryImage,
-  TourReview,
-  Accommodation,
-  TourExtraDetails,
-} from "@/types/sri-lankan-tour-types";
 import TourMapContainer from "@/components/sri-lankan-tours-components/tour-map-components/TourMapContainer";
-import NavBar from "@/components/common-components/navBar/NavBar";
-import Footer from "@/app/components/footer/Footer";
 import Loading from "@/components/common-components/loading/Loading";
 import { ErrorState } from "@/components/common-components/error-state/ErrorState";
 import { EmptyState } from "@/components/common-components/empty-state/EmptyState";
@@ -22,204 +13,19 @@ import SLTourDetailsBookingSidebar from "@/components/sri-lankan-tours-component
 import TourHistorySection from "@/components/sri-lankan-tours-components/TourHistorySection";
 import TourHistoryGallery from "@/components/sri-lankan-tours-components/TourHistoryGallery";
 import SLTourDayWiseDetails from "@/components/sri-lankan-tours-components/SLTourDayWiseDetails";
-import { DayDetails } from "@/types/sri-lankan-tour-types";
 import { Calendar } from "lucide-react";
 import { PackageSchedulesComponent } from "@/components/sri-lankan-tours-components/tour-day-to-day-details-components/PackageSchedules";
-
-// Add this interface near other interfaces
-interface DayDetailsApiResponse {
-  code: number;
-  status: string;
-  message: string;
-  data: DayDetails[];
-  timestamp: string;
-}
-
-interface Schedule {
-  scheduleId: number;
-  scheduleName: string;
-  assumeStartDate: string;
-  assumeEndDate: string;
-  durationStart: number;
-  durationEnd: number;
-  specialNote: string;
-  scheduleDescription: string;
-}
-
-interface Image {
-  imageId: number;
-  imageName: string;
-  imageDescription: string;
-  imageUrl: string;
-}
-
-export interface TourAssignedEmployeeResponse {
-  firstName: string;
-  lastName: string;
-  imageUrl: string;
-  email: string;
-  mobileNumber: string;
-  designationName: string;
-  assignMessage: string;
-  relatedOtherTours: RelatedOtherTour[];
-}
-
-export interface RelatedOtherTour {
-  tourId: number;
-  tourName: string;
-}
-
-interface TourDetails {
-  tourId: number;
-  tourName: string;
-  tourDescription: string;
-  duration: number;
-  latitude: number;
-  longitude: number;
-  startLocation: string;
-  endLocation: string;
-  tourTypeName: string;
-  tourTypeDescription: string;
-  tourCategoryName: string;
-  tourCategoryDescription: string;
-  seasonName: string;
-  seasonDescription: string;
-  statusName: string;
-  schedules: Schedule[];
-  images: Image[];
-}
-
-interface ApiResponse {
-  code: number;
-  status: string;
-  message: string;
-  data: TourDetails;
-  timestamp: string;
-}
-
-interface ReviewsApiResponse {
-  code: number;
-  status: string;
-  message: string;
-  data: TourReview[];
-  timestamp: string;
-}
-
-// Add Package Interfaces
-interface PackageDayAccommodation {
-  packageDayAccommodationId: number;
-  dayNumber: number;
-  breakfast: boolean;
-  breakfastDescription: string | null;
-  lunch: boolean;
-  lunchDescription: string | null;
-  dinner: boolean;
-  dinnerDescription: string | null;
-  morningTea: boolean;
-  morningTeaDescription: string | null;
-  eveningTea: boolean;
-  eveningTeaDescription: string | null;
-  snacks: boolean;
-  snackNote: string | null;
-  otherNotes: string | null;
-  hotelId: number;
-  hotelName: string;
-  hotelDescription: string;
-  hotelWebsite: string;
-  hotelCategory: number;
-  hotelType: string;
-  hotelLocation: string;
-  hotelLatitude: number;
-  hotelLongitude: number;
-  transportId: number;
-  vehicleRegistrationNumber: string;
-  vehicleTypeName: string;
-  vehicleModel: string;
-  seatCapacity: number;
-  airCondition: boolean;
-}
-
-// Update Package interface to include extra details
-export interface Package {
-  packageId: number;
-  packageName: string;
-  packageDescription: string;
-  totalPrice: number;
-  pricePerPerson: number;
-  discount: number;
-  color: string;
-  hoverColor: string;
-  packageDayByDayDtoList: PackageDayAccommodation[];
-  inclusions?: TourExtraDetails["inclusions"];
-  exclusions?: TourExtraDetails["exclusions"];
-  conditions?: TourExtraDetails["conditions"];
-  travelTips?: TourExtraDetails["travelTips"];
-}
-
-interface PackagesApiResponse {
-  code: number;
-  status: string;
-  message: string;
-  data: Package[];
-  timestamp: string;
-}
-
-// Add interface for Package Extra Details API response
-interface PackageExtraDetailsItem {
-  id: number;
-  description?: string;
-  title?: string;
-  displayOrder: number;
-  status: "ACTIVE" | "INACTIVE";
-}
-
-interface PackageExtraDetailsData {
-  packageId: number;
-  inclusions: PackageExtraDetailsItem[];
-  exclusions: PackageExtraDetailsItem[];
-  conditions: PackageExtraDetailsItem[];
-  travelTips: PackageExtraDetailsItem[];
-}
-
-interface PackageExtraDetailsApiResponse {
-  code: number;
-  status: string;
-  message: string;
-  data: PackageExtraDetailsData[];
-  timestamp: string;
-}
-
-// Add interface for Package Schedules API response
-export interface PackageSchedule {
-  packageScheduleId: number;
-  packageId: number;
-  name: string;
-  assumeStartDate: string;
-  assumeEndDate: string;
-  description: string;
-  specialNote: string;
-  status: string;
-  durationStart: number;
-  durationEnd: number;
-}
-
-interface PackageSchedulesData {
-  packageId: number;
-  packageSchedules: PackageSchedule[];
-}
-
-interface PackageSchedulesApiResponse {
-  code: number;
-  status: string;
-  message: string;
-  data: PackageSchedulesData[];
-  timestamp: string;
-}
+import { PackageService } from "@/services/packageService"; // Import package service
+import { EmployeeService } from "@/services/employeeService"; // Import employee service
+import { Accommodation, DayDetails, TourDetails, TourExtraDetails, TourHistory, TourHistoryImage, TourReview } from "@/types/tour-types"; // Import types
+import { Package, PackageDayAccommodation, PackageExtraDetailsData, PackageSchedule, PackageSchedulesData } from "@/types/package-types"; // Import package types
+import { TourAssignedEmployeeResponse } from "@/types/employee-types"; // Import employee types
+import { TourService } from "@/services/tourService";
 
 const SriLankanTourDetailsPage = () => {
   const params = useParams();
   const sriLankanTourId = params?.sriLankanTourId || null;
-  const tourId = sriLankanTourId?.[0] || "0"; // Default to "0" if null/undefined
+  const tourId = sriLankanTourId?.[0] || "1";
 
   const [tour, setTour] = React.useState<TourDetails | null>(null);
   const [reviews, setReviews] = React.useState<TourReview[]>([]);
@@ -253,9 +59,7 @@ const SriLankanTourDetailsPage = () => {
   const [packagesError, setPackagesError] = useState<string | null>(null);
   const [dayDetailsWithAccommodations, setDayDetailsWithAccommodations] =
     useState<DayDetails[]>([]);
-  const [packageExtraDetails, setPackageExtraDetails] = useState<
-    PackageExtraDetailsData[]
-  >([]);
+  const [packageExtraDetails, setPackageExtraDetails] = useState<PackageExtraDetailsData[]>([]);
   const [packageExtraDetailsLoading, setPackageExtraDetailsLoading] =
     useState(false);
   const [packageExtraDetailsError, setPackageExtraDetailsError] = useState<
@@ -263,9 +67,7 @@ const SriLankanTourDetailsPage = () => {
   >(null);
 
   // Add package schedules states
-  const [packageSchedules, setPackageSchedules] = useState<
-    PackageSchedulesData[]
-  >([]);
+  const [packageSchedules, setPackageSchedules] = useState<PackageSchedulesData[]>([]);
   const [packageSchedulesLoading, setPackageSchedulesLoading] = useState(false);
   const [packageSchedulesError, setPackageSchedulesError] = useState<
     string | null
@@ -407,185 +209,100 @@ const SriLankanTourDetailsPage = () => {
   };
 
   React.useEffect(() => {
-    const fetchTourDetails = async () => {
+    const fetchAllData = async () => {
+      if (!sriLankanTourId) return;
+
       try {
         setTourLoading(true);
-        const response = await fetch(
-          `http://localhost:8080/felicita/v0/api/tour/${sriLankanTourId}`
-        );
+        
+        // Fetch all data using services
+        const [
+          tourDetailsResult,
+          reviewsResult,
+          packagesResult,
+          tourExtraDetailsResult,
+          packageExtraDetailsResult,
+          packageSchedulesResult,
+          employeeResult,
+          historyResult,
+          historyImagesResult,
+          dayDetailsResult
+        ] = await Promise.all([
+          TourService.getTourDetails(tourId),
+          TourService.getTourReviewsById(tourId),
+          PackageService.getTourPackages(tourId),
+          TourService.getTourExtraDetails(tourId),
+          PackageService.getPackageExtraDetails(tourId),
+          PackageService.getPackageSchedules(tourId),
+          EmployeeService.getAssignedEmployee(tourId),
+          TourService.getTourHistoryById(tourId),
+          TourService.getTourHistoryImagesById(tourId),
+          TourService.getDayWiseDetails(tourId)
+        ]);
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch tour details");
+        // Set tour details
+        if (tourDetailsResult.data) setTour(tourDetailsResult.data);
+        if (tourDetailsResult.error) setTourError(tourDetailsResult.error);
+
+        // Set reviews
+        if (reviewsResult.data) setReviews(reviewsResult.data);
+        if (reviewsResult.error) setReviewsError(reviewsResult.error);
+
+        // Set packages
+        if (packagesResult.data) {
+          setPackages(packagesResult.data);
+          if (packagesResult.data.length > 0) {
+            setSelectedPackage(packagesResult.data[0]);
+          }
         }
+        if (packagesResult.error) setPackagesError(packagesResult.error);
 
-        const data: ApiResponse = await response.json();
-        setTour(data.data);
+        // Set tour extra details
+        if (tourExtraDetailsResult.data) setTourExtraDetails(tourExtraDetailsResult.data);
+        if (tourExtraDetailsResult.error) setTourExtraDetailsError(tourExtraDetailsResult.error);
+
+        // Set package extra details
+        if (packageExtraDetailsResult.data) setPackageExtraDetails(packageExtraDetailsResult.data);
+        if (packageExtraDetailsResult.error) setPackageExtraDetailsError(packageExtraDetailsResult.error);
+
+        // Set package schedules
+        if (packageSchedulesResult.data) setPackageSchedules(packageSchedulesResult.data);
+        if (packageSchedulesResult.error) setPackageSchedulesError(packageSchedulesResult.error);
+
+        // Set employee details
+        if (employeeResult.data) setAssignUser(employeeResult.data);
+        if (employeeResult.error) setAssignUserError(employeeResult.error);
+
+        // Set history
+        if (historyResult.data) setHistories(historyResult.data);
+        if (historyResult.error) setHistoryError(historyResult.error);
+
+        // Set history images
+        if (historyImagesResult.data) setGalleryImages(historyImagesResult.data);
+        if (historyImagesResult.error) setGalleryError(historyImagesResult.error);
+
+        // Set day details
+        if (dayDetailsResult.data) setDayDetails(dayDetailsResult.data);
+        if (dayDetailsResult.error) setDayDetailsError(dayDetailsResult.error);
+
       } catch (err) {
+        console.error("Error fetching data:", err);
         setTourError(err instanceof Error ? err.message : "An error occurred");
       } finally {
         setTourLoading(false);
-      }
-    };
-
-    const fetchTourExtraDetails = async () => {
-      try {
-        setTourExtraDetailsLoading(true);
-        const response = await fetch(
-          `http://localhost:8080/felicita/v0/api/tour/tour-extra-details/${sriLankanTourId}`
-        );
-        const data = await response.json();
-        console.log("Tour Extra Details:", data);
-
-        if (data.code === 200) {
-          setTourExtraDetails(data.data);
-        } else {
-          setTourExtraDetailsError("Failed to load tour additional details");
-        }
-      } catch (err) {
-        setTourExtraDetailsError("Failed to load tour additional details");
-      } finally {
-        setTourExtraDetailsLoading(false);
-      }
-    };
-
-    const fetchTourReviews = async () => {
-      try {
-        setReviewsLoading(true);
-        const response = await fetch(
-          `http://localhost:8080/felicita/v0/api/tour/reviews/${sriLankanTourId}`
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch tour reviews");
-        }
-
-        const data: ReviewsApiResponse = await response.json();
-        setReviews(data.data);
-      } catch (err) {
-        setReviewsError(
-          err instanceof Error ? err.message : "An error occurred"
-        );
-      } finally {
         setReviewsLoading(false);
-      }
-    };
-
-    const fetchPackages = async () => {
-      try {
-        setPackagesLoading(true);
-        const response = await fetch(
-          `http://localhost:8080/felicita/v0/api/package/package-details/${sriLankanTourId}`
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch packages");
-        }
-
-        const data: PackagesApiResponse = await response.json();
-        setPackages(data.data);
-
-        // Select first package by default
-        if (data.data.length > 0) {
-          setSelectedPackage(data.data[0]);
-        }
-      } catch (err) {
-        setPackagesError(
-          err instanceof Error ? err.message : "An error occurred"
-        );
-      } finally {
         setPackagesLoading(false);
-      }
-    };
-    const fetchAssignUser = async () => {
-      try {
-        setAssignUserLoading(true);
-        const response = await fetch(
-          `http://localhost:8080/felicita/api/v0/employee/employee-details/${sriLankanTourId}`
-        );
-        const result = await response.json();
-
-        if (result.code === 200) {
-          setAssignUser(result.data);
-        } else {
-          throw new Error(result.message);
-        }
-      } catch (err) {
-        setAssignUserError(
-          err instanceof Error ? err.message : "Failed to load assign user"
-        );
-      } finally {
-        setAssignUserLoading(false);
-      }
-    };
-
-    const fetchPackageExtraDetails = async () => {
-      try {
-        setPackageExtraDetailsLoading(true);
-        const response = await fetch(
-          `http://localhost:8080/felicita/v0/api/package/package-extra-details/${sriLankanTourId}`
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch package extra details");
-        }
-
-        const data: PackageExtraDetailsApiResponse = await response.json();
-        console.log("Package Extra Details:", data);
-
-        if (data.code === 200) {
-          setPackageExtraDetails(data.data);
-        } else {
-          setPackageExtraDetailsError("Failed to load package extra details");
-        }
-      } catch (err) {
-        setPackageExtraDetailsError(
-          err instanceof Error ? err.message : "An error occurred"
-        );
-      } finally {
+        setTourExtraDetailsLoading(false);
         setPackageExtraDetailsLoading(false);
-      }
-    };
-
-    const fetchPackageSchedules = async () => {
-      try {
-        setPackageSchedulesLoading(true);
-        const response = await fetch(
-          `http://localhost:8080/felicita/v0/api/package/package-schedules/${sriLankanTourId}`
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch package schedules");
-        }
-
-        const data: PackageSchedulesApiResponse = await response.json();
-        console.log("Package Schedules:", data);
-
-        if (data.code === 200) {
-          setPackageSchedules(data.data);
-        } else {
-          setPackageSchedulesError("Failed to load package schedules");
-        }
-      } catch (err) {
-        setPackageSchedulesError(
-          err instanceof Error ? err.message : "An error occurred"
-        );
-      } finally {
         setPackageSchedulesLoading(false);
+        setAssignUserLoading(false);
+        setHistoryLoading(false);
+        setGalleryLoading(false);
+        setDayDetailsLoading(false);
       }
     };
 
-    if (sriLankanTourId) {
-      fetchTourDetails();
-      fetchTourReviews();
-      fetchTourHistory();
-      fetchTourHistoryImages();
-      fetchDayWiseDetails();
-      fetchTourExtraDetails();
-      fetchPackages();
-      fetchPackageExtraDetails();
-      fetchPackageSchedules(); // Add this
-      fetchAssignUser();
-    }
+    fetchAllData();
   }, [sriLankanTourId]);
 
   // Effect to update day details with accommodations when package changes
@@ -608,215 +325,114 @@ const SriLankanTourDetailsPage = () => {
 
   const handleRetryDayDetails = () => {
     if (sriLankanTourId) {
-      fetchDayWiseDetails();
+      setDayDetailsLoading(true);
+      TourService.getDayWiseDetails(tourId)
+        .then((result) => {
+          if (result.data) setDayDetails(result.data);
+          if (result.error) setDayDetailsError(result.error);
+        })
+        .finally(() => setDayDetailsLoading(false));
     }
   };
 
   const handleRetryPackages = () => {
     if (sriLankanTourId) {
       setPackagesLoading(true);
-      setPackagesError(null);
-      fetch(
-        `http://localhost:8080/felicita/v0/api/package/package-details/${sriLankanTourId}`
-      )
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Failed to fetch packages");
+      PackageService.getTourPackages(tourId)
+        .then((result) => {
+          if (result.data) {
+            setPackages(result.data);
+            if (result.data.length > 0) {
+              setSelectedPackage(result.data[0]);
+            }
           }
-          return response.json();
+          if (result.error) setPackagesError(result.error);
         })
-        .then((data: PackagesApiResponse) => {
-          setPackages(data.data);
-          if (data.data.length > 0) {
-            setSelectedPackage(data.data[0]);
-          }
-        })
-        .catch((err) => {
-          setPackagesError(
-            err instanceof Error ? err.message : "An error occurred"
-          );
-        })
-        .finally(() => {
-          setPackagesLoading(false);
-        });
+        .finally(() => setPackagesLoading(false));
     }
   };
 
   const handleRetryPackageExtraDetails = () => {
     if (sriLankanTourId) {
       setPackageExtraDetailsLoading(true);
-      setPackageExtraDetailsError(null);
-      fetch(
-        `http://localhost:8080/felicita/v0/api/package/package-extra-details/${sriLankanTourId}`
-      )
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Failed to fetch package extra details");
-          }
-          return response.json();
+      PackageService.getPackageExtraDetails(tourId)
+        .then((result) => {
+          if (result.data) setPackageExtraDetails(result.data);
+          if (result.error) setPackageExtraDetailsError(result.error);
         })
-        .then((data: PackageExtraDetailsApiResponse) => {
-          if (data.code === 200) {
-            setPackageExtraDetails(data.data);
-          } else {
-            setPackageExtraDetailsError("Failed to load package extra details");
-          }
-        })
-        .catch((err) => {
-          setPackageExtraDetailsError(
-            err instanceof Error ? err.message : "An error occurred"
-          );
-        })
-        .finally(() => {
-          setPackageExtraDetailsLoading(false);
-        });
+        .finally(() => setPackageExtraDetailsLoading(false));
     }
   };
 
   const handleRetryPackageSchedules = () => {
     if (sriLankanTourId) {
       setPackageSchedulesLoading(true);
-      setPackageSchedulesError(null);
-      fetch(
-        `http://localhost:8080/felicita/v0/api/package/package-schedules/${sriLankanTourId}`
-      )
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Failed to fetch package schedules");
-          }
-          return response.json();
+      PackageService.getPackageSchedules(tourId)
+        .then((result) => {
+          if (result.data) setPackageSchedules(result.data);
+          if (result.error) setPackageSchedulesError(result.error);
         })
-        .then((data: PackageSchedulesApiResponse) => {
-          if (data.code === 200) {
-            setPackageSchedules(data.data);
-          } else {
-            setPackageSchedulesError("Failed to load package schedules");
-          }
-        })
-        .catch((err) => {
-          setPackageSchedulesError(
-            err instanceof Error ? err.message : "An error occurred"
-          );
-        })
-        .finally(() => {
-          setPackageSchedulesLoading(false);
-        });
-    }
-  };
-
-  const fetchTourHistory = async (): Promise<void> => {
-    try {
-      const response = await fetch(
-        `http://localhost:8080/felicita/v0/api/tour/history/${sriLankanTourId}`
-      );
-      const result = await response.json();
-
-      if (result.code === 200) {
-        setHistories(result.data);
-      } else {
-        throw new Error(result.message);
-      }
-    } catch (err) {
-      setHistoryError(
-        err instanceof Error ? err.message : "Failed to load tour history"
-      );
-    } finally {
-      setHistoryLoading(false);
-    }
-  };
-
-  const fetchDayWiseDetails = async () => {
-    try {
-      setDayDetailsLoading(true);
-      const response = await fetch(
-        `http://localhost:8080/felicita/v0/api/tour/tour-details/${sriLankanTourId}`
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch day-wise details");
-      }
-
-      const data: DayDetailsApiResponse = await response.json();
-      setDayDetails(data.data);
-    } catch (err) {
-      setDayDetailsError(
-        err instanceof Error ? err.message : "An error occurred"
-      );
-    } finally {
-      setDayDetailsLoading(false);
-    }
-  };
-
-  const fetchTourHistoryImages = async (): Promise<void> => {
-    try {
-      const response = await fetch(
-        `http://localhost:8080/felicita/v0/api/tour/history-images/${sriLankanTourId}`
-      );
-      const result = await response.json();
-
-      if (result.code === 200) {
-        setGalleryImages(result.data);
-      } else {
-        throw new Error(result.message);
-      }
-    } catch (err) {
-      setGalleryError(
-        err instanceof Error ? err.message : "Failed to load tour images"
-      );
-    } finally {
-      setGalleryLoading(false);
+        .finally(() => setPackageSchedulesLoading(false));
     }
   };
 
   const handleRetryReviews = () => {
     if (sriLankanTourId) {
       setReviewsLoading(true);
-      setReviewsError(null);
-      fetch(
-        `http://localhost:8080/felicita/v0/api/tour/reviews/${sriLankanTourId}`
-      )
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Failed to fetch tour reviews");
-          }
-          return response.json();
+      TourService.getTourReviewsById(tourId)
+        .then((result) => {
+          if (result.data) setReviews(result.data);
+          if (result.error) setReviewsError(result.error);
         })
-        .then((data: ReviewsApiResponse) => {
-          setReviews(data.data);
-        })
-        .catch((err) => {
-          setReviewsError(
-            err instanceof Error ? err.message : "An error occurred"
-          );
-        })
-        .finally(() => {
-          setReviewsLoading(false);
-        });
+        .finally(() => setReviewsLoading(false));
     }
   };
 
   const handleRetryTour = () => {
     if (sriLankanTourId) {
       setTourLoading(true);
-      setTourError(null);
-      fetch(`http://localhost:8080/felicita/v0/api/tour/${sriLankanTourId}`)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Failed to fetch tour details");
-          }
-          return response.json();
+      TourService.getTourDetails(tourId)
+        .then((result) => {
+          if (result.data) setTour(result.data);
+          if (result.error) setTourError(result.error);
         })
-        .then((data: ApiResponse) => {
-          setTour(data.data);
+        .finally(() => setTourLoading(false));
+    }
+  };
+
+  const handleRetryEmployee = () => {
+    if (sriLankanTourId) {
+      setAssignUserLoading(true);
+      EmployeeService.getAssignedEmployee(tourId)
+        .then((result) => {
+          if (result.data) setAssignUser(result.data);
+          if (result.error) setAssignUserError(result.error);
         })
-        .catch((err) => {
-          setTourError(
-            err instanceof Error ? err.message : "An error occurred"
-          );
+        .finally(() => setAssignUserLoading(false));
+    }
+  };
+
+  const handleRetryHistory = () => {
+    if (sriLankanTourId) {
+      setHistoryLoading(true);
+      TourService.getTourHistoryById(tourId)
+        .then((result) => {
+          if (result.data) setHistories(result.data);
+          if (result.error) setHistoryError(result.error);
         })
-        .finally(() => {
-          setTourLoading(false);
-        });
+        .finally(() => setHistoryLoading(false));
+    }
+  };
+
+  const handleRetryGallery = () => {
+    if (sriLankanTourId) {
+      setGalleryLoading(true);
+      TourService.getTourHistoryImagesById(tourId)
+        .then((result) => {
+          if (result.data) setGalleryImages(result.data);
+          if (result.error) setGalleryError(result.error);
+        })
+        .finally(() => setGalleryLoading(false));
     }
   };
 
@@ -936,9 +552,6 @@ const SriLankanTourDetailsPage = () => {
                 </div>
                 {pkg.discount > 0 && (
                   <div className="flex items-center gap-2 mt-1">
-                    {/* <span className="line-through text-gray-400">
-                      LKR {pkg.totalPrice.toLocaleString()}
-                    </span> */}
                     <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
                       Save {pkg.discount}%
                     </span>
@@ -955,26 +568,6 @@ const SriLankanTourDetailsPage = () => {
                   Show All Details
                 </button>
               </div>
-
-              {/* <div className="text-sm text-gray-500">
-                <div className="flex items-center gap-2 mb-1">
-                  <span>•</span>
-                  <span>
-                    Hotel: {pkg.packageDayByDayDtoList[0]?.hotelName || "N/A"}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span>•</span>
-                  <span>
-                    Transport:{" "}
-                    {pkg.packageDayByDayDtoList[0]?.vehicleTypeName || "N/A"}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span>•</span>
-                  <span>Days: {pkg.packageDayByDayDtoList.length}</span>
-                </div>
-              </div> */}
             </div>
           ))}
         </div>
@@ -1150,13 +743,13 @@ const SriLankanTourDetailsPage = () => {
         histories={histories}
         loading={historyLoading}
         error={historyError}
-        onRetry={fetchTourHistory}
+        onRetry={handleRetryHistory}
       />
       <TourHistoryGallery
         images={galleryImages}
         loading={galleryLoading}
         error={galleryError}
-        onRetry={fetchTourHistoryImages}
+        onRetry={handleRetryGallery}
       />
     </div>
   );

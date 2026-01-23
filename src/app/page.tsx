@@ -15,10 +15,6 @@ import PackagesHome from "../components/packages-components/PackagesHome";
 import Partners from "./components/partners/Partners";
 import PromotionsHome from "./components/promotions/PromotionsHome";
 import ReviewsHome from "./components/reviews/ReviewsHome";
-import ActiveToursHome from "./components/tours/ActiveToursHome";
-import ActiveToursHomeGrid from "./components/tours/ActiveToursHomeGrid";
-import PopularTours from "./components/tours/PopularTours";
-import TourMap from "./components/tours/TourMap";
 import UserBenefitsHome from "./components/user-benefits/UserBenefitsHome";
 import { UserLevelsWithBenefitsHome } from "./components/user-levels/benefits/UserLevelsWithBenefitsHome";
 import UserLevelsHome from "./components/user-levels/UserLevelsHome";
@@ -28,6 +24,10 @@ import Faq from "@/components/faq-components/Faq";
 import ContactForm from "@/components/contact-us-components/ContactForm";
 import WhyChooseUs from "@/components/home-page-components/whyChooseUs/WhyChooseUs";
 import OurServices from "@/components/home-page-components/ourServices/OurServices";
+import ActiveToursHome from "@/components/home-page-components/tours/ActiveToursHome";
+import ActiveToursHomeGrid from "@/components/home-page-components/tours/ActiveToursHomeGrid";
+import TourMap from "@/components/home-page-components/tours/TourMap";
+import PopularTours from "@/components/home-page-components/tours/PopularTours";
 
 export default function Home() {
   return (
@@ -53,10 +53,10 @@ export default function Home() {
       <div>
         <NewDestinations />
       </div> */}
-      <div>{/* <PopularTours /> */}</div>
-      {/* <div>
+      <div><PopularTours /></div>
+      <div>
         <ActiveToursHome />
-      </div> */}
+      </div>
       <div>
         <ActiveToursHomeGrid />
       </div>

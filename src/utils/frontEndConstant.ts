@@ -21,6 +21,7 @@ const GALLERY = "/gallery";
 const ACTIVITIES = "/activities";
 const FOOTER = "/footer";
 const PLAN_YOUR_TRIP = "/plan-your-trip";
+const EMPLOYEES = "/employees"
 
 // Link Bar
 export const GET_ACTIVE_LINK_BAR_DATA = `${API}${LINK_BAR}`;
@@ -61,6 +62,28 @@ export const GET_DESTINATIONS_HISTORY_DETAILS_DATA_FE = `${API}${DESTINATIONS}/h
 export const GET_DESTINATIONS_HISTORY_IMAGES_DETAILS_DATA_FE = `${API}${DESTINATIONS}/history-images`;
 export const GET_DESTINATIONS_REVIEWS_DETAILS_DATA_FE = `${API}${DESTINATIONS}/reviews`;
 
+// Tours
+export const GET_TOUR_DETAILS_BY_ID_DATA_FE = `${API}${TOUR}`;
+export const GET_ALL_TOUR_DATA_FE = `${API}${TOUR}`;
+export const GET_ACTIVE_TOUR_DATA_FE = `${API}${TOUR}/active-tours`;
+export const GET_POPULAR_TOUR_DATA_FE = `${API}${TOUR}/popular`;
+export const GET_TOURS_DETAILS_BY_REQUEST_DATA_FE = `${API}${TOUR}/tours-for-request`;
+export const GET_TOURS_HISTORY_DETAILS_DATA_FE = `${API}${TOUR}/history`;
+export const GET_TOURS_HISTORY_IMAGES_DETAILS_DATA_FE = `${API}${TOUR}/history-images`;
+export const GET_TOURS_REVIEWS_DETAILS_DATA_FE = `${API}${TOUR}/reviews`;
+export const GET_TOUR_EXTRA_DETAILS_BY_ID_DATA_FE = `${API}${TOUR}/extra-details`;
+export const GET_TOUR_DAY_TO_DAY_DETAILS_BY_ID_DATA_FE = `${API}${TOUR}/day-to-day-details`;
+
+// Packages
+export const GET_PACKAGE_DETAILS_BY_TOUR_ID_DATA_FE = `${API}${PACKAGES}/package-details-by-tour-id`;
+export const GET_PACKAGE_EXTRA_DETAILS_BY_TOUR_ID_DATA_FE = `${API}${PACKAGES}/package-extra-details-by-tour-id`;
+export const GET_PACKAGE_SCHEDULES_DETAILS_BY_TOUR_ID_DATA_FE = `${API}${PACKAGES}/package-schedules-by-tour-id`;
+
+// Employees
+export const GET_EMPLOYEE_DETAILS_BY_TOUR_ID_DATA_FE = `${API}${EMPLOYEES}/employees-details-by-tour-id`;
+
+
+export const GET_TOUR_DETAILS_BY_ID_FE = `${API}${TOUR}/details-by-id`;
 
 export const GET_ALL_FAQ_DATA = `${API}${FAQ}`;
 
@@ -75,10 +98,6 @@ export const GET_ACTIVE_DESTINATIONS_LOCATIONS_CATEGORIES_FE = `${API}${DESTINAT
 
 export const GET_ALL_ACTIVE_BLOGS = `${API}${BLOGS}`;
 
-export const GET_ALL_ACTIVE_TOUR_FE = `${API}${TOUR}`;
-
-export const GET_POPULAR_TOUR_FE = `${API}${TOUR}/popular`;
-export const GET_TOUR_DETAILS_BY_ID_FE = `${API}${TOUR}/details-by-id`;
 
 export const GET_ALL_ACTIVE_PACKAGES_FE = `${API}${PACKAGES}`;
 export const GET_PACKAGE_DETAILS_BY_ID_FE = `${API}${PACKAGES}`;

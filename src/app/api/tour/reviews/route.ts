@@ -1,9 +1,9 @@
-import { GET_POPULAR_TOURS_DATA } from "@/utils/backEndConstant";
+import { GET_TOURS_REVIEWS_DETAILS_DATA } from "@/utils/backEndConstant";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const response = await fetch(GET_POPULAR_TOURS_DATA, {
+    const response = await fetch(GET_TOURS_REVIEWS_DETAILS_DATA, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

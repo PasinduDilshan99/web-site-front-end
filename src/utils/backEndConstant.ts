@@ -27,6 +27,7 @@ const FOOTER = "/footer";
 const PLAN_YOUR_TRIP = "/plan-your-trip";
 const SERVICE_PROVIDER = "/service-provider";
 const VEHICLES = "/vehicles";
+const EMPLOYEE = "/employee"
 
 export const BASE_PATH = `${PROTOCOL}://${DOMAIN}:${PORT}/${CONTEXT_ROOT}`;
 
@@ -70,6 +71,29 @@ export const GET_DESTINATIONS_HISTORY_DETAILS_DATA = `${BASE_PATH}${API}${VERSIO
 export const GET_DESTINATIONS_HISTORY_IMAGES_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${DESTINATIONS}/history-images`;
 export const GET_DESTINATIONS_REVIEWS_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${DESTINATIONS}/reviews`;
 
+// Tours
+export const GET_TOUR_DETAILS_BY_ID_DATA = `${BASE_PATH}${API}${VERSION}${TOUR}`;
+export const GET_ALL_TOURS_DATA = `${BASE_PATH}${API}${VERSION}${TOUR}/all`;
+export const GET_ACTIVE_TOURS_DATA = `${BASE_PATH}${API}${VERSION}${TOUR}/active`;
+export const GET_POPULAR_TOURS_DATA = `${BASE_PATH}${API}${VERSION}${TOUR}/popular`;
+export const GET_TOURS_DETAILS_BY_REQUEST_DATA = `${BASE_PATH}${API}${VERSION}${TOUR}/tours`;
+export const GET_TOURS_HISTORY_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${TOUR}/history`;
+export const GET_TOURS_HISTORY_IMAGES_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${TOUR}/history-images`;
+export const GET_TOURS_REVIEWS_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${TOUR}/reviews`;
+export const GET_TOUR_EXTRA_DETAILS_BY_ID_DATA = `${BASE_PATH}${API}${VERSION}${TOUR}/tour-extra-details`;
+export const GET_TOUR_DAY_TO_DAY_DETAILS_BY_ID_DATA = `${BASE_PATH}${API}${VERSION}${TOUR}/tour-details`;
+
+// Packages
+export const GET_PACKAGE_DETAILS_BY_TOUR_ID_DATA = `${BASE_PATH}${API}${VERSION}${PACKAGE}/package-details`;
+export const GET_PACKAGE_EXTRA_DETAILS_BY_TOUR_ID_DATA = `${BASE_PATH}${API}${VERSION}${PACKAGE}/package-extra-details`;
+export const GET_PACKAGE_SCHEDULES_BY_TOUR_ID_DATA = `${BASE_PATH}${API}${VERSION}${PACKAGE}/package-schedules`;
+
+// Employees
+export const GET_EMPLOYEE_DETAILS_BY_TOUR_ID_DATA = `${BASE_PATH}${API}${VERSION}${EMPLOYEE}/employee-details`;
+
+
+export const GET_TOUR_DETAILS_BY_ID_BE = `${BASE_PATH}${VERSION}${API}${TOUR}`;
+
 
 export const UPDATE_FAQ_VIEW_COUNT = `${BASE_PATH}${VERSION}${API}${FAQ}/view-count`;
 
@@ -83,9 +107,7 @@ export const GET_ACTIVE_WORK_FLOW = `${BASE_PATH}${VERSION}${API}${WORK_FLOW}/ac
 
 export const GET_ALL_ACTIVE_BLOGS = `${BASE_PATH}${VERSION}${API}${BLOG}/active`;
 
-export const GET_ALL_ACTIVE_TOURS_BE = `${BASE_PATH}${VERSION}${API}${TOUR}/active`;
-export const GET_ALL_ACTIVE_POPULAR_TOURS_BE = `${BASE_PATH}${VERSION}${API}${TOUR}/popular`;
-export const GET_TOUR_DETAILS_BY_ID_BE = `${BASE_PATH}${VERSION}${API}${TOUR}`;
+
 
 export const GET_ALL_ACTIVE_PACKAGE_BE = `${BASE_PATH}${VERSION}${API}${PACKAGE}/active`;
 export const GET_PACKAGE_DETAILS_BY_ID_BE = `${BASE_PATH}${VERSION}${API}${PACKAGE}`;

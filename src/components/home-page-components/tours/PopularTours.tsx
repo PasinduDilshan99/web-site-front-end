@@ -1,5 +1,4 @@
 "use client";
-import { GET_POPULAR_TOUR_FE } from "@/utils/frontEndConstant";
 import React, { useEffect, useState } from "react";
 import AnimatedButton from "../../../components/common-components/buttons/AnimatedButton";
 import SectionHeader from "../../../components/common-components/section-header/SectionHeader";
@@ -7,95 +6,30 @@ import Loading from "../../../components/common-components/loading/Loading";
 import { ErrorState } from "../../../components/common-components/error-state/ErrorState";
 import { EmptyState } from "../../../components/common-components/empty-state/EmptyState";
 import Image from "next/image";
-
-// Updated TypeScript interfaces based on new API response
-interface Review {
-  reviewId: number;
-  reviewerName: string;
-  review: string;
-  rating: number;
-  reviewDescription: string;
-  numberOfParticipate: number;
-  reviewStatus: string;
-  reviewCreatedAt: string;
-}
-
-interface ImagesType {
-  imageName: string;
-  imageUrl: string;
-}
-
-interface Destination {
-  destinationId: number;
-  destinationName: string;
-  destinationDescription: string;
-  location: string;
-  destinationStatus: string;
-}
-
-interface Schedule {
-  scheduleId: number;
-  scheduleName: string;
-  assumeStartDate: string;
-  assumeEndDate: string;
-  durationStart: number;
-  durationEnd: number;
-  specialNote: string;
-  scheduleDescription: string;
-  scheduleStatus: string;
-  destinations: Destination[];
-  reviews: Review[];
-}
-
-interface PopularToursType {
-  tourId: number;
-  tourName: string;
-  tourDescription: string;
-  duration: number;
-  latitude: number;
-  longitude: number;
-  startLocation: string;
-  endLocation: string;
-  tourType: string;
-  tourCategory: string;
-  season: string;
-  tourStatus: string;
-  images: ImagesType[];
-  schedules: Schedule[];
-}
-
-interface ApiResponse {
-  code: number;
-  status: string;
-  message: string;
-  data: PopularToursType[];
-  timestamp: string;
-}
+import { PopularTourType } from "@/types/tour-types"; // Import types
+import { TourService } from "@/services/tourService";
 
 const PopularTours = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [popularTours, setPopularTours] = useState<PopularToursType[]>([]);
+  const [popularTours, setPopularTours] = useState<PopularTourType[]>([]);
 
   useEffect(() => {
     const fetchPopularTours = async () => {
       try {
         setLoading(true);
-        const response = await fetch(GET_POPULAR_TOUR_FE);
-        const data: ApiResponse = await response.json();
+        
+        // USING THE SERVICE INSTEAD OF DIRECT FETCH
+        const { data: items, error } = await TourService.fetchPopularTours();
 
-        if (response.ok && data.code === 200) {
-          const items: PopularToursType[] = data.data || [];
-          const activeTours = items.filter(
-            (tour) => tour.tourStatus === "ACTIVE"
-          );
-          setPopularTours(activeTours);
-          setError(null);
+        if (error) {
+          setError(error);
         } else {
-          setError(data.message || "Failed to fetch popular tours");
+          setPopularTours(items);
+          setError(null);
         }
       } catch (err) {
-        console.error("Error fetching popular tours:", err);
+        console.error("Error in component:", err);
         setError("Something went wrong while fetching popular tours");
       } finally {
         setLoading(false);
@@ -106,7 +40,7 @@ const PopularTours = () => {
   }, []);
 
   // Calculate average rating from all schedules' reviews
-  const getAverageRating = (tour: PopularToursType) => {
+  const getAverageRating = (tour: PopularTourType) => {
     const allReviews = tour.schedules.flatMap(
       (schedule) => schedule.reviews || []
     );
@@ -116,7 +50,7 @@ const PopularTours = () => {
   };
 
   // Get total reviews count
-  const getTotalReviews = (tour: PopularToursType) => {
+  const getTotalReviews = (tour: PopularTourType) => {
     return tour.schedules.reduce(
       (total, schedule) => total + (schedule.reviews?.length || 0),
       0
@@ -141,7 +75,7 @@ const PopularTours = () => {
   };
 
   // Calculate discount percentage based on tour category and season
-  const calculateDiscount = (tour: PopularToursType) => {
+  const calculateDiscount = (tour: PopularTourType) => {
     // Mock discount calculation based on category and season
     const discountMap: { [key: string]: number } = {
       Luxury: 20,
@@ -154,7 +88,7 @@ const PopularTours = () => {
   };
 
   // Calculate original price based on discount
-  const calculateOriginalPrice = (tour: PopularToursType) => {
+  const calculateOriginalPrice = (tour: PopularTourType) => {
     const discount = calculateDiscount(tour);
     // Base price calculation based on duration and category
     const basePrice = tour.duration * 100;
@@ -174,7 +108,7 @@ const PopularTours = () => {
   };
 
   // Get destinations list for a tour
-  const getDestinations = (tour: PopularToursType) => {
+  const getDestinations = (tour: PopularTourType) => {
     const allDestinations = tour.schedules.flatMap((schedule) =>
       schedule.destinations.map((dest) => dest.destinationName)
     );
@@ -182,7 +116,7 @@ const PopularTours = () => {
   };
 
   // Get first available image from API
-  const getTourImage = (tour: PopularToursType) => {
+  const getTourImage = (tour: PopularTourType) => {
     if (tour.images && tour.images.length > 0 && tour.images[0].imageUrl) {
       return tour.images[0].imageUrl;
     }

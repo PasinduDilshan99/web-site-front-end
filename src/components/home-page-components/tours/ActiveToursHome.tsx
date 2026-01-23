@@ -1,49 +1,12 @@
 "use client";
-import { GET_ALL_ACTIVE_TOUR_FE } from "@/utils/frontEndConstant";
 import React, { useEffect, useState } from "react";
 import Loading from "../../../components/common-components/loading/Loading";
 import { ErrorState } from "../../../components/common-components/error-state/ErrorState";
 import { EmptyState } from "../../../components/common-components/empty-state/EmptyState";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-
-interface Schedule {
-  scheduleId: number;
-  scheduleName: string;
-  assumeStartDate: string;
-  assumeEndDate: string;
-  durationStart: number;
-  durationEnd: number;
-  specialNote: string;
-  scheduleDescription: string;
-}
-
-interface TourImage {
-  imageId: number;
-  imageName: string;
-  imageDescription: string;
-  imageUrl: string;
-}
-
-interface ActiveToursType {
-  tourId: number;
-  tourName: string;
-  tourDescription: string;
-  duration: number;
-  latitude: number;
-  longitude: number;
-  startLocation: string;
-  endLocation: string;
-  tourTypeName: string;
-  tourTypeDescription: string;
-  tourCategoryName: string;
-  tourCategoryDescription: string;
-  seasonName: string;
-  seasonDescription: string;
-  statusName: string;
-  schedules: Schedule[];
-  images: TourImage[];
-}
+import { TourService } from "@/services/tourService"; // Import service
+import { ActiveToursType } from "@/types/tour-types"; // Import types
 
 const ActiveToursHome = () => {
   const router = useRouter();
@@ -94,18 +57,18 @@ const ActiveToursHome = () => {
     const fetchActiveTours = async () => {
       try {
         setLoading(true);
-        const response = await fetch(GET_ALL_ACTIVE_TOUR_FE);
-        const data = await response.json();
+        
+        // USING THE SERVICE INSTEAD OF DIRECT FETCH
+        const { data: items, error } = await TourService.fetchActiveTours();
 
-        if (response.ok) {
-          const items: ActiveToursType[] = data.data || [];
+        if (error) {
+          setError(error);
+        } else {
           setActiveTours(items);
           setError(null);
-        } else {
-          setError(data.message || "Failed to fetch active tours");
         }
       } catch (err) {
-        console.error("Error fetching active tours:", err);
+        console.error("Error in component:", err);
         setError("Something went wrong while fetching active tours");
       } finally {
         setLoading(false);
@@ -283,8 +246,7 @@ const ActiveToursHome = () => {
                         <div className="relative h-48 sm:h-56 md:h-64 lg:h-52 xl:h-56 2xl:h-60 overflow-hidden">
                           <Image
                             src={
-                              tour.images[0]?.imageUrl ||
-                              "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=300&fit=crop"
+                              tour.images[0]?.imageUrl
                             }
                             width={500}
                             height={500}

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import {
   TourHistory,
   TourHistoryResponse,
-} from "@/types/sri-lankan-tour-types";
+} from "@/types/tour-types";
 import Loading from "@/components/common-components/loading/Loading";
 import { ErrorState } from "@/components/common-components/error-state/ErrorState";
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";
