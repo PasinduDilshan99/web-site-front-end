@@ -1,9 +1,9 @@
-import { GET_ACTIVE_ACTIVITIES_CATEGORIES_BE } from "@/utils/backEndConstant";
+import { GET_ACTIVITY_REVIEWS_DETAILS_DATA } from "@/utils/backEndConstant";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const response = await fetch(GET_ACTIVE_ACTIVITIES_CATEGORIES_BE, {
+    const response = await fetch(GET_ACTIVITY_REVIEWS_DETAILS_DATA, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

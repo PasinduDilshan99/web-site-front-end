@@ -1,4 +1,4 @@
-import { ActivityFilters } from "@/types/activities-types";
+import { ActivityFilters } from "@/types/activity-types";
 import React, { useState } from "react";
 
 // Define a type for all possible filter values

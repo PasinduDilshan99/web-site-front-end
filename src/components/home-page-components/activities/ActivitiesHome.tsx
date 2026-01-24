@@ -1,12 +1,12 @@
 "use client";
-import { GET_ACTIVE_ACTIVITIES_FE } from "@/utils/frontEndConstant";
 import React, { useEffect, useState } from "react";
-import Loading from "../../../components/common-components/loading/Loading";
-import AnimatedButton from "../../../components/common-components/buttons/AnimatedButton";
-import SectionHeader from "../../../components/common-components/section-header/SectionHeader";
-import { ActiveActivitiesType } from "@/types/activities-types";
+import Loading from "../../common-components/loading/Loading";
+import AnimatedButton from "../../common-components/buttons/AnimatedButton";
+import SectionHeader from "../../common-components/section-header/SectionHeader";
+import { ActiveActivitiesType } from "@/types/activity-types";
 import ActivitiesGrid from "@/components/activities-components/ActivitiesGrid";
 import { useRouter } from "next/navigation";
+import { ActivityService } from "@/services/activityService"; // Import service
 
 const ActivitiesHome = () => {
   const [loading, setLoading] = useState(true);
@@ -45,15 +45,14 @@ useEffect(() => {
     const fetchActivities = async () => {
       try {
         setLoading(true);
-        const response = await fetch(GET_ACTIVE_ACTIVITIES_FE);
-        const data = await response.json();
+        // USING THE SERVICE INSTEAD OF DIRECT FETCH
+        const { data: activities, error } = await ActivityService.fetchActiveActivities();
 
-        if (response.ok) {
-          const items: ActiveActivitiesType[] = data.data || [];
-          setActiveActivities(items);
-          setError(null);
+        if (error) {
+          setError(error);
         } else {
-          setError(data.message || "Failed to fetch active activities");
+          setActiveActivities(activities);
+          setError(null);
         }
       } catch (err) {
         console.error("Error fetching active activities:", err);

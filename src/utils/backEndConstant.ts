@@ -22,7 +22,7 @@ const USER_LEVEL = "/user-level";
 const USER_BENEFITS = "/user-benefits";
 const PROMOTIONS = "/promotions";
 const GALLERY = "/gallery";
-const ACTIVITIES = "/activities";
+const ACTIVITIES = "/activity";
 const FOOTER = "/footer";
 const PLAN_YOUR_TRIP = "/plan-your-trip";
 const SERVICE_PROVIDER = "/service-provider";
@@ -99,6 +99,20 @@ export const GET_PACKAGE_HISTORY_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${P
 export const GET_PACKAGE_HISTORY_IMAGES_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${PACKAGE}/history-images`;
 export const GET_PACKAGE_COMPARE_DETAILS_BY_TOUR_ID_DATA = `${BASE_PATH}${API}${VERSION}${PACKAGE}/package-compare`;
 
+// Activities
+export const GET_ACTIVITY_DETAILS_BY_ACTIVITY_ID_DATA = `${BASE_PATH}${API}${VERSION}${ACTIVITIES}`;
+export const GET_ALL_ACTIVITIES_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${ACTIVITIES}/all`;
+export const GET_ACTIVE_ACTIVITIES_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${ACTIVITIES}/active`;
+export const GET_ACTIVITIES_DETAILS_BY_REQUEST_DATA = `${BASE_PATH}${API}${VERSION}${ACTIVITIES}/activities`;
+export const GET_ALL_ACTIVITY_CATEGORIES_DATA = `${BASE_PATH}${API}${VERSION}${ACTIVITIES}/category`;
+export const GET_ACTIVE_ACTIVITY_CATEGORIES_DATA = `${BASE_PATH}${API}${VERSION}${ACTIVITIES}/active-category`;
+export const GET_ACTIVITY_REVIEWS_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${ACTIVITIES}/reviews`;
+export const GET_ACTIVITY_HISTORY_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${ACTIVITIES}/history`;
+export const GET_ACTIVITY_HISTORY_IMAGES_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${ACTIVITIES}/history-images`;
+
+
+
+
 // Employees
 export const GET_EMPLOYEE_DETAILS_BY_TOUR_ID_DATA = `${BASE_PATH}${API}${VERSION}${EMPLOYEE}/employee-details`;
 
@@ -128,8 +142,7 @@ export const GET_ALL_ACTIVE_USER_LEVEL_WITH_BENEFITS_BE = `${BASE_PATH}${API}${V
 export const GET_ALL_ACTIVE_USER_BENEFITS_BE = `${BASE_PATH}${API}${VERSION}${USER_BENEFITS}/active`;
 export const GET_ALL_ACTIVE_PROMOTIONS_BE = `${BASE_PATH}${API}${VERSION}${PROMOTIONS}/active`;
 export const GET_OPEN_GALLERY_BE = `${BASE_PATH}${API}${VERSION}${GALLERY}/open`;
-export const GET_ACTIVE_ACTIVITIES_BE = `${BASE_PATH}${API}${VERSION}${ACTIVITIES}/active`;
-export const GET_ACTIVE_ACTIVITIES_CATEGORIES_BE = `${BASE_PATH}${API}${VERSION}${ACTIVITIES}/active-category`;
+
 export const GET_ACTIVE_FOOTER_DATA = `${BASE_PATH}${API}${VERSION}${FOOTER}/active`;
 export const GET_PLAN_YOUR_TRIP_ACTIVE_DESTINATIONS = `${BASE_PATH}${API}${VERSION}${PLAN_YOUR_TRIP}/active`;
 export const GET_PLAN_YOUR_TRIP_DESTINATIONS_TOURS = `${BASE_PATH}${API}${VERSION}${PLAN_YOUR_TRIP}/tours`;

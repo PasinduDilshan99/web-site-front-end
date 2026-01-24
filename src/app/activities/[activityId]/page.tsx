@@ -1,9 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { ActivityData } from "@/types/activities-types";
 import LoadingState from "@/components/activities-components/LoadingState";
-import ErrorState from "@/components/activities-components/ErrorState";
 import ActivityHeader from "@/components/activities-components/ActivityHeader";
 import ActivityImages from "@/components/activities-components/ActivityImages";
 import ActivityDetails from "@/components/activities-components/ActivityDetails";
@@ -12,12 +10,10 @@ import ActivitySeasons from "@/components/activities-components/ActivitySeasons"
 import ActivityRequirements from "@/components/activities-components/ActivityRequirements";
 import ActivitySchedules from "@/components/activities-components/ActivitySchedules";
 import ReviewsSection from "@/components/activities-components/ReviewsSection";
-import ActivityHistorySection, {
-  ActivityHistory,
-  ActivityHistoryImage,
-} from "@/components/activities-components/ActivityHistorySection";
+import ActivityHistorySection from "@/components/activities-components/ActivityHistorySection";
 import ActivityHistoryGallery from "@/components/activities-components/ActivityHistoryGallery";
-import { Review } from "@/pages/ActivityPage";
+import { ActivityData, ActivityHistory, ActivityHistoryImage, Review } from "@/types/activity-types";
+import { ActivityService } from "@/services/activityService";
 
 
 const ActivityDetailsPage = () => {
@@ -26,9 +22,7 @@ const ActivityDetailsPage = () => {
   const [activity, setActivity] = useState<ActivityData | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [histories, setHistories] = useState<ActivityHistory[]>([]);
-  const [historyImages, setHistoryImages] = useState<ActivityHistoryImage[]>(
-    []
-  );
+  const [historyImages, setHistoryImages] = useState<ActivityHistoryImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [reviewsLoading, setReviewsLoading] = useState(false);
   const [historyLoading, setHistoryLoading] = useState(false);
@@ -36,41 +30,37 @@ const ActivityDetailsPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [reviewsError, setReviewsError] = useState<string | null>(null);
   const [historyError, setHistoryError] = useState<string | null>(null);
-  const [historyImagesError, setHistoryImagesError] = useState<string | null>(
-    null
-  );
+  const [historyImagesError, setHistoryImagesError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchActivity = async () => {
+    if (!activityId) {
+      setError("No activity ID provided");
+      setLoading(false);
+      return;
+    }
+
+    const fetchActivityData = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(
-          `http://localhost:8080/felicita/api/v0/activities/${activityId}`,
-          {
-            method: "GET",
-            headers: {
-              Accept: "application/json",
-            },
-          }
-        );
+        // USING THE SERVICE INSTEAD OF DIRECT FETCH
+        const { data: activityData, error: activityError } = 
+          await ActivityService.fetchActivityById(activityId as string);
 
-        if (!response.ok) {
-          throw new Error(
-            `Failed to fetch activity: ${response.status} ${response.statusText}`
-          );
-        }
-
-        const data = await response.json();
-
-        if (data.code === 200 && data.data) {
-          setActivity(data.data);
-          fetchActivityReviews(data.data.id);
-          fetchActivityHistory(data.data.id);
-          fetchActivityHistoryImages(data.data.id);
+        if (activityError) {
+          setError(activityError);
+          setLoading(false);
+        } else if (activityData) {
+          setActivity(activityData);
+          setLoading(false);
+          // Now fetch related data
+          fetchActivityReviews(activityData.id);
+          fetchActivityHistory(activityData.id);
+          fetchActivityHistoryImages(activityData.id);
         } else {
-          throw new Error(data.message || "Invalid response format");
+          setError("No activity data received");
+          setLoading(false);
         }
       } catch (err) {
         console.error("Error fetching activity:", err);
@@ -79,7 +69,6 @@ const ActivityDetailsPage = () => {
             ? err.message
             : "An error occurred while fetching activity details"
         );
-      } finally {
         setLoading(false);
       }
     };
@@ -89,20 +78,14 @@ const ActivityDetailsPage = () => {
         setReviewsLoading(true);
         setReviewsError(null);
 
-        const response = await fetch(
-          `http://localhost:8080/felicita/api/v0/activities/reviews/${activityId}`
-        );
+        // USING THE SERVICE INSTEAD OF DIRECT FETCH
+        const { reviews: fetchedReviews, error: reviewsError } = 
+          await ActivityService.fetchActivityReviewsById(activityId);
 
-        if (!response.ok) {
-          throw new Error(`Failed to fetch reviews: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        if (data.code === 200 && data.data) {
-          setReviews(data.data);
+        if (reviewsError) {
+          setReviewsError(reviewsError);
         } else {
-          throw new Error(data.message || "Failed to load reviews");
+          setReviews(fetchedReviews);
         }
       } catch (err) {
         console.error("Error fetching reviews:", err);
@@ -119,22 +102,14 @@ const ActivityDetailsPage = () => {
         setHistoryLoading(true);
         setHistoryError(null);
 
-        const response = await fetch(
-          `http://localhost:8080/felicita/api/v0/activities/history/${activityId}`
-        );
+        // USING THE SERVICE INSTEAD OF DIRECT FETCH
+        const { histories: fetchedHistories, error: historyError } = 
+          await ActivityService.fetchActivityHistoryById(activityId);
 
-        if (!response.ok) {
-          throw new Error(
-            `Failed to fetch activity history: ${response.status}`
-          );
-        }
-
-        const data = await response.json();
-
-        if (data.code === 200 && data.data) {
-          setHistories(data.data);
+        if (historyError) {
+          setHistoryError(historyError);
         } else {
-          throw new Error(data.message || "Failed to load activity history");
+          setHistories(fetchedHistories);
         }
       } catch (err) {
         console.error("Error fetching activity history:", err);
@@ -151,22 +126,14 @@ const ActivityDetailsPage = () => {
         setHistoryImagesLoading(true);
         setHistoryImagesError(null);
 
-        const response = await fetch(
-          `http://localhost:8080/felicita/api/v0/activities/history-images/${activityId}`
-        );
+        // USING THE SERVICE INSTEAD OF DIRECT FETCH
+        const { historyImages: fetchedImages, error: imagesError } = 
+          await ActivityService.fetchActivityHistoryImagesById(activityId);
 
-        if (!response.ok) {
-          throw new Error(
-            `Failed to fetch activity images: ${response.status}`
-          );
-        }
-
-        const data = await response.json();
-
-        if (data.code === 200 && data.data) {
-          setHistoryImages(data.data);
+        if (imagesError) {
+          setHistoryImagesError(imagesError);
         } else {
-          throw new Error(data.message || "Failed to load activity images");
+          setHistoryImages(fetchedImages);
         }
       } catch (err) {
         console.error("Error fetching activity images:", err);
@@ -178,84 +145,116 @@ const ActivityDetailsPage = () => {
       }
     };
 
-    if (activityId) {
-      fetchActivity();
-    } else {
-      setError("No activity ID provided");
-      setLoading(false);
-    }
+    fetchActivityData();
   }, [activityId]);
 
-  // Retry functions
-  const fetchActivityHistory = () => {
+  // Retry function for activity history
+  const retryFetchActivityHistory = async () => {
     if (activity) {
-      fetchActivityHistoryRetry(activity.id);
+      try {
+        setHistoryLoading(true);
+        setHistoryError(null);
+
+        const { histories: fetchedHistories, error: historyError } = 
+          await ActivityService.fetchActivityHistoryById(activity.id);
+
+        if (historyError) {
+          setHistoryError(historyError);
+        } else {
+          setHistories(fetchedHistories);
+        }
+      } catch (err) {
+        setHistoryError(
+          err instanceof Error ? err.message : "Failed to load activity history"
+        );
+      } finally {
+        setHistoryLoading(false);
+      }
     }
   };
 
-  const fetchActivityHistoryImages = () => {
+  // Retry function for activity history images
+  const retryFetchActivityHistoryImages = async () => {
     if (activity) {
-      fetchActivityHistoryImagesRetry(activity.id);
+      try {
+        setHistoryImagesLoading(true);
+        setHistoryImagesError(null);
+
+        const { historyImages: fetchedImages, error: imagesError } = 
+          await ActivityService.fetchActivityHistoryImagesById(activity.id);
+
+        if (imagesError) {
+          setHistoryImagesError(imagesError);
+        } else {
+          setHistoryImages(fetchedImages);
+        }
+      } catch (err) {
+        setHistoryImagesError(
+          err instanceof Error ? err.message : "Failed to load activity images"
+        );
+      } finally {
+        setHistoryImagesLoading(false);
+      }
     }
   };
 
-  const fetchActivityHistoryRetry = async (activityId: number) => {
-    try {
-      setHistoryLoading(true);
-      setHistoryError(null);
+  // Retry function for reviews
+  const retryFetchReviews = async () => {
+    if (activity) {
+      try {
+        setReviewsLoading(true);
+        setReviewsError(null);
 
-      const response = await fetch(
-        `http://localhost:8080/felicita/api/v0/activities/history/${activityId}`
-      );
+        const { reviews: fetchedReviews, error: reviewsError } = 
+          await ActivityService.fetchActivityReviewsById(activity.id);
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch activity history: ${response.status}`);
+        if (reviewsError) {
+          setReviewsError(reviewsError);
+        } else {
+          setReviews(fetchedReviews);
+        }
+      } catch (err) {
+        setReviewsError(
+          err instanceof Error ? err.message : "Failed to load reviews"
+        );
+      } finally {
+        setReviewsLoading(false);
       }
-
-      const data = await response.json();
-
-      if (data.code === 200 && data.data) {
-        setHistories(data.data);
-      } else {
-        throw new Error(data.message || "Failed to load activity history");
-      }
-    } catch (err) {
-      console.error("Error fetching activity history:", err);
-      setHistoryError(
-        err instanceof Error ? err.message : "Failed to load activity history"
-      );
-    } finally {
-      setHistoryLoading(false);
     }
   };
 
-  const fetchActivityHistoryImagesRetry = async (activityId: number) => {
-    try {
-      setHistoryImagesLoading(true);
-      setHistoryImagesError(null);
+  // Main retry function for activity data
+  const retryFetchActivity = async () => {
+    if (activityId) {
+      try {
+        setLoading(true);
+        setError(null);
 
-      const response = await fetch(
-        `http://localhost:8080/felicita/api/v0/activities/history-images/${activityId}`
-      );
+        const { data: activityData, error: activityError } = 
+          await ActivityService.fetchActivityById(activityId as string);
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch activity images: ${response.status}`);
+        if (activityError) {
+          setError(activityError);
+          setLoading(false);
+        } else if (activityData) {
+          setActivity(activityData);
+          setLoading(false);
+          // Retry all related data
+          retryFetchReviews();
+          retryFetchActivityHistory();
+          retryFetchActivityHistoryImages();
+        } else {
+          setError("No activity data received");
+          setLoading(false);
+        }
+      } catch (err) {
+        setError(
+          err instanceof Error
+            ? err.message
+            : "An error occurred while fetching activity details"
+        );
+        setLoading(false);
       }
-
-      const data = await response.json();
-
-      if (data.code === 200 && data.data) {
-        setHistoryImages(data.data);
-      } else {
-        throw new Error(data.message || "Failed to load activity images");
-      }
-    } catch (err) {
-      console.error("Error fetching activity images:", err);
-      setHistoryImagesError(
-        err instanceof Error ? err.message : "Failed to load activity images"
-      );
-    } finally {
-      setHistoryImagesLoading(false);
     }
   };
 
@@ -264,7 +263,23 @@ const ActivityDetailsPage = () => {
   }
 
   if (error) {
-    return <ErrorState error={error} activityId={activityId as string} />;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-purple-50 flex items-center justify-center">
+        <div className="text-center p-8 max-w-md">
+          <div className="text-red-500 text-6xl mb-4">⚠️</div>
+          <h1 className="text-2xl font-bold text-gray-800 mb-2">
+            Failed to Load Activity
+          </h1>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <button
+            onClick={retryFetchActivity}
+            className="bg-gradient-to-r from-purple-600 to-amber-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-amber-700 transition-all duration-300"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
   }
 
   if (!activity) {
@@ -284,55 +299,56 @@ const ActivityDetailsPage = () => {
   }
 
   return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-purple-50">
-        <ActivityHeader activity={activity} />
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-purple-50">
+      <ActivityHeader activity={activity} />
 
-        <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <ActivityImages
-              images={activity.images}
-              activityName={activity.name}
-            />
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <ActivityImages
+            images={activity.images}
+            activityName={activity.name}
+          />
 
-            <div className="space-y-6">
-              <ActivityDetails activity={activity} />
-              <ActivityKeyInfo activity={activity} />
-              <ActivitySeasons season={activity.season} />
-              <ActivityRequirements requirements={activity.requirements} />
-              <ActivitySchedules schedules={activity.schedules} />
-            </div>
+          <div className="space-y-6">
+            <ActivityDetails activity={activity} />
+            <ActivityKeyInfo activity={activity} />
+            <ActivitySeasons season={activity.season} />
+            <ActivityRequirements requirements={activity.requirements} />
+            <ActivitySchedules schedules={activity.schedules} />
           </div>
         </div>
-
-        {/* Activity History Section */}
-        <div className="container mx-auto px-4 py-8">
-          <ActivityHistorySection
-            histories={histories}
-            loading={historyLoading}
-            error={historyError}
-            onRetry={fetchActivityHistory}
-          />
-        </div>
-
-        {/* Activity History Gallery */}
-        <div className="container mx-auto px-4">
-          <ActivityHistoryGallery
-            imagesData={historyImages}
-            loading={historyImagesLoading}
-            error={historyImagesError}
-            onRetry={fetchActivityHistoryImages}
-          />
-        </div>
-
-        {/* Reviews Section */}
-        <div className="container mx-auto px-4 py-8">
-          <ReviewsSection
-            reviews={reviews}
-            loading={reviewsLoading}
-            error={reviewsError}
-          />
-        </div>
       </div>
+
+      {/* Activity History Section */}
+      <div className="container mx-auto px-4 py-8">
+        <ActivityHistorySection
+          histories={histories}
+          loading={historyLoading}
+          error={historyError}
+          onRetry={retryFetchActivityHistory}
+        />
+      </div>
+
+      {/* Activity History Gallery */}
+      <div className="container mx-auto px-4">
+        <ActivityHistoryGallery
+          imagesData={historyImages}
+          loading={historyImagesLoading}
+          error={historyImagesError}
+          onRetry={retryFetchActivityHistoryImages}
+        />
+      </div>
+
+      {/* Reviews Section */}
+      <div className="container mx-auto px-4 py-8">
+        <ReviewsSection
+          reviews={reviews}
+          loading={reviewsLoading}
+          error={reviewsError}
+          // onRetry={retryFetchReviews}
+        />
+      </div>
+    </div>
   );
 };
 
