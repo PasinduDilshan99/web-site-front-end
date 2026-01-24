@@ -110,7 +110,19 @@ export const GET_ACTIVITY_REVIEWS_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${
 export const GET_ACTIVITY_HISTORY_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${ACTIVITIES}/history`;
 export const GET_ACTIVITY_HISTORY_IMAGES_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${ACTIVITIES}/history-images`;
 
-
+// Blogs
+export const GET_ALL_BLOGS_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${BLOG}/all`;
+export const GET_ACTIVE_BLOGS_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${BLOG}/active`;
+export const GET_BLOGS_TAG_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${BLOG}/tags`;
+export const GET_BLOGS_TAG_BY_BLOG_ID_DATA = `${BASE_PATH}${API}${VERSION}${BLOG}/tags`;
+export const GET_BLOGS_DERAILS_BY_WRITER_NAME_DATA = `${BASE_PATH}${API}${VERSION}${BLOG}/writer`;
+export const GET_BLOGS_DERAILS_BY_TAG_NAME_DATA = `${BASE_PATH}${API}${VERSION}${BLOG}/tag`;
+export const GET_BLOGS_DERAILS_BY_BLOG_ID_DATA = `${BASE_PATH}${API}${VERSION}${BLOG}/blog-details`;
+export const ADD_BLOG_DATA = `${BASE_PATH}${API}${VERSION}${BLOG}/add-blog`;
+export const ADD_BLOG_BOOKMARK_DATA = `${BASE_PATH}${API}${VERSION}${BLOG}/add-bookmark`;
+export const ADD_BLOG_REACT_DATA = `${BASE_PATH}${API}${VERSION}${BLOG}/add-react`;
+export const ADD_BLOG_COMMENT_REACT_DATA = `${BASE_PATH}${API}${VERSION}${BLOG}/add-comment-react`;
+export const ADD_BLOG_COMMENT_DATA = `${BASE_PATH}${API}${VERSION}${BLOG}/add-comment`;
 
 
 // Employees
@@ -130,7 +142,6 @@ export const GET_ACTIVE_WORK_FLOW = `${BASE_PATH}${VERSION}${API}${WORK_FLOW}/ac
 
 
 
-export const GET_ALL_ACTIVE_BLOGS = `${BASE_PATH}${VERSION}${API}${BLOG}/active`;
 
 
 

@@ -1,67 +1,23 @@
 "use client";
 import AnimatedButton from "@/components/common-components/buttons/AnimatedButton";
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";
-import { GET_ALL_ACTIVE_BLOGS } from "@/utils/frontEndConstant";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-
-interface ImageType {
-  id: number;
-  image_url: string;
-}
-
-interface ReactionType {
-  username: string;
-  user_id: number;
-  reaction_type_id: number;
-}
-
-interface ReplyType {
-  username: string;
-  comment: string;
-  reactions: ReactionType[] | null;
-  replies: ReplyType[] | null;
-  comment_id: number;
-  user_id: number;
-  comment_date: string;
-}
-
-interface CommentType {
-  username: string;
-  comment: string;
-  reactions: ReactionType[] | null;
-  replies: ReplyType[] | null;
-  comment_id: number;
-  user_id: number;
-  comment_date: string;
-}
-
-interface BlogReactionType {
-  count: number;
-  reaction_type_id: number;
-  reaction_type_name: string;
-}
-
-interface BlogType {
-  blog_id: number;
-  title: string;
-  subtitle: string;
-  description: string;
-  writer_id: number;
-  writer_name: string;
-  blog_status: string;
-  blog_created_at: string;
-  images: ImageType[];
-  likeCount: number;
-  comments: CommentType[];
-  blog_reactions: BlogReactionType[];
-}
+import { BlogService } from "@/services/blogService"; // Import service
+import {
+  BlogImage,
+  BlogComment,
+  BlogCommentReply,
+  BlogReaction,
+  BlogDetailsData,
+  EnhancedBlogData,
+} from "@/types/blog-types"; // Import types
 
 const ActiveBlogsSummery = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeBlogs, setActiveBlogs] = useState<BlogType[]>([]);
+  const [activeBlogs, setActiveBlogs] = useState<EnhancedBlogData[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const router = useRouter();
 
@@ -73,20 +29,17 @@ const ActiveBlogsSummery = () => {
     const fetchActiveBlogs = async () => {
       try {
         setLoading(true);
-        const response = await fetch(GET_ALL_ACTIVE_BLOGS);
-        const data = await response.json();
+        // USING THE SERVICE INSTEAD OF DIRECT FETCH
+        const { data: blogs, error } =
+          await BlogService.fetchRandomActiveBlogs(6);
 
-        if (response.ok) {
-          const items: BlogType[] = data.data || [];
-          const randomSix = items
-            .slice() // copy array (to avoid mutating original)
-            .sort(() => Math.random() - 0.5) // shuffle
-            .slice(0, 6); // take first 6
-
-          setActiveBlogs(randomSix);
-          setError(null);
+        if (error) {
+          setError(error);
         } else {
-          setError(data.message || "Failed to fetch active blogs");
+          // Enhance blog data with calculated properties
+          const enhancedBlogs = blogs.map((blog) => enhanceBlogData(blog));
+          setActiveBlogs(enhancedBlogs);
+          setError(null);
         }
       } catch (err) {
         console.error("Error fetching active blogs:", err);
@@ -98,6 +51,63 @@ const ActiveBlogsSummery = () => {
 
     fetchActiveBlogs();
   }, []);
+
+  // Helper function to count total comments including replies
+  const countTotalComments = (comments: BlogComment[] | null): number => {
+    if (!comments || !Array.isArray(comments)) return 0;
+
+    let total = comments.length;
+
+    const countReplies = (replies: BlogCommentReply[] | null): number => {
+      if (!replies || !Array.isArray(replies)) return 0;
+
+      let replyCount = replies.length;
+      replies.forEach((reply) => {
+        if (reply.replies && Array.isArray(reply.replies)) {
+          replyCount += countReplies(reply.replies);
+        }
+      });
+      return replyCount;
+    };
+
+    comments.forEach((comment) => {
+      if (comment.replies && Array.isArray(comment.replies)) {
+        total += countReplies(comment.replies);
+      }
+    });
+
+    return total;
+  };
+
+  // Helper function to calculate total reactions
+  const calculateTotalReactions = (
+    blogReactions: BlogReaction[] | null,
+  ): number => {
+    if (!blogReactions || !Array.isArray(blogReactions)) return 0;
+
+    // Sum all reaction counts
+    return blogReactions.reduce(
+      (total, reaction) => total + (reaction.count || 0),
+      0,
+    );
+  };
+
+  // Enhance blog data with calculated properties
+  const enhanceBlogData = (blog: BlogDetailsData): EnhancedBlogData => {
+    // Use likeCount from API if available, otherwise calculate from blog_reactions
+    const totalReactions =
+      blog.likeCount || calculateTotalReactions(blog.blog_reactions);
+
+    // Count total comments including replies
+    const commentCount = countTotalComments(blog.comments);
+
+    return {
+      ...blog,
+      blogCategory: blog.blogCategory || "Uncategorized",
+      totalReactions,
+      commentCount,
+    };
+  };
 
   // Auto-rotate carousel
   useEffect(() => {
@@ -127,50 +137,15 @@ const ActiveBlogsSummery = () => {
     return text.substring(0, maxLength) + "...";
   };
 
-  // Helper function to count total comments including replies
-  const getTotalCommentsCount = (
-    comments: CommentType[] | null | undefined
-  ): number => {
-    if (!comments || !Array.isArray(comments)) return 0;
-
-    let count = 0;
-
-    const countReplies = (replies: ReplyType[] | null) => {
-      if (!replies || !Array.isArray(replies)) return;
-      replies.forEach((reply) => {
-        count++;
-        countReplies(reply.replies);
-      });
-    };
-
-    comments.forEach((comment) => {
-      count++;
-      countReplies(comment.replies);
-    });
-
-    return count;
-  };
-
-  // Helper function to get total reactions count
-  const getTotalReactionsCount = (
-    blogReactions: BlogReactionType[] | null | undefined
-  ): number => {
-    if (!blogReactions || !Array.isArray(blogReactions)) return 0;
-    return blogReactions.reduce(
-      (total, reaction) => total + (reaction.count || 0),
-      0
-    );
-  };
-
   const nextSlide = () => {
     setCurrentIndex(
-      currentIndex >= activeBlogs.length - 1 ? 0 : currentIndex + 1
+      currentIndex >= activeBlogs.length - 1 ? 0 : currentIndex + 1,
     );
   };
 
   const prevSlide = () => {
     setCurrentIndex(
-      currentIndex <= 0 ? activeBlogs.length - 1 : currentIndex - 1
+      currentIndex <= 0 ? activeBlogs.length - 1 : currentIndex - 1,
     );
   };
 
@@ -185,10 +160,14 @@ const ActiveBlogsSummery = () => {
     const width = window.innerWidth;
     let itemsToShow = 1;
 
-    if (width >= 1536) itemsToShow = 5; // 2xl screens
-    else if (width >= 1280) itemsToShow = 4; // xl screens
-    else if (width >= 1024) itemsToShow = 3; // lg screens
-    else if (width >= 768) itemsToShow = 2; // md screens
+    if (width >= 1536)
+      itemsToShow = 5; // 2xl screens
+    else if (width >= 1280)
+      itemsToShow = 4; // xl screens
+    else if (width >= 1024)
+      itemsToShow = 3; // lg screens
+    else if (width >= 768)
+      itemsToShow = 2; // md screens
     else itemsToShow = 1; // sm and xs screens
 
     // Return the current blog and the next ones to fill the view
@@ -320,10 +299,11 @@ const ActiveBlogsSummery = () => {
         <div className="overflow-hidden px-2 sm:px-0">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
             {visibleBlogs.map((blog, index) => {
-              const totalComments = getTotalCommentsCount(blog.comments);
-              const totalReactions = getTotalReactionsCount(
-                blog.blog_reactions
-              );
+              const totalComments =
+                blog.commentCount || countTotalComments(blog.comments);
+              const totalReactions =
+                blog.totalReactions ||
+                calculateTotalReactions(blog.blog_reactions);
               const blogImages = blog.images || [];
               const blogReactions = blog.blog_reactions || [];
 
@@ -338,10 +318,7 @@ const ActiveBlogsSummery = () => {
                     style={{ height: getImageHeight() }}
                   >
                     <Image
-                      src={
-                        blogImages[0]?.image_url ||
-                        "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=250&fit=crop"
-                      }
+                      src={blogImages[0]?.image_url}
                       alt={blog.title}
                       width={400}
                       height={400}
@@ -403,8 +380,8 @@ const ActiveBlogsSummery = () => {
                         window.innerWidth >= 1024
                           ? 70
                           : window.innerWidth >= 768
-                          ? 60
-                          : 50
+                            ? 60
+                            : 50,
                       )}
                     </h3>
 
@@ -415,8 +392,8 @@ const ActiveBlogsSummery = () => {
                         window.innerWidth >= 1024
                           ? 90
                           : window.innerWidth >= 768
-                          ? 70
-                          : 60
+                            ? 70
+                            : 60,
                       )}
                     </p>
 
@@ -427,8 +404,8 @@ const ActiveBlogsSummery = () => {
                         window.innerWidth >= 1024
                           ? 120
                           : window.innerWidth >= 768
-                          ? 100
-                          : 80
+                            ? 100
+                            : 80,
                       )}
                     </p>
 

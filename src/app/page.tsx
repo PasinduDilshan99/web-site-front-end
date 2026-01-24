@@ -2,7 +2,7 @@ import LinkBar from "@/components/common-components/linkBar/LinkBar";
 import Accommodations from "./components/accommodations/Accommodations";
 import ActivitiesHome from "../components/home-page-components/activities/ActivitiesHome";
 import ActivityCategoriesHome from "../components/home-page-components/activities/categories/ActivityCategoriesHome";
-import ActiveBlogsSummery from "./components/blogs/ActiveBlogsSummery";
+import ActiveBlogsSummery from "../components/home-page-components/blogs/ActiveBlogsSummery";
 import DestinationsCategories from "../components/home-page-components/destinations/DestinationsCategories";
 import NewDestinations from "../components/home-page-components/destinations/NewDestinations";
 import PopularDestinations from "../components/home-page-components/destinations/popular-destinations/PopularDestinations";
@@ -97,9 +97,9 @@ export default function Home() {
       {/* <div>
         <ReviewsHome />
       </div> */}
-      {/* <div>
+      <div>
         <ActiveBlogsSummery />
-      </div> */}
+      </div>
 
       {/* Process & Promotions */}
       <div>
