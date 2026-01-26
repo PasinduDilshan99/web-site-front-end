@@ -8,7 +8,7 @@ import NewDestinations from "../components/home-page-components/destinations/New
 import PopularDestinations from "../components/home-page-components/destinations/popular-destinations/PopularDestinations";
 import TrendingDestinations from "../components/home-page-components/destinations/TrendingDestinations";
 import Footer from "./components/footer/Footer";
-import GalleryHome from "./components/gallery/GalleryHome";
+import GalleryHome from "../components/home-page-components/gallery/GalleryHome";
 import HeroSection from "../components/home-page-components/heroSection/HeroSection";
 import Inquire from "./components/inquire/Inquire";
 import PackagesHome from "../components/packages-components/PackagesHome";
@@ -44,37 +44,39 @@ export default function Home() {
       <div>
         <OurServices />
       </div>
-      <div>
+      {/* <div>
         <PopularDestinations />
-      </div>
+      </div> */}
       {/* <div>
         <TrendingDestinations />
       </div>
       <div>
         <NewDestinations />
       </div> */}
-      <div><PopularTours /></div>
-      <div>
+      {/* <div>
+        <PopularTours />
+      </div> */}
+      {/* <div>
         <ActiveToursHome />
-      </div>
-      <div>
+      </div> */}
+      {/* <div>
         <ActiveToursHomeGrid />
-      </div>
-      <div>
+      </div> */}
+      {/* <div>
         <TourMap />
-      </div>
-      <div>
+      </div> */}
+      {/* <div>
         <ActivitiesHome />
-      </div>
-      <div>
+      </div> */}
+      {/* <div>
         <ActivityCategoriesHome />
-      </div>
-      <div>
+      </div> */}
+      {/* <div>
         <PackagesHome />
-      </div>
-      <div>
+      </div> */}
+      {/* <div>
         <Accommodations />
-      </div>
+      </div> */}
       {/* <div>
         <DestinationsCategories />
       </div> */}
@@ -97,14 +99,14 @@ export default function Home() {
       {/* <div>
         <ReviewsHome />
       </div> */}
-      <div>
+      {/* <div>
         <ActiveBlogsSummery />
-      </div>
+      </div> */}
 
       {/* Process & Promotions */}
-      <div>
+      {/* <div>
         <WorkFlow />
-      </div>
+      </div> */}
       {/* <div>
         <PromotionsHome />
       </div> */}
@@ -113,9 +115,9 @@ export default function Home() {
       {/* <div>
         <Faq />
       </div> */}
-      <div>
+      {/* <div>
         <ContactForm />
-      </div>
+      </div> */}
       {/* <div>
         <Inquire />
       </div> */}

@@ -114,6 +114,10 @@ export const ADD_BLOG_REACT_DATA_FE = `${API}${BLOGS}/add-react`;
 export const ADD_BLOG_COMMENT_REACT_DATA_FE = `${API}${BLOGS}/add-blog-comment-react`;
 export const ADD_BLOG_COMMENT_DATA_FE = `${API}${BLOGS}/add-comment-to-blog`;
 
+// Gallery
+export const GET_ALL_GALLERY_IMAGES_DATA_FE = `${API}${GALLERY}`;
+export const GET_ACTIVE_GALLERY_IMAGES_DATA_FE = `${API}${GALLERY}/active-images`;
+
 // Employees
 export const GET_EMPLOYEE_DETAILS_BY_TOUR_ID_DATA_FE = `${API}${EMPLOYEES}/employees-details-by-tour-id`;
 
@@ -134,7 +138,6 @@ export const GET_ALL_ACTIVE_USER_LEVEL_FE = `${API}${USER_LEVEL}`;
 export const GET_ALL_ACTIVE_USER_LEVEL_WITH_BENEFITS_FE = `${API}${USER_LEVEL}/benefits`;
 export const GET_ALL_ACTIVE_USER_BENEFITS_FE = `${API}${USER_BENEFITS}`;
 export const GET_ALL_ACTIVE_PROMOTIONS_FE = `${API}${PROMOTIONS}`;
-export const GET_OPEN_GALLERY_FE = `${API}${GALLERY}`;
 export const GET_ACTIVE_ACTIVITIES_FE = `${API}${ACTIVITIES}`;
 export const GET_ACTIVE_ACTIVITIES_CATEGORIES_FE = `${API}${ACTIVITIES}/categories`;
 export const GET_ACTIVE_FOOTER_DATA = `${API}${FOOTER}`;

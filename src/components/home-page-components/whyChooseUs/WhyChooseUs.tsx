@@ -6,6 +6,7 @@ import Loading from "../../../components/common-components/loading/Loading";
 import AnimatedButton from "../../../components/common-components/buttons/AnimatedButton";
 import { useRouter } from "next/navigation";
 import { WhyChooseUsService } from "@/services/whyChooseUsService";
+import SectionHeader from "@/components/common-components/section-header/SectionHeader";
 
 // Default icon SVG component with Sunset Purple theme
 const DefaultIcon = ({ color = "#A855F7" }: { color?: string }) => (
@@ -54,7 +55,6 @@ const WhyChooseUs = () => {
       setLoading(true);
       setError(null);
 
-      // USING THE SERVICE INSTEAD OF DIRECT FETCH
       const { data: items, error } = await WhyChooseUsService.fetchCardsData();
 
       if (error) {
@@ -110,14 +110,15 @@ const WhyChooseUs = () => {
     <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-r from-purple-100 to-amber-100">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 ">
         {/* Section Header - Fully Responsive */}
-        <div className="text-center mb-8 sm:mb-12 md:mb-16 lg:mb-20">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold mb-3 sm:mb-4 md:mb-6 leading-tight bg-gradient-to-r from-purple-600 to-amber-600 bg-clip-text text-transparent">
-            Why Choose Us
-          </h2>
-          <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl md:max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto leading-relaxed px-2 sm:px-0 text-gray-600">
-            Discover what makes us the preferred choice for thousands of
-            travelers worldwide
-          </p>
+        <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
+          <SectionHeader
+            subtitle=""
+            title="Why Choose Us"
+            description="Discover what makes us the preferred choice for thousands of
+            travelers worldwide"
+            fromColor="#A855F7"
+            toColor="#F59E0B"
+          />
         </div>
 
         {/* Cards Grid - Fully Responsive */}

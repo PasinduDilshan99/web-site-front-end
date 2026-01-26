@@ -6,6 +6,7 @@ import { ErrorState } from "../../../components/common-components/error-state/Er
 import { EmptyState } from "../../../components/common-components/empty-state/EmptyState";
 import { OurServiceDataType } from "@/types/our-services-types";
 import { OurServicesService } from "@/services/OurServicesService";
+import SectionHeader from "@/components/common-components/section-header/SectionHeader";
 
 const OurServices = () => {
   const [loading, setLoading] = useState(true);
@@ -16,8 +17,9 @@ const OurServices = () => {
     const fetchOurServices = async () => {
       try {
         setLoading(true);
-        
-        const { data: services, error } = await OurServicesService.fetchOurServicesData();
+
+        const { data: services, error } =
+          await OurServicesService.fetchOurServicesData();
 
         if (error) {
           setError(error);
@@ -49,17 +51,16 @@ const OurServices = () => {
   }
 
   if (error) {
-    return (
-      <ErrorState
-        title="Failed to Load Partners"
-        message={error}
-        icon="alert"
-        variant="error"
-        size="md"
-        actionLabel="Try Again"
-        onAction={handleRetry}
-      />
-    );
+    return;
+    // <ErrorState
+    //   title="Failed to Load Partners"
+    //   message={error}
+    //   icon="alert"
+    //   variant="error"
+    //   size="md"
+    //   actionLabel="Try Again"
+    //   onAction={handleRetry}
+    // />
   }
 
   if (ourServices.length === 0) {
@@ -77,15 +78,14 @@ const OurServices = () => {
     <section className="py-6 xs:py-8 sm:py-10 lg:py-12 xl:py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 xs:px-5 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-8 sm:mb-10 lg:mb-12">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold bg-gradient-to-r from-[#A855F7] to-[#F59E0B] bg-clip-text text-transparent mb-3 sm:mb-4 md:mb-5 lg:mb-6 leading-tight">
-            Our Services
-          </h2>
-          <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-gray-700 max-w-2xl mx-auto px-2 xs:px-0">
-            Creative and energetic solutions designed for your unique
-            experiences
-          </p>
-          <div className="mt-3 xs:mt-4 sm:mt-5 md:mt-6 w-12 xs:w-14 sm:w-16 md:w-20 lg:w-24 xl:w-32 h-0.5 xs:h-1 bg-gradient-to-r from-[#A855F7] to-[#F59E0B] mx-auto rounded-full"></div>
+        <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
+          <SectionHeader
+            subtitle=""
+            title="Our Services"
+            description="Creative and energetic solutions designed for your unique experiences"
+            fromColor="#A855F7"
+            toColor="#F59E0B"
+          />
         </div>
 
         {/* Services Grid */}

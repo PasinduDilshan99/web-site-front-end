@@ -124,6 +124,10 @@ export const ADD_BLOG_REACT_DATA = `${BASE_PATH}${API}${VERSION}${BLOG}/add-reac
 export const ADD_BLOG_COMMENT_REACT_DATA = `${BASE_PATH}${API}${VERSION}${BLOG}/add-comment-react`;
 export const ADD_BLOG_COMMENT_DATA = `${BASE_PATH}${API}${VERSION}${BLOG}/add-comment`;
 
+// Gallery
+export const GET_ALL_GALLERY_IMAGES_DATA = `${BASE_PATH}${API}${VERSION}${GALLERY}/all`;
+export const GET_ACTIVE_GALLERY_IMAGES_DATA = `${BASE_PATH}${API}${VERSION}${GALLERY}/active`;
+
 
 // Employees
 export const GET_EMPLOYEE_DETAILS_BY_TOUR_ID_DATA = `${BASE_PATH}${API}${VERSION}${EMPLOYEE}/employee-details`;
@@ -152,7 +156,6 @@ export const GET_ALL_ACTIVE_USER_LEVEL_BE = `${BASE_PATH}${API}${VERSION}${USER_
 export const GET_ALL_ACTIVE_USER_LEVEL_WITH_BENEFITS_BE = `${BASE_PATH}${API}${VERSION}${USER_LEVEL}/active-with-benefits`;
 export const GET_ALL_ACTIVE_USER_BENEFITS_BE = `${BASE_PATH}${API}${VERSION}${USER_BENEFITS}/active`;
 export const GET_ALL_ACTIVE_PROMOTIONS_BE = `${BASE_PATH}${API}${VERSION}${PROMOTIONS}/active`;
-export const GET_OPEN_GALLERY_BE = `${BASE_PATH}${API}${VERSION}${GALLERY}/open`;
 
 export const GET_ACTIVE_FOOTER_DATA = `${BASE_PATH}${API}${VERSION}${FOOTER}/active`;
 export const GET_PLAN_YOUR_TRIP_ACTIVE_DESTINATIONS = `${BASE_PATH}${API}${VERSION}${PLAN_YOUR_TRIP}/active`;
