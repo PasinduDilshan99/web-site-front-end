@@ -1,9 +1,9 @@
-import { GET_OPEN_GALLERY_BE } from "@/utils/backEndConstant";
+import { GET_ALL_GALLERY_IMAGES_DATA } from "@/utils/backEndConstant";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const response = await fetch(GET_OPEN_GALLERY_BE, {
+    const response = await fetch(GET_ALL_GALLERY_IMAGES_DATA, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

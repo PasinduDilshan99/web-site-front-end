@@ -1,9 +1,9 @@
-import { GET_VISIBLE_OUR_SERVICES } from "@/utils/backEndConstant";
+import { GET_ACTIVE_OUR_SERVICES_DATA } from "@/utils/backEndConstant";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const response = await fetch(GET_VISIBLE_OUR_SERVICES, {
+    const response = await fetch(GET_ACTIVE_OUR_SERVICES_DATA, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import {
   DestinationHistoryType,
   HistoryApiResponse,
-} from "@/types/destinations-types";
+} from "@/types/destination-types";
 import Loading from "@/components/common-components/loading/Loading";
 import { ErrorState } from "@/components/common-components/error-state/ErrorState";
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";

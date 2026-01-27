@@ -4,54 +4,8 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import TourPackageSchedulesHeroSection from "@/components/package-schedules-components/TourPackageSchedulesHeroSection";
 import ScheduleCard from "@/components/package-schedules-components/ScheduleCard";
-
-// ========== Interfaces ==========
-interface PackageImage {
-  imageId: number;
-  imageName: string;
-  imageDescription: string;
-  imageUrl: string;
-}
-
-interface PackageDetails {
-  packageId: number;
-  packageName: string;
-  packageDescription: string;
-  totalPrice: number;
-  pricePerPerson: number;
-  discount: number;
-  color: string;
-  hoverColor: string;
-  minPersonCount: number;
-  maxPersonCount: number;
-  status: string;
-  images: PackageImage[];
-}
-
-interface Schedule {
-  scheduleId: number;
-  scheduleName: string;
-  assumeStartDate: string;
-  assumeEndDate: string;
-  durationStart: number;
-  durationEnd: number;
-  specialNote: string;
-  description: string;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface ApiResponse {
-  code: number;
-  status: string;
-  message: string;
-  data: {
-    packageDetails: PackageDetails;
-    schedules: Schedule[];
-  };
-  timestamp: string;
-}
+import { PackageSchedule, PackageScheduleDetails } from "@/types/package-types";
+import { PackageService } from "@/services/packageService";
 
 // ========== Main PackageSchedulePage Component ==========
 const PackageSchedulePage = () => {
@@ -61,9 +15,9 @@ const PackageSchedulePage = () => {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [packageData, setPackageData] = useState<PackageDetails | null>(null);
-  const [schedules, setSchedules] = useState<Schedule[]>([]);
-  const [filteredSchedules, setFilteredSchedules] = useState<Schedule[]>([]);
+  const [packageData, setPackageData] = useState<PackageScheduleDetails | null>(null);
+  const [schedules, setSchedules] = useState<PackageSchedule[]>([]);
+  const [filteredSchedules, setFilteredSchedules] = useState<PackageSchedule[]>([]);
   const [filter, setFilter] = useState<
     "all" | "active" | "upcoming" | "ongoing"
   >("all");
@@ -80,26 +34,17 @@ const PackageSchedulePage = () => {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(
-          `http://localhost:8080/felicita/v0/api/package/package-schedules-details/${packageId}`,
-          {
-            credentials: "include",
-          }
-        );
+        // USING THE SERVICE INSTEAD OF DIRECT FETCH
+        const { packageDetails, schedules: fetchedSchedules, error: serviceError } = 
+          await PackageService.fetchPackageScheduleDetails(packageId);
 
-        if (!response.ok) {
-          throw new Error(`Failed to fetch package data: ${response.status}`);
+        if (serviceError) {
+          throw new Error(serviceError);
         }
 
-        const data: ApiResponse = await response.json();
-
-        if (data.code === 200) {
-          setPackageData(data.data.packageDetails);
-          setSchedules(data.data.schedules);
-          setFilteredSchedules(data.data.schedules);
-        } else {
-          throw new Error(data.message || "Failed to retrieve package data");
-        }
+        setPackageData(packageDetails);
+        setSchedules(fetchedSchedules);
+        setFilteredSchedules(fetchedSchedules);
       } catch (err) {
         console.error("Error fetching package schedule:", err);
         setError(

@@ -31,6 +31,7 @@ import Footer from "@/app/components/footer/Footer";
 import LinkBar from "@/components/common-components/linkBar/LinkBar";
 import Loading from "@/components/common-components/loading/Loading";
 import { useAuth } from "@/context/AuthContext";
+import { BlogService } from "@/services/blogService";
 
 interface BlogFormData {
   title: string;
@@ -308,27 +309,29 @@ const CreateBlogPage = () => {
       console.log("Submitting blog:", requestData);
 
       // Call API
-      const response = await fetch(
-        "http://localhost:8080/felicita/v0/api/blog/create",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            // Token should be automatically sent via cookies
-          },
-          body: JSON.stringify(requestData),
-          credentials: "include", // Important: sends cookies
-        }
-      );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      const result = await BlogService.createBlog(requestData)
+      // const response = await fetch(
+      //   "http://localhost:8080/felicita/v0/api/blog/create",
+      //   {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //       // Token should be automatically sent via cookies
+      //     },
+      //     body: JSON.stringify(requestData),
+      //     credentials: "include", // Important: sends cookies
+      //   }
+      // );
 
-      const apiResponse: ApiResponse = await response.json();
+      // if (!response.ok) {
+      //   throw new Error(`HTTP error! status: ${response.status}`);
+      // }
 
-      if (apiResponse.code === 200) {
-        setSuccess(apiResponse.data.message || "Blog created successfully!");
+      // const apiResponse: ApiResponse = await response.json();
+
+      if (result.success) {
+        setSuccess(result.message || "Blog created successfully!");
         
         // Reset form after successful submission
         setTimeout(() => {
@@ -347,7 +350,7 @@ const CreateBlogPage = () => {
           // router.push("/blog");
         }, 3000);
       } else {
-        throw new Error(apiResponse.message || "Failed to create blog");
+        throw new Error(result.error || "Failed to create blog");
       }
     } catch (err) {
       console.error("Error creating blog:", err);

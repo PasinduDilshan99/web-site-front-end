@@ -1,9 +1,9 @@
-import { GET_ALL_ACTIVE_BLOGS } from "@/utils/backEndConstant";
+import { GET_ALL_BLOGS_DETAILS_DATA } from "@/utils/backEndConstant";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const response = await fetch(GET_ALL_ACTIVE_BLOGS, {
+    const response = await fetch(GET_ALL_BLOGS_DETAILS_DATA, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

@@ -9,10 +9,11 @@ import PackageSummaryCard from "@/components/package-comparison-components/Packa
 import DayComparisonTable from "@/components/package-comparison-components/DayComparisonTable";
 import ExtraDetailsComparison from "@/components/package-comparison-components/ExtraDetailsComparison";
 import {
-  Package,
-  ApiResponse,
+  PackageComparison as ComparisonPackage,
 } from "@/types/package-comparison-types";
-import { Tour } from "@/types/packages-types";
+import { Tour } from "@/types/tour-types";
+import { PackageService } from "@/services/packageService";
+import { TourService } from "@/services/tourService";
 
 const PackagesComparePage = () => {
   const searchParams = useSearchParams();
@@ -24,16 +25,16 @@ const PackagesComparePage = () => {
   const [tours, setTours] = useState<Tour[]>([]);
   const [filteredTours, setFilteredTours] = useState<Tour[]>([]);
   const [selectedTour, setSelectedTour] = useState<Tour | null>(null);
-  const [packages, setPackages] = useState<Package[]>([]);
+  const [packages, setPackages] = useState<ComparisonPackage[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showTourDropdown, setShowTourDropdown] = useState(false);
 
   // States for comparison
-  const [selectedPackage1, setSelectedPackage1] = useState<Package | null>(
+  const [selectedPackage1, setSelectedPackage1] = useState<ComparisonPackage | null>(
     null
   );
-  const [selectedPackage2, setSelectedPackage2] = useState<Package | null>(
+  const [selectedPackage2, setSelectedPackage2] = useState<ComparisonPackage | null>(
     null
   );
   const [package1Id, setPackage1Id] = useState<string>("");
@@ -49,22 +50,20 @@ const PackagesComparePage = () => {
     const fetchTours = async () => {
       try {
         setLoading(true);
-        const response = await fetch(
-          "http://localhost:8080/felicita/v0/api/tour/all-tours-basic",
-          {
-            headers: {
-              Cookie:
-                "token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNpbmR1IiwidXNlcklkIjo0LCJ1c2VybmFtZSI6InBhc2luZHUiLCJpYXQiOjE3NjI2Njg5NjksImV4cCI6MTc2MjY2OTA4OX0.5wQ6QL3q2pvSoCEhDze6t_Aub3Vb8hlcMRQ3UQxu8yg",
-            },
-          }
-        );
-        const result: ApiResponse<Tour[]> = await response.json();
-        setTours(result.data);
-        setFilteredTours(result.data);
+        
+        // USING THE SERVICE INSTEAD OF DIRECT FETCH
+        const { tours: fetchedTours, error } = await TourService.fetchAllToursBasicDetails();
+        
+        if (error) {
+          console.error("Error fetching tours:", error);
+        } else {
+          setTours(fetchedTours);
+          setFilteredTours(fetchedTours);
+        }
 
         // If tourId is in URL params, find and select that tour
         if (tourId) {
-          const foundTour = result.data.find(
+          const foundTour = fetchedTours.find(
             (t) => t.tourDetails.tourId.toString() === tourId
           );
           if (foundTour) {
@@ -88,17 +87,15 @@ const PackagesComparePage = () => {
   const fetchPackagesForTour = async (id: number) => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `http://localhost:8080/felicita/v0/api/package/package-compare/${id}`,
-        {
-          headers: {
-            Cookie:
-              "token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNpbmR1IiwidXNlcklkIjo0LCJ1c2VybmFtZSI6InBhc2luZHUiLCJpYXQiOjE3NjI2Njg5NjksImV4cCI6MTc2MjY2OTA4OX0.5wQ6QL3q2pvSoCEhDze6t_Aub3Vb8hlcMRQ3UQxu8yg",
-          },
-        }
-      );
-      const result: ApiResponse<Package[]> = await response.json();
-      setPackages(result.data);
+      
+      // USING THE SERVICE INSTEAD OF DIRECT FETCH
+      const { packages: fetchedPackages, error } = await PackageService.fetchPackagesForComparison(id);
+      
+      if (error) {
+        console.error("Error fetching packages:", error);
+      } else {
+        setPackages(fetchedPackages);
+      }
     } catch (error) {
       console.error("Error fetching packages:", error);
     } finally {
@@ -173,7 +170,7 @@ const PackagesComparePage = () => {
   };
 
   // Render package images gallery
-  const renderPackageImages = (pkg: Package) => {
+  const renderPackageImages = (pkg: ComparisonPackage) => {
     if (!pkg.images || pkg.images.length === 0) return null;
 
     return (

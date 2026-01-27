@@ -1,34 +1,7 @@
 "use client";
+import { HeroSectionService } from "@/services/heroSectionService";
+import { PackageHeroData } from "@/types/hero-section-types";
 import React, { useState, useEffect } from "react";
-
-export interface PackageHeroData {
-  id: number;
-  name: string;
-  imageUrl: string;
-  title?: string;
-  subtitle?: string;
-  description?: string;
-  primaryButtonText?: string;
-  primaryButtonLink?: string;
-  secondaryButtonText?: string;
-  secondaryButtonLink?: string;
-  order?: number;
-  createdAt?: string;
-  updatedAt?: string;
-  status?: string;
-  createdBy?: number;
-  updatedBy?: number | null;
-  terminatedAt?: string | null;
-  terminatedBy?: number | null;
-}
-
-interface ApiResponse {
-  code: number;
-  status: string;
-  message: string;
-  data: PackageHeroData[];
-  timestamp: string;
-}
 
 const PackageHeroSection = () => {
   const [loading, setLoading] = useState(true);
@@ -44,41 +17,17 @@ const PackageHeroSection = () => {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(
-          "http://localhost:8080/felicita/v0/api/hero-section/package",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
-          }
-        );
+        // USING THE SERVICE INSTEAD OF DIRECT FETCH
+        const { data: items, error } = await HeroSectionService.fetchPackageHeroData();
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const apiResponse: ApiResponse = await response.json();
-
-        if (apiResponse.code === 200 && apiResponse.data) {
-          const activeItems = apiResponse.data.filter(
-            (item) => item.status === "ACTIVE"
-          );
-
-          const sortedItems = [...activeItems].sort(
-            (a, b) => (a.order || 0) - (b.order || 0)
-          );
-
-          setHeroData(sortedItems);
+        if (error) {
+          setError(error);
         } else {
-          setError(apiResponse.message || "Failed to fetch packages content");
+          setHeroData(items);
         }
       } catch (err) {
-        console.error("Error fetching packages hero data:", err);
-        setError(
-          err instanceof Error ? err.message : "Failed to load packages content"
-        );
+        console.error("Error in component:", err);
+        setError("Failed to load packages content");
       } finally {
         setLoading(false);
       }
@@ -560,7 +509,6 @@ const PackageHeroSection = () => {
           </button>
         </div>
       </div>
-
     </div>
   );
 };

@@ -2,16 +2,14 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
   PopularDestinationsDetailsType,
-  Filters,
+  Filters,Review,
   EnhancedDestination,
   DestinationHistoryType,
   DestinationHistoryImage,
   DestinationSearchRequest,
-} from "@/types/destinations-types";
+} from "@/types/destination-types";
 import Loading from "@/components/common-components/loading/Loading";
 import { ErrorState } from "@/components/common-components/error-state/ErrorState";
-import NavBar from "@/components/common-components/navBar/NavBar";
-import Footer from "@/app/components/footer/Footer";
 import FilterSection from "@/components/destinations-components/active-destinations/FilterSection";
 import DestinationsGrid from "@/components/destinations-components/active-destinations/DestinationsGrid";
 import ReviewsSection from "@/components/destinations-components/ReviewsSection";
@@ -19,84 +17,7 @@ import SectionHeader from "@/components/common-components/section-header/Section
 import DestinationHistory from "@/components/destinations-components/DestinationHistory";
 import DestinationHistoryGallery from "@/components/destinations-components/DestinationHistoryGallery";
 import DestinationHeroSection from "@/components/destinations-components/DestinationHeroSection";
-import LinkBar from "@/components/common-components/linkBar/LinkBar";
-
-// Define API response interface
-interface DestinationListResponse {
-  destinationCount: number;
-  destinationResponseDtos: PopularDestinationsDetailsType[];
-}
-
-interface PaginatedDestinationResponse {
-  code: number;
-  status: string;
-  message: string;
-  data: DestinationListResponse | null;
-  timestamp: string;
-}
-
-// Review types (keep existing review types)
-interface Image {
-  imageId: number;
-  imageName: string;
-  imageDescription: string;
-  imageUrl: string;
-  imageStatus: string;
-  imageCreatedBy: number;
-  imageCreatedAt: string;
-}
-
-interface ReviewReaction {
-  reviewReactionId: number;
-  reactionReviewId: number;
-  reactionUserId: number;
-  reactionUserName: string;
-  reactionType: string;
-  reviewReactionStatus: string;
-  reactionCreatedAt: string;
-}
-
-interface CommentReaction {
-  commentReactionId: number;
-  commentReactionCommentId: number;
-  commentReactionUserId: number;
-  commentReactionUserName: string;
-  commentReactionType: string;
-  commentReactionStatus: string;
-  commentReactionCreatedBy: number;
-  commentReactionCreatedAt: string;
-}
-
-interface Comment {
-  commentId: number;
-  commentReviewId: number;
-  commentUserId: number;
-  commentUserName: string;
-  parentCommentId: number | null;
-  commentText: string;
-  commentStatus: string;
-  commentCreatedAt: string;
-  commentCreatedBy: number;
-  commentReactions: CommentReaction[];
-}
-
-export interface Review {
-  reviewId: number;
-  destinationId: number;
-  destinationName: string;
-  reviewUserId: number;
-  reviewUserName: string;
-  reviewText: string;
-  reviewRating: number;
-  reviewStatus: string;
-  reviewCreatedBy: number;
-  reviewCreatedAt: string;
-  reviewUpdatedBy: number;
-  reviewUpdatedAt: string;
-  images: Image[];
-  reactions: ReviewReaction[];
-  comments: Comment[];
-}
+import { DestinationService } from "@/services/destinationService";
 
 const DestinationPage: React.FC = () => {
   const [destinations, setDestinations] = useState<EnhancedDestination[]>([]);
@@ -137,56 +58,15 @@ const DestinationPage: React.FC = () => {
   const [locations, setLocations] = useState<string[]>([]);
   const [durations, setDurations] = useState<number[]>([]);
 
+  const destinationService = new DestinationService();
+
   // Fetch filter options (initial data)
   const fetchFilterOptions = useCallback(async (): Promise<void> => {
     try {
-      const requestBody: DestinationSearchRequest = {
-        name: null,
-        minPrice: null,
-        maxPrice: null,
-        duration: null,
-        destinationCategory: null,
-        season: null,
-        status: null,
-        pageSize: 100, // Fetch more for filter options
-        pageNumber: 1,
-      };
-
-      const response = await fetch(
-        "http://localhost:8080/felicita/v0/api/destination/destinations",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Cookie: "token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNpbmR1IiwidXNlcklkIjo0LCJ1c2VybmFtZSI6InBhc2luZHUiLCJpYXQiOjE3NjI2Njg5NjksImV4cCI6MTc2MjY2OTA4OX0.5wQ6QL3q2pvSoCEhDze6t_Aub3Vb8hlcMRQ3UQxu8yg",
-          },
-          body: JSON.stringify(requestBody),
-        }
-      );
-
-      const result: PaginatedDestinationResponse = await response.json();
-
-      if (result.code === 200 && result.data) {
-        // Extract unique values for filters
-        const categoriesList = [...new Set(result.data.destinationResponseDtos.map((dest) => dest.categoryName))];
-        const locationsList = [...new Set(result.data.destinationResponseDtos.map((dest) => dest.location))];
-        // Duration options based on activities
-        const durationsList = [
-          ...new Set(
-            result.data.destinationResponseDtos.flatMap((dest) =>
-              dest.activities.map((activity) =>
-                Math.ceil(activity.durationHours / 24)
-              )
-            )
-          ),
-        ]
-          .filter((duration) => duration > 0)
-          .sort((a, b) => a - b);
-        
-        setCategories(categoriesList);
-        setLocations(locationsList);
-        setDurations(durationsList);
-      }
+      const { categories, locations, durations } = await destinationService.fetchFilterOptions();
+      setCategories(categories);
+      setLocations(locations);
+      setDurations(durations);
     } catch (err) {
       console.error("Error fetching filter options:", err);
     }
@@ -197,55 +77,43 @@ const DestinationPage: React.FC = () => {
     try {
       setLoading(true);
       
-      // Prepare API request - Note: Some filters might not be supported by the API
+      // Prepare API request
       const requestBody: DestinationSearchRequest = {
         name: filters.search || null,
         minPrice: filters.priceRange[0] > 0 ? filters.priceRange[0] : null,
         maxPrice: filters.priceRange[1] < 10000 ? filters.priceRange[1] : null,
         duration: filters.duration ? parseFloat(filters.duration) : null,
         destinationCategory: filters.category || null,
-        season: null, // Not in current API, but keeping structure
-        status: null, // Not in current API, but keeping structure
+        season: null,
+        status: null,
         pageSize: itemsPerPage,
         pageNumber: currentPage,
       };
 
-      const response = await fetch(
-        "http://localhost:8080/felicita/v0/api/destination/destinations",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Cookie: "token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNpbmR1IiwidXNlcklkIjo0LCJ1c2VybmFtZSI6InBhc2luZHUiLCJpYXQiOjE3NjI2Njg5NjksImV4cCI6MTc2MjY2OTA4OX0.5wQ6QL3q2pvSoCEhDze6t_Aub3Vb8hlcMRQ3UQxu8yg",
-          },
-          body: JSON.stringify(requestBody),
-        }
-      );
+      const { data, error } = await destinationService.fetchDestinationsWithFilters(requestBody);
 
-      const result: PaginatedDestinationResponse = await response.json();
-
-      if (result.code === 200) {
-        if (result.data) {
-          // Enhance destinations with mock rating and popularity data
-          const enhancedDestinations: EnhancedDestination[] = result.data.destinationResponseDtos.map(
-            (destination: PopularDestinationsDetailsType) => ({
-              ...destination,
-              rating: generateMockRating(destination.destinationId),
-              popularity: generateMockPopularity(destination.destinationId),
-            })
-          );
-          setDestinations(enhancedDestinations);
-          setTotalDestinations(result.data.destinationCount);
-          setTotalPages(Math.ceil(result.data.destinationCount / itemsPerPage));
-        } else {
-          setDestinations([]);
-          setTotalDestinations(0);
-          setTotalPages(0);
-        }
-        setError(null);
-      } else {
-        throw new Error(result.message);
+      if (error) {
+        throw new Error(error);
       }
+
+      if (data) {
+        // Enhance destinations with mock rating and popularity data
+        const enhancedDestinations: EnhancedDestination[] = data.destinationResponseDtos.map(
+          (destination: PopularDestinationsDetailsType) => ({
+            ...destination,
+            rating: DestinationService.generateMockRating(destination.destinationId),
+            popularity: DestinationService.generateMockPopularity(destination.destinationId),
+          })
+        );
+        setDestinations(enhancedDestinations);
+        setTotalDestinations(data.destinationCount);
+        setTotalPages(Math.ceil(data.destinationCount / itemsPerPage));
+      } else {
+        setDestinations([]);
+        setTotalDestinations(0);
+        setTotalPages(0);
+      }
+      setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -254,6 +122,60 @@ const DestinationPage: React.FC = () => {
     }
   }, [filters, currentPage, itemsPerPage]);
 
+  // Fetch reviews
+  const fetchReviews = async (): Promise<void> => {
+    try {
+      setReviewsLoading(true);
+      const { data, error } = await destinationService.fetchReviews();
+      
+      if (error) {
+        throw new Error(error);
+      }
+      setReviews(data);
+      setReviewsError(null);
+    } catch (err) {
+      setReviewsError(err instanceof Error ? err.message : "Failed to load reviews");
+    } finally {
+      setReviewsLoading(false);
+    }
+  };
+
+  // Fetch history
+  const fetchHistory = async (): Promise<void> => {
+    try {
+      setHistoryLoading(true);
+      const { data, error } = await destinationService.fetchHistory();
+      
+      if (error) {
+        throw new Error(error);
+      }
+      setHistory(data);
+      setHistoryError(null);
+    } catch (err) {
+      setHistoryError(err instanceof Error ? err.message : "Failed to load destination history");
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
+  // Fetch history images
+  const fetchHistoryImages = async (): Promise<void> => {
+    try {
+      setHistoryImagesLoading(true);
+      const { data, error } = await destinationService.fetchHistoryImages();
+      
+      if (error) {
+        throw new Error(error);
+      }
+      setHistoryImages(data);
+      setHistoryImagesError(null);
+    } catch (err) {
+      setHistoryImagesError(err instanceof Error ? err.message : "Failed to load history images");
+    } finally {
+      setHistoryImagesLoading(false);
+    }
+  };
+
   // Initial data fetch - runs only once on mount
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -261,9 +183,9 @@ const DestinationPage: React.FC = () => {
         setLoading(true);
         await fetchFilterOptions();
         await fetchDestinationsWithFilters();
-        fetchReviews();
-        fetchHistory();
-        fetchHistoryImages();
+        await fetchReviews();
+        await fetchHistory();
+        await fetchHistoryImages();
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       }
@@ -295,83 +217,6 @@ const DestinationPage: React.FC = () => {
       fetchDestinationsWithFilters();
     }
   }, [itemsPerPage]); // Only depends on itemsPerPage
-
-  const fetchHistory = async (): Promise<void> => {
-    try {
-      const response = await fetch(
-        "http://localhost:8080/felicita/v0/api/destination/history"
-      );
-      const result = await response.json();
-
-      if (result.code === 200) {
-        setHistory(result.data);
-      } else {
-        throw new Error(result.message);
-      }
-    } catch (err) {
-      setHistoryError(
-        err instanceof Error
-          ? err.message
-          : "Failed to load destination history"
-      );
-    } finally {
-      setHistoryLoading(false);
-    }
-  };
-
-  const fetchHistoryImages = async (): Promise<void> => {
-    try {
-      const response = await fetch(
-        "http://localhost:8080/felicita/v0/api/destination/history-images"
-      );
-      const result = await response.json();
-
-      if (result.code === 200) {
-        setHistoryImages(result.data);
-      } else {
-        throw new Error(result.message);
-      }
-    } catch (err) {
-      setHistoryImagesError(
-        err instanceof Error ? err.message : "Failed to load history images"
-      );
-    } finally {
-      setHistoryImagesLoading(false);
-    }
-  };
-
-  const fetchReviews = async (): Promise<void> => {
-    try {
-      const response = await fetch(
-        "http://localhost:8080/felicita/v0/api/destination/reviews"
-      );
-      const result = await response.json();
-
-      if (result.code === 200) {
-        setReviews(result.data);
-      } else {
-        throw new Error(result.message);
-      }
-    } catch (err) {
-      setReviewsError(
-        err instanceof Error ? err.message : "Failed to load reviews"
-      );
-    } finally {
-      setReviewsLoading(false);
-    }
-  };
-
-  // Generate mock rating (4.0 - 5.0)
-  const generateMockRating = (destinationId: number): number => {
-    const baseRating = 4.0;
-    const variation = (destinationId % 11) / 10; // 0.0 to 1.0
-    return Math.round((baseRating + variation) * 10) / 10;
-  };
-
-  // Generate mock popularity (1-100)
-  const generateMockPopularity = (destinationId: number): number => {
-    return (destinationId % 100) + 1;
-  };
 
   // Mock price calculation (same as in DestinationCard)
   const getPrice = (popularity: number, rating: number): number => {

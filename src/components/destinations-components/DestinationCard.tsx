@@ -1,8 +1,8 @@
-import { PopularDestinationsType } from "@/types/destinations-types";
+import { PopularDestinationsType } from "@/types/destination-types";
 import React, { useState } from "react";
-import ImageGallery from "./popular-destinations/PopularDestinationImageGallery";
-import DestinationInfo from "./popular-destinations/PopularDestinationInfo";
-import PriceSection from "./popular-destinations/PopularDestinationPriceSection";
+import ImageGallery from "../home-page-components/destinations/popular-destinations/PopularDestinationImageGallery";
+import DestinationInfo from "../home-page-components/destinations/popular-destinations/PopularDestinationInfo";
+import PriceSection from "../home-page-components/destinations/popular-destinations/PopularDestinationPriceSection";
 
 interface DestinationCardProps {
   destination: PopularDestinationsType;

@@ -1,9 +1,9 @@
-import { GET_VISIBLE_WHY_CHOOSE_US_DATA } from "@/utils/backEndConstant";
+import { GET_ACTIVE_WHY_CHOOSE_US_DATA } from "@/utils/backEndConstant";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const response = await fetch(GET_VISIBLE_WHY_CHOOSE_US_DATA, {
+    const response = await fetch(GET_ACTIVE_WHY_CHOOSE_US_DATA, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

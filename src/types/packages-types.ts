@@ -96,39 +96,6 @@ export interface Filters {
   endDate: string;
 }
 
-export interface Tour{
-    tourDetails: TourDetails;
-    images: TourImage[];
-
-}
-
-export interface TourImage {
-  imageId: number;
-  imageName: string;
-  imageDescription: string;
-  imageUrl: string;
-}
-
-export interface TourDetails {
-  tourId: number;
-  tourName: string;
-  tourDescription: string;
-  duration: number;
-  latitude: number;
-  longitude: number;
-  startLocation: string;
-  endLocation: string;
-  tourTypeName: string;
-  tourTypeDescription: string;
-  tourCategoryName: string;
-  tourCategoryDescription: string;
-  seasonName: string;
-  seasonDescription: string;
-  statusName: string;
-  schedules: Schedule[];
-  images: TourImage[];
-}
-
 export interface Activity {
   activityId: number;
   activityName: string;

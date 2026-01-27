@@ -2,7 +2,7 @@ import React from "react";
 import OverviewTab from "./OverviewTab";
 import ActivitiesTab from "./ActivitiesTab";
 import LocationTab from "./LocationTab";
-import { DestinationData } from "@/types/destination-details-types";
+import { DestinationData } from "@/types/destination-types";
 
 interface DestinationTabsProps {
   destination: DestinationData;

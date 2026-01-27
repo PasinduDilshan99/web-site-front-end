@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { TourHistoryImage } from "@/types/sri-lankan-tour-types";
+import { TourHistoryImage } from "@/types/tour-types";
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";
 import Loading from "@/components/common-components/loading/Loading";
 import { ErrorState } from "@/components/common-components/error-state/ErrorState";

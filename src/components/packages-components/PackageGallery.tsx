@@ -22,8 +22,8 @@ const PackageGallery: React.FC<PackageGalleryProps> = ({
 }) => {
   if (images.length === 0) {
     return (
-      <div className="bg-gray-200 rounded-2xl h-96 flex items-center justify-center">
-        <div className="text-gray-500 text-lg">No images available</div>
+      <div className="bg-gray-200 rounded-xl sm:rounded-2xl h-64 sm:h-80 md:h-96 flex items-center justify-center">
+        <div className="text-gray-500 text-base sm:text-lg">No images available</div>
       </div>
     );
   }
@@ -31,44 +31,46 @@ const PackageGallery: React.FC<PackageGalleryProps> = ({
   const selectedImage = images[selectedImageIndex];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       {/* Main Image */}
-      <div className="relative h-96 md:h-[500px] rounded-2xl overflow-hidden bg-gray-200">
+      <div className="relative h-64 sm:h-80 md:h-96 lg:h-[500px] rounded-xl sm:rounded-2xl overflow-hidden bg-gray-200">
         <Image
           src={selectedImage.imageUrl}
-          alt={selectedImage.imageDescription}
+          alt={selectedImage.imageDescription || selectedImage.imageName}
           fill
           className="object-cover"
+          sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 50vw, 66vw"
           onError={(e) => {
-            e.currentTarget.src = "/images/placeholder.jpg";
+            (e.target as HTMLImageElement).src = "/images/placeholder.jpg";
           }}
         />
         {/* Image Badge */}
-        <div className="absolute top-4 left-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
+        <div className="absolute top-2 sm:top-4 left-2 sm:left-4 bg-black/70 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm">
           {selectedImage.type === 'package' ? 'Package' : 'Tour'} Image
         </div>
       </div>
 
       {/* Thumbnail Grid */}
       {images.length > 1 && (
-        <div className="grid grid-cols-4 md:grid-cols-6 gap-2">
+        <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-1 sm:gap-2">
           {images.map((image, index) => (
             <button
               key={image.imageId}
               onClick={() => onImageSelect(index)}
-              className={`relative h-20 md:h-24 rounded-lg overflow-hidden border-2 transition-all ${
+              className={`relative h-16 sm:h-20 md:h-24 rounded-lg overflow-hidden border-2 transition-all ${
                 index === selectedImageIndex
-                  ? 'border-purple-500 ring-2 ring-purple-300'
+                  ? 'border-purple-500 ring-1 sm:ring-2 ring-purple-300'
                   : 'border-transparent hover:border-gray-300'
               }`}
             >
               <Image
                 src={image.imageUrl}
-                alt={image.imageDescription}
+                alt={image.imageDescription || image.imageName}
                 fill
                 className="object-cover"
+                sizes="(max-width: 640px) 25vw, (max-width: 768px) 20vw, (max-width: 1024px) 16vw, 14vw"
                 onError={(e) => {
-                  e.currentTarget.src = "/images/placeholder.jpg";
+                  (e.target as HTMLImageElement).src = "/images/placeholder.jpg";
                 }}
               />
               {/* Thumbnail Badge */}

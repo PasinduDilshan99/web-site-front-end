@@ -270,3 +270,113 @@ export const REACTION_TYPES = {
 } as const;
 
 export type ReactionType = typeof REACTION_TYPES[keyof typeof REACTION_TYPES];
+
+
+export interface BlogReactionType {
+  username: string;
+  user_id: number;
+  reaction_type_id: number;
+}
+
+export interface ReplyType {
+  username: string;
+  comment: string;
+  reactions: BlogReactionType[] | null;
+  replies: ReplyType[] | null;
+  comment_id: number;
+  user_id: number;
+  comment_date: string;
+}
+
+export interface CommentType {
+  username: string;
+  comment: string;
+  reactions: BlogReactionType[] | null;
+  replies: ReplyType[] | null;
+  comment_id: number;
+  user_id: number;
+  comment_date: string;
+}
+
+export interface BlogReactionType {
+  count: number;
+  reaction_type_id: number;
+  reaction_type_name: string;
+}
+
+export interface BlogType {
+  blog_id: number;
+  title: string;
+  subtitle: string;
+  description: string;
+  writer_id: number;
+  writer_name: string;
+  blog_status: string;
+  blog_created_at: string;
+  images: BlogImage[];
+  likeCount: number;
+  comments: CommentType[];
+  blog_reactions: BlogReactionType[];
+}
+
+
+export interface ActiveBlogsResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: BlogDetailsData[];
+  timestamp: string;
+}
+
+// If you want to combine with existing Comment interfaces:
+export interface CombinedBlogComment extends Omit<BlogComment, 'reactions' | 'replies'> {
+  reactions: CommentReaction[] | null;
+  replies: CombinedBlogCommentReply[] | null;
+}
+
+export interface CombinedBlogCommentReply extends Omit<BlogCommentReply, 'reactions' | 'replies'> {
+  reactions: CommentReaction[] | null;
+  replies: CombinedBlogCommentReply[] | null;
+}
+
+// Add these interfaces to your existing blog-types.ts file
+
+export interface BlogListApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: BlogDetailsData[];
+  timestamp: string;
+}
+
+// Rename or keep existing ApiResponse for single blog
+export interface SingleBlogApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: BlogDetailsData;
+  timestamp: string;
+}
+
+// Helper function types for blog calculations
+export interface EnhancedBlogData extends BlogDetailsData {
+  totalReactions: number;
+  commentCount: number;
+}
+
+export interface BlogCreateRequest {
+  title: string;
+  subTitle: string;
+  description: string;
+  imageUrls: string[];
+}
+
+export interface BlogCreateResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: {
+    message: string;
+  };
+  timestamp: string;
+}

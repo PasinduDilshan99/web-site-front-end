@@ -1,9 +1,9 @@
-import { GET_PACKAGE_REVIEWS_BE } from "@/utils/backEndConstant";
+import { GET_PACKAGE_REVIEWS_DETAILS_DATA } from "@/utils/backEndConstant";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const response = await fetch(GET_PACKAGE_REVIEWS_BE, {
+    const response = await fetch(GET_PACKAGE_REVIEWS_DETAILS_DATA, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

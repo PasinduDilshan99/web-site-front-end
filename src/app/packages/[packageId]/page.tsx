@@ -12,38 +12,28 @@ import ReviewsSection from "@/components/packages-components/ReviewsSection";
 import TourDetailsSection from "@/components/packages-components/TourDetailsSection";
 import HistoryCarousel from "@/components/packages-components/HistoryCarousel";
 import PackageHistoryGallery from "@/components/packages-components/PackageHistoryGallery";
+import InclusionsExclusions from "@/components/packages-components/InclusionsExclusions";
+import TravelTips from "@/components/packages-components/TravelTips";
+import DayByDayItinerary from "@/components/packages-components/DayByDayItinerary";
 import {
   Destination,
   TourDetails,
   ActivePackagesType,
-  ApiResponse,
   ExtendedActivity,
   PackageReview,
-  ReviewsResponse,
   PackageHistory,
-  PackageHistoryResponse,
   PackageHistoryImage,
-} from "@/types/packages-types";
-import {
-  GET_DESTINATIONS_DETAILS_BY_TOUR_ID_BE,
-  GET_PACKAGE_DETAILS_BY_ID_BE,
-  GET_TOUR_DETAILS_BY_ID_BE,
-} from "@/utils/backEndConstant";
+} from "@/types/package-types";
 import { useParams } from "next/navigation";
 import React, { useState, useEffect } from "react";
-
-// Add these interfaces for the API responses
-interface PackageHistoryImagesResponse {
-  code: number;
-  status: string;
-  message: string;
-  data: PackageHistoryImage[];
-  timestamp: string;
-}
+import { DestinationService } from "@/services/destinationService";
+import { PackageService } from "@/services/packageService";
+import { TourService } from "@/services/tourService";
+import PackageDetailsHeroSection from "@/components/packages-components/PackageDetailsHeroSection";
 
 const PackagePage = () => {
   const params = useParams();
-  const packageId =  params?.packageId || null;
+  const packageId = params?.packageId || "1";
   const [packageData, setPackageData] = useState<ActivePackagesType | null>(
     null
   );
@@ -72,8 +62,8 @@ const PackagePage = () => {
     if (packageId) {
       fetchPackageData();
       fetchReviews();
-      fetchHistory(); // Fetch history when component mounts
-      fetchHistoryImages(); // Fetch history images when component mounts
+      fetchHistory();
+      fetchHistoryImages();
     }
   }, [packageId]);
 
@@ -82,50 +72,40 @@ const PackagePage = () => {
       setLoading(true);
       setError(null);
 
-      // Fetch package details
-      const packageResponse = await fetch(
-        `${GET_PACKAGE_DETAILS_BY_ID_BE}/${packageId}`
-      );
-      const packageResult: ApiResponse<ActivePackagesType> =
-        await packageResponse.json();
+      // USING THE SERVICE INSTEAD OF DIRECT FETCH
+      const { data: fetchedPackage, error: packageError } = 
+        await PackageService.fetchPackageAllDetails(packageId[0]);
 
-      if (packageResult.code !== 200) {
-        throw new Error(
-          packageResult.message || "Failed to fetch package details"
-        );
+      if (packageError) {
+        throw new Error(packageError);
       }
 
-      setPackageData(packageResult.data);
-
-      // Fetch tour details using tourId from package
-      const tourResponse = await fetch(
-        `${GET_TOUR_DETAILS_BY_ID_BE}/${packageResult.data.tourId}`
-      );
-      const tourResult: ApiResponse<TourDetails> = await tourResponse.json();
-
-      if (tourResult.code === 200) {
-        setTourData(tourResult.data);
+      if (!fetchedPackage) {
+        throw new Error("No package data found");
       }
 
-      // Fetch destinations for the tour
-      const destinationsResponse = await fetch(
-        `${GET_DESTINATIONS_DETAILS_BY_TOUR_ID_BE}/${packageResult.data.tourId}`
-      );
-      const destinationsResult: ApiResponse<Destination[]> =
-        await destinationsResponse.json();
+      setPackageData(fetchedPackage);
 
-      if (destinationsResult.code === 200) {
-        setDestinations(destinationsResult.data);
+      // Fetch tour details if needed
+      if (fetchedPackage.tourId) {
+        const { data: fetchedTour, error: tourError } = 
+          await TourService.getTourDetails(fetchedPackage.tourId.toString());
 
-        // Create ExtendedActivity objects with destination information
-        const activities: ExtendedActivity[] = destinationsResult.data.flatMap(
-          (destination) =>
-            destination.activities.map((activity) => ({
-              ...activity,
-              destinationName: destination.destinationName,
-              destinationId: destination.destinationId,
-            }))
-        );
+        if (tourError) {
+          console.error("Error fetching tour details:", tourError);
+        } else {
+          setTourData(fetchedTour);
+        }
+      }
+
+      // Fetch destinations if needed
+      const { data: destinationsData, activities, error: destinationsError } = 
+        await DestinationService.fetchDestinationsByTourId(fetchedPackage.tourId);
+
+      if (destinationsError) {
+        console.error("Error fetching destinations:", destinationsError);
+      } else {
+        setDestinations(destinationsData);
         setAllActivities(activities);
       }
     } catch (err) {
@@ -145,15 +125,14 @@ const PackagePage = () => {
       setReviewsLoading(true);
       setReviewsError(null);
 
-      const response = await fetch(
-        `http://localhost:8080/felicita/v0/api/package/reviews/${packageId}`
-      );
-      const result: ReviewsResponse = await response.json();
+      if (!packageId) return;
 
-      if (result.code === 200) {
-        setReviews(result.data);
+      const { reviews: fetchedReviews, error } = await PackageService.fetchPackageReviewsById(packageId[0]);
+
+      if (error) {
+        setReviewsError(error);
       } else {
-        throw new Error(result.message);
+        setReviews(fetchedReviews);
       }
     } catch (err) {
       setReviewsError(
@@ -171,15 +150,14 @@ const PackagePage = () => {
       setHistoryLoading(true);
       setHistoryError(null);
 
-      const response = await fetch(
-        `http://localhost:8080/felicita/v0/api/package/history/${packageId}`
-      );
-      const result: PackageHistoryResponse = await response.json();
+      if (!packageId) return;
 
-      if (result.code === 200) {
-        setHistory(result.data);
+      const { history: fetchedHistory, error } = await PackageService.fetchPackageHistoryById(packageId[0]);
+
+      if (error) {
+        setHistoryError(error);
       } else {
-        throw new Error(result.message);
+        setHistory(fetchedHistory);
       }
     } catch (err) {
       setHistoryError(
@@ -197,15 +175,14 @@ const PackagePage = () => {
       setHistoryImagesLoading(true);
       setHistoryImagesError(null);
 
-      const response = await fetch(
-        `http://localhost:8080/felicita/v0/api/package/history-images/${packageId}`
-      );
-      const result: PackageHistoryImagesResponse = await response.json();
+      if (!packageId) return;
 
-      if (result.code === 200) {
-        setHistoryImages(result.data);
+      const { historyImages: fetchedImages, error } = await PackageService.fetchPackageHistoryImagesById(packageId[0]);
+
+      if (error) {
+        setHistoryImagesError(error);
       } else {
-        throw new Error(result.message);
+        setHistoryImages(fetchedImages);
       }
     } catch (err) {
       setHistoryImagesError(
@@ -221,7 +198,10 @@ const PackagePage = () => {
   const handleRetry = () => {
     setError(null);
     setLoading(true);
-    window.location.reload();
+    fetchPackageData();
+    fetchReviews();
+    fetchHistory();
+    fetchHistoryImages();
   };
 
   const handleReviewsRetry = () => {
@@ -242,7 +222,7 @@ const PackagePage = () => {
   if (loading) {
     return (
       <Loading
-        message="Loading packages details..."
+        message="Loading package details..."
         variant="spinner"
         size="md"
       />
@@ -254,7 +234,7 @@ const PackagePage = () => {
       <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           <ErrorState
-            title="Failed to Load packages details"
+            title="Failed to Load package details"
             message={error}
             icon="alert"
             variant="error"
@@ -279,79 +259,99 @@ const PackagePage = () => {
   }
 
   const allImages = [
-    ...packageData.images.map((img) => ({
+    ...packageData.packageImages.map((img) => ({
       ...img,
       type: "package" as const,
     })),
-    ...(tourData?.images.map((img) => ({
+    ...(tourData?.images?.map((img) => ({
       ...img,
       type: "tour" as const,
     })) || []),
   ];
 
   return (
-      <div className="min-h-screen bg-gray-50">
-        {/* Header Section */}
-        <PackageHeader packageData={packageData} />
+    <div className="min-h-screen bg-gray-50">
+      {/* Header Section */}
+      {/* <PackageHeader packageData={packageData} /> */}
+      <PackageDetailsHeroSection packageData={packageData} />
 
-        <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left Column - Gallery and Info */}
-            <div className="lg:col-span-2 space-y-8">
-              {/* Image Gallery */}
-              <PackageGallery
-                images={allImages}
-                selectedImageIndex={selectedImageIndex}
-                onImageSelect={setSelectedImageIndex}
-              />
-
-              {/* Package Information */}
-              <PackageInfo packageData={packageData} />
-
-              {/* Activities Section */}
-              {/* {allActivities.length > 0 && (
-              <ActivitiesSection activities={allActivities} />
-            )} */}
-
-              {/* Tour Details */}
-              {tourData && <TourDetailsSection tourData={tourData} />}
-
-              {/* Destinations */}
-              {destinations.length > 0 && (
-                <DestinationsSection destinations={destinations} />
-              )}
-            </div>
-
-            {/* Right Column - Booking Card */}
-            <div className="lg:col-span-1">
-              <BookingSection packageData={packageData} />
-            </div>
-          </div>
-          <div className="mt-8">
-            <ReviewsSection
-              reviews={reviews}
-              // loading={reviewsLoading}
-              // error={reviewsError}
-              // onRetry={handleReviewsRetry}
+      <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-6 sm:py-8 md:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+          {/* Left Column - Gallery and Info */}
+          <div className="lg:col-span-2 space-y-6 sm:space-y-8">
+            {/* Image Gallery */}
+            <PackageGallery
+              images={allImages}
+              selectedImageIndex={selectedImageIndex}
+              onImageSelect={setSelectedImageIndex}
             />
-          </div>
-          {/* History Section */}
-          <HistoryCarousel
-            historyData={history}
-            loading={historyLoading}
-            error={historyError}
-            onRetry={handleHistoryRetry}
-          />
 
-          {/* Package History Gallery Section */}
-          <PackageHistoryGallery
-            imagesData={historyImages}
-            loading={historyImagesLoading}
-            error={historyImagesError}
-            onRetry={handleHistoryImagesRetry}
+            {/* Package Information */}
+            <PackageInfo packageData={packageData} />
+
+            {/* Inclusions & Exclusions */}
+            <InclusionsExclusions packageData={packageData} />
+
+            {/* Travel Tips */}
+            <TravelTips travelTips={packageData.travelTips} />
+
+            {/* Day by Day Itinerary */}
+            {packageData.dayAccommodationResponses?.packageDayByDayDtoList && (
+              <DayByDayItinerary 
+                itinerary={packageData.dayAccommodationResponses.packageDayByDayDtoList}
+              />
+            )}
+
+            {/* Tour Details */}
+            {tourData && <TourDetailsSection tourData={tourData} />}
+
+            {/* Destinations */}
+            {destinations.length > 0 && (
+              <DestinationsSection destinations={destinations} />
+            )}
+          </div>
+
+          {/* Right Column - Booking Card */}
+          <div className="lg:col-span-1">
+            <BookingSection packageData={packageData} />
+          </div>
+        </div>
+
+        {/* Reviews Section */}
+        <div className="mt-8 sm:mt-12 md:mt-16">
+          <ReviewsSection
+            reviews={reviews}
+            // loading={reviewsLoading}
+            // error={reviewsError}
+            // onRetry={handleReviewsRetry}
           />
         </div>
+
+        {/* History Section */}
+        {history.length > 0 && (
+          <div className="mt-8 sm:mt-12 md:mt-16">
+            <HistoryCarousel
+              historyData={history}
+              loading={historyLoading}
+              error={historyError}
+              onRetry={handleHistoryRetry}
+            />
+          </div>
+        )}
+
+        {/* Package History Gallery Section */}
+        {historyImages.length > 0 && (
+          <div className="mt-8 sm:mt-12 md:mt-16">
+            <PackageHistoryGallery
+              imagesData={historyImages}
+              loading={historyImagesLoading}
+              error={historyImagesError}
+              onRetry={handleHistoryImagesRetry}
+            />
+          </div>
+        )}
       </div>
+    </div>
   );
 };
 

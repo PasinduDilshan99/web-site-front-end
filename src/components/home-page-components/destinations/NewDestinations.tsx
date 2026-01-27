@@ -1,0 +1,288 @@
+"use client";
+import React, { useEffect, useState } from "react";
+import Loading from "../../common-components/loading/Loading";
+import SectionHeader from "../../common-components/section-header/SectionHeader";
+import AnimatedButton from "../../common-components/buttons/AnimatedButton";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { ImageType, NewDestinationsType } from "@/types/destination-types";
+import { DestinationService } from "@/services/destinationService";
+
+// Image Carousel Component for each destination
+const ImageCarousel: React.FC<{
+  images: ImageType[];
+  destinationName: string;
+  categoryName: string;
+  rating: number;
+}> = ({ images, destinationName, categoryName, rating }) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    if (images.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+    }, 3000); // Change image every 3 seconds
+
+    return () => clearInterval(interval);
+  }, [images.length]);
+
+  // Filter active images
+  const activeImages = images.filter((img) => img.imageStatus === "ACTIVE");
+
+  if (!activeImages || activeImages.length === 0) {
+    return (
+      <div className="relative h-40 sm:h-48 md:h-52 lg:h-56 xl:h-60 2xl:h-64 overflow-hidden group bg-gradient-to-br from-amber-400 to-purple-600 flex items-center justify-center">
+        <span className="text-white font-semibold text-base sm:text-lg md:text-xl text-center px-3">
+          {destinationName}
+        </span>
+
+        {/* Category Badge */}
+        <div className="absolute top-2 left-2 xs:top-2 xs:left-2 sm:top-3 sm:left-3 md:top-3 md:left-3 lg:top-4 lg:left-4 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 xs:px-2 xs:py-1 sm:px-2.5 sm:py-1 md:px-3 md:py-1 shadow-sm">
+          <span className="text-amber-600 text-xs xs:text-xs sm:text-sm md:text-sm font-medium">
+            {categoryName}
+          </span>
+        </div>
+
+        {/* Rating Badge */}
+        <div className="absolute top-2 right-2 xs:top-2 xs:right-2 sm:top-3 sm:right-3 md:top-3 md:right-3 lg:top-4 lg:right-4 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 xs:px-2 xs:py-1 sm:px-2.5 sm:py-1 md:px-3 md:py-1 flex items-center shadow-sm">
+          <span className="text-yellow-500 mr-1 text-xs xs:text-xs sm:text-sm">
+            ⭐
+          </span>
+          <span className="font-bold text-gray-800 text-xs xs:text-xs sm:text-sm">
+            {rating}
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative h-40 sm:h-44 md:h-48 lg:h-56 xl:h-60 2xl:h-64 overflow-hidden group">
+      {/* Images */}
+      {activeImages.map((image, index) => (
+        <div
+          key={image.imageId}
+          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+            index === currentImageIndex ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          <Image
+            src={image.imageUrl}
+            alt={image.imageDescription}
+            width={400}
+            height={400}
+            className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105"
+          />
+        </div>
+      ))}
+
+      {/* Category Badge */}
+      <div className="absolute top-2 left-2 xs:top-2 xs:left-2 sm:top-3 sm:left-3 md:top-3 md:left-3 lg:top-4 lg:left-4 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 xs:px-2 xs:py-1 sm:px-2.5 sm:py-1 md:px-3 md:py-1 shadow-sm">
+        <span className="text-amber-600 text-xs xs:text-xs sm:text-sm md:text-sm font-medium">
+          {categoryName}
+        </span>
+      </div>
+
+      {/* Rating Badge */}
+      <div className="absolute top-2 right-2 xs:top-2 xs:right-2 sm:top-3 sm:right-3 md:top-3 md:right-3 lg:top-4 lg:right-4 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 xs:px-2 xs:py-1 sm:px-2.5 sm:py-1 md:px-3 md:py-1 flex items-center shadow-sm">
+        <span className="text-yellow-500 mr-1 text-xs xs:text-xs sm:text-sm">
+          ⭐
+        </span>
+        <span className="font-bold text-gray-800 text-xs xs:text-xs sm:text-sm">
+          {rating}
+        </span>
+      </div>
+
+      {/* Image Indicators */}
+      {activeImages.length > 1 && (
+        <div className="absolute bottom-2 xs:bottom-2 sm:bottom-3 md:bottom-3 lg:bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-1 xs:space-x-1 sm:space-x-1.5 md:space-x-2">
+          {activeImages.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentImageIndex(index)}
+              className={`w-1.5 h-1.5 xs:w-1.5 xs:h-1.5 sm:w-2 sm:h-2 rounded-full transition-all duration-300 ${
+                index === currentImageIndex
+                  ? "bg-white scale-125"
+                  : "bg-white/50 hover:bg-white/80"
+              }`}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Navigation Arrows (appear on hover) */}
+      {activeImages.length > 1 && (
+        <>
+          <button
+            onClick={() =>
+              setCurrentImageIndex(
+                currentImageIndex === 0
+                  ? activeImages.length - 1
+                  : currentImageIndex - 1
+              )
+            }
+            className="absolute left-1 xs:left-1 sm:left-2 md:left-2 top-1/2 transform -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white rounded-full w-5 h-5 xs:w-5 xs:h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-xs xs:text-xs sm:text-sm md:text-base"
+          >
+            ‹
+          </button>
+          <button
+            onClick={() =>
+              setCurrentImageIndex(
+                (currentImageIndex + 1) % activeImages.length
+              )
+            }
+            className="absolute right-1 xs:right-1 sm:right-2 md:right-2 top-1/2 transform -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white rounded-full w-5 h-5 xs:w-5 xs:h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-xs xs:text-xs sm:text-sm md:text-base"
+          >
+            ›
+          </button>
+        </>
+      )}
+
+      {/* Image Counter */}
+      {activeImages.length > 1 && (
+        <div className="absolute bottom-2 right-2 xs:bottom-2 xs:right-2 sm:bottom-3 sm:right-3 md:bottom-3 md:right-3 lg:bottom-4 lg:right-4 bg-black/40 text-white text-xs xs:text-xs sm:text-xs px-1.5 xs:px-1.5 sm:px-2 py-0.5 xs:py-0.5 sm:py-1 rounded-full">
+          {currentImageIndex + 1}/{activeImages.length}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const NewDestinations = () => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [newDestinations, setNewDestinations] = useState<NewDestinationsType[]>(
+    []
+  );
+  const router = useRouter();
+
+  const handleMoreDestinationClick = () => {
+    router.push("/destinations");
+  };
+
+  const handleMoreDetails = (destinationId: number) => {
+    router.push(`/destinations/${destinationId}`);
+  };
+
+  useEffect(() => {
+    const fetchNewDestinations = async () => {
+      try {
+        setLoading(true);
+        
+        // USING THE SERVICE INSTEAD OF DIRECT FETCH
+        const { data: destinations, error } = await DestinationService.fetchNewDestinations();
+
+        if (error) {
+          setError(error);
+        } else {
+          setNewDestinations(destinations);
+          setError(null);
+        }
+      } catch (err) {
+        console.error("Error in component:", err);
+        setError("Something went wrong while fetching new destinations");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNewDestinations();
+  }, []);
+
+  if (loading) {
+    return (
+      <Loading
+        message="Loading new destinations..."
+        variant="spinner"
+        size="md"
+      />
+    );
+  }
+
+  if (error) {
+    return null;
+  }
+
+  if (newDestinations.length === 0) {
+    return null;
+  }
+
+  return (
+    <section className="py-8 sm:py-12 md:py-16 lg:py-20 xl:py-24 bg-gradient-to-br from-amber-50 to-purple-50">
+      <div className="mx-auto px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10">
+        {/* Header Section */}
+        <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8">
+          <SectionHeader
+            subtitle="New destinations"
+            title="New Destinations"
+            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore."
+            fromColor="#A855F7"
+            toColor="#F59E0B"
+          />
+        </div>
+
+        {/* Destinations Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6 lg:gap-7 xl:gap-8">
+          {newDestinations.map((destination) => (
+            <div
+              key={destination.destinationId}
+              className="bg-white rounded-lg sm:rounded-xl md:rounded-2xl overflow-hidden shadow-md hover:shadow-lg sm:hover:shadow-xl transition-all duration-300 hover:scale-105 border border-gray-100"
+            >
+              {/* Image Carousel */}
+              <ImageCarousel
+                images={destination.images}
+                destinationName={destination.destinationName}
+                categoryName={destination.categoryName}
+                rating={destination.rating}
+              />
+
+              {/* Content */}
+              <div className="p-2 sm:p-5 md:p-6">
+                <div className="flex justify-between items-start mb-3 sm:mb-4">
+                  <h3 className="text-sm sm:text-md md:text-lg lg:text-xl xl:text-2xl font-bold text-gray-900 leading-tight">
+                    {destination.destinationName}
+                  </h3>
+                  <span className="text-xs md:text-sm text-gray-500 bg-gray-100 px-2 sm:px-2.5 md:px-3 py-1 rounded-full flex-shrink-0 ml-2">
+                    {destination.location}
+                  </span>
+                </div>
+
+                <p className="text-gray-600 mb-4 sm:mb-5 md:mb-6 line-clamp-2 text-xs sm:text-sm md:text-md lg:text-lg xl:text-xl 2xl:text-2xl leading-relaxed">
+                  {destination.destinationDescription}
+                </p>
+
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="text-xs sm:text-sm text-gray-500">
+                      Starting from
+                    </p>
+                    <p className="text-lg sm:text-xl md:text-2xl font-bold text-purple-600">
+                      ${Math.floor(destination.popularity / 10)}.00
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={() => handleMoreDetails(destination.destinationId)}
+                    className="px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-amber-600 to-purple-600 text-white text-xs sm:text-sm md:text-base font-medium rounded-lg sm:rounded-xl hover:from-purple-700 hover:to-amber-700 transition-colors"
+                  >
+                    Read more
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* View All Button */}
+        <div className="text-center mt-6 sm:mt-8 md:mt-10 lg:mt-12 xl:mt-16">
+          <AnimatedButton onClick={handleMoreDestinationClick}>
+            More Destinations
+          </AnimatedButton>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default NewDestinations;

@@ -9,7 +9,7 @@ import {
   AlertCircle,
   MessageCircle,
 } from "lucide-react";
-import { Reaction, Review } from "@/pages/ActivityPage";
+import { Reaction, Review } from "@/types/activity-types";
 
 // Props interface
 interface ReviewsSectionProps {

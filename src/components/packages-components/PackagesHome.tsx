@@ -1,11 +1,9 @@
 "use client";
-import { GET_ALL_ACTIVE_PACKAGES_FE } from "@/utils/frontEndConstant";
 import React, { useEffect, useState } from "react";
 import SectionHeader from "../common-components/section-header/SectionHeader";
 import AnimatedButton from "../common-components/buttons/AnimatedButton";
-import { ActivePackagesType, ApiResponse } from "@/types/packages-types";
+import { ActivePackagesType } from "@/types/packages-types";
 import Loading from "@/components/common-components/loading/Loading";
-import { ErrorState } from "@/components/common-components/error-state/ErrorState";
 import { EmptyState } from "@/components/common-components/empty-state/EmptyState";
 import PackageGrid from "@/components/packages-components/PackageGrid";
 import {
@@ -18,6 +16,7 @@ import {
   PACKAGES_HEADER_SECTION_TITLE,
 } from "@/utils/constant";
 import { useRouter } from "next/navigation";
+import { PackageService } from "@/services/packageService";
 
 const PackagesHome = () => {
   const [loading, setLoading] = useState(true);
@@ -52,14 +51,14 @@ const PackagesHome = () => {
     const fetchPackages = async () => {
       try {
         setLoading(true);
-        const response = await fetch(GET_ALL_ACTIVE_PACKAGES_FE);
-        const data: ApiResponse<ActivePackagesType[]> = await response.json();
+        // USING THE SERVICE INSTEAD OF DIRECT FETCH
+        const { data: packages, error } = await PackageService.fetchActivePackages();
 
-        if (response.ok && data.code === 200) {
-          setActivePackages(data.data || []);
-          setError(null);
+        if (error) {
+          setError(error);
         } else {
-          setError(data.message || "Failed to fetch packages");
+          setActivePackages(packages);
+          setError(null);
         }
       } catch (err) {
         console.error("Error fetching packages:", err);

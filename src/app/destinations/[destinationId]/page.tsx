@@ -10,23 +10,19 @@ import DestinationDetailsMain from "@/components/destinations-components/destina
 import DestinationDetailsSidebar from "@/components/destinations-components/destinaton-details/DestinationDetailsSidebar";
 import DestinationHistory from "@/components/destinations-components/DestinationHistory";
 import DestinationHistoryGallery from "@/components/destinations-components/DestinationHistoryGallery";
-import { DestinationData } from "@/types/destination-details-types";
-import { DestinationHistoryType } from "@/types/destinations-types";
-import { DestinationHistoryImage } from "@/types/destinations-types";
+import { DestinationHistoryImage, DestinationHistoryType,Review,DestinationData } from "@/types/destination-types";
 import NavBar from "@/components/common-components/navBar/NavBar";
 import Footer from "@/app/components/footer/Footer";
-import { Review } from "@/pages/DestinationPage";
+import { DestinationService } from "@/services/destinationService";
 
 const DestinationDetailsPage = () => {
-const params = useParams();
-const destinationId = params?.destinationId || null;
+  const params = useParams();
+  const destinationId = params?.destinationId || null;
 
   const [destination, setDestination] = useState<DestinationData | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [history, setHistory] = useState<DestinationHistoryType[]>([]);
-  const [historyImages, setHistoryImages] = useState<DestinationHistoryImage[]>(
-    []
-  );
+  const [historyImages, setHistoryImages] = useState<DestinationHistoryImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [reviewsLoading, setReviewsLoading] = useState(true);
   const [historyLoading, setHistoryLoading] = useState(true);
@@ -34,41 +30,43 @@ const destinationId = params?.destinationId || null;
   const [error, setError] = useState<string | null>(null);
   const [reviewsError, setReviewsError] = useState<string | null>(null);
   const [historyError, setHistoryError] = useState<string | null>(null);
-  const [historyImagesError, setHistoryImagesError] = useState<string | null>(
-    null
-  );
+  const [historyImagesError, setHistoryImagesError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (destinationId) {
-      fetchDestination();
-      fetchDestinationReviews();
-      fetchDestinationHistory();
-      fetchDestinationHistoryImages(); // Fetch history images data
+  const destinationService = new DestinationService();
+
+  const fetchDestination = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const { data, error } = await destinationService.fetchDestination(destinationId as string);
+      
+      if (error) {
+        throw new Error(error);
+      }
+      
+      setDestination(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setLoading(false);
     }
-  }, [destinationId,]);
+  };
 
   const fetchDestinationReviews = async () => {
     try {
       setReviewsLoading(true);
       setReviewsError(null);
-      const response = await fetch(
-        `http://localhost:8080/felicita/v0/api/destination/reviews/${destinationId}`
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch reviews");
+      
+      const { data, error } = await destinationService.fetchDestinationReviews(destinationId as string);
+      
+      if (error) {
+        throw new Error(error);
       }
-
-      const data = await response.json();
-      if (data.code === 200) {
-        setReviews(data.data);
-      } else {
-        throw new Error(data.message);
-      }
+      
+      setReviews(data);
     } catch (err) {
-      setReviewsError(
-        err instanceof Error ? err.message : "Failed to load reviews"
-      );
+      setReviewsError(err instanceof Error ? err.message : "Failed to load reviews");
     } finally {
       setReviewsLoading(false);
     }
@@ -78,26 +76,16 @@ const destinationId = params?.destinationId || null;
     try {
       setHistoryLoading(true);
       setHistoryError(null);
-      const response = await fetch(
-        `http://localhost:8080/felicita/v0/api/destination/history/${destinationId}`
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch destination history");
+      
+      const { data, error } = await destinationService.fetchDestinationHistory(destinationId as string);
+      
+      if (error) {
+        throw new Error(error);
       }
-
-      const data = await response.json();
-      if (data.code === 200) {
-        setHistory(data.data);
-      } else {
-        throw new Error(data.message);
-      }
+      
+      setHistory(data);
     } catch (err) {
-      setHistoryError(
-        err instanceof Error
-          ? err.message
-          : "Failed to load destination history"
-      );
+      setHistoryError(err instanceof Error ? err.message : "Failed to load destination history");
     } finally {
       setHistoryLoading(false);
     }
@@ -107,51 +95,29 @@ const destinationId = params?.destinationId || null;
     try {
       setHistoryImagesLoading(true);
       setHistoryImagesError(null);
-      const response = await fetch(
-        `http://localhost:8080/felicita/v0/api/destination/history-images/${destinationId}`
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch destination history images");
+      
+      const { data, error } = await destinationService.fetchDestinationHistoryImages(destinationId as string);
+      
+      if (error) {
+        throw new Error(error);
       }
-
-      const data = await response.json();
-      if (data.code === 200) {
-        setHistoryImages(data.data);
-      } else {
-        throw new Error(data.message);
-      }
+      
+      setHistoryImages(data);
     } catch (err) {
-      setHistoryImagesError(
-        err instanceof Error
-          ? err.message
-          : "Failed to load destination history images"
-      );
+      setHistoryImagesError(err instanceof Error ? err.message : "Failed to load destination history images");
     } finally {
       setHistoryImagesLoading(false);
     }
   };
 
-  const fetchDestination = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await fetch(
-        `http://localhost:8080/felicita/v0/api/destination/${destinationId}`
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch destination");
-      }
-
-      const data = await response.json();
-      setDestination(data.data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    if (destinationId) {
+      fetchDestination();
+      fetchDestinationReviews();
+      fetchDestinationHistory();
+      fetchDestinationHistoryImages();
     }
-  };
+  }, [destinationId]);
 
   const handleRetryHistory = () => {
     fetchDestinationHistory();

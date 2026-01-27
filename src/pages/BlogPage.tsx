@@ -1,24 +1,21 @@
-// app/blog/page.tsx
 "use client";
 import React, { useState, useEffect } from "react";
 import {
-  BlogComment,
-  BlogCommentReply,
   BlogDetailsData,
   BlogFilters,
-  BlogReaction,
   PaginationState,
+  BlogComment,
+  BlogCommentReply,
+  BlogReaction,
+  EnhancedBlogData,
 } from "@/types/blog-types";
 import Loading from "@/components/common-components/loading/Loading";
 import { ErrorState } from "@/components/common-components/error-state/ErrorState";
-import NavBar from "@/components/common-components/navBar/NavBar";
-import Footer from "@/app/components/footer/Footer";
 import BlogHeroSection from "@/components/blog-components/BlogHeroSection";
 import BlogFilter from "@/components/blog-components/BlogFilter";
 import BlogCard from "@/components/blog-components/BlogCard";
-import LinkBar from "@/components/common-components/linkBar/LinkBar";
-
 import { useSearchParams } from "next/navigation";
+import { BlogService } from "@/services/blogService"; // Import service
 
 const BlogPage: React.FC = () => {
   const searchParams = useSearchParams();
@@ -29,8 +26,8 @@ const BlogPage: React.FC = () => {
   console.log("Writer Param:", writerParam);
   console.log("Search Param:", searchParam);
 
-  const [blogs, setBlogs] = useState<BlogDetailsData[]>([]);
-  const [filteredBlogs, setFilteredBlogs] = useState<BlogDetailsData[]>([]);
+  const [blogs, setBlogs] = useState<EnhancedBlogData[]>([]);
+  const [filteredBlogs, setFilteredBlogs] = useState<EnhancedBlogData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [categories, setCategories] = useState<string[]>([]);
@@ -89,7 +86,6 @@ const BlogPage: React.FC = () => {
   ): number => {
     if (!blogReactions || !Array.isArray(blogReactions)) return 0;
 
-    // Sum all reaction counts
     return blogReactions.reduce(
       (total, reaction) => total + (reaction.count || 0),
       0
@@ -97,43 +93,74 @@ const BlogPage: React.FC = () => {
   };
 
   // Enhance blog data with calculated properties
-  const enhanceBlogData = (blog: BlogDetailsData): BlogDetailsData => {
-    // Use likeCount from API if available, otherwise calculate from blog_reactions
+  const enhanceBlogData = (blog: BlogDetailsData): EnhancedBlogData => {
     const totalReactions =
       blog.likeCount || calculateTotalReactions(blog.blog_reactions);
 
-    // Count total comments including replies
     const commentCount = countTotalComments(blog.comments);
 
     return {
       ...blog,
-      blogCategory: blog.blogCategory || "Uncategorized", // Ensure blogCategory exists
+      blogCategory: blog.blogCategory || "Uncategorized",
       totalReactions,
       commentCount,
     };
   };
 
-  // Determine which API to call based on parameters
-  const getApiUrl = (): string => {
-    if (writerParam) {
-      return `http://localhost:8080/felicita/v0/api/blog/writer/${encodeURIComponent(
-        writerParam
-      )}`;
-    } else if (searchParam) {
-      return `http://localhost:8080/felicita/v0/api/blog/tag/${encodeURIComponent(
-        searchParam
-      )}`;
-    } else {
-      return "http://localhost:8080/felicita/v0/api/blog/active";
+  // Fetch blogs using the service
+  const fetchBlogs = async (): Promise<void> => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      let result;
+      
+      // USING THE SERVICE INSTEAD OF DIRECT FETCH
+      if (writerParam) {
+        result = await BlogService.fetchBlogsByWriter(writerParam);
+      } else if (searchParam) {
+        result = await BlogService.fetchBlogsByTag(searchParam);
+      } else {
+        result = await BlogService.fetchActiveBlogs();
+      }
+
+      if (result.error) {
+        throw new Error(result.error);
+      }
+
+      console.log("API Response:", result.data);
+
+      // Enhance the data with calculated properties
+      const enhancedBlogs = result.data.map(enhanceBlogData);
+
+      // Extract unique categories from blogs
+      const uniqueCategories = [
+        ...new Set(
+          result.data
+            .map((blog: BlogDetailsData) => blog.blogCategory)
+            .filter(
+              (category: string | null) => category && category.trim() !== ""
+            )
+        ),
+      ] as string[];
+
+      console.log("Enhanced Blogs:", enhancedBlogs);
+      console.log("Extracted Categories:", uniqueCategories);
+
+      setBlogs(enhancedBlogs);
+      setFilteredBlogs(enhancedBlogs);
+      setCategories(uniqueCategories.sort());
+
+      // Reset filters based on URL parameters
+      resetFiltersFromParams();
+    } catch (err) {
+      console.error("Error fetching blogs:", err);
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Determine if we should show filters based on parameters
-  const shouldShowFilters = (): boolean => {
-    return !writerParam && !searchParam;
-  };
-
-  // Reset filters when parameters change
   const resetFiltersFromParams = (): void => {
     if (writerParam) {
       setFilters((prev) => ({
@@ -154,111 +181,9 @@ const BlogPage: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    fetchBlogs();
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [writerParam, searchParam]); // Re-fetch when params change
-
-  useEffect(() => {
-    applyFilters();
-  }, [filters, blogs]);
-
-  useEffect(() => {
-    setPagination((prev) => ({ ...prev, currentPage: 1 }));
-  }, [filters]);
-
-  const handleResize = () => {
-    const width = window.innerWidth;
-    let itemsPerPage = 9;
-
-    if (width < 640) {
-      itemsPerPage = 6;
-    } else if (width < 768) {
-      itemsPerPage = 6;
-    } else if (width < 1024) {
-      itemsPerPage = 9;
-    } else if (width < 1280) {
-      itemsPerPage = 12;
-    } else {
-      itemsPerPage = 18;
-    }
-
-    setPagination((prev) => ({
-      ...prev,
-      itemsPerPage,
-    }));
-  };
-
-  const fetchBlogs = async (): Promise<void> => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const apiUrl = getApiUrl();
-      console.log("Fetching from API:", apiUrl);
-
-      const response = await fetch(apiUrl, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-
-      if (result.code === 200 && result.data) {
-        console.log("API Response:", result.data); // Debug log
-
-        // First enhance the data with calculated properties
-        const enhancedBlogs = result.data.map(enhanceBlogData);
-
-        // Extract unique categories from blogs
-        const uniqueCategories = [
-          ...new Set(
-            result.data
-              .map((blog: BlogDetailsData) => blog.blogCategory)
-              .filter(
-                (category: string | null) => category && category.trim() !== ""
-              )
-          ),
-        ] as string[];
-
-        // console.log('Enhanced Blogs:', enhancedBlogs.map(blog => ({
-        //   title: blog.title,
-        //   category: blog.blogCategory,
-        //   totalReactions: blog.totalReactions,
-        //   commentCount: blog.commentCount,
-        //   date: blog.blog_created_at
-        // })));
-
-        console.log("Extracted Categories:", uniqueCategories); // Debug log
-
-        setBlogs(enhancedBlogs);
-        setFilteredBlogs(enhancedBlogs);
-        setCategories(uniqueCategories.sort()); // Set categories state
-
-        // Reset filters based on URL parameters
-        resetFiltersFromParams();
-      } else {
-        throw new Error(result.message || "Failed to fetch blogs");
-      }
-    } catch (err) {
-      console.error("Error fetching blogs:", err);
-      setError(err instanceof Error ? err.message : "An error occurred");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // Apply filters to blogs
   const applyFilters = (): void => {
-    console.log("Applying filters with sortBy:", filters.sortBy); // Debug log
+    console.log("Applying filters with sortBy:", filters.sortBy);
 
     let filtered = [...blogs];
 
@@ -281,7 +206,7 @@ const BlogPage: React.FC = () => {
       filtered = filtered.filter((blog) => blog.writer_name === filters.writer);
     }
 
-    // Category filter (using actual blogCategory field from API)
+    // Category filter
     if (filters.category) {
       filtered = filtered.filter(
         (blog) => blog.blogCategory === filters.category
@@ -310,48 +235,34 @@ const BlogPage: React.FC = () => {
       });
     }
 
-    // Sorting - FIXED VERSION
-    console.log(
-      "Before sorting - First 3 blogs:",
-      filtered.slice(0, 3).map((b) => ({
-        title: b.title,
-        category: b.blogCategory,
-        totalReactions: b.totalReactions,
-        commentCount: b.commentCount,
-        date: b.blog_created_at,
-      }))
-    );
+    // Sorting
+    console.log("Before sorting:", filtered.slice(0, 3));
 
     filtered.sort((a, b) => {
       switch (filters.sortBy) {
         case "recent":
-          // Most recent first (newest date first)
           return (
             new Date(b.blog_created_at).getTime() -
             new Date(a.blog_created_at).getTime()
           );
 
         case "likes":
-          // Most liked first - use likeCount if available, otherwise totalReactions
           const aLikes = a.likeCount || a.totalReactions || 0;
           const bLikes = b.likeCount || b.totalReactions || 0;
           return bLikes - aLikes;
 
         case "comments":
-          // Most comments first
           const aComments = a.commentCount || 0;
           const bComments = b.commentCount || 0;
           return bComments - aComments;
 
         case "date-asc":
-          // Oldest first
           return (
             new Date(a.blog_created_at).getTime() -
             new Date(b.blog_created_at).getTime()
           );
 
         case "date-desc":
-          // Newest first
           return (
             new Date(b.blog_created_at).getTime() -
             new Date(a.blog_created_at).getTime()
@@ -362,33 +273,27 @@ const BlogPage: React.FC = () => {
       }
     });
 
-    console.log(
-      "After sorting - First 3 blogs:",
-      filtered.slice(0, 3).map((b) => ({
-        title: b.title,
-        category: b.blogCategory,
-        totalReactions: b.totalReactions,
-        commentCount: b.commentCount,
-        date: b.blog_created_at,
-        sortBy: filters.sortBy,
-      }))
-    );
-
+    console.log("After sorting:", filtered.slice(0, 3));
     setFilteredBlogs(filtered);
   };
 
+  // Determine if we should show filters based on parameters
+  const shouldShowFilters = (): boolean => {
+    return !writerParam && !searchParam;
+  };
+
+  // Handle filter change
   const handleFilterChange = (
     filterName: keyof BlogFilters,
     value: unknown
   ): void => {
-    console.log(`Filter changed: ${filterName} =`, value); // Debug log
+    console.log(`Filter changed: ${filterName} =`, value);
 
     // If changing writer or search and we have URL params, navigate to remove them
     if (
       (filterName === "writer" && writerParam) ||
       (filterName === "search" && searchParam)
     ) {
-      // Clear URL parameters by navigating to base blog page
       window.history.pushState({}, "", "/blog");
     }
 
@@ -399,7 +304,6 @@ const BlogPage: React.FC = () => {
   };
 
   const resetFilters = (): void => {
-    // If we have URL parameters, navigate to base blog page
     if (writerParam || searchParam) {
       window.history.pushState({}, "", "/blog");
     }
@@ -433,7 +337,7 @@ const BlogPage: React.FC = () => {
   };
 
   // Calculate paginated blogs
-  const getPaginatedBlogs = (): BlogDetailsData[] => {
+  const getPaginatedBlogs = (): EnhancedBlogData[] => {
     const startIndex = (pagination.currentPage - 1) * pagination.itemsPerPage;
     const endIndex = startIndex + pagination.itemsPerPage;
     return filteredBlogs.slice(startIndex, endIndex);
@@ -445,6 +349,45 @@ const BlogPage: React.FC = () => {
   const handleBlogClick = (blogId: number) => {
     window.location.href = `/blogs/${blogId}`;
   };
+
+  // Event handlers
+  const handleResize = () => {
+    const width = window.innerWidth;
+    let itemsPerPage = 9;
+
+    if (width < 640) {
+      itemsPerPage = 6;
+    } else if (width < 768) {
+      itemsPerPage = 6;
+    } else if (width < 1024) {
+      itemsPerPage = 9;
+    } else if (width < 1280) {
+      itemsPerPage = 12;
+    } else {
+      itemsPerPage = 18;
+    }
+
+    setPagination((prev) => ({
+      ...prev,
+      itemsPerPage,
+    }));
+  };
+
+  // Effects
+  useEffect(() => {
+    fetchBlogs();
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [writerParam, searchParam]);
+
+  useEffect(() => {
+    applyFilters();
+  }, [filters, blogs]);
+
+  useEffect(() => {
+    setPagination((prev) => ({ ...prev, currentPage: 1 }));
+  }, [filters]);
 
   if (loading) {
     return (
@@ -464,130 +407,130 @@ const BlogPage: React.FC = () => {
 
   return (
     <div>
-        <div>
-          <BlogHeroSection />
+      <div>
+        <BlogHeroSection />
+      </div>
+
+      <div className="mx-auto px-4 py-8 md:py-12 lg:py-16 bg-gradient-to-b from-purple-50 to-amber-50 min-h-screen">
+        {/* Page Header */}
+        <div className="text-center mb-8 md:mb-12">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-purple-900 mb-4">
+            {writerParam
+              ? `${writerParam}'s Blogs`
+              : searchParam
+              ? `Search Results for "${searchParam}"`
+              : "Travel Stories & Insights"}
+          </h1>
+          <p className="text-gray-600 max-w-3xl mx-auto">
+            {writerParam
+              ? `Discover all blogs written by ${writerParam}`
+              : searchParam
+              ? `Showing blogs related to "${searchParam}"`
+              : "Discover authentic travel experiences, expert tips, and inspiring stories from our community of travel writers and explorers."}
+          </p>
         </div>
 
-        <div className="mx-auto px-4 py-8 md:py-12 lg:py-16 bg-gradient-to-b from-purple-50 to-amber-50 min-h-screen">
-          {/* Page Header */}
-          <div className="text-center mb-8 md:mb-12">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-purple-900 mb-4">
-              {writerParam
-                ? `${writerParam}'s Blogs`
-                : searchParam
-                ? `Search Results for "${searchParam}"`
-                : "Travel Stories & Insights"}
-            </h1>
-            <p className="text-gray-600 max-w-3xl mx-auto">
-              {writerParam
-                ? `Discover all blogs written by ${writerParam}`
-                : searchParam
-                ? `Showing blogs related to "${searchParam}"`
-                : "Discover authentic travel experiences, expert tips, and inspiring stories from our community of travel writers and explorers."}
-            </p>
+        {/* Filters Section - Only show if no URL parameters */}
+        {shouldShowFilters() ? (
+          <BlogFilter
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            onResetFilters={resetFilters}
+            writers={writers}
+            categories={categories}
+          />
+        ) : (
+          <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-purple-200">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div>
+                <h2 className="text-xl font-bold text-purple-900">
+                  {writerParam
+                    ? `Filtered by Writer: ${writerParam}`
+                    : searchParam
+                    ? `Filtered by Search: ${searchParam}`
+                    : ""}
+                </h2>
+                <p className="text-sm text-gray-600">
+                  Showing {blogs.length} blog{blogs.length !== 1 ? "s" : ""}
+                  {writerParam
+                    ? ` by ${writerParam}`
+                    : searchParam
+                    ? ` related to "${searchParam}"`
+                    : ""}
+                </p>
+              </div>
+              <button
+                onClick={resetFilters}
+                className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-50 to-amber-50 text-purple-700 font-medium rounded-lg hover:from-purple-100 hover:to-amber-100 transition-colors border border-purple-200"
+              >
+                Clear Filter
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Results Section */}
+        <div className="mb-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <h3 className="text-2xl font-semibold text-purple-900">
+              {filteredBlogs.length} Blog
+              {filteredBlogs.length !== 1 ? "s" : ""} Found
+            </h3>
+
+            {/* Items per page selector */}
+            <div className="flex items-center gap-3">
+              <label
+                htmlFor="itemsPerPage"
+                className="text-sm font-medium text-purple-700 whitespace-nowrap"
+              >
+                Show:
+              </label>
+              <select
+                id="itemsPerPage"
+                value={pagination.itemsPerPage}
+                onChange={(e) =>
+                  handleItemsPerPageChange(Number(e.target.value))
+                }
+                className="text-purple-500 px-3 py-2 border border-purple-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-sm bg-white"
+              >
+                {itemsPerPageOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option} per page
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          {/* Filters Section - Only show if no URL parameters */}
-          {shouldShowFilters() ? (
-            <BlogFilter
-              filters={filters}
-              onFilterChange={handleFilterChange}
-              onResetFilters={resetFilters}
-              writers={writers}
-              categories={categories}
-            />
-          ) : (
-            <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-purple-200">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                  <h2 className="text-xl font-bold text-purple-900">
-                    {writerParam
-                      ? `Filtered by Writer: ${writerParam}`
-                      : searchParam
-                      ? `Filtered by Search: ${searchParam}`
-                      : ""}
-                  </h2>
-                  <p className="text-sm text-gray-600">
-                    Showing {blogs.length} blog{blogs.length !== 1 ? "s" : ""}
-                    {writerParam
-                      ? ` by ${writerParam}`
-                      : searchParam
-                      ? ` related to "${searchParam}"`
-                      : ""}
-                  </p>
-                </div>
-                <button
-                  onClick={resetFilters}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-50 to-amber-50 text-purple-700 font-medium rounded-lg hover:from-purple-100 hover:to-amber-100 transition-colors border border-purple-200"
-                >
-                  Clear Filter
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Results Section */}
-          <div className="mb-8">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-              <h3 className="text-2xl font-semibold text-purple-900">
-                {filteredBlogs.length} Blog
-                {filteredBlogs.length !== 1 ? "s" : ""} Found
-              </h3>
-
-              {/* Items per page selector */}
-              <div className="flex items-center gap-3">
-                <label
-                  htmlFor="itemsPerPage"
-                  className="text-sm font-medium text-purple-700 whitespace-nowrap"
-                >
-                  Show:
-                </label>
-                <select
-                  id="itemsPerPage"
-                  value={pagination.itemsPerPage}
-                  onChange={(e) =>
-                    handleItemsPerPageChange(Number(e.target.value))
-                  }
-                  className="text-purple-500 px-3 py-2 border border-purple-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-sm bg-white"
-                >
-                  {itemsPerPageOptions.map((option) => (
-                    <option key={option} value={option}>
-                      {option} per page
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            {/* Blogs Grid */}
-            {paginatedBlogs.length > 0 ? (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                  {paginatedBlogs.map((blog) => (
-                    <BlogCard
-                      key={blog.blog_id}
-                      blog={blog}
-                      onClick={handleBlogClick}
-                    />
-                  ))}
-                </div>
-
-                {/* Pagination Controls */}
-                {totalPages > 1 && (
-                  <PaginationControls
-                    currentPage={pagination.currentPage}
-                    totalPages={totalPages}
-                    onPageChange={handlePageChange}
-                    totalItems={filteredBlogs.length}
-                    itemsPerPage={pagination.itemsPerPage}
+          {/* Blogs Grid */}
+          {paginatedBlogs.length > 0 ? (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                {paginatedBlogs.map((blog) => (
+                  <BlogCard
+                    key={blog.blog_id}
+                    blog={blog}
+                    onClick={handleBlogClick}
                   />
-                )}
-              </>
-            ) : (
-              <NoResults onResetFilters={resetFilters} />
-            )}
-          </div>
+                ))}
+              </div>
+
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <PaginationControls
+                  currentPage={pagination.currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                  totalItems={filteredBlogs.length}
+                  itemsPerPage={pagination.itemsPerPage}
+                />
+              )}
+            </>
+          ) : (
+            <NoResults onResetFilters={resetFilters} />
+          )}
         </div>
+      </div>
     </div>
   );
 };

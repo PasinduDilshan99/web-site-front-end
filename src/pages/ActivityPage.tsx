@@ -1,103 +1,16 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  ActiveActivitiesType,
-  ActivityFilters,
-  ActivitySearchRequest,
-} from "@/types/activities-types";
 import Loading from "@/components/common-components/loading/Loading";
 import { ErrorState } from "@/components/common-components/error-state/ErrorState";
 import ActivitiesGrid from "@/components/activities-components/ActivitiesGrid";
-import NavBar from "@/components/common-components/navBar/NavBar";
-import Footer from "@/app/components/footer/Footer";
 import FilterSection from "@/components/activities-components/FilterSection";
 import ReviewsSection from "@/components/activities-components/ReviewsSection";
-import ActivityHistorySection, {
-  ActivityHistory,
-  ActivityHistoryImage,
-} from "@/components/activities-components/ActivityHistorySection";
+import ActivityHistorySection from "@/components/activities-components/ActivityHistorySection";
 import ActivityHistoryGallery from "@/components/activities-components/ActivityHistoryGallery";
 import ActivityHeroSection from "@/components/activities-components/ActivityHeroSection";
-import LinkBar from "@/components/common-components/linkBar/LinkBar";
+import { ActiveActivitiesType, ActivityFilters, ActivityHistory, ActivityHistoryImage, Review } from "@/types/activity-types";
+import { ActivityService } from "@/services/activityService";
 
-// Define API response interface
-interface ActivityListResponse {
-  activityCount: number;
-  activityResponseDtos: ActiveActivitiesType[];
-}
-
-interface PaginatedActivityResponse {
-  code: number;
-  status: string;
-  message: string;
-  data: ActivityListResponse | null;
-  timestamp: string;
-}
-
-// Review types (keep existing review types)
-interface CommentReaction {
-  commentReactionId: number;
-  commentReactionCommentId: number;
-  userId: number;
-  userName: string;
-  commentReactionType: string;
-  commentReactionStatus: string;
-  commentReactionCreatedBy: number;
-  commentReactionCreatedAt: string;
-}
-
-interface Comment {
-  commentId: number;
-  commentReviewId: number;
-  userId: number;
-  userName: string;
-  parentCommentId: number | null;
-  comment: string;
-  commentStatus: string;
-  commentCreatedAt: string;
-  commentCreatedBy: number;
-  commentReactions: CommentReaction[];
-}
-
-export interface Reaction {
-  reviewReactionId: number;
-  reactionReviewId: number;
-  userId: number;
-  userName: string;
-  reactionType: string;
-  reviewReactionStatus: string;
-  reactionCreatedAt: string;
-}
-
-interface ReviewImage {
-  imageId: number;
-  imageName: string;
-  imageDescription: string;
-  imageUrl: string;
-  imageStatus: string;
-  imageCreatedBy: number;
-  imageCreatedAt: string;
-}
-
-export interface Review {
-  reviewId: number;
-  activityScheduleId: number;
-  activityId: number;
-  activityName: string;
-  reviewName: string;
-  review: string;
-  rating: number;
-  description: string;
-  reviewStatus: string;
-  numberOfParticipate: number;
-  reviewCreatedBy: number;
-  reviewCreatedAt: string;
-  reviewUpdatedBy: number | null;
-  reviewUpdatedAt: string;
-  images: ReviewImage[];
-  reactions: Reaction[];
-  comments: Comment[];
-}
 
 const ActivityPage: React.FC = () => {
   const [activities, setActivities] = useState<ActiveActivitiesType[]>([]);
@@ -144,52 +57,18 @@ const ActivityPage: React.FC = () => {
   // Fetch filter options (initial data)
   const fetchFilterOptions = useCallback(async (): Promise<void> => {
     try {
-      const requestBody: ActivitySearchRequest = {
-        name: null,
-        minPrice: null,
-        maxPrice: null,
-        duration: null,
-        activityCategory: null,
-        season: null,
-        status: null,
-        pageSize: 100, // Fetch more for filter options
-        pageNumber: 1,
-      };
-
-      const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/activities/activities",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Cookie: "token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNpbmR1IiwidXNlcklkIjo0LCJ1c2VybmFtZSI6InBhc2luZHUiLCJpYXQiOjE3NjI2Njg5NjksImV4cCI6MTc2MjY2OTA4OX0.5wQ6QL3q2pvSoCEhDze6t_Aub3Vb8hlcMRQ3UQxu8yg",
-          },
-          body: JSON.stringify(requestBody),
-        }
-      );
-
-      const result: PaginatedActivityResponse = await response.json();
-
-      if (result.code === 200 && result.data) {
-        // Extract unique values for filters
-        const categoriesList = [...new Set(result.data.activityResponseDtos.map((activity) => activity.category_name))];
-        const seasonsList = [
-          ...new Set(
-            result.data.activityResponseDtos.flatMap((activity) =>
-              activity.season.split(",").map((s) => s.trim())
-            )
-          ),
-        ];
-        const durationsList = [
-          ...new Set(
-            result.data.activityResponseDtos.map((activity) => Math.ceil(activity.duration_hours))
-          ),
-        ].sort((a, b) => a - b);
-        const participantsList = [
-          ...new Set(result.data.activityResponseDtos.map((activity) => activity.max_participate)),
-        ].sort((a, b) => a - b);
-        const statusesList = [...new Set(result.data.activityResponseDtos.map((activity) => activity.status))];
-        
+      const { 
+        categories: categoriesList, 
+        seasons: seasonsList, 
+        durations: durationsList, 
+        participantsOptions: participantsList, 
+        statuses: statusesList, 
+        error 
+      } = await ActivityService.fetchFilterOptions();
+      
+      if (error) {
+        console.error("Error fetching filter options:", error);
+      } else {
         setCategories(categoriesList);
         setSeasons(seasonsList);
         setDurations(durationsList);
@@ -206,46 +85,24 @@ const ActivityPage: React.FC = () => {
     try {
       setLoading(true);
       
-      // Prepare API request
-      const requestBody: ActivitySearchRequest = {
-        name: filters.search || null,
-        minPrice: filters.priceRange[0] > 0 ? filters.priceRange[0] : null,
-        maxPrice: filters.priceRange[1] < 10000 ? filters.priceRange[1] : null,
-        duration: filters.duration ? parseFloat(filters.duration) : null,
-        activityCategory: filters.category || null,
-        season: filters.season || null,
-        status: filters.status || null,
-        pageSize: itemsPerPage,
-        pageNumber: currentPage,
-      };
+      // Prepare API request using service helper
+      const requestBody = ActivityService.buildSearchRequest(filters);
+      
+      // USING THE SERVICE INSTEAD OF DIRECT FETCH
+      const { activities: fetchedActivities, totalActivities: total, error } = 
+        await ActivityService.fetchActivitiesWithFilters(
+          requestBody,
+          itemsPerPage,
+          currentPage
+        );
 
-      const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/activities/activities",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Cookie: "token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNpbmR1IiwidXNlcklkIjo0LCJ1c2VybmFtZSI6InBhc2luZHUiLCJpYXQiOjE3NjI2Njg5NjksImV4cCI6MTc2MjY2OTA4OX0.5wQ6QL3q2pvSoCEhDze6t_Aub3Vb8hlcMRQ3UQxu8yg",
-          },
-          body: JSON.stringify(requestBody),
-        }
-      );
-
-      const result: PaginatedActivityResponse = await response.json();
-
-      if (result.code === 200) {
-        if (result.data) {
-          setActivities(result.data.activityResponseDtos);
-          setTotalActivities(result.data.activityCount);
-          setTotalPages(Math.ceil(result.data.activityCount / itemsPerPage));
-        } else {
-          setActivities([]);
-          setTotalActivities(0);
-          setTotalPages(0);
-        }
-        setError(null);
+      if (error) {
+        setError(error);
       } else {
-        throw new Error(result.message);
+        setActivities(fetchedActivities);
+        setTotalActivities(total);
+        setTotalPages(Math.ceil(total / itemsPerPage));
+        setError(null);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -299,15 +156,17 @@ const ActivityPage: React.FC = () => {
 
   const fetchActivityHistoryImages = async (): Promise<void> => {
     try {
-      const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/activities/history-images"
-      );
-      const result = await response.json();
+      setHistoryImagesLoading(true);
+      setHistoryImagesError(null);
+      
+      // USING THE SERVICE INSTEAD OF DIRECT FETCH
+      const { historyImages: fetchedImages, error } = await ActivityService.fetchActivityHistoryImages();
 
-      if (result.code === 200) {
-        setHistoryImages(result.data);
+      if (error) {
+        setHistoryImagesError(error);
       } else {
-        throw new Error(result.message);
+        setHistoryImages(fetchedImages);
+        setHistoryImagesError(null);
       }
     } catch (err) {
       setHistoryImagesError(
@@ -320,15 +179,17 @@ const ActivityPage: React.FC = () => {
 
   const fetchReviews = async (): Promise<void> => {
     try {
-      const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/activities/reviews"
-      );
-      const result = await response.json();
+      setReviewsLoading(true);
+      setReviewsError(null);
+      
+      // USING THE SERVICE INSTEAD OF DIRECT FETCH
+      const { reviews: fetchedReviews, error } = await ActivityService.fetchReviews();
 
-      if (result.code === 200) {
-        setReviews(result.data);
+      if (error) {
+        setReviewsError(error);
       } else {
-        throw new Error(result.message);
+        setReviews(fetchedReviews);
+        setReviewsError(null);
       }
     } catch (err) {
       setReviewsError(
@@ -341,15 +202,17 @@ const ActivityPage: React.FC = () => {
 
   const fetchActivityHistory = async (): Promise<void> => {
     try {
-      const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/activities/history"
-      );
-      const result = await response.json();
+      setHistoryLoading(true);
+      setHistoryError(null);
+      
+      // USING THE SERVICE INSTEAD OF DIRECT FETCH
+      const { histories: fetchedHistories, error } = await ActivityService.fetchActivityHistory();
 
-      if (result.code === 200) {
-        setHistories(result.data);
+      if (error) {
+        setHistoryError(error);
       } else {
-        throw new Error(result.message);
+        setHistories(fetchedHistories);
+        setHistoryError(null);
       }
     } catch (err) {
       setHistoryError(

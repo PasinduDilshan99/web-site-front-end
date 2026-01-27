@@ -3,9 +3,7 @@ import AboutUsPage from "@/pages/AboutUsPage";
 
 const page = () => {
   return (
-    <>
       <AboutUsPage/>
-    </>
   );
 };
 
