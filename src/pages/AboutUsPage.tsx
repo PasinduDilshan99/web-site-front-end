@@ -1,5 +1,4 @@
 import Footer from "@/app/components/footer/Footer";
-import WhyChooseUs from "@/app/components/whyChooseUs/WhyChooseUs";
 import AboutUsHeroSection from "@/components/about-us-components/AboutUsHeroSection";
 import AboutUsStatistics from "@/components/about-us-components/AboutUsStatistics";
 import AchievementDetails from "@/components/about-us-components/AchievementDetails";
@@ -12,6 +11,7 @@ import OurStory from "@/components/about-us-components/OurStory";
 import TourGuides from "@/components/about-us-components/TourGuides";
 import LinkBar from "@/components/common-components/linkBar/LinkBar";
 import NavBar from "@/components/common-components/navBar/NavBar";
+import WhyChooseUs from "@/components/home-page-components/whyChooseUs/WhyChooseUs";
 import React from "react";
 
 const AboutUsPage = () => {

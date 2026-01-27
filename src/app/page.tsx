@@ -28,61 +28,63 @@ import ActiveToursHome from "@/components/home-page-components/tours/ActiveTours
 import ActiveToursHomeGrid from "@/components/home-page-components/tours/ActiveToursHomeGrid";
 import TourMap from "@/components/home-page-components/tours/TourMap";
 import PopularTours from "@/components/home-page-components/tours/PopularTours";
+import AirplaneScrollWrapper from "./test/AirplaneScrollWrapper";
 
 export default function Home() {
   return (
     <div>
-      <div>
-        <HeroSection />
-      </div>
-      {/* <div>
+      <AirplaneScrollWrapper>
+        <div>
+          <HeroSection />
+        </div>
+        {/* <div>
         <Partners />
       </div> */}
-      <div>
-        <WhyChooseUs />
-      </div>
-      <div>
-        <OurServices />
-      </div>
-      {/* <div>
+        <div>
+          <WhyChooseUs />
+        </div>
+        <div>
+          <OurServices />
+        </div>
+        {/* <div>
         <PopularDestinations />
       </div> */}
-      {/* <div>
+        <div>
         <TrendingDestinations />
       </div>
-      <div>
+      {/* <div>
         <NewDestinations />
       </div> */}
-      {/* <div>
+        {/* <div>
         <PopularTours />
-      </div> */}
-      {/* <div>
+      </div> 
+        <div>
         <ActiveToursHome />
       </div> */}
-      {/* <div>
+         <div>
         <ActiveToursHomeGrid />
-      </div> */}
-      {/* <div>
+      </div>
+        <div>
         <TourMap />
-      </div> */}
-      {/* <div>
+      </div> 
+        {/* <div>
         <ActivitiesHome />
       </div> */}
-      {/* <div>
+        <div>
         <ActivityCategoriesHome />
-      </div> */}
-      {/* <div>
+      </div>
+        {/* <div>
         <PackagesHome />
       </div> */}
-      {/* <div>
+        {/* <div>
         <Accommodations />
       </div> */}
-      {/* <div>
+        {/* <div>
         <DestinationsCategories />
       </div> */}
 
-      {/* User Benefits & Loyalty */}
-      {/* <div>
+        {/* User Benefits & Loyalty */}
+        {/* <div>
         <UserLevelsHome />
       </div>
       <div>
@@ -92,35 +94,36 @@ export default function Home() {
         <UserBenefitsHome />
       </div> */}
 
-      {/* Social Proof & Content */}
-      <div>
-        <GalleryHome />
-      </div>
-      {/* <div>
+        {/* Social Proof & Content */}
+        <div>
+          <GalleryHome />
+        </div>
+        {/* <div>
         <ReviewsHome />
       </div> */}
-      {/* <div>
+        {/* <div>
         <ActiveBlogsSummery />
       </div> */}
 
-      {/* Process & Promotions */}
-      {/* <div>
+        {/* Process & Promotions */}
+        {/* <div>
         <WorkFlow />
       </div> */}
-      {/* <div>
+        {/* <div>
         <PromotionsHome />
       </div> */}
 
-      {/* Support & Information */}
-      {/* <div>
+        {/* Support & Information */}
+        {/* <div>
         <Faq />
       </div> */}
-      {/* <div>
-        <ContactForm />
-      </div> */}
-      {/* <div>
+        <div>
+          <ContactForm />
+        </div>
+        {/* <div>
         <Inquire />
       </div> */}
+      </AirplaneScrollWrapper>
     </div>
   );
 }

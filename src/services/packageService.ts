@@ -22,7 +22,7 @@ import {
   PackageSchedule,
   PackageScheduleApiResponse,
 } from "@/types/package-types";
-import { GET_ACTIVE_PACKAGE_DETAILS_DATA_FE, GET_PACKAGE_DETAILS_BY_ID_DATA_FE, GET_PACKAGE_DETAILS_BY_TOUR_ID_DATA_FE, GET_PACKAGE_DETAILS_FOR_COMPARE_BY_TOUR_ID_DATA_FE, GET_PACKAGE_EXTRA_DETAILS_BY_TOUR_ID_DATA_FE, GET_PACKAGE_HISTORY_DETAILS_DATA_FE, GET_PACKAGE_HISTORY_IMAGES_DETAILS_DATA_FE, GET_PACKAGE_REVIEWS_DETAILS_DATA_FE, GET_PACKAGE_SCHEDULES_DETAILS_BY_PACKAGE_ID_DATA_FE, GET_PACKAGE_SCHEDULES_DETAILS_BY_TOUR_ID_DATA_FE, GET_PACKAGES_DETAILS_FOR_REQUEST_DATA_FE } from "@/utils/frontEndConstant";
+import { GET_ACTIVE_PACKAGE_DETAILS_DATA_FE, GET_PACKAGE_ALL_DETAILS_BY_ID_DATA_FE, GET_PACKAGE_DETAILS_BY_ID_DATA_FE, GET_PACKAGE_DETAILS_BY_TOUR_ID_DATA_FE, GET_PACKAGE_DETAILS_FOR_COMPARE_BY_TOUR_ID_DATA_FE, GET_PACKAGE_EXTRA_DETAILS_BY_TOUR_ID_DATA_FE, GET_PACKAGE_HISTORY_DETAILS_DATA_FE, GET_PACKAGE_HISTORY_IMAGES_DETAILS_DATA_FE, GET_PACKAGE_REVIEWS_DETAILS_DATA_FE, GET_PACKAGE_SCHEDULES_DETAILS_BY_PACKAGE_ID_DATA_FE, GET_PACKAGE_SCHEDULES_DETAILS_BY_TOUR_ID_DATA_FE, GET_PACKAGES_DETAILS_FOR_REQUEST_DATA_FE } from "@/utils/frontEndConstant";
 
 export class PackageService {
   // Get packages for a tour
@@ -411,6 +411,36 @@ static async fetchFilterOptions(): Promise<{
     try {
       const response = await fetch(
         `${GET_PACKAGE_DETAILS_BY_ID_DATA_FE}/${packageId}`
+      );
+      const result: ApiResponse<ActivePackagesType> = await response.json();
+
+      if (result.code === 200) {
+        return {
+          data: result.data,
+          error: null,
+        };
+      } else {
+        return {
+          data: null,
+          error: result.message || "Failed to fetch package details",
+        };
+      }
+    } catch (err) {
+      console.error("Error fetching package details:", err);
+      return {
+        data: null,
+        error: err instanceof Error ? err.message : "Failed to fetch package details",
+      };
+    }
+  }
+
+    static async fetchPackageAllDetails(packageId: string | number): Promise<{
+    data: ActivePackagesType | null;
+    error: string | null;
+  }> {
+    try {
+      const response = await fetch(
+        `${GET_PACKAGE_ALL_DETAILS_BY_ID_DATA_FE}/${packageId}`
       );
       const result: ApiResponse<ActivePackagesType> = await response.json();
 

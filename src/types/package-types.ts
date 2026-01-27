@@ -143,23 +143,45 @@ export interface ActivePackagesType {
   maxPersonCount: number;
   pricePerPerson: number;
   packageStatus: string;
-  createdAt: string;
-  createdBy: number;
   packageTypeName: string;
-  packageTypeDescription: string;
-  packageTypeStatus: string;
+  startLocation: string;
+  duration: number;
   tourId: number;
   tourName: string;
-  tourDescription: string;
-  duration: number;
-  latitude: number;
-  longitude: number;
-  startLocation: string;
-  endLocation: string;
-  tourStatus: string;
-  schedules: Schedule[];
-  features: Feature[];
-  images: PackageImage[];
+  packageFeatures: Feature[];
+  packageImages: PackageImage[];
+  inclusions: InclusionExclusionItem[];
+  exclusions: InclusionExclusionItem[];
+  conditions: InclusionExclusionItem[];
+  travelTips: TravelTipItem[];
+  dayAccommodationResponses: DayAccommodationResponse;
+}
+
+export interface InclusionExclusionItem {
+  id: number;
+  description: string;
+  displayOrder: number;
+  status: string;
+}
+
+export interface DayAccommodationResponse {
+  packageId: number;
+  packageName: string;
+  packageDescription: string;
+  totalPrice: number;
+  pricePerPerson: number;
+  discount: number;
+  color: string;
+  hoverColor: string;
+  packageDayByDayDtoList: PackageDayAccommodation[];
+}
+
+export interface TravelTipItem {
+  id: number;
+  title?: string;
+  description?: string;
+  displayOrder: number;
+  status: string;
 }
 
 export interface ApiResponse<T> {

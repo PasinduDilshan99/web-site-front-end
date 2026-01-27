@@ -21,13 +21,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body >
         <AuthProvider>
           {/* <DecemberSnowfall /> */}
           <GlobalGradientScrollbar />
           <LinkBar />
           <NavBar />
-          <main>{children}</main>
+          <main >{children}</main>
           <Footer />
           {/* <ChatBot /> */}
         </AuthProvider>

@@ -32,7 +32,7 @@ const BookHeroSection: React.FC<BookHeroSectionProps> = ({ packageScheduleId }) 
         setError(null);
         
         const response = await fetch(
-          `http://localhost:8080/felicita/v0/api/hero-section/package-schedule/${packageScheduleId}`,
+          `http://localhost:8080/felicita/api/v0/hero-section/package-schedule/${packageScheduleId}`,
           {
             method: 'GET',
             credentials: 'include',

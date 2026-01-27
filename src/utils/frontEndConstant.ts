@@ -79,6 +79,7 @@ export const GET_ALL_TOURS_BASIC_DETAILS_DATA_FE = `${API}${TOUR}/basic-details`
 export const GET_ALL_PACKAGES_DETAILS_DATA_FE = `${API}${PACKAGES}`;
 export const GET_ACTIVE_PACKAGE_DETAILS_DATA_FE = `${API}${PACKAGES}/active-packages`;
 export const GET_PACKAGE_DETAILS_BY_ID_DATA_FE = `${API}${PACKAGES}`;
+export const GET_PACKAGE_ALL_DETAILS_BY_ID_DATA_FE = `${API}${PACKAGES}/all-details`;
 export const GET_PACKAGES_DETAILS_FOR_REQUEST_DATA_FE = `${API}${PACKAGES}/packages-for-request`;
 export const GET_PACKAGE_REVIEWS_DETAILS_DATA_FE = `${API}${PACKAGES}/reviews`;
 export const GET_PACKAGE_HISTORY_DETAILS_DATA_FE = `${API}${PACKAGES}/history-details`;
