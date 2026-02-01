@@ -1,4 +1,5 @@
 // Company Details
+export const COMPANY_OWNER = "Nipunika Sathsarani";
 export const COMPANY_NAME = "Felicita Trips";
 export const COMPANY_INFO_EMAIL = "felicitatrips@gmail.com";
 export const COMPANY_CONTACT_NUMBER = "0707076052";

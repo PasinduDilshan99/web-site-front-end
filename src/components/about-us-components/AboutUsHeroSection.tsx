@@ -160,7 +160,7 @@ const AboutUsHeroSection = () => {
           )}
 
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 md:p-8 max-w-3xl mx-auto">
-            <p className="text-lg md:text-xl lg:text-2xl mb-4 text-gray-100 leading-relaxed">
+            <p className="text-md md:text-lg lg:text-xl mb-4 text-gray-100 leading-relaxed">
               {currentSlideData.description || 
                 "We are a Sri Lanka Tourism Development Authority & Sri Lanka Civil Aviation Authority approved travel agent based in Colombo, Sri Lanka."}
             </p>
@@ -170,7 +170,7 @@ const AboutUsHeroSection = () => {
                 {currentSlideData.primaryButtonText && (
                   <button
                     onClick={() => handleButtonClick(currentSlideData.primaryButtonLink)}
-                    className="px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold rounded-full hover:from-amber-600 hover:to-orange-600 transform hover:scale-105 transition-all duration-300 shadow-lg"
+                    className="text-sm md:text-lg px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold rounded-full hover:from-amber-600 hover:to-orange-600 transform hover:scale-105 transition-all duration-300 shadow-lg"
                   >
                     {currentSlideData.primaryButtonText}
                   </button>
@@ -178,7 +178,7 @@ const AboutUsHeroSection = () => {
                 {currentSlideData.secondaryButtonText && (
                   <button
                     onClick={() => handleButtonClick(currentSlideData.secondaryButtonLink)}
-                    className="px-6 py-3 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-gray-900 transition-all duration-300"
+                    className="text-sm md:text-lg px-6 py-3 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-gray-900 transition-all duration-300"
                   >
                     {currentSlideData.secondaryButtonText}
                   </button>
@@ -187,7 +187,7 @@ const AboutUsHeroSection = () => {
             )}
           </div>
 
-          <div className="flex flex-wrap justify-center gap-4 mt-8">
+          {/* <div className="flex flex-wrap justify-center gap-4 mt-8">
             <span 
               className="px-4 py-2 bg-amber-500/20 border border-amber-500/30 rounded-full text-amber-200 text-sm font-medium backdrop-blur-sm"
             >
@@ -198,7 +198,7 @@ const AboutUsHeroSection = () => {
             >
               Civil Aviation Authority
             </span>
-          </div>
+          </div> */}
         </div>
       </div>
 

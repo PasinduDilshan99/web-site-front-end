@@ -22,6 +22,8 @@ const ACTIVITIES = "/activities";
 const FOOTER = "/footer";
 const PLAN_YOUR_TRIP = "/plan-your-trip";
 const EMPLOYEES = "/employees";
+const INQUIRY = "/inquiry";
+const OUR_STORY = "/our-story"
 
 // Link Bar
 export const GET_ACTIVE_LINK_BAR_DATA = `${API}${LINK_BAR}`;
@@ -119,6 +121,16 @@ export const ADD_BLOG_COMMENT_DATA_FE = `${API}${BLOGS}/add-comment-to-blog`;
 export const GET_ALL_GALLERY_IMAGES_DATA_FE = `${API}${GALLERY}`;
 export const GET_ACTIVE_GALLERY_IMAGES_DATA_FE = `${API}${GALLERY}/active-images`;
 
+// Inquiry
+export const ADD_INQUIRY_DATA_FE = `${API}${INQUIRY}/create`;
+
+// Footer
+export const GET_ALL_FOOTER_DATA_FE = `${API}${FOOTER}`;
+export const GET_ACTIVE_FOOTER_DATA_FE = `${API}${FOOTER}/active`;
+
+// Our Story
+export const GET_OUR_STORY_DETAILS_DATA_FE = `${API}${OUR_STORY}/details`;
+
 // Employees
 export const GET_EMPLOYEE_DETAILS_BY_TOUR_ID_DATA_FE = `${API}${EMPLOYEES}/employees-details-by-tour-id`;
 
@@ -141,7 +153,6 @@ export const GET_ALL_ACTIVE_USER_BENEFITS_FE = `${API}${USER_BENEFITS}`;
 export const GET_ALL_ACTIVE_PROMOTIONS_FE = `${API}${PROMOTIONS}`;
 export const GET_ACTIVE_ACTIVITIES_FE = `${API}${ACTIVITIES}`;
 export const GET_ACTIVE_ACTIVITIES_CATEGORIES_FE = `${API}${ACTIVITIES}/categories`;
-export const GET_ACTIVE_FOOTER_DATA = `${API}${FOOTER}`;
 export const GET_PLAN_YOUR_TRIP_ACTIVE_DESTINATIONS_FE = `${API}${PLAN_YOUR_TRIP}`;
 export const GET_PLAN_YOUR_TRIP_DESTINATIONS_TOURS_FE = `${API}${PLAN_YOUR_TRIP}/map`;
 

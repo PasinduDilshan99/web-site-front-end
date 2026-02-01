@@ -8,8 +8,13 @@ import { countries, Country } from "@/utils/countries";
 import Inquire from "@/app/components/inquire/Inquire";
 import LocationDetails from "@/app/components/inquire/LocationDetails";
 import { COMPANY_CONTACT_NUMBER } from "@/utils/constant";
+import { InquiryService } from "@/services/inquiryService"; // Import service
+import { 
+  InquiryFormData, 
+  InquiryFormErrors 
+} from "@/types/inquiry-types"; // Import types
 
-interface FormData {
+interface FormData extends InquiryFormData {
   fullName: string;
   email: string | null;
   phone: string | null;
@@ -23,26 +28,11 @@ interface FormData {
   message: string;
 }
 
-interface FormErrors {
+interface FormErrors extends InquiryFormErrors {
   fullName?: string;
   email?: string;
   phone?: string;
   preferredContactMethod?: string;
-}
-
-// Define the API request type
-interface InquiryRequest {
-  name: string;
-  email: string | null;
-  phoneNumber: string | null;
-  country: string | null;
-  preferredContactMethod: string | null;
-  preferredDestination: string | null;
-  adults: number;
-  kids: number;
-  arrivalDate: string | null;
-  departureDate: string | null;
-  message: string | null;
 }
 
 const ContactForm = () => {
@@ -68,8 +58,7 @@ const ContactForm = () => {
   // Country selector states
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredCountries, setFilteredCountries] =
-    useState<Country[]>(countries);
+  const [filteredCountries, setFilteredCountries] = useState<Country[]>(countries);
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   const countryDropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -174,9 +163,6 @@ const ContactForm = () => {
         newErrors.phone =
           "Phone number is required for WhatsApp or Phone Call contact methods";
       }
-      // else if (!/^[\d\s\+\-\(\)]{10,}$/.test(formData.phone)) {
-      //   newErrors.phone = "Please enter a valid phone number";
-      // }
     }
 
     // If no contact method selected, require either email or phone
@@ -258,7 +244,7 @@ const ContactForm = () => {
     }
   };
 
-  const prepareInquiryData = (): InquiryRequest => {
+  const prepareInquiryData = () => {
     // Get country name from selected country or use the code if not found
     let countryName = "";
     if (selectedCountry) {
@@ -308,37 +294,14 @@ const ContactForm = () => {
       // Prepare data for API
       const inquiryData = prepareInquiryData();
 
-      // Make API call
-      const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/inquiry/create",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            // Note: You'll need to handle authentication tokens differently
-            // 'Cookie': 'your-auth-tokens-here' // This should come from your auth context
-          },
-          credentials: "include", // This will send cookies if your API uses them
-          body: JSON.stringify(inquiryData),
-        },
-      );
+      // USING THE SERVICE INSTEAD OF DIRECT FETCH
+      const { data: result, error } = await InquiryService.createInquiry(inquiryData);
 
-      if (!response.ok) {
-        let errorMessage = "Failed to submit inquiry";
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.message || errorMessage;
-        } catch (e) {
-          // If response is not JSON, use status text
-          errorMessage = response.statusText || errorMessage;
-        }
-        throw new Error(errorMessage);
+      if (error) {
+        throw new Error(error);
       }
 
-      // Parse response if needed
-      const result = await response.json();
       console.log("Inquiry created successfully:", result);
-
       setIsSubmitted(true);
 
       // Reset form after successful submission

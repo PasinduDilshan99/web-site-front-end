@@ -1,51 +1,13 @@
 "use client";
 import React, { JSX, useEffect, useState } from "react";
 import { COMPANY_NAME } from "@/utils/constant";
-import { GET_ACTIVE_FOOTER_DATA } from "@/utils/frontEndConstant";
-
-// Footer data interfaces
-interface SubItem {
-  id: number;
-  name: string;
-  description: string;
-  icon: string;
-  linkUrl: string;
-  status: string;
-}
-
-interface FooterSection {
-  id: number;
-  title: string;
-  description: string;
-  color: string;
-  status: string;
-  subItems: SubItem[];
-}
-
-interface SocialMedia {
-  id: number;
-  name: string;
-  description: string;
-  link: string;
-  iconUrl: string;
-  color: string;
-  hoverColor: string;
-  status: string;
-}
-
-interface OtherLink {
-  id: number;
-  name: string;
-  description: string;
-  linkUrl: string;
-  status: string;
-}
-
-interface FooterData {
-  sections: FooterSection[];
-  socialMedia: SocialMedia[];
-  others: OtherLink[];
-}
+import { FooterService } from "@/services/footerService"; // Import service
+import { 
+  FooterData, 
+  FooterSection, 
+  FooterSocialMedia, 
+  FooterOtherLink 
+} from "@/types/footer-types"; // Import types
 
 const Footer = () => {
   const [footerData, setFooterData] = useState<FooterData | null>(null);
@@ -57,14 +19,13 @@ const Footer = () => {
     const fetchFooterData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(GET_ACTIVE_FOOTER_DATA);
-        const result = await response.json();
+        const { data: footerData, error } = await FooterService.fetchFooterData();
 
-        if (response.ok && result.code === 200) {
-          setFooterData(result.data);
-          setError(null);
+        if (error) {
+          setError(error);
         } else {
-          setError(result.message || "Failed to fetch footer data");
+          setFooterData(footerData);
+          setError(null);
         }
       } catch (err) {
         console.error("Error fetching footer data:", err);

@@ -1,20 +1,26 @@
-import { GET_ALL_FOOTER_DATA } from "@/utils/backEndConstant";
+import { ADD_INQUIRY_DATA } from "@/utils/backEndConstant";
 import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function POST(req: Request) {
   try {
-    const response = await fetch(GET_ALL_FOOTER_DATA, {
-      method: "GET",
+    const body = await req.json();
+
+    const response = await fetch(ADD_INQUIRY_DATA, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Cookie: req.headers.get("cookie") || "",
       },
+      credentials: "include",
+      body: JSON.stringify(body),
     });
 
     if (!response.ok) {
       const text = await response.text();
       console.error("Backend returned error:", text);
+
       return NextResponse.json(
-        { error: "Failed to fetch data from backend" },
+        { error: "Failed to create inquiry" },
         { status: response.status }
       );
     }
@@ -23,7 +29,8 @@ export async function GET() {
     return NextResponse.json(data, { status: response.status });
 
   } catch (error) {
-    console.error("Error fetching backend data:", error);
+    console.error("Error creating inquiry:", error);
+
     return NextResponse.json(
       { error: "Something went wrong" },
       { status: 500 }

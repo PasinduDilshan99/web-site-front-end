@@ -51,16 +51,14 @@ const CeoSpeech: React.FC = () => {
 
   return (
     <div className="bg-gradient-to-br from-amber-50 via-purple-50 to-amber-50 py-4 sm:py-4 md:py-8 lg:py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-center">
+      <div className="mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-1 gap-8 lg:gap-12 xl:gap-16 items-center">
           
           {/* Left Side - CEO Image */}
-          <div className="order-2 lg:order-1 flex justify-center lg:justify-end">
+          {/* <div className="order-2 lg:order-1 flex justify-center lg:justify-end">
             <div className="relative group">
-              {/* Decorative background circles */}
               <div className="absolute -inset-4 bg-gradient-to-br from-purple-400 to-amber-400 rounded-full opacity-20 blur-2xl group-hover:opacity-30 transition-opacity duration-500"></div>
               
-              {/* Main image container */}
               <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[400px] lg:h-[400px] xl:w-[480px] xl:h-[480px]">
                 {ceoData.imageUrl ? (
                   <img
@@ -74,18 +72,16 @@ const CeoSpeech: React.FC = () => {
                   </div>
                 )}
                 
-                {/* Corner accent */}
                 <div className="absolute -bottom-6 -right-6 w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-purple-600 to-amber-500 rounded-2xl opacity-80 -z-10 group-hover:scale-110 transition-transform duration-500"></div>
                 <div className="absolute -top-6 -left-6 w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-amber-400 to-purple-400 rounded-2xl opacity-60 -z-10 group-hover:scale-110 transition-transform duration-500"></div>
               </div>
 
-              {/* Name badge */}
               <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-white rounded-2xl shadow-xl px-6 py-4 text-center min-w-[280px] sm:min-w-[320px]">
                 <h3 className="text-xl sm:text-2xl font-bold text-slate-800 mb-1">{ceoData.name}</h3>
                 <p className="text-amber-600 font-semibold text-sm sm:text-base">{ceoData.title}</p>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Right Side - Speech */}
           <div className="order-1 lg:order-2 space-y-6">
@@ -94,16 +90,14 @@ const CeoSpeech: React.FC = () => {
               <Quote className="w-8 h-8 sm:w-10 sm:h-10 text-purple-600" />
             </div>
 
-            {/* Title */}
             <div>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-800 mb-2">
+              <h2 className="text-xl sm:text-2xl md:text-4xl font-bold text-slate-800 mb-2">
                 A Message from Our CEO
               </h2>
               <div className="w-24 h-1.5 bg-gradient-to-r from-purple-600 to-amber-500 rounded-full"></div>
             </div>
 
-            {/* Speech content */}
-            <div className="space-y-5 text-gray-700 text-base sm:text-lg md:text-xl leading-relaxed">
+            <div className="space-y-5 text-gray-700 text-base sm:text-md md:text-lg lg:text-xl leading-relaxed">
               {ceoData.speech.slice(0, -1).map((paragraph, index) => (
                 <p 
                   key={index}
@@ -114,7 +108,6 @@ const CeoSpeech: React.FC = () => {
                 </p>
               ))}
               
-              {/* Typing animation for last paragraph */}
               <p className="font-semibold text-purple-800">
                 {typingText}
                 {isTyping && (
@@ -123,7 +116,6 @@ const CeoSpeech: React.FC = () => {
               </p>
             </div>
 
-            {/* Signature */}
             <div className="pt-6">
               <div className="inline-block">
                 <p className="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-amber-600 mb-1">
