@@ -163,16 +163,6 @@ const FaqHeroSection = () => {
         ))}
       </div>
 
-      {/* FAQ Badge */}
-      <div className="absolute top-3 left-3 sm:top-4 sm:left-4 md:top-6 md:left-6 z-10">
-        <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-amber-500/20 backdrop-blur-sm rounded-full border border-amber-400/30">
-          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-amber-400 rounded-full animate-pulse"></div>
-          <span className="text-xs sm:text-sm font-medium text-white">
-            <span className="text-amber-200 font-bold">{heroData.length}</span> FAQ Categories
-          </span>
-        </div>
-      </div>
-
       {/* Slide Counter */}
       {heroData.length > 1 && (
         <div className="absolute top-3 right-3 sm:top-4 sm:right-4 md:top-6 md:right-6 text-white/70 text-xs sm:text-sm backdrop-blur-sm bg-black/20 px-2 sm:px-3 py-1 rounded-full z-10">
@@ -260,7 +250,7 @@ const FaqHeroSection = () => {
 
             {/* Quick Stats */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 md:gap-4">
-              <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl border border-white/20 hover:bg-white/15 transition-all duration-300">
+              <div className="hidden lg:flex items-center gap-2 sm:gap-3 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl border border-white/20 hover:bg-white/15 transition-all duration-300">
                 <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0">
                   <svg
                     className="w-4 h-4 sm:w-5 sm:h-5 text-amber-300"
@@ -281,7 +271,7 @@ const FaqHeroSection = () => {
                   <p className="text-base sm:text-lg font-bold">95%</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl border border-white/20 hover:bg-white/15 transition-all duration-300">
+              <div className="hidden lg:flex items-center gap-2 sm:gap-3 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl border border-white/20 hover:bg-white/15 transition-all duration-300">
                 <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
                   <svg
                     className="w-4 h-4 sm:w-5 sm:h-5 text-purple-300"

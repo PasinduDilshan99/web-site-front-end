@@ -68,7 +68,7 @@ export const ContactSupportModal = ({
   const [showModal, setShowModal] = useState(false);
   const [categories, setCategories] = useState<string[]>([]);
   const [isLoadingCategories, setIsLoadingCategories] = useState(false);
-  const [responseTime, setResponseTime] = useState("24");
+  const [responseTime, setResponseTime] = useState("2");
   const [errors, setErrors] = useState<ValidationError[]>([]);
   const [successMessage, setSuccessMessage] = useState("");
 
