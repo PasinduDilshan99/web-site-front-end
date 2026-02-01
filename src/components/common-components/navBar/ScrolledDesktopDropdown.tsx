@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { NavBarItem } from "@/types/nav-bar-types";
 import { getVisibleSubmenus } from "@/utils/utils";
 
@@ -9,6 +10,7 @@ interface ScrolledDesktopDropdownProps {
   isOpen: boolean;
   onToggle: () => void;
   onClose: () => void;
+  isActive: boolean;
 }
 
 const ScrolledDesktopDropdown: React.FC<ScrolledDesktopDropdownProps> = ({
@@ -16,8 +18,17 @@ const ScrolledDesktopDropdown: React.FC<ScrolledDesktopDropdownProps> = ({
   isOpen,
   onToggle,
   onClose,
+  isActive,
 }) => {
+  const pathname = usePathname();
   const visibleSubmenus = getVisibleSubmenus(item);
+
+  // Check if a submenu item is active
+  const isSubmenuActive = (linkUrl: string) => {
+    if (pathname === linkUrl) return true;
+    if (pathname?.startsWith(linkUrl) && linkUrl !== '/') return true;
+    return false;
+  };
 
   return (
     <div className="relative group nav-dropdown">
@@ -25,23 +36,26 @@ const ScrolledDesktopDropdown: React.FC<ScrolledDesktopDropdownProps> = ({
         onClick={onToggle}
         className="relative font-medium transition-colors duration-300 group px-2 py-1 rounded-md text-sm flex items-center space-x-1"
         style={{
-          color: "#5A4D75",
-          backgroundColor: isOpen ? "rgba(139, 95, 191, 0.08)" : "transparent",
+          color: isActive || isOpen ? "#8B5FBF" : "#5A4D75",
+          backgroundColor: isOpen || isActive ? "rgba(139, 95, 191, 0.08)" : "transparent",
         }}
         onMouseEnter={(e) => {
-          if (!isOpen) {
+          if (!isOpen && !isActive) {
             e.currentTarget.style.color = "#8B5FBF";
             e.currentTarget.style.backgroundColor = "rgba(139, 95, 191, 0.08)";
           }
         }}
         onMouseLeave={(e) => {
-          if (!isOpen) {
+          if (!isOpen && !isActive) {
             e.currentTarget.style.color = "#5A4D75";
             e.currentTarget.style.backgroundColor = "transparent";
           }
         }}
       >
         <span>{item.name}</span>
+        {isActive && !isOpen && (
+          <div className="w-1.5 h-1.5 rounded-full bg-purple-500 ml-1"></div>
+        )}
         <svg
           className={`w-3 h-3 transition-transform duration-200 ${
             isOpen ? "rotate-180" : ""
@@ -57,6 +71,14 @@ const ScrolledDesktopDropdown: React.FC<ScrolledDesktopDropdownProps> = ({
             d="M19 9l-7 7-7-7"
           />
         </svg>
+        {isActive && (
+          <span
+            className="absolute left-0 -bottom-1.5 w-full h-0.5 rounded-full"
+            style={{
+              background: "linear-gradient(90deg, #8B5FBF 0%, #E9B949 100%)",
+            }}
+          ></span>
+        )}
       </button>
 
       {/* Dropdown Submenu for Scrolled Nav */}
@@ -69,31 +91,43 @@ const ScrolledDesktopDropdown: React.FC<ScrolledDesktopDropdownProps> = ({
           }}
         >
           <div className="py-1">
-            {visibleSubmenus.map((submenu) => (
-              <Link
-                key={submenu.id}
-                href={submenu.linkUrl}
-                className="flex items-center space-x-2 px-3 py-2 transition-colors duration-300 text-sm"
-                style={{
-                  color: "#5A4D75",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = "#8B5FBF";
-                  e.currentTarget.style.backgroundColor =
-                    "rgba(139, 95, 191, 0.08)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = "#5A4D75";
-                  e.currentTarget.style.backgroundColor = "transparent";
-                }}
-                onClick={onClose}
-              >
-                {submenu.iconClass && (
-                  <i className={`${submenu.iconClass} w-3 h-3`}></i>
-                )}
-                <span>{submenu.name}</span>
-              </Link>
-            ))}
+            {visibleSubmenus.map((submenu) => {
+              const submenuIsActive = isSubmenuActive(submenu.linkUrl);
+              
+              return (
+                <Link
+                  key={submenu.id}
+                  href={submenu.linkUrl}
+                  className="flex items-center space-x-2 px-3 py-2 transition-colors duration-300 text-sm"
+                  style={{
+                    color: submenuIsActive ? "#8B5FBF" : "#5A4D75",
+                    backgroundColor: submenuIsActive ? "rgba(139, 95, 191, 0.08)" : "transparent",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!submenuIsActive) {
+                      e.currentTarget.style.color = "#8B5FBF";
+                      e.currentTarget.style.backgroundColor =
+                        "rgba(139, 95, 191, 0.08)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!submenuIsActive) {
+                      e.currentTarget.style.color = "#5A4D75";
+                      e.currentTarget.style.backgroundColor = "transparent";
+                    }
+                  }}
+                  onClick={onClose}
+                >
+                  {submenu.iconClass && (
+                    <i className={`${submenu.iconClass} w-3 h-3`}></i>
+                  )}
+                  <span className="flex-1">{submenu.name}</span>
+                  {submenuIsActive && (
+                    <div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div>
+                  )}
+                </Link>
+              );
+            })}
           </div>
         </div>
       )}

@@ -24,7 +24,7 @@ export default function RootLayout({
       <body >
         <AuthProvider>
           {/* <DecemberSnowfall /> */}
-          <GlobalGradientScrollbar />
+          {/* <GlobalGradientScrollbar /> */}
           <LinkBar />
           <NavBar />
           <main >{children}</main>

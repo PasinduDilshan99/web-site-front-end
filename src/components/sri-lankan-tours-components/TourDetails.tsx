@@ -8,12 +8,13 @@ interface TourDetailsProps {
 }
 
 const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
-  const formatDuration = (days: number) => {
-    const nights = days - 1;
-    return `${nights < 10 ? "0" + nights : nights} Days ${
-      days < 10 ? "0" + days : days
-    } Nights`;
-  };
+const formatDuration = (days: number) => {
+  const nights = days > 0 ? days - 1 : 0;
+  const formattedDays = days < 10 ? "0" + days : days.toString();
+  const formattedNights = nights < 10 ? "0" + nights : nights.toString();
+  
+  return `${formattedDays} Days ${formattedNights} Nights`;
+};
 
   const calculatePrice = () => {
     const basePrice = 50;
@@ -103,7 +104,7 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
         </div>
 
         {/* Schedules Count */}
-        {tour.schedules.length > 0 && (
+        {/* {tour.schedules.length > 0 && (
           <div className="flex items-center gap-1">
             <span className="inline-flex w-4 h-4 bg-blue-100 rounded-full items-center justify-center flex-shrink-0">
               <svg
@@ -123,7 +124,7 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
               {tour.schedules.length !== 1 ? "s" : ""}
             </span>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

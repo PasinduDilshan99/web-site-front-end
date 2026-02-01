@@ -1,4 +1,5 @@
 "use client";
+import { COMPANY_CONTACT_NUMBER, COMPANY_INFO_EMAIL, COMPANY_LOCATION } from "@/utils/constant";
 import React, { useState, useEffect } from "react";
 
 const LocationDetails = () => {
@@ -18,10 +19,10 @@ const LocationDetails = () => {
   }&layer=mapnik&marker=${latitude}%2C${longitude}`;
 
   return (
-    <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm" style={{ width: "350px", height: "500px" }}>
+    <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm"  >
       {/* Header */}
       <div className="mb-6">
-        <h3 className="font-bold text-gray-800 text-lg flex items-center gap-2">
+        <h3 className="font-bold text-gray-800 text-md lg:text-lg flex items-center gap-2">
           <svg 
             className="w-5 h-5 text-teal-600" 
             fill="none" 
@@ -46,7 +47,7 @@ const LocationDetails = () => {
       </div>
 
       {/* Contact Information - Row Layout */}
-      <div className="space-y-4 mb-6">
+      <div className="space-y-4 mb-6 text-sm lg:text-lg ">
         {/* Phone Number */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -67,7 +68,7 @@ const LocationDetails = () => {
             </div>
             <span className="text-gray-600">Phone:</span>
           </div>
-          <span className="font-medium text-gray-800">(704) 555-0127</span>
+          <span className="font-medium text-gray-800">{COMPANY_CONTACT_NUMBER}</span>
         </div>
 
         {/* Email Address */}
@@ -90,7 +91,7 @@ const LocationDetails = () => {
             </div>
             <span className="text-gray-600">Email:</span>
           </div>
-          <span className="font-medium text-gray-800 text-sm">tim.jennings@example.com</span>
+          <span className="font-medium text-gray-800 text-sm">{COMPANY_INFO_EMAIL}</span>
         </div>
 
         {/* Location */}
@@ -119,7 +120,7 @@ const LocationDetails = () => {
             </div>
             <span className="text-gray-600">Location:</span>
           </div>
-          <span className="font-medium text-gray-800">Colombo, Sri Lanka</span>
+          <span className="font-medium text-gray-800">{COMPANY_LOCATION}</span>
         </div>
       </div>
 

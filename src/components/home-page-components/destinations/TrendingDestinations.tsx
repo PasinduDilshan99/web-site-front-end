@@ -8,6 +8,8 @@ import SectionHeader from "../../common-components/section-header/SectionHeader"
 import AnimatedButton from "../../common-components/buttons/AnimatedButton";
 import { DestinationService } from "@/services/destinationService";
 import { TrendingDestinationType } from "@/types/destination-types";
+import { TRENDING_DESTINATIONS_IMAGES_CHANGE_TIME } from "@/utils/constant";
+import BasicCycleLoading from "@/components/common-components/basic-loading/BasicCycleLoading";
 
 const TrendingDestinations = () => {
   const [loading, setLoading] = useState(true);
@@ -83,7 +85,7 @@ const TrendingDestinations = () => {
           }, 250);
         }
       });
-    }, 4000); // Change image every 4 seconds
+    }, TRENDING_DESTINATIONS_IMAGES_CHANGE_TIME);
 
     return () => clearInterval(interval);
   }, [trendingDestinations]);
@@ -132,7 +134,7 @@ const TrendingDestinations = () => {
 
   if (loading) {
     return (
-      <Loading
+      <BasicCycleLoading
         message="Loading trending destinations..."
         variant="spinner"
         size="md"

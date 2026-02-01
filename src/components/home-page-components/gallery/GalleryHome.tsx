@@ -3,12 +3,15 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { GalleryService } from "@/services/galleryService";
 import { ActiveImagesType } from "@/types/gallery-types";
+import SectionHeader from "@/components/common-components/section-header/SectionHeader";
 
 const GalleryHome = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [openImages, setOpenImages] = useState<ActiveImagesType[]>([]);
-  const [selectedImage, setSelectedImage] = useState<ActiveImagesType | null>(null);
+  const [selectedImage, setSelectedImage] = useState<ActiveImagesType | null>(
+    null,
+  );
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
   const [isLaptop, setIsLaptop] = useState(false);
@@ -70,20 +73,20 @@ const GalleryHome = () => {
 
     const totalImages = openImages.length;
     let rows = 3;
-    
+
     if (isMobile) rows = 2;
     if (isTablet) rows = 3;
     if (isLaptop) rows = 3;
-    
+
     const imagesPerRow = Math.ceil(totalImages / rows);
-    
+
     const result = [];
     for (let i = 0; i < rows; i++) {
       const start = i * imagesPerRow;
       const end = start + imagesPerRow;
       result.push(openImages.slice(start, end));
     }
-    
+
     return result;
   };
 
@@ -95,29 +98,29 @@ const GalleryHome = () => {
       if (e.key === "Escape") setSelectedImage(null);
     };
     window.addEventListener("keydown", handleEscape);
-    
+
     if (selectedImage) {
-      document.body.style.overflow = 'hidden';
-      document.body.classList.add('modal-open');
+      document.body.style.overflow = "hidden";
+      document.body.classList.add("modal-open");
     } else {
-      document.body.style.overflow = 'unset';
-      document.body.classList.remove('modal-open');
+      document.body.style.overflow = "unset";
+      document.body.classList.remove("modal-open");
     }
-    
+
     return () => {
       window.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = 'unset';
-      document.body.classList.remove('modal-open');
+      document.body.style.overflow = "unset";
+      document.body.classList.remove("modal-open");
     };
   }, [selectedImage]);
 
   // Format date
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -140,7 +143,10 @@ const GalleryHome = () => {
 
         <div className="max-w-full mx-auto space-y-2 sm:space-y-3 md:space-y-4">
           {[...Array(isMobile ? 2 : 3)].map((_, rowIndex) => (
-            <div key={rowIndex} className="flex gap-2 sm:gap-3 md:gap-4 overflow-hidden justify-center">
+            <div
+              key={rowIndex}
+              className="flex gap-2 sm:gap-3 md:gap-4 overflow-hidden justify-center"
+            >
               {[...Array(6)].map((_, i) => (
                 <div
                   key={i}
@@ -184,7 +190,9 @@ const GalleryHome = () => {
       <div className="relative overflow-hidden py-2 sm:py-3">
         <div
           className={`flex gap-3 sm:gap-4 md:gap-5 ${
-            direction === "left" ? "animate-scroll-left" : "animate-scroll-right"
+            direction === "left"
+              ? "animate-scroll-left"
+              : "animate-scroll-right"
           }`}
           style={{ width: "fit-content" }}
         >
@@ -215,16 +223,24 @@ const GalleryHome = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-4 sm:py-6 md:py-8 lg:py-12">
+    <div className="bg-gradient-to-br from-gray-50 to-gray-100 py-4 sm:py-6 md:py-8 lg:py-12">
       <style jsx global>{`
         @keyframes scroll-left {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
         }
 
         @keyframes scroll-right {
-          0% { transform: translateX(-50%); }
-          100% { transform: translateX(0); }
+          0% {
+            transform: translateX(-50%);
+          }
+          100% {
+            transform: translateX(0);
+          }
         }
 
         .animate-scroll-left {
@@ -268,28 +284,29 @@ const GalleryHome = () => {
 
       {/* Header Section */}
       <div className="text-center mb-6 sm:mb-10 md:mb-12 lg:mb-16 xl:mb-20 px-4">
-        <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base md:text-lg lg:text-xl mb-3 sm:mb-4">
-          Explore our visual journey through stunning photographs
-        </p>
-        <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold bg-gradient-to-r from-[#A855F7] via-[#EC4899] to-[#F59E0B] bg-clip-text text-transparent mb-3 sm:mb-4 md:mb-6 leading-tight">
-          IMAGE GALLERY
-        </h2>
-        <div className="mt-3 sm:mt-4 md:mt-6 w-12 sm:w-16 md:w-20 lg:w-24 h-0.5 sm:h-1 bg-gradient-to-r from-[#A855F7] via-[#EC4899] to-[#F59E0B] mx-auto rounded-full"></div>
+        <SectionHeader
+          subtitle=""
+          title="IMAGE GALLERY"
+          description="Explore our visual journey through stunning photographs"
+          fromColor="#A855F7"
+          toColor="#F59E0B"
+        />
       </div>
 
       {/* Gallery Images */}
       <div className="max-w-full mx-auto space-y-3 sm:space-y-4 md:space-y-5">
-        {visibleRows.map((rowImages, index) => (
-          rowImages.length > 0 && (
-            <CarouselRow
-              key={`row-${index}`}
-              images={rowImages}
-              direction={index % 2 === 0 ? "left" : "right"}
-              rowIndex={index}
-            />
-          )
-        ))}
-        
+        {visibleRows.map(
+          (rowImages, index) =>
+            rowImages.length > 0 && (
+              <CarouselRow
+                key={`row-${index}`}
+                images={rowImages}
+                direction={index % 2 === 0 ? "left" : "right"}
+                rowIndex={index}
+              />
+            ),
+        )}
+
         {openImages.length === 0 && (
           <div className="text-center py-12 sm:py-16 md:py-20 px-4">
             <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8 max-w-md mx-auto">
@@ -325,14 +342,16 @@ const GalleryHome = () => {
             className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9998] animate-fadeIn"
             onClick={() => setSelectedImage(null)}
           />
-          
+
           {/* Modal Container */}
           <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4 md:p-5 lg:p-6">
             <div
               className={`bg-white rounded-xl shadow-2xl w-full ${
-                isMobile ? 'max-w-full mx-2 my-4' : 
-                isTablet ? 'max-w-4xl my-6' : 
-                'max-w-5xl my-8'
+                isMobile
+                  ? "max-w-full mx-2 my-4"
+                  : isTablet
+                    ? "max-w-4xl my-6"
+                    : "max-w-5xl my-8"
               } max-h-[95vh] overflow-hidden animate-scaleIn`}
               onClick={(e) => e.stopPropagation()}
             >
@@ -343,7 +362,7 @@ const GalleryHome = () => {
                   <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 truncate pr-2">
                     {selectedImage.imageName}
                   </h2>
-                  
+
                   <button
                     onClick={() => setSelectedImage(null)}
                     className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-red-500 hover:bg-red-600 text-white shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 active:scale-95 flex-shrink-0"
@@ -368,7 +387,9 @@ const GalleryHome = () => {
                 {/* Content Area */}
                 <div className="flex-1 overflow-y-auto">
                   {/* Image Section - Larger */}
-                  <div className={`${getModalImageHeight()} relative flex-shrink-0 w-full`}>
+                  <div
+                    className={`${getModalImageHeight()} relative flex-shrink-0 w-full`}
+                  >
                     <div className="relative w-full h-full">
                       <Image
                         src={selectedImage.imageLink}
@@ -392,14 +413,24 @@ const GalleryHome = () => {
                         <div className="p-3 sm:p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
                           <p className="text-xs uppercase tracking-wider text-gray-500 font-medium mb-2">
                             <span className="inline-flex items-center gap-2">
-                              <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                              <svg
+                                className="w-4 h-4 text-purple-600"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                                />
                               </svg>
                               Photographer
                             </span>
                           </p>
                           <p className="text-sm sm:text-base font-semibold text-gray-800">
-                            {selectedImage.imageOwner || 'Unknown'}
+                            {selectedImage.imageOwner || "Unknown"}
                           </p>
                         </div>
 
@@ -408,9 +439,24 @@ const GalleryHome = () => {
                           <div className="p-3 sm:p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
                             <p className="text-xs uppercase tracking-wider text-gray-500 font-medium mb-2">
                               <span className="inline-flex items-center gap-2">
-                                <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <svg
+                                  className="w-4 h-4 text-blue-600"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                                  />
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                                  />
                                 </svg>
                                 Location
                               </span>
@@ -425,8 +471,18 @@ const GalleryHome = () => {
                         <div className="p-3 sm:p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
                           <p className="text-xs uppercase tracking-wider text-gray-500 font-medium mb-2">
                             <span className="inline-flex items-center gap-2">
-                              <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              <svg
+                                className="w-4 h-4 text-gray-600"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                />
                               </svg>
                               Uploaded
                             </span>
@@ -444,8 +500,18 @@ const GalleryHome = () => {
                           <div className="p-3 sm:p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
                             <p className="text-xs uppercase tracking-wider text-gray-500 font-medium mb-2">
                               <span className="inline-flex items-center gap-2">
-                                <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                <svg
+                                  className="w-4 h-4 text-amber-600"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                  />
                                 </svg>
                                 Description
                               </span>
@@ -461,8 +527,18 @@ const GalleryHome = () => {
                           <div className="p-3 sm:p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
                             <p className="text-xs uppercase tracking-wider text-gray-500 font-medium mb-2">
                               <span className="inline-flex items-center gap-2">
-                                <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                                <svg
+                                  className="w-4 h-4 text-green-600"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+                                  />
                                 </svg>
                                 Source
                               </span>
@@ -475,8 +551,18 @@ const GalleryHome = () => {
                                 className="inline-flex items-center gap-2 text-sm sm:text-base text-blue-600 hover:text-blue-800 hover:underline font-medium"
                               >
                                 {selectedImage.imageSource}
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                                  />
                                 </svg>
                               </a>
                             ) : (
@@ -511,16 +597,20 @@ const GalleryHome = () => {
 
       <style jsx>{`
         @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
         }
 
         @keyframes scaleIn {
-          from { 
+          from {
             transform: scale(0.95) translateY(10px);
             opacity: 0;
           }
-          to { 
+          to {
             transform: scale(1) translateY(0);
             opacity: 1;
           }
@@ -536,8 +626,15 @@ const GalleryHome = () => {
 
         /* Add animation for the decorative dots */
         @keyframes pulse {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.5; transform: scale(0.9); }
+          0%,
+          100% {
+            opacity: 1;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 0.5;
+            transform: scale(0.9);
+          }
         }
 
         .animate-pulse {

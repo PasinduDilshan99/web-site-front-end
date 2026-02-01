@@ -22,7 +22,7 @@ const TourImageGallery: React.FC<TourImageGalleryProps> = ({ tour }) => {
 
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
-    }, 3000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [allImages.length]);

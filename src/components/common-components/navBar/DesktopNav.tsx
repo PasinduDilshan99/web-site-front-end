@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { NavBarItem } from "@/types/nav-bar-types";
 import { User } from "@/context/AuthContext";
 import { useAuth } from "@/context/AuthContext";
@@ -26,9 +26,30 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
   companyName,
   onCloseAll,
 }) => {
+  const pathname = usePathname();
   const { logout } = useAuth();
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false);
+
+  // Helper function to check if a nav item is active
+  const isItemActive = (item: NavBarItem) => {
+    // Exact match for main nav items
+    if (pathname === item.linkUrl) return true;
+    
+    // Check if current path starts with nav item link (for nested routes)
+    if (pathname?.startsWith(item.linkUrl) && item.linkUrl !== '/') return true;
+    
+    // Check if any submenu item matches current path
+    if (item.submenus && item.submenus.length > 0) {
+      return item.submenus.some(submenu => {
+        if (pathname === submenu.linkUrl) return true;
+        if (pathname?.startsWith(submenu.linkUrl) && submenu.linkUrl !== '/') return true;
+        return false;
+      });
+    }
+    
+    return false;
+  };
 
   const handleDropdownToggle = (itemId: number) => {
     setActiveDropdown(activeDropdown === itemId ? null : itemId);
@@ -71,6 +92,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
           const hasSubmenu =
             item.submenus &&
             item.submenus.filter((sub) => sub.status === "VISIBLE").length > 0;
+          const isActive = isItemActive(item);
 
           if (hasSubmenu) {
             return (
@@ -80,6 +102,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                 isOpen={activeDropdown === item.id}
                 onToggle={() => handleDropdownToggle(item.id)}
                 onClose={closeAllDropdowns}
+                isActive={isActive}
               />
             );
           }
@@ -89,21 +112,30 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
               key={item.id}
               href={item.linkUrl}
               className="relative font-medium transition-colors duration-300 group px-3 py-2 rounded-lg"
-              style={{ color: "#5A4D75" }}
+              style={{ 
+                color: isActive ? "#8B5FBF" : "#5A4D75",
+                backgroundColor: isActive ? "rgba(139, 95, 191, 0.08)" : "transparent"
+              }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = "#8B5FBF";
-                e.currentTarget.style.backgroundColor =
-                  "rgba(139, 95, 191, 0.08)";
+                if (!isActive) {
+                  e.currentTarget.style.color = "#8B5FBF";
+                  e.currentTarget.style.backgroundColor =
+                    "rgba(139, 95, 191, 0.08)";
+                }
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.color = "#5A4D75";
-                e.currentTarget.style.backgroundColor = "transparent";
+                if (!isActive) {
+                  e.currentTarget.style.color = "#5A4D75";
+                  e.currentTarget.style.backgroundColor = "transparent";
+                }
               }}
               onClick={closeAllDropdowns}
             >
               {item.name}
               <span
-                className="absolute left-0 -bottom-1 w-0 h-0.5 transition-all duration-300 group-hover:w-full rounded-full"
+                className={`absolute left-0 -bottom-1 h-0.5 transition-all duration-300 rounded-full ${
+                  isActive ? "w-full" : "w-0 group-hover:w-full"
+                }`}
                 style={{
                   background:
                     "linear-gradient(90deg, #8B5FBF 0%, #E9B949 100%)",
@@ -125,6 +157,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
             activeDropdown={activeDropdown}
             onActiveDropdownChange={setActiveDropdown}
             onClose={closeAllDropdowns}
+            currentPath={pathname}
           />
         )}
       </div>
@@ -141,21 +174,27 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
           <div className="flex items-center space-x-2">
             <Link
               href="/login"
-              className="px-3 py-1.5 rounded-md font-medium transition-all duration-300 border text-xs"
+              className={`px-3 py-1.5 rounded-md font-medium transition-all duration-300 border text-xs ${
+                pathname === "/login" ? "active-login" : ""
+              }`}
               style={{
-                color: "#8B5FBF",
-                backgroundColor: "transparent",
-                borderColor: "rgba(139, 95, 191, 0.3)",
+                color: pathname === "/login" ? "#FFFFFF" : "#8B5FBF",
+                backgroundColor: pathname === "/login" ? "#8B5FBF" : "transparent",
+                borderColor: pathname === "/login" ? "#8B5FBF" : "rgba(139, 95, 191, 0.3)",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = "#FFFFFF";
-                e.currentTarget.style.backgroundColor = "#8B5FBF";
-                e.currentTarget.style.borderColor = "#8B5FBF";
+                if (pathname !== "/login") {
+                  e.currentTarget.style.color = "#FFFFFF";
+                  e.currentTarget.style.backgroundColor = "#8B5FBF";
+                  e.currentTarget.style.borderColor = "#8B5FBF";
+                }
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.color = "#8B5FBF";
-                e.currentTarget.style.backgroundColor = "transparent";
-                e.currentTarget.style.borderColor = "rgba(139, 95, 191, 0.3)";
+                if (pathname !== "/login") {
+                  e.currentTarget.style.color = "#8B5FBF";
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.borderColor = "rgba(139, 95, 191, 0.3)";
+                }
               }}
               onClick={closeAllDropdowns}
             >
@@ -163,18 +202,26 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
             </Link>
             <Link
               href="/signup"
-              className="px-3 py-1.5 rounded-md font-medium transition-all duration-300 text-xs"
+              className={`px-3 py-1.5 rounded-md font-medium transition-all duration-300 text-xs ${
+                pathname === "/signup" ? "active-signup" : ""
+              }`}
               style={{
-                background: "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
+                background: pathname === "/signup" 
+                  ? "linear-gradient(135deg, #7A4FA8 0%, #D4A73A 100%)"
+                  : "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
                 color: "#FFFFFF",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background =
-                  "linear-gradient(135deg, #7A4FA8 0%, #D4A73A 100%)";
+                if (pathname !== "/signup") {
+                  e.currentTarget.style.background =
+                    "linear-gradient(135deg, #7A4FA8 0%, #D4A73A 100%)";
+                }
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background =
-                  "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)";
+                if (pathname !== "/signup") {
+                  e.currentTarget.style.background =
+                    "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)";
+                }
               }}
               onClick={closeAllDropdowns}
             >
