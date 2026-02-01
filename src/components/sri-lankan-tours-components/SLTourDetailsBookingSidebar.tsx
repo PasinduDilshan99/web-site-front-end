@@ -1,12 +1,9 @@
-import {
-  Package,
-  TourAssignedEmployeeResponse,
-} from "@/app/sri-lankan-tours/[sriLankanTourId]/page";
-import { TourDetails } from "@/types/packages-types";
+import { Package, TourDetails } from "@/types/package-types";
 import React, { useState } from "react";
 import { SLTourDetailsDetailItem } from "./tour-day-to-day-details-components/SLTourDetailsDetailItem";
 import TourAssignedUser from "./tour-day-to-day-details-components/TourAssignedUser";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { TourAssignedEmployeeResponse } from "@/types/employee-types";
 
 interface SLTourDetailsBookingSidebarProps {
   tour: TourDetails;
@@ -84,9 +81,9 @@ const SLTourDetailsBookingSidebar: React.FC<
               <p className="text-xs text-gray-500 mt-1">per person</p>
             </div>
           </div>
-          {/* <button className="w-full bg-gradient-to-r from-amber-600 to-purple-600 hover:from-purple-700 hover:to-amber-700 text-white py-4 rounded-xl font-semibold text-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
+          <button className="w-full bg-gradient-to-r from-amber-600 to-purple-600 hover:from-purple-700 hover:to-amber-700 text-white py-4 rounded-xl font-semibold text-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
             {selectedPackage ? "Book This Package" : "Book Now"}
-          </button> */}
+          </button>
 
           <p className="text-xs text-gray-500 text-center">
             Secure your spot with easy booking

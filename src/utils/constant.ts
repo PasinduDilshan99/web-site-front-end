@@ -32,3 +32,7 @@ export const UNIQUE_CODE_NAME = "uniqueCode";
 // Destinations
 export const TRENDING_DESTINATIONS_IMAGES_CHANGE_TIME = 5000;
 
+// Tours
+export const NUMBER_OF_TOUR_CATEGORIES = 5;
+
+
