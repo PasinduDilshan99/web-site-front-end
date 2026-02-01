@@ -8,6 +8,7 @@ import { useAuth } from "@/context/AuthContext";
 import DesktopDropdown from "./DesktopDropdown";
 import MoreDropdown from "./MoreDropdown";
 import UserDropdown from "./UserDropdown";
+import Image from "next/image";
 
 interface DesktopNavProps {
   visibleItems: NavBarItem[];
@@ -35,19 +36,20 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
   const isItemActive = (item: NavBarItem) => {
     // Exact match for main nav items
     if (pathname === item.linkUrl) return true;
-    
+
     // Check if current path starts with nav item link (for nested routes)
-    if (pathname?.startsWith(item.linkUrl) && item.linkUrl !== '/') return true;
-    
+    if (pathname?.startsWith(item.linkUrl) && item.linkUrl !== "/") return true;
+
     // Check if any submenu item matches current path
     if (item.submenus && item.submenus.length > 0) {
-      return item.submenus.some(submenu => {
+      return item.submenus.some((submenu) => {
         if (pathname === submenu.linkUrl) return true;
-        if (pathname?.startsWith(submenu.linkUrl) && submenu.linkUrl !== '/') return true;
+        if (pathname?.startsWith(submenu.linkUrl) && submenu.linkUrl !== "/")
+          return true;
         return false;
       });
     }
-    
+
     return false;
   };
 
@@ -67,6 +69,19 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
       <div className="flex items-center">
         <Link
           href="/"
+          className="block hover:opacity-90 transition-opacity duration-300"
+          onClick={closeAllDropdowns}
+        >
+          <Image
+            src="/felicita_trips.png"
+            alt={companyName}
+            width={150} // Adjust based on your logo size
+            height={50} // Adjust based on your logo size
+            className="h-10 w-auto" // Tailwind classes for responsive sizing
+          />
+        </Link>
+        {/* <Link
+          href="/"
           className="text-xl font-bold bg-clip-text text-transparent hover:transition-all duration-300"
           style={{
             backgroundImage:
@@ -83,7 +98,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
           onClick={closeAllDropdowns}
         >
           {companyName}
-        </Link>
+        </Link> */}
       </div>
 
       {/* Desktop Menu */}
@@ -112,9 +127,11 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
               key={item.id}
               href={item.linkUrl}
               className="relative font-medium transition-colors duration-300 group px-3 py-2 rounded-lg"
-              style={{ 
+              style={{
                 color: isActive ? "#8B5FBF" : "#5A4D75",
-                backgroundColor: isActive ? "rgba(139, 95, 191, 0.08)" : "transparent"
+                backgroundColor: isActive
+                  ? "rgba(139, 95, 191, 0.08)"
+                  : "transparent",
               }}
               onMouseEnter={(e) => {
                 if (!isActive) {
@@ -179,8 +196,10 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
               }`}
               style={{
                 color: pathname === "/login" ? "#FFFFFF" : "#8B5FBF",
-                backgroundColor: pathname === "/login" ? "#8B5FBF" : "transparent",
-                borderColor: pathname === "/login" ? "#8B5FBF" : "rgba(139, 95, 191, 0.3)",
+                backgroundColor:
+                  pathname === "/login" ? "#8B5FBF" : "transparent",
+                borderColor:
+                  pathname === "/login" ? "#8B5FBF" : "rgba(139, 95, 191, 0.3)",
               }}
               onMouseEnter={(e) => {
                 if (pathname !== "/login") {
@@ -206,9 +225,10 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                 pathname === "/signup" ? "active-signup" : ""
               }`}
               style={{
-                background: pathname === "/signup" 
-                  ? "linear-gradient(135deg, #7A4FA8 0%, #D4A73A 100%)"
-                  : "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
+                background:
+                  pathname === "/signup"
+                    ? "linear-gradient(135deg, #7A4FA8 0%, #D4A73A 100%)"
+                    : "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
                 color: "#FFFFFF",
               }}
               onMouseEnter={(e) => {

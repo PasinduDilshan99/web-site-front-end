@@ -7,6 +7,7 @@ import { User } from "@/context/AuthContext";
 import { useAuth } from "@/context/AuthContext";
 import ScrolledDesktopDropdown from "./ScrolledDesktopDropdown";
 import UserDropdown from "./UserDropdown";
+import Image from "next/image";
 
 interface ScrolledDesktopNavProps {
   visibleItems: NavBarItem[];
@@ -27,38 +28,44 @@ const ScrolledDesktopNav: React.FC<ScrolledDesktopNavProps> = ({
 }) => {
   const pathname = usePathname();
   const { logout } = useAuth();
-  const [activeScrolledDropdown, setActiveScrolledDropdown] = useState<number | null>(null);
-  const [isScrolledMoreDropdownOpen, setIsScrolledMoreDropdownOpen] = useState(false);
+  const [activeScrolledDropdown, setActiveScrolledDropdown] = useState<
+    number | null
+  >(null);
+  const [isScrolledMoreDropdownOpen, setIsScrolledMoreDropdownOpen] =
+    useState(false);
 
   // Helper function to check if a nav item is active
   const isItemActive = (item: NavBarItem) => {
     // Exact match for main nav items
     if (pathname === item.linkUrl) return true;
-    
+
     // Check if current path starts with nav item link (for nested routes)
-    if (pathname?.startsWith(item.linkUrl) && item.linkUrl !== '/') return true;
-    
+    if (pathname?.startsWith(item.linkUrl) && item.linkUrl !== "/") return true;
+
     // Check if any submenu item matches current path
     if (item.submenus && item.submenus.length > 0) {
-      return item.submenus.some(submenu => {
+      return item.submenus.some((submenu) => {
         if (pathname === submenu.linkUrl) return true;
-        if (pathname?.startsWith(submenu.linkUrl) && submenu.linkUrl !== '/') return true;
+        if (pathname?.startsWith(submenu.linkUrl) && submenu.linkUrl !== "/")
+          return true;
         return false;
       });
     }
-    
+
     return false;
   };
 
   // Helper function to check if submenu item is active
   const isSubmenuItemActive = (linkUrl: string) => {
     if (pathname === linkUrl) return true;
-    if (pathname?.startsWith(linkUrl) && linkUrl !== '/') return true;
+    if (pathname?.startsWith(linkUrl) && linkUrl !== "/") return true;
     return false;
   };
 
   const handleScrolledDropdownToggle = (itemId: number) => {
-    setActiveScrolledDropdown(activeScrolledDropdown === itemId ? null : itemId);
+    setActiveScrolledDropdown(
+      activeScrolledDropdown === itemId ? null : itemId,
+    );
     setIsScrolledMoreDropdownOpen(false);
   };
 
@@ -72,6 +79,19 @@ const ScrolledDesktopNav: React.FC<ScrolledDesktopNavProps> = ({
     <>
       <div className="flex items-center">
         <Link
+          href="/"
+          className="block hover:opacity-90 transition-opacity duration-300"
+          onClick={closeAllDropdowns}
+        >
+          <Image
+            src="/felicita_trips.png"
+            alt={companyName}
+            width={150} // Adjust based on your logo size
+            height={50} // Adjust based on your logo size
+            className="h-10 w-auto" // Tailwind classes for responsive sizing
+          />
+        </Link>
+        {/* <Link
           href="/"
           className="text-lg font-bold bg-clip-text text-transparent hover:transition-all duration-300"
           style={{
@@ -89,7 +109,7 @@ const ScrolledDesktopNav: React.FC<ScrolledDesktopNavProps> = ({
           onClick={closeAllDropdowns}
         >
           {companyName}
-        </Link>
+        </Link> */}
       </div>
 
       {/* Compact Desktop Menu */}
@@ -118,9 +138,11 @@ const ScrolledDesktopNav: React.FC<ScrolledDesktopNavProps> = ({
               key={item.id}
               href={item.linkUrl}
               className="relative font-medium transition-colors duration-300 group px-2 py-1 rounded-md text-sm"
-              style={{ 
+              style={{
                 color: isActive ? "#8B5FBF" : "#5A4D75",
-                backgroundColor: isActive ? "rgba(139, 95, 191, 0.08)" : "transparent"
+                backgroundColor: isActive
+                  ? "rgba(139, 95, 191, 0.08)"
+                  : "transparent",
               }}
               onMouseEnter={(e) => {
                 if (!isActive) {
@@ -142,7 +164,8 @@ const ScrolledDesktopNav: React.FC<ScrolledDesktopNavProps> = ({
                 <span
                   className="absolute left-0 -bottom-1.5 w-full h-0.5 rounded-full"
                   style={{
-                    background: "linear-gradient(90deg, #8B5FBF 0%, #E9B949 100%)",
+                    background:
+                      "linear-gradient(90deg, #8B5FBF 0%, #E9B949 100%)",
                   }}
                 ></span>
               )}
@@ -222,23 +245,33 @@ const ScrolledDesktopNav: React.FC<ScrolledDesktopNavProps> = ({
                             }
                             className="flex items-center justify-between w-full px-3 py-2 transition-colors duration-300 text-sm"
                             style={{
-                              color: activeScrolledDropdown === item.id || isActive ? "#8B5FBF" : "#5A4D75",
+                              color:
+                                activeScrolledDropdown === item.id || isActive
+                                  ? "#8B5FBF"
+                                  : "#5A4D75",
                               backgroundColor:
                                 activeScrolledDropdown === item.id
                                   ? "rgba(139, 95, 191, 0.08)"
                                   : "transparent",
                             }}
                             onMouseEnter={(e) => {
-                              if (activeScrolledDropdown !== item.id && !isActive) {
+                              if (
+                                activeScrolledDropdown !== item.id &&
+                                !isActive
+                              ) {
                                 e.currentTarget.style.color = "#8B5FBF";
                                 e.currentTarget.style.backgroundColor =
                                   "rgba(139, 95, 191, 0.08)";
                               }
                             }}
                             onMouseLeave={(e) => {
-                              if (activeScrolledDropdown !== item.id && !isActive) {
+                              if (
+                                activeScrolledDropdown !== item.id &&
+                                !isActive
+                              ) {
                                 e.currentTarget.style.color = "#5A4D75";
-                                e.currentTarget.style.backgroundColor = "transparent";
+                                e.currentTarget.style.backgroundColor =
+                                  "transparent";
                               }
                             }}
                           >
@@ -274,27 +307,35 @@ const ScrolledDesktopNav: React.FC<ScrolledDesktopNavProps> = ({
                                 {item.submenus
                                   .filter((sub) => sub.status === "VISIBLE")
                                   .map((submenu) => {
-                                    const isSubActive = isSubmenuItemActive(submenu.linkUrl);
-                                    
+                                    const isSubActive = isSubmenuItemActive(
+                                      submenu.linkUrl,
+                                    );
+
                                     return (
                                       <Link
                                         key={submenu.id}
                                         href={submenu.linkUrl}
                                         className="flex items-center space-x-2 px-3 py-2 transition-colors duration-300 text-sm"
-                                        style={{ 
-                                          color: isSubActive ? "#8B5FBF" : "#5A4D75",
-                                          backgroundColor: isSubActive ? "rgba(139, 95, 191, 0.08)" : "transparent"
+                                        style={{
+                                          color: isSubActive
+                                            ? "#8B5FBF"
+                                            : "#5A4D75",
+                                          backgroundColor: isSubActive
+                                            ? "rgba(139, 95, 191, 0.08)"
+                                            : "transparent",
                                         }}
                                         onMouseEnter={(e) => {
                                           if (!isSubActive) {
-                                            e.currentTarget.style.color = "#8B5FBF";
+                                            e.currentTarget.style.color =
+                                              "#8B5FBF";
                                             e.currentTarget.style.backgroundColor =
                                               "rgba(139, 95, 191, 0.08)";
                                           }
                                         }}
                                         onMouseLeave={(e) => {
                                           if (!isSubActive) {
-                                            e.currentTarget.style.color = "#5A4D75";
+                                            e.currentTarget.style.color =
+                                              "#5A4D75";
                                             e.currentTarget.style.backgroundColor =
                                               "transparent";
                                           }
@@ -325,9 +366,11 @@ const ScrolledDesktopNav: React.FC<ScrolledDesktopNavProps> = ({
                         key={item.id}
                         href={item.linkUrl}
                         className="flex items-center justify-between px-3 py-2 transition-colors duration-300 text-sm"
-                        style={{ 
+                        style={{
                           color: isActive ? "#8B5FBF" : "#5A4D75",
-                          backgroundColor: isActive ? "rgba(139, 95, 191, 0.08)" : "transparent"
+                          backgroundColor: isActive
+                            ? "rgba(139, 95, 191, 0.08)"
+                            : "transparent",
                         }}
                         onMouseEnter={(e) => {
                           if (!isActive) {
@@ -339,7 +382,8 @@ const ScrolledDesktopNav: React.FC<ScrolledDesktopNavProps> = ({
                         onMouseLeave={(e) => {
                           if (!isActive) {
                             e.currentTarget.style.color = "#5A4D75";
-                            e.currentTarget.style.backgroundColor = "transparent";
+                            e.currentTarget.style.backgroundColor =
+                              "transparent";
                           }
                         }}
                         onClick={closeAllDropdowns}
@@ -375,8 +419,10 @@ const ScrolledDesktopNav: React.FC<ScrolledDesktopNavProps> = ({
               }`}
               style={{
                 color: pathname === "/login" ? "#FFFFFF" : "#8B5FBF",
-                backgroundColor: pathname === "/login" ? "#8B5FBF" : "transparent",
-                borderColor: pathname === "/login" ? "#8B5FBF" : "rgba(139, 95, 191, 0.3)",
+                backgroundColor:
+                  pathname === "/login" ? "#8B5FBF" : "transparent",
+                borderColor:
+                  pathname === "/login" ? "#8B5FBF" : "rgba(139, 95, 191, 0.3)",
               }}
               onMouseEnter={(e) => {
                 if (pathname !== "/login") {
@@ -402,9 +448,10 @@ const ScrolledDesktopNav: React.FC<ScrolledDesktopNavProps> = ({
                 pathname === "/signup" ? "active-signup" : ""
               }`}
               style={{
-                background: pathname === "/signup" 
-                  ? "linear-gradient(135deg, #7A4FA8 0%, #D4A73A 100%)"
-                  : "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
+                background:
+                  pathname === "/signup"
+                    ? "linear-gradient(135deg, #7A4FA8 0%, #D4A73A 100%)"
+                    : "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
                 color: "#FFFFFF",
               }}
               onMouseEnter={(e) => {
