@@ -2,7 +2,8 @@
 export const COMPANY_OWNER = "Nipunika Sathsarani";
 export const COMPANY_NAME = "Felicita Trips";
 export const COMPANY_INFO_EMAIL = "felicitatrips@gmail.com";
-export const COMPANY_CONTACT_NUMBER = "0707076052";
+export const COMPANY_CONTACT_NUMBER = "+94 70 7076 052";
+export const COMPANY_EMERGENCY_CONTACT_NUMBER = "+94 70 7076 052";
 export const COMPANY_LOCATION = "Colombo, Sri Lanka";
 export const COMPANY_LONGITUDE = 79.9771391;
 export const COMPANY_LATITUDE = 6.9316342;

@@ -24,6 +24,7 @@ const PLAN_YOUR_TRIP = "/plan-your-trip";
 const EMPLOYEES = "/employees";
 const INQUIRY = "/inquiry";
 const OUR_STORY = "/our-story"
+const CONTACT_US = "/contact-us"
 
 // Link Bar
 export const GET_ACTIVE_LINK_BAR_DATA = `${API}${LINK_BAR}`;
@@ -130,6 +131,9 @@ export const GET_ACTIVE_FOOTER_DATA_FE = `${API}${FOOTER}/active`;
 
 // Our Story
 export const GET_OUR_STORY_DETAILS_DATA_FE = `${API}${OUR_STORY}/details`;
+
+// Contact Us
+export const GET_CONTACT_US_CONTACT_METHODS_DATA_FE = `${API}${CONTACT_US}/contact-methods`;
 
 // Employees
 export const GET_EMPLOYEE_DETAILS_BY_TOUR_ID_DATA_FE = `${API}${EMPLOYEES}/employees-details-by-tour-id`;

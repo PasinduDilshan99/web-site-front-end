@@ -1,24 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-
-interface ContactMethod {
-  id: number;
-  icon: string;
-  title: string;
-  value: string;
-  description: string | null;
-  link: string | null;
-  action: 'call' | 'email' | 'whatsapp' | 'location' | 'hours' | 'emergency';
-  highlight?: boolean;
-}
-
-interface ApiResponse {
-  code: number;
-  status: string;
-  message: string;
-  data: ContactMethod[];
-  timestamp: string;
-}
+import { ContactService } from '@/services/contactService'; // Import service
+import { ContactMethod } from '@/types/contact-types'; // Import types
 
 const ContactHighlights = () => {
   const [copied, setCopied] = useState<string | null>(null);
@@ -35,28 +18,14 @@ const ContactHighlights = () => {
       setLoading(true);
       setError(null);
       
-      const response = await fetch('http://localhost:8080/felicita/api/v0/contact-us/contact-methods', {
-        headers: {
-          'Cookie': 'token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXNpbmR1IiwidXNlcklkIjo0LCJ1c2VybmFtZSI6InBhc2luZHUiLCJpYXQiOjE3NjI2Njg5NjksImV4cCI6MTc2MjY2OTA4OX0.5wQ6QL3q2pvSoCEhDze6t_Aub3Vb8hlcMRQ3UQxu8yg'
-        }
-      });
+      // USING THE SERVICE INSTEAD OF DIRECT FETCH
+      const { data: methods, error } = await ContactService.fetchContactMethods();
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (error) {
+        throw new Error(error);
       }
 
-      const result: ApiResponse = await response.json();
-      
-      if (result.code === 200) {
-        // Add highlight property for emergency items
-        const methodsWithHighlight = result.data.map(method => ({
-          ...method,
-          highlight: method.action === 'emergency'
-        }));
-        setContactMethods(methodsWithHighlight);
-      } else {
-        throw new Error(result.message || 'Failed to fetch contact methods');
-      }
+      setContactMethods(methods || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
       console.error('Error fetching contact methods:', err);
@@ -273,10 +242,10 @@ const ContactHighlights = () => {
       <div className="container mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-4">
             Quick Contact Options
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+          <p className="text-gray-600 max-w-2xl mx-auto text-md lg:text-lg">
             Choose your preferred way to get in touch with our travel experts. 
             We&apos;re available through multiple channels for your convenience.
           </p>
@@ -284,11 +253,11 @@ const ContactHighlights = () => {
         </div>
 
         {/* Contact Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6 mb-8 sm:mb-10 md:mb-12">
           {contactMethods.map((method) => (
             <div
               key={method.id}
-              className={`relative rounded-xl p-6 transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
+              className={`relative rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${
                 method.highlight 
                   ? 'bg-gradient-to-br from-red-50 to-white border-2 border-red-200' 
                   : 'bg-white border border-gray-200'
@@ -296,15 +265,15 @@ const ContactHighlights = () => {
             >
               {/* Highlight Badge */}
               {method.highlight && (
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                  <span className="px-4 py-1 bg-red-500 text-white text-xs font-bold rounded-full animate-pulse">
+                <div className="absolute -top-2 sm:-top-3 left-1/2 transform -translate-x-1/2">
+                  <span className="px-3 sm:px-4 py-0.5 sm:py-1 bg-red-500 text-white text-xs font-bold rounded-full animate-pulse">
                     24/7 Available
                   </span>
                 </div>
               )}
               
               {/* Icon Container */}
-              <div className={`inline-flex p-4 rounded-2xl mb-4 ${
+              <div className={`inline-flex p-3 sm:p-3.5 md:p-4 rounded-xl sm:rounded-2xl mb-3 sm:mb-4 ${
                 method.highlight 
                   ? 'bg-red-100 text-red-600' 
                   : 'bg-teal-50 text-teal-600'
@@ -313,18 +282,18 @@ const ContactHighlights = () => {
               </div>
               
               {/* Title */}
-              <h3 className="text-xl font-bold text-gray-800 mb-2">{method.title}</h3>
+              <h3 className="text-base sm:text-lg md:text-xl font-bold text-gray-800 mb-2">{method.title}</h3>
               
               {/* Value */}
               <div className="mb-2">
-                <p className="text-lg font-semibold text-gray-900">{method.value}</p>
+                <p className="text-sm sm:text-base md:text-lg font-semibold text-gray-900">{method.value}</p>
                 {method.description && (
-                  <p className="text-gray-600 text-sm mt-1">{method.description}</p>
+                  <p className="text-gray-600 text-xs sm:text-sm mt-1">{method.description}</p>
                 )}
               </div>
               
               {/* Action Button */}
-              <div className="mt-6">
+              <div className="mt-4 sm:mt-5 md:mt-6">
                 {getActionButton(method)}
               </div>
             </div>
@@ -335,8 +304,8 @@ const ContactHighlights = () => {
         <div className="bg-gradient-to-r from-teal-500 to-blue-500 rounded-2xl p-6 md:p-8 text-white">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="mb-6 md:mb-0">
-              <h3 className="text-2xl font-bold mb-2">Need Immediate Assistance?</h3>
-              <p className="text-teal-100">
+              <h3 className="text-xl font-bold mb-2">Need Immediate Assistance?</h3>
+              <p className="text-teal-100 text-md lg:text-lg">
                 Our travel consultants are standing by to help you plan your perfect journey.
               </p>
             </div>

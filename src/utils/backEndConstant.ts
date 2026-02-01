@@ -32,6 +32,7 @@ const VEHICLES = "/vehicles";
 const EMPLOYEE = "/employee"
 const INQUIRY = "/inquiry"
 const OUR_STORY = "/our-story"
+const CONTACT_US = "/contact-us"
 
 export const BASE_PATH = `${PROTOCOL}://${DOMAIN}:${PORT}/${CONTEXT_ROOT}`;
 
@@ -142,6 +143,9 @@ export const GET_ACTIVE_FOOTER_DATA = `${BASE_PATH}${API}${VERSION}${FOOTER}/act
 
 // Our Story
 export const GET_OUR_STORY_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${OUR_STORY}/details`;
+
+// Contact Us
+export const GET_CONTACT_US_CONTACT_METHODS_DATA = `${BASE_PATH}${API}${VERSION}${CONTACT_US}/contact-methods`;
 
 // Employees
 export const GET_EMPLOYEE_DETAILS_BY_TOUR_ID_DATA = `${BASE_PATH}${API}${VERSION}${EMPLOYEE}/employee-details`;

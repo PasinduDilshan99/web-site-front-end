@@ -1,6 +1,7 @@
 "use client";
 import { HeroSectionService } from "@/services/heroSectionService";
 import { ContactUsHeroData } from "@/types/hero-section-types";
+import { COMPANY_EMERGENCY_CONTACT_NUMBER } from "@/utils/constant";
 import React, { useState, useEffect } from "react";
 
 const ContactUsHeroSection = () => {
@@ -219,7 +220,7 @@ const ContactUsHeroSection = () => {
             </div>
 
             {/* Quick Contact Info */}
-            <div className="flex flex-wrap gap-4">
+            <div className="hidden lg:flex flex-wrap gap-4">
               <div className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
                 <svg className="w-5 h-5 text-teal-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -321,12 +322,12 @@ const ContactUsHeroSection = () => {
       )}
 
       {/* Emergency Contact Badge */}
-      <div className="absolute top-6 right-6">
+      <div className="absolute top-6 right-6 hidden lg:flex">
         <div className="flex items-center gap-2 px-4 py-2 bg-red-500/20 backdrop-blur-sm rounded-full border border-red-400/30">
           <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
           <span className="text-sm font-medium text-white">
             <a href="tel:+94771234567" className="hover:text-red-200 transition-colors">
-              Emergency: +94 77 123 4567
+              Emergency: {COMPANY_EMERGENCY_CONTACT_NUMBER}
             </a>
           </span>
         </div>

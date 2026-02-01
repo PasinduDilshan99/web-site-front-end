@@ -1,6 +1,3 @@
-import Footer from "@/app/components/footer/Footer";
-import LinkBar from "@/components/common-components/linkBar/LinkBar";
-import NavBar from "@/components/common-components/navBar/NavBar";
 import BusinessInformation from "@/components/contact-us-components/BusinessInformation";
 import CallToAction from "@/components/contact-us-components/CallToAction";
 import ContactForm from "@/components/contact-us-components/ContactForm";
@@ -26,12 +23,12 @@ const ContactUsPage = () => {
       {/* <div>
         <ContactUsOffice />
       </div> */}
-      <div>
+      {/* <div>
         <BusinessInformation />
-      </div>
-      <div>
+      </div> */}
+      {/* <div>
         <ContactUsSocialMedia />
-      </div>
+      </div> */}
       {/* <div>
         <Faq />
       </div> */}
