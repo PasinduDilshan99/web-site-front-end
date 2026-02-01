@@ -1,9 +1,9 @@
-import { GET_ALL_FAQ_DATA } from "@/utils/backEndConstant";
+import { GET_FAQ_OPTIONS_DATA } from "@/utils/backEndConstant";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const response = await fetch(GET_ALL_FAQ_DATA, {
+    const response = await fetch(GET_FAQ_OPTIONS_DATA, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

@@ -1,62 +1,17 @@
 "use client";
 import { useState, useEffect } from "react";
-
-interface ContactSupportModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-interface Option {
-  optionId: number;
-  optionKey: string;
-  optionValue: string;
-  optionType: string;
-  optionTypeDescription: string;
-  optionDescription: string;
-  commonStatusName: string;
-  createdAt: string;
-  updatedAt: string;
-  createdBy: number;
-  updatedBy: number | null;
-}
-
-interface ApiResponse {
-  code: number;
-  status: string;
-  message: string;
-  data: Option[];
-  timestamp: string;
-}
-
-interface ValidationError {
-  id: number;
-  field: string;
-  value: string;
-}
-
-interface InsertFAQSuccessResponseType {
-  code: number;
-  status: string;
-  message: string;
-  data: {
-    message: string;
-  };
-  timestamp: string;
-}
-
-interface InsertFAQErrorResponseType {
-  code: number;
-  status: string;
-  message: string;
-  data: ValidationError[];
-  timestamp: string;
-}
+import { FaqService } from "@/services/faqService"; // Import service
+import { 
+  ContactSupportModalProps, 
+  ContactSupportFormData, 
+  ValidationError 
+} from "@/types/faq-types"; // Import types
 
 export const ContactSupportModal = ({
   isOpen,
   onClose,
 }: ContactSupportModalProps) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ContactSupportFormData>({
     name: "",
     email: "",
     subject: "",
@@ -76,57 +31,29 @@ export const ContactSupportModal = ({
     setMounted(true);
   }, []);
 
-  // Fetch categories from API
+  // Fetch categories from API using service
   useEffect(() => {
     const fetchCategories = async () => {
       if (!isOpen) return;
 
       setIsLoadingCategories(true);
       try {
-        const response = await fetch(
-          "http://localhost:8080/felicita/v0/api/faq/options"
-        );
-        const result: ApiResponse = await response.json();
+        // USING THE SERVICE INSTEAD OF DIRECT FETCH
+        const { categories: fetchedCategories, responseTime: fetchedResponseTime, error } = 
+          await FaqService.fetchContactOptions();
 
-        if (result.code === 200 && result.data) {
-          // Find the contact_form_categories option
-          const categoriesOption = result.data.find(
-            (option) => option.optionKey === "contact_form_categories"
-          );
-          const responseTimeOption = result.data.find(
-            (option) => option.optionKey === "response_time_hours"
-          );
-
-          if (categoriesOption && categoriesOption.optionValue) {
-            try {
-              const parsedCategories = JSON.parse(categoriesOption.optionValue);
-              if (
-                Array.isArray(parsedCategories) &&
-                parsedCategories.length > 0
-              ) {
-                setCategories(parsedCategories);
-                // Set default category to first available category
-                setFormData((prev) => ({
-                  ...prev,
-                  category: parsedCategories[0],
-                }));
-              }
-            } catch (error) {
-              console.error("Error parsing categories:", error);
-              // Fallback to default categories if parsing fails
-              setCategories([
-                "general",
-                "technical",
-                "billing",
-                "feature",
-                "bug",
-              ]);
-            }
-          }
-
-          if (responseTimeOption) {
-            setResponseTime(responseTimeOption.optionValue);
-          }
+        if (error) {
+          console.error("Error fetching categories:", error);
+          // Fallback to default categories if API fails
+          setCategories(["general", "technical", "billing", "feature", "bug"]);
+        } else {
+          setCategories(fetchedCategories);
+          setResponseTime(fetchedResponseTime);
+          // Set default category to first available category
+          setFormData((prev) => ({
+            ...prev,
+            category: fetchedCategories[0] || "general",
+          }));
         }
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -178,31 +105,23 @@ export const ContactSupportModal = ({
     setSuccessMessage("");
 
     try {
-      const response = await fetch("/api/faq/insert-faq-request", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ticketNumber: "",
-          name: formData.name,
-          email: formData.email,
-          category: formData.category,
-          subject: formData.subject,
-          message: formData.message,
-          ipAddress: "192.168.0.1", // You might want to get the actual IP address
-          userId: 1, // You might want to get the actual user ID from your auth system
-        }),
-      });
+      // Prepare form data for API
+      const requestData = {
+        ticketNumber: "",
+        name: formData.name,
+        email: formData.email,
+        category: formData.category,
+        subject: formData.subject,
+        message: formData.message,
+        ipAddress: "192.168.0.1", // You might want to get the actual IP address
+        userId: 1, // You might want to get the actual user ID from your auth system
+      };
 
-      const result = await response.json();
+      // USING THE SERVICE INSTEAD OF DIRECT FETCH
+      const result = await FaqService.submitContactRequest(requestData);
 
-      if (response.ok) {
-        // Success case
-        const successData = result as InsertFAQSuccessResponseType;
-        setSuccessMessage(
-          successData.data.message || "Message sent successfully!"
-        );
+      if (result.success) {
+        setSuccessMessage(result.message || "Message sent successfully!");
 
         // Reset form
         setFormData({
@@ -218,13 +137,9 @@ export const ContactSupportModal = ({
           onClose();
         }, 2000);
       } else {
-        // Error cases
-        if (Array.isArray(result.data)) {
-          // Validation errors (400 status)
-          const errorData = result as InsertFAQErrorResponseType;
-          setErrors(errorData.data);
+        if (result.errors) {
+          setErrors(result.errors);
         } else {
-          // Generic errors
           setErrors([
             {
               id: 0,

@@ -62,3 +62,61 @@ export interface InsertFAQErrorResponseType {
 export interface GenericErrorResponseType {
   error: string;
 }
+
+export interface UpdateViewCountRequest {
+  faqId: number;
+}
+
+export interface FaqApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: FaqItem[];
+  timestamp: string;
+}
+
+export interface UpdateViewCountResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: {
+    faqId: number;
+    viewCount: number;
+  };
+  timestamp: string;
+}
+
+export interface Option {
+  optionId: number;
+  optionKey: string;
+  optionValue: string;
+  optionType: string;
+  optionTypeDescription: string;
+  optionDescription: string;
+  commonStatusName: string;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: number;
+  updatedBy: number | null;
+}
+
+export interface OptionsApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: Option[];
+  timestamp: string;
+}
+
+export interface ContactSupportModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export interface ContactSupportFormData {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  category: string;
+}

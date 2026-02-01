@@ -138,9 +138,16 @@ export const GET_CONTACT_US_CONTACT_METHODS_DATA_FE = `${API}${CONTACT_US}/conta
 // Employees
 export const GET_EMPLOYEE_DETAILS_BY_TOUR_ID_DATA_FE = `${API}${EMPLOYEES}/employees-details-by-tour-id`;
 
+// FAQ
+export const GET_ALL_FAQ_DATA_FE = `${API}${FAQ}`;
+export const GET_ACTIVE_FAQ_DATA_FE = `${API}${FAQ}/active`;
+export const UPDATE_FAQ_VIEW_COUNT_DATA_FE = `${API}${FAQ}/update-view-count`;
+export const GET_FAQ_OPTIONS_DATA_FE =`${API}${FAQ}/options`;
+export const ADD_FAQ_REQUEST_DATA_FE = `${API}${FAQ}/insert-faq-request`;
+
+
 export const GET_TOUR_DETAILS_BY_ID_FE = `${API}${TOUR}/details-by-id`;
 
-export const GET_ALL_FAQ_DATA = `${API}${FAQ}`;
 
 export const GET_ALL_PARTNERS = `${API}${PARTNERS}`;
 
@@ -160,9 +167,6 @@ export const GET_ACTIVE_ACTIVITIES_CATEGORIES_FE = `${API}${ACTIVITIES}/categori
 export const GET_PLAN_YOUR_TRIP_ACTIVE_DESTINATIONS_FE = `${API}${PLAN_YOUR_TRIP}`;
 export const GET_PLAN_YOUR_TRIP_DESTINATIONS_TOURS_FE = `${API}${PLAN_YOUR_TRIP}/map`;
 
-// FAQ
-export const UPDATE_FAQ_VIEW_COUNT = `${API}${FAQ}/update-view-count`;
-export const INSERT_FAQ_REQUEST_FE = `${API}${FAQ}/insert-faq-request`;
 
 // Accommodations
 export const GET_AVAILABLE_ACCOMMODATION = `${API}${ACCOMMODATION}`;

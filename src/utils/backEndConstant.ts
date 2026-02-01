@@ -147,6 +147,13 @@ export const GET_OUR_STORY_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${OUR_STO
 // Contact Us
 export const GET_CONTACT_US_CONTACT_METHODS_DATA = `${BASE_PATH}${API}${VERSION}${CONTACT_US}/contact-methods`;
 
+// FAQ
+export const GET_ALL_FAQ_DATA = `${BASE_PATH}${API}${VERSION}${FAQ}/all`;
+export const GET_ACTIVE_FAQ_DATA = `${BASE_PATH}${API}${VERSION}${FAQ}/active`;
+export const UPDATE_FAQ_VIEW_COUNT_DATA = `${BASE_PATH}${API}${VERSION}${FAQ}/view-count`;
+export const GET_FAQ_OPTIONS_DATA = `${BASE_PATH}${API}${VERSION}${FAQ}/options`;
+export const ADD_FAQ_REQUEST_DATA = `${BASE_PATH}${API}${VERSION}${FAQ}/insert-faq-request`;
+
 // Employees
 export const GET_EMPLOYEE_DETAILS_BY_TOUR_ID_DATA = `${BASE_PATH}${API}${VERSION}${EMPLOYEE}/employee-details`;
 
@@ -154,7 +161,6 @@ export const GET_EMPLOYEE_DETAILS_BY_TOUR_ID_DATA = `${BASE_PATH}${API}${VERSION
 export const GET_TOUR_DETAILS_BY_ID_BE = `${BASE_PATH}${VERSION}${API}${TOUR}`;
 
 
-export const UPDATE_FAQ_VIEW_COUNT = `${BASE_PATH}${VERSION}${API}${FAQ}/view-count`;
 
 export const GET_VISIBLE_PARTNERS = `${BASE_PATH}${VERSION}${API}${PARTNERS}/visible`;
 
@@ -178,9 +184,7 @@ export const GET_ALL_ACTIVE_PROMOTIONS_BE = `${BASE_PATH}${API}${VERSION}${PROMO
 export const GET_PLAN_YOUR_TRIP_ACTIVE_DESTINATIONS = `${BASE_PATH}${API}${VERSION}${PLAN_YOUR_TRIP}/active`;
 export const GET_PLAN_YOUR_TRIP_DESTINATIONS_TOURS = `${BASE_PATH}${API}${VERSION}${PLAN_YOUR_TRIP}/tours`;
 
-// FAQ
-export const GET_VISIBLE_FAQ_DATA = `${BASE_PATH}${VERSION}${API}${FAQ}/visible`;
-export const INSERT_FAQ_REQUEST = `${BASE_PATH}${VERSION}${API}${FAQ}/insert-faq-request`;
+
 
 // Accommodations
 export const GET_AVAILABLE_ACCOMMODATION = `${BASE_PATH}${VERSION}${API}${ACCOMMODATION}/available`;
