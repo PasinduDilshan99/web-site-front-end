@@ -1,14 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { TourDetails } from "@/types/package-types";
+import { ActivityData, ActivityImage } from "@/types/activity-types";
 
-interface SLTourDetailsHeroSectionProps {
-  tour: TourDetails;
+interface ActivityDetailsHeroSectionProps {
+  activity: ActivityData;
 }
 
-const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
-  tour,
+const ActivityDetailsHeroSection: React.FC<ActivityDetailsHeroSectionProps> = ({
+  activity,
 }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
@@ -16,14 +16,14 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
 
   // Auto-play functionality for image slider
   useEffect(() => {
-    if (!isAutoPlaying || tour.images.length <= 1) return;
+    if (!isAutoPlaying || activity.images.length <= 1) return;
 
     const interval = setInterval(() => {
-      setSelectedImageIndex((prev) => (prev + 1) % tour.images.length);
+      setSelectedImageIndex((prev) => (prev + 1) % activity.images.length);
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [isAutoPlaying, tour.images.length]);
+  }, [isAutoPlaying, activity.images.length]);
 
   const goToSlide = (index: number) => {
     setSelectedImageIndex(index);
@@ -32,54 +32,54 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
   };
 
   const nextSlide = () => {
-    setSelectedImageIndex((prev) => (prev + 1) % tour.images.length);
+    setSelectedImageIndex((prev) => (prev + 1) % activity.images.length);
     setIsAutoPlaying(false);
     setTimeout(() => setIsAutoPlaying(true), 10000);
   };
 
   const prevSlide = () => {
     setSelectedImageIndex(
-      (prev) => (prev - 1 + tour.images.length) % tour.images.length
+      (prev) => (prev - 1 + activity.images.length) % activity.images.length
     );
     setIsAutoPlaying(false);
     setTimeout(() => setIsAutoPlaying(true), 10000);
   };
 
   const getFallbackImage = () => {
-    return "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80";
+    return "https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80";
   };
 
-  if (!tour.images.length) {
+  if (!activity.images.length) {
     return (
-      <div className="relative h-96 bg-gradient-to-r from-amber-600 to-purple-600 flex items-center justify-center">
+      <div className="relative h-96 bg-gradient-to-r from-blue-600 to-amber-600 flex items-center justify-center">
         <div className="absolute bottom-0 left-0 right-0 p-6 text-white bg-gradient-to-t from-black/60 to-transparent">
           <div className="max-w-7xl mx-auto">
-            <h1 className="text-4xl font-bold mb-2">{tour.tourName}</h1>
-            <p className="text-xl opacity-90">{tour.tourDescription}</p>
+            <h1 className="text-4xl font-bold mb-2">{activity.name}</h1>
+            <p className="text-xl opacity-90">{activity.description}</p>
           </div>
         </div>
       </div>
     );
   }
 
-  const currentImage = tour.images[selectedImageIndex];
+  const currentImage = activity.images[selectedImageIndex];
 
   return (
     <>
       {/* Hero Section with Slider */}
-      <div className="relative h-[500px] md:h-[600px] overflow-hidden bg-gradient-to-r from-amber-600 to-purple-600">
+      <div className="relative h-[500px] md:h-[600px] overflow-hidden bg-gradient-to-r from-blue-600 to-amber-600">
         {/* Image Slider */}
         <div className="relative w-full h-full">
-          {tour.images.map((image, index) => (
+          {activity.images.map((image, index) => (
             <div
-              key={image.imageId}
+              key={image.id}
               className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
                 index === selectedImageIndex ? "opacity-100" : "opacity-0"
               }`}
             >
               <Image
-                src={image.imageUrl}
-                alt={image.imageName}
+                src={image.image_url}
+                alt={image.name || `Activity image ${index + 1}`}
                 className="w-full h-full object-cover"
                 width={2000}
                 height={1200}
@@ -100,66 +100,74 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
         <div className="absolute inset-0 flex items-end">
           <div className="container mx-auto px-4 md:px-6 lg:px-8 pb-12">
             <div className="max-w-4xl text-white">
-              {/* Tour Category Badge */}
+              {/* Activity Category Badge */}
               <div className="mb-4 flex flex-wrap gap-3">
+                <span className="px-4 py-2 bg-blue-500/90 backdrop-blur-sm rounded-full text-sm font-semibold">
+                  {activity.category_name}
+                </span>
                 <span className="px-4 py-2 bg-amber-500/90 backdrop-blur-sm rounded-full text-sm font-semibold">
-                  {tour.tourCategoryName}
+                  {activity.season}
                 </span>
-                <span className="px-4 py-2 bg-purple-500/90 backdrop-blur-sm rounded-full text-sm font-semibold">
-                  {tour.tourTypeName}
-                </span>
-                <span className="px-4 py-2 bg-blue-500/90 backdrop-blur-sm rounded-full text-sm font-semibold flex items-center gap-2">
+                <span className="px-4 py-2 bg-green-500/90 backdrop-blur-sm rounded-full text-sm font-semibold flex items-center gap-2">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  {tour.duration} Days
+                  {activity.duration_hours} Hours
+                </span>
+                <span className="px-4 py-2 bg-purple-500/90 backdrop-blur-sm rounded-full text-sm font-semibold">
+                  {activity.status}
                 </span>
               </div>
 
-              {/* Tour Title and Description */}
+              {/* Activity Title and Description */}
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
-                {tour.tourName}
+                {activity.name}
               </h1>
               
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 max-w-3xl mb-6">
                 <p className="text-lg md:text-xl text-gray-100 leading-relaxed mb-4">
-                  {tour.tourDescription}
+                  {activity.description}
                 </p>
 
-                {/* Tour Info */}
+                {/* Activity Info */}
                 <div className="flex flex-wrap gap-4 text-sm">
                   <div className="flex items-center gap-2">
-                    <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span className="font-medium">{tour.startLocation} → {tour.endLocation}</span>
+                    <span className="font-medium">{activity.duration_hours} Hours Duration</span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  {/* <div className="flex items-center gap-2">
                     <svg className="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span className="font-medium">{tour.seasonName}</span>
-                  </div>
-                  {tour.schedules && tour.schedules.length > 0 && (
+                    <span className="font-medium">Local: ${activity.price_local} | Foreigner: ${activity.price_foreigners}</span>
+                  </div> */}
+                  {/* {activity.schedules && activity.schedules.length > 0 && (
                     <div className="flex items-center gap-2">
-                      <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
-                      <span className="font-medium">{tour.schedules.length} Available Schedules</span>
+                      <span className="font-medium">{activity.schedules.length} Available Schedules</span>
                     </div>
-                  )}
+                  )} */}
+                  <div className="flex items-center gap-2">
+                    <svg className="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span className="font-medium">{activity.min_participate} - {activity.max_participate} Participants</span>
+                  </div>
                 </div>
               </div>
 
               {/* Image Counter */}
-              {tour.images.length > 1 && (
+              {activity.images.length > 1 && (
                 <div className="flex items-center gap-2 px-4 py-2 bg-black/40 backdrop-blur-sm rounded-full inline-flex">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                   <span className="text-sm font-medium">
-                    {selectedImageIndex + 1} / {tour.images.length}
+                    {selectedImageIndex + 1} / {activity.images.length}
                   </span>
                 </div>
               )}
@@ -168,7 +176,7 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
         </div>
 
         {/* Navigation Arrows */}
-        {tour.images.length > 1 && (
+        {activity.images.length > 1 && (
           <div className="hidden md:flex">
             <button
               onClick={prevSlide}
@@ -213,9 +221,9 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
         )}
 
         {/* Slide Indicators */}
-        {tour.images.length > 1 && (
+        {activity.images.length > 1 && (
           <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3">
-            {tour.images.map((_, index) => (
+            {activity.images.map((_, index) => (
               <button
                 key={index}
                 onClick={() => goToSlide(index)}
@@ -231,12 +239,12 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
         )}
 
         {/* Progress Bar */}
-        {tour.images.length > 1 && (
+        {activity.images.length > 1 && (
           <div className="absolute bottom-0 left-0 w-full h-1 bg-white/10">
             <div
-              className="h-full bg-gradient-to-r from-amber-400 to-purple-400 transition-all duration-300"
+              className="h-full bg-gradient-to-r from-blue-400 to-amber-400 transition-all duration-300"
               style={{
-                width: `${((selectedImageIndex + 1) / tour.images.length) * 100}%`,
+                width: `${((selectedImageIndex + 1) / activity.images.length) * 100}%`,
               }}
             />
           </div>
@@ -244,22 +252,22 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
       </div>
 
       {/* Image Thumbnails */}
-      {tour.images.length > 1 && (
+      {/* {activity.images.length > 1 && (
         <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-amber-500 scrollbar-track-gray-200">
-            {tour.images.map((image, index) => (
+          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-200">
+            {activity.images.map((image, index) => (
               <button
-                key={image.imageId}
+                key={image.id}
                 onClick={() => goToSlide(index)}
                 className={`relative flex-shrink-0 w-28 h-28 rounded-lg overflow-hidden border-2 transition-all duration-300 ${
                   selectedImageIndex === index
-                    ? "border-amber-500 ring-4 ring-amber-200 scale-105"
-                    : "border-gray-300 hover:border-purple-400 hover:scale-105"
+                    ? "border-blue-500 ring-4 ring-blue-200 scale-105"
+                    : "border-gray-300 hover:border-amber-400 hover:scale-105"
                 }`}
               >
                 <img
-                  src={image.imageUrl}
-                  alt={image.imageName}
+                  src={image.image_url}
+                  alt={image.name || `Activity thumbnail ${index + 1}`}
                   className="w-full h-full object-cover"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
@@ -267,24 +275,24 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
                   }}
                 />
                 {selectedImageIndex === index && (
-                  <div className="absolute inset-0 bg-amber-500/20 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-blue-500/20 flex items-center justify-center">
                     <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
                   </div>
                 )}
-                {image.imageName && (
+                {image.name && (
                   <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-1 text-center truncate">
-                    {image.imageName}
+                    {image.name}
                   </div>
                 )}
               </button>
             ))}
           </div>
         </div>
-      )}
+      )} */}
     </>
   );
 };
 
-export default SLTourDetailsHeroSection;
+export default ActivityDetailsHeroSection;

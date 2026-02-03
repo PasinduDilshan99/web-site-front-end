@@ -29,7 +29,7 @@ export default function RootLayout({
           <NavBar />
           <main >{children}</main>
           <Footer />
-          {/* <ChatBot /> */}
+          <ChatBot />
         </AuthProvider>
       </body>
     </html>

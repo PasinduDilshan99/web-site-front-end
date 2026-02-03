@@ -20,7 +20,7 @@ const ActivityKeyInfo: React.FC<ActivityKeyInfoProps> = ({ activity }) => {
 
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6">
-      <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+      <h2 className="text-lg lg:text-xl font-bold text-gray-900 mb-4 flex items-center">
         <span className="w-2 h-2 bg-amber-500 rounded-full mr-2"></span>
         Key Information
       </h2>

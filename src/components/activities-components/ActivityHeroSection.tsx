@@ -180,7 +180,7 @@ const ActivityHeroSection = () => {
   const currentDifficulty = getActivityDifficulty(currentSlideData);
 
   return (
-    <div className="relative w-full h-[800px] overflow-hidden bg-gradient-to-br from-purple-900 via-indigo-800 to-blue-800">
+    <div className="relative w-full h-[650px] lg:h-[800px] overflow-hidden bg-gradient-to-br from-purple-900 via-indigo-800 to-blue-800">
       {/* Image Slider */}
       <div className="relative w-full h-full">
         {heroData.map((item, index) => (
@@ -209,28 +209,28 @@ const ActivityHeroSection = () => {
       </div>
 
       {/* Activity Badge */}
-      <div className="absolute top-6 left-6">
+      {/* <div className="absolute top-6 left-6">
         <div className="flex items-center gap-2 px-4 py-2 bg-purple-500/20 backdrop-blur-sm rounded-full border border-purple-400/30">
           <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
           <span className="text-sm font-medium text-white">
             <span className="text-purple-200 font-bold">{heroData.length}</span> Activities Available
           </span>
         </div>
-      </div>
+      </div> */}
 
       {/* Slide Counter */}
       {filteredActivities.length > 1 && (
-        <div className="absolute top-28 right-6 text-white/70 text-sm backdrop-blur-sm bg-black/20 px-3 py-1 rounded-full">
+        <div className="absolute top-12 lg:top-28 right-6 text-white/70 text-sm backdrop-blur-sm bg-black/20 px-3 py-1 rounded-full">
           {currentSlide + 1} / {filteredActivities.length}
         </div>
       )}
 
       {/* Content Overlay */}
-      <div className="absolute inset-0 flex items-center pt-20">
+      <div className="absolute inset-0 flex items-center pt-12 lg:pt-20">
         <div className="container mx-auto px-4 md:px-6 lg:px-8">
           <div className="max-w-5xl text-white mx-auto">
             {/* Activity Info Badge */}
-            <div className="flex gap-3 mb-6 flex-wrap">
+            <div className="hidden lg:flex gap-3 mb-6 flex-wrap">
               <div className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 flex items-center gap-2">
                 <svg
                   className={`w-4 h-4 ${
@@ -285,13 +285,13 @@ const ActivityHeroSection = () => {
             </div>
 
             <div className="mb-8">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight tracking-tight">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight tracking-tight">
                 {currentSlideData.title || "Experience Sri Lanka"}
               </h1>
 
               {currentSlideData.subtitle && (
                 <div className="mb-6">
-                  <h2 className="text-2xl md:text-3xl font-semibold mb-3 text-purple-200">
+                  <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold mb-3 text-purple-200">
                     {currentSlideData.subtitle}
                   </h2>
                   <div className="w-20 h-1 bg-purple-400 rounded-full"></div>
@@ -300,7 +300,7 @@ const ActivityHeroSection = () => {
             </div>
 
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 md:p-8 max-w-3xl mb-8 border border-white/20 shadow-2xl">
-              <p className="text-lg md:text-xl mb-6 text-gray-100 leading-relaxed">
+              <p className="text-mf md:text-lg lg:text-xl mb-6 text-gray-100 leading-relaxed">
                 {currentSlideData.description ||
                   "Discover unforgettable experiences across Sri Lanka. From adventurous hikes to cultural tours, we offer activities for every type of traveler."}
               </p>
@@ -359,7 +359,7 @@ const ActivityHeroSection = () => {
             </div>
 
             {/* Activity Features */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="lg:grid grid-cols-1 md:grid-cols-3 gap-4 hidden">
               <div className="flex items-center gap-3 px-5 py-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 hover:bg-white/15 transition-all duration-300">
                 <div className="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center">
                   <svg
@@ -433,7 +433,7 @@ const ActivityHeroSection = () => {
         <>
           <button
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group md:left-6"
+            className="hidden lg:flex absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group md:left-6"
             aria-label="Previous slide"
           >
             <svg
@@ -453,7 +453,7 @@ const ActivityHeroSection = () => {
 
           <button
             onClick={nextSlide}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group md:right-6"
+            className="hidden lg:flex absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group md:right-6"
             aria-label="Next slide"
           >
             <svg
@@ -504,7 +504,7 @@ const ActivityHeroSection = () => {
       )}
 
       {/* Quick Actions */}
-      <div className="absolute bottom-28 right-6 hidden md:block">
+      {/* <div className="absolute bottom-28 right-6 hidden md:block">
         <div className="flex flex-col gap-2">
           <button
             onClick={() => window.location.href = "/activities/bundles"}
@@ -545,7 +545,7 @@ const ActivityHeroSection = () => {
             Family Activities
           </button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
