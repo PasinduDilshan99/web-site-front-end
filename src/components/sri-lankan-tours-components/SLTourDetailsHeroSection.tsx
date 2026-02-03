@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { TourDetails } from "@/types/packages-types";
+import { TourDetails } from "@/types/package-types";
 
 interface SLTourDetailsHeroSectionProps {
   tour: TourDetails;

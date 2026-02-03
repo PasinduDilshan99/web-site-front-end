@@ -8,23 +8,34 @@ import ReviewsSection from "@/components/activities-components/ReviewsSection";
 import ActivityHistorySection from "@/components/activities-components/ActivityHistorySection";
 import ActivityHistoryGallery from "@/components/activities-components/ActivityHistoryGallery";
 import ActivityHeroSection from "@/components/activities-components/ActivityHeroSection";
-import { ActiveActivitiesType, ActivityFilters, ActivityHistory, ActivityHistoryImage, Review } from "@/types/activity-types";
+import {
+  ActiveActivitiesType,
+  ActivityFilters,
+  ActivityHistory,
+  ActivityHistoryImage,
+  Review,
+} from "@/types/activity-types";
 import { ActivityService } from "@/services/activityService";
-
+import SectionHeader from "@/components/common-components/section-header/SectionHeader";
 
 const ActivityPage: React.FC = () => {
   const [activities, setActivities] = useState<ActiveActivitiesType[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [histories, setHistories] = useState<ActivityHistory[]>([]);
-  const [historyImages, setHistoryImages] = useState<ActivityHistoryImage[]>([]);
+  const [historyImages, setHistoryImages] = useState<ActivityHistoryImage[]>(
+    [],
+  );
   const [loading, setLoading] = useState<boolean>(true);
   const [reviewsLoading, setReviewsLoading] = useState<boolean>(true);
   const [historyLoading, setHistoryLoading] = useState<boolean>(true);
-  const [historyImagesLoading, setHistoryImagesLoading] = useState<boolean>(true);
+  const [historyImagesLoading, setHistoryImagesLoading] =
+    useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [reviewsError, setReviewsError] = useState<string | null>(null);
   const [historyError, setHistoryError] = useState<string | null>(null);
-  const [historyImagesError, setHistoryImagesError] = useState<string | null>(null);
+  const [historyImagesError, setHistoryImagesError] = useState<string | null>(
+    null,
+  );
 
   // Filter states
   const [filters, setFilters] = useState<ActivityFilters>({
@@ -57,15 +68,15 @@ const ActivityPage: React.FC = () => {
   // Fetch filter options (initial data)
   const fetchFilterOptions = useCallback(async (): Promise<void> => {
     try {
-      const { 
-        categories: categoriesList, 
-        seasons: seasonsList, 
-        durations: durationsList, 
-        participantsOptions: participantsList, 
-        statuses: statusesList, 
-        error 
+      const {
+        categories: categoriesList,
+        seasons: seasonsList,
+        durations: durationsList,
+        participantsOptions: participantsList,
+        statuses: statusesList,
+        error,
       } = await ActivityService.fetchFilterOptions();
-      
+
       if (error) {
         console.error("Error fetching filter options:", error);
       } else {
@@ -84,17 +95,20 @@ const ActivityPage: React.FC = () => {
   const fetchActivitiesWithFilters = useCallback(async (): Promise<void> => {
     try {
       setLoading(true);
-      
+
       // Prepare API request using service helper
       const requestBody = ActivityService.buildSearchRequest(filters);
-      
+
       // USING THE SERVICE INSTEAD OF DIRECT FETCH
-      const { activities: fetchedActivities, totalActivities: total, error } = 
-        await ActivityService.fetchActivitiesWithFilters(
-          requestBody,
-          itemsPerPage,
-          currentPage
-        );
+      const {
+        activities: fetchedActivities,
+        totalActivities: total,
+        error,
+      } = await ActivityService.fetchActivitiesWithFilters(
+        requestBody,
+        itemsPerPage,
+        currentPage,
+      );
 
       if (error) {
         setError(error);
@@ -126,7 +140,7 @@ const ActivityPage: React.FC = () => {
         setError(err instanceof Error ? err.message : "An error occurred");
       }
     };
-    
+
     fetchInitialData();
   }, []); // Empty dependency array - runs only once on mount
 
@@ -158,9 +172,10 @@ const ActivityPage: React.FC = () => {
     try {
       setHistoryImagesLoading(true);
       setHistoryImagesError(null);
-      
+
       // USING THE SERVICE INSTEAD OF DIRECT FETCH
-      const { historyImages: fetchedImages, error } = await ActivityService.fetchActivityHistoryImages();
+      const { historyImages: fetchedImages, error } =
+        await ActivityService.fetchActivityHistoryImages();
 
       if (error) {
         setHistoryImagesError(error);
@@ -170,7 +185,7 @@ const ActivityPage: React.FC = () => {
       }
     } catch (err) {
       setHistoryImagesError(
-        err instanceof Error ? err.message : "Failed to load activity images"
+        err instanceof Error ? err.message : "Failed to load activity images",
       );
     } finally {
       setHistoryImagesLoading(false);
@@ -181,9 +196,10 @@ const ActivityPage: React.FC = () => {
     try {
       setReviewsLoading(true);
       setReviewsError(null);
-      
+
       // USING THE SERVICE INSTEAD OF DIRECT FETCH
-      const { reviews: fetchedReviews, error } = await ActivityService.fetchReviews();
+      const { reviews: fetchedReviews, error } =
+        await ActivityService.fetchReviews();
 
       if (error) {
         setReviewsError(error);
@@ -193,7 +209,7 @@ const ActivityPage: React.FC = () => {
       }
     } catch (err) {
       setReviewsError(
-        err instanceof Error ? err.message : "Failed to load reviews"
+        err instanceof Error ? err.message : "Failed to load reviews",
       );
     } finally {
       setReviewsLoading(false);
@@ -204,9 +220,10 @@ const ActivityPage: React.FC = () => {
     try {
       setHistoryLoading(true);
       setHistoryError(null);
-      
+
       // USING THE SERVICE INSTEAD OF DIRECT FETCH
-      const { histories: fetchedHistories, error } = await ActivityService.fetchActivityHistory();
+      const { histories: fetchedHistories, error } =
+        await ActivityService.fetchActivityHistory();
 
       if (error) {
         setHistoryError(error);
@@ -216,7 +233,7 @@ const ActivityPage: React.FC = () => {
       }
     } catch (err) {
       setHistoryError(
-        err instanceof Error ? err.message : "Failed to load activity history"
+        err instanceof Error ? err.message : "Failed to load activity history",
       );
     } finally {
       setHistoryLoading(false);
@@ -225,7 +242,7 @@ const ActivityPage: React.FC = () => {
 
   const handleFilterChange = (
     filterName: keyof ActivityFilters,
-    value: unknown
+    value: unknown,
   ): void => {
     setFilters((prev) => ({
       ...prev,
@@ -316,13 +333,14 @@ const ActivityPage: React.FC = () => {
       <ActivityHeroSection />
       <div className="mx-auto px-4 py-8 bg-gradient-to-br from-blue-50 via-purple-50 to-amber-50 min-h-screen">
         {/* Page Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Adventure Activities
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Discover exciting activities and experiences for your next adventure
-          </p>
+        <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
+          <SectionHeader
+            subtitle=""
+            title="Adventure Activities"
+            description="Discover exciting activities and experiences for your next adventure"
+            fromColor="#A855F7"
+            toColor="#F59E0B"
+          />
         </div>
 
         {/* Filters Section */}
@@ -341,7 +359,7 @@ const ActivityPage: React.FC = () => {
         {/* Results Section */}
         <div id="results-section" className="mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <h3 className="text-2xl font-semibold text-gray-900">
+            <h3 className="text-lg lg:text-2xl font-semibold text-gray-900">
               {totalActivities} Activity
               {totalActivities !== 1 ? "s" : ""} Found
             </h3>
@@ -360,7 +378,7 @@ const ActivityPage: React.FC = () => {
                 onChange={(e) =>
                   handleItemsPerPageChange(Number(e.target.value))
                 }
-                className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-600"
               >
                 <option value={6}>6</option>
                 <option value={8}>8</option>
@@ -402,23 +420,23 @@ const ActivityPage: React.FC = () => {
         </div>
 
         {/* Reviews Section */}
-        <ReviewsSection
+        {/* <ReviewsSection
           reviews={reviews}
           loading={reviewsLoading}
           error={reviewsError}
-        />
-        <ActivityHistorySection
+        /> */}
+        {/* <ActivityHistorySection
           histories={histories}
           loading={historyLoading}
           error={historyError}
           onRetry={fetchActivityHistory}
-        />
-        <ActivityHistoryGallery
+        /> */}
+        {/* <ActivityHistoryGallery
           imagesData={historyImages}
           loading={historyImagesLoading}
           error={historyImagesError}
           onRetry={fetchActivityHistoryImages}
-        />
+        /> */}
       </div>
     </>
   );
@@ -487,7 +505,8 @@ const Pagination: React.FC<PaginationProps> = ({
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 pt-6 border-t border-gray-200">
       {/* Results info */}
       <div className="text-sm text-gray-600">
-        Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} results
+        Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of{" "}
+        {totalItems} results
       </div>
 
       {/* Pagination buttons */}

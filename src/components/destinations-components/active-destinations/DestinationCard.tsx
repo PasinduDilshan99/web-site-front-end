@@ -51,9 +51,9 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
         )}
 
         {/* Discount Badge */}
-        <div className="absolute top-3 left-3 bg-purple-400 text-white px-3 py-1 rounded-full text-sm font-semibold z-10">
+        {/* <div className="absolute top-3 left-3 bg-purple-400 text-white px-3 py-1 rounded-full text-sm font-semibold z-10">
           {discount}% Off
-        </div>
+        </div> */}
 
         {/* Favorite Button */}
         <button className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-100 transition-colors z-10">
@@ -177,21 +177,22 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
         {/* Category */}
         <p className="text-gray-600 text-sm mb-4">{destination.categoryName}</p>
 
-        {/* Activities Count */}
-        <p className="text-gray-500 text-sm mb-4">
-          {destination.activities.length} activities available
-        </p>
-
-        {/* Price and Button */}
         <div className="flex justify-between items-center mt-auto">
-          <div className="flex items-center space-x-2">
+          {/* Activities Count */}
+
+          <p className="text-gray-500 text-sm mb-4">
+            {destination.activities.length} activities available
+          </p>
+          {/* Price and Button */}
+
+          {/* <div className="flex items-center space-x-2">
             <span className="text-sm text-gray-500 line-through">
               ${originalPrice}.00
             </span>
             <span className="text-lg font-bold text-purple-600">
               ${currentPrice}.00
             </span>
-          </div>
+          </div> */}
 
           <button
             onClick={handleExploreClick}

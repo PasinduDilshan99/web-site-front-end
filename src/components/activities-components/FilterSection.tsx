@@ -62,13 +62,13 @@ const FilterSection: React.FC<FilterSectionProps> = ({
   return (
     <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6 md:p-8 mb-8 border-2 border-blue-200 shadow-lg">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-        <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+        <h2 className="text-xl lg:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
           Filter Activities
         </h2>
         <div className="flex gap-3">
           <button
             onClick={onResetFilters}
-            className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg"
+            className="px-4 lg:px-6 py-1 lg:py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg"
           >
             Reset Filters
           </button>
@@ -106,18 +106,18 @@ const FilterSection: React.FC<FilterSectionProps> = ({
             placeholder="Search activities..."
             value={filters.search}
             onChange={(e) => onFilterChange("search", e.target.value)}
-            className="w-full px-4 py-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500 transition-all"
+            className="text-sm lg:text-md w-full px-4 py-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500 transition-all"
           />
         </div>
 
         {/* Price Range */}
-        <div className="space-y-2">
-          <label className="block text-sm font-semibold text-gray-800">
-            Price Range (Foreign)
+        <div className="space-y-2 text-gray-800">
+          <label className="block text-sm font-semibold ">
+            Price Range ($)
           </label>
           <div className="flex justify-between text-sm font-medium text-blue-700 mb-2">
-            <span>{formatPrice(filters.priceRange[0])}</span>
-            <span>{formatPrice(filters.priceRange[1])}</span>
+            {/* <span>{formatPrice(filters.priceRange[0])}</span> */}
+            {/* <span>{formatPrice(filters.priceRange[1])}</span> */}
           </div>
           <div className="flex gap-4">
             <input
@@ -126,7 +126,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
               max="10000"
               value={filters.priceRange[0]}
               onChange={(e) => handlePriceChange('min', parseInt(e.target.value) || 0)}
-              className="w-1/2 px-3 py-1 border border-blue-300 rounded-md text-sm"
+              className="w-1/2 px-3 py-1 border border-blue-300 rounded-md text-sm lg:text-md"
               placeholder="Min"
             />
             <input
@@ -135,7 +135,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
               max="10000"
               value={filters.priceRange[1]}
               onChange={(e) => handlePriceChange('max', parseInt(e.target.value) || 10000)}
-              className="w-1/2 px-3 py-1 border border-blue-300 rounded-md text-sm"
+              className="w-1/2 px-3 py-1 border border-blue-300 rounded-md text-sm lg:text-md"
               placeholder="Max"
             />
           </div>
@@ -149,7 +149,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
           <select
             value={filters.duration}
             onChange={(e) => onFilterChange("duration", e.target.value)}
-            className="w-full px-4 py-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
+            className="text-sm lg:text-md w-full px-4 py-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
             style={{
               backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%232563eb' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
               backgroundRepeat: "no-repeat",
@@ -174,7 +174,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
           <select
             value={filters.category}
             onChange={(e) => onFilterChange("category", e.target.value)}
-            className="w-full px-4 py-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
+            className="text-sm lg:text-md w-full px-4 py-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
             style={{
               backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%232563eb' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
               backgroundRepeat: "no-repeat",
@@ -209,7 +209,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
             <select
               value={filters.season}
               onChange={(e) => onFilterChange("season", e.target.value)}
-              className="w-full px-4 py-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
+              className="text-sm lg:text-md w-full px-4 py-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
               style={{
                 backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%232563eb' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
                 backgroundRepeat: "no-repeat",
@@ -234,7 +234,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
             <select
               value={filters.participants}
               onChange={(e) => onFilterChange("participants", e.target.value)}
-              className="w-full px-4 py-2 border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
+              className="text-sm lg:text-md w-full px-4 py-2 border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
               style={{
                 backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239333ea' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
                 backgroundRepeat: "no-repeat",
@@ -259,7 +259,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
             <select
               value={filters.status}
               onChange={(e) => onFilterChange("status", e.target.value)}
-              className="w-full px-4 py-2 border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
+              className="text-sm lg:text-md w-full px-4 py-2 border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
               style={{
                 backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239333ea' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
                 backgroundRepeat: "no-repeat",

@@ -688,7 +688,7 @@ const SriLankanTourDetailsPage = () => {
           {/* Sidebar */}
           <div className="lg:col-span-1 gap-12">
             {/* Show package schedules if available, otherwise show general tour schedules */}
-            {packageSchedulesLoading ? (
+            {/* {packageSchedulesLoading ? (
               <div className="mt-6 p-6 bg-white rounded-2xl shadow-lg">
                 <div className="text-center py-4">
                   <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600"></div>
@@ -719,7 +719,7 @@ const SriLankanTourDetailsPage = () => {
               />
             ) : (
               <SLTourDetailsSchedules schedules={tour.schedules} />
-            )}
+            )} */}
             <SLTourDetailsBookingSidebar
               tour={tour}
               selectedPackage={selectedPackage}
@@ -732,25 +732,25 @@ const SriLankanTourDetailsPage = () => {
       </div>
 
       {/* Reviews Section */}
-      <ReviewsSection
+      {/* <ReviewsSection
         reviews={reviews}
         loading={reviewsLoading}
         error={reviewsError}
         onRetry={handleRetryReviews}
-      />
+      /> */}
       <TourMapContainer tourId={Number.parseInt(tourId[0])} />
-      <TourHistorySection
+      {/* <TourHistorySection
         histories={histories}
         loading={historyLoading}
         error={historyError}
         onRetry={handleRetryHistory}
-      />
-      <TourHistoryGallery
+      /> */}
+      {/* <TourHistoryGallery
         images={galleryImages}
         loading={galleryLoading}
         error={galleryError}
         onRetry={handleRetryGallery}
-      />
+      /> */}
     </div>
   );
 };

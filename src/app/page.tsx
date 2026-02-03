@@ -33,7 +33,7 @@ import AirplaneScrollWrapper from "./test/AirplaneScrollWrapper";
 export default function Home() {
   return (
     <div>
-      <AirplaneScrollWrapper>
+      {/* <AirplaneScrollWrapper> */}
         <div>
           <HeroSection />
         </div>
@@ -123,7 +123,7 @@ export default function Home() {
         {/* <div>
         <Inquire />
       </div> */}
-      </AirplaneScrollWrapper>
+      {/* </AirplaneScrollWrapper> */}
     </div>
   );
 }

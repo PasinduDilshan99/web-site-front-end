@@ -7,6 +7,7 @@ import { EmptyState } from "../../../components/common-components/empty-state/Em
 import { OurServiceDataType } from "@/types/our-services-types";
 import { OurServicesService } from "@/services/OurServicesService";
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";
+import BasicCycleLoading from "@/components/common-components/basic-loading/BasicCycleLoading";
 
 const OurServices = () => {
   const [loading, setLoading] = useState(true);
@@ -46,7 +47,7 @@ const OurServices = () => {
 
   if (loading) {
     return (
-      <Loading message="Loading partners..." variant="spinner" size="md" />
+      <BasicCycleLoading message="Loading partners..." variant="spinner" size="md" />
     );
   }
 
@@ -55,7 +56,7 @@ const OurServices = () => {
     // <ErrorState
     //   title="Failed to Load Partners"
     //   message={error}
-    //   icon="alert"
+    //   icon="alert
     //   variant="error"
     //   size="md"
     //   actionLabel="Try Again"
@@ -76,7 +77,7 @@ const OurServices = () => {
 
   return (
     <section className="py-6 xs:py-8 sm:py-10 lg:py-12 xl:py-16 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 xs:px-5 sm:px-6 lg:px-8">
+      <div className="mx-auto px-4 xs:px-5 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
           <SectionHeader

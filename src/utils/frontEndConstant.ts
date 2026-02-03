@@ -22,6 +22,9 @@ const ACTIVITIES = "/activities";
 const FOOTER = "/footer";
 const PLAN_YOUR_TRIP = "/plan-your-trip";
 const EMPLOYEES = "/employees";
+const INQUIRY = "/inquiry";
+const OUR_STORY = "/our-story"
+const CONTACT_US = "/contact-us"
 
 // Link Bar
 export const GET_ACTIVE_LINK_BAR_DATA = `${API}${LINK_BAR}`;
@@ -119,12 +122,32 @@ export const ADD_BLOG_COMMENT_DATA_FE = `${API}${BLOGS}/add-comment-to-blog`;
 export const GET_ALL_GALLERY_IMAGES_DATA_FE = `${API}${GALLERY}`;
 export const GET_ACTIVE_GALLERY_IMAGES_DATA_FE = `${API}${GALLERY}/active-images`;
 
+// Inquiry
+export const ADD_INQUIRY_DATA_FE = `${API}${INQUIRY}/create`;
+
+// Footer
+export const GET_ALL_FOOTER_DATA_FE = `${API}${FOOTER}`;
+export const GET_ACTIVE_FOOTER_DATA_FE = `${API}${FOOTER}/active`;
+
+// Our Story
+export const GET_OUR_STORY_DETAILS_DATA_FE = `${API}${OUR_STORY}/details`;
+
+// Contact Us
+export const GET_CONTACT_US_CONTACT_METHODS_DATA_FE = `${API}${CONTACT_US}/contact-methods`;
+
 // Employees
 export const GET_EMPLOYEE_DETAILS_BY_TOUR_ID_DATA_FE = `${API}${EMPLOYEES}/employees-details-by-tour-id`;
 
+// FAQ
+export const GET_ALL_FAQ_DATA_FE = `${API}${FAQ}`;
+export const GET_ACTIVE_FAQ_DATA_FE = `${API}${FAQ}/active`;
+export const UPDATE_FAQ_VIEW_COUNT_DATA_FE = `${API}${FAQ}/update-view-count`;
+export const GET_FAQ_OPTIONS_DATA_FE =`${API}${FAQ}/options`;
+export const ADD_FAQ_REQUEST_DATA_FE = `${API}${FAQ}/insert-faq-request`;
+
+
 export const GET_TOUR_DETAILS_BY_ID_FE = `${API}${TOUR}/details-by-id`;
 
-export const GET_ALL_FAQ_DATA = `${API}${FAQ}`;
 
 export const GET_ALL_PARTNERS = `${API}${PARTNERS}`;
 
@@ -141,13 +164,9 @@ export const GET_ALL_ACTIVE_USER_BENEFITS_FE = `${API}${USER_BENEFITS}`;
 export const GET_ALL_ACTIVE_PROMOTIONS_FE = `${API}${PROMOTIONS}`;
 export const GET_ACTIVE_ACTIVITIES_FE = `${API}${ACTIVITIES}`;
 export const GET_ACTIVE_ACTIVITIES_CATEGORIES_FE = `${API}${ACTIVITIES}/categories`;
-export const GET_ACTIVE_FOOTER_DATA = `${API}${FOOTER}`;
 export const GET_PLAN_YOUR_TRIP_ACTIVE_DESTINATIONS_FE = `${API}${PLAN_YOUR_TRIP}`;
 export const GET_PLAN_YOUR_TRIP_DESTINATIONS_TOURS_FE = `${API}${PLAN_YOUR_TRIP}/map`;
 
-// FAQ
-export const UPDATE_FAQ_VIEW_COUNT = `${API}${FAQ}/update-view-count`;
-export const INSERT_FAQ_REQUEST_FE = `${API}${FAQ}/insert-faq-request`;
 
 // Accommodations
 export const GET_AVAILABLE_ACCOMMODATION = `${API}${ACCOMMODATION}`;

@@ -32,13 +32,13 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = ({ activity }) => {
     <div className="bg-white rounded-2xl shadow-lg p-6">
       <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
         <div>
-          <span className="inline-block bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm font-medium mb-2">
+          <span className="inline-block bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-xs lg:text-sm font-medium mb-2">
             {activity.category_name}
           </span>
-          <h1 className="text-3xl font-bold text-gray-900">{activity.name}</h1>
+          <h1 className="text-xl lg:text-3xl font-bold text-gray-900">{activity.name}</h1>
         </div>
         <span
-          className={`px-4 py-2 rounded-full text-sm font-bold ${getStatusColor(
+          className={`px-4 py-2 rounded-full text-xs lg:text-sm font-bold ${getStatusColor(
             activity.status
           )}`}
         >
@@ -46,12 +46,12 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = ({ activity }) => {
         </span>
       </div>
 
-      <p className="text-gray-600 text-lg leading-relaxed">
+      <p className="text-gray-600 text-sm lg:text-lg leading-relaxed">
         {activity.description}
       </p>
 
       {/* Price Section */}
-      <div className="mt-6 p-4 bg-gradient-to-r from-amber-50 to-purple-50 rounded-xl border border-amber-200">
+      {/* <div className="mt-6 p-4 bg-gradient-to-r from-amber-50 to-purple-50 rounded-xl border border-amber-200">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <div className="flex items-baseline space-x-2">
@@ -71,7 +71,7 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = ({ activity }) => {
             Book Now
           </button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

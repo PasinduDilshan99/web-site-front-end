@@ -7,6 +7,7 @@ import { ActiveToursType } from "@/types/tour-types";
 import ToursGrid from "@/components/sri-lankan-tours-components/ToursGrid";
 import { useRouter } from "next/navigation";
 import { TourService } from "@/services/tourService"; // Import service
+import BasicCycleLoading from "@/components/common-components/basic-loading/BasicCycleLoading";
 
 const ActiveToursHomeGrid = () => {
   const [loading, setLoading] = useState(true);
@@ -46,7 +47,6 @@ const ActiveToursHomeGrid = () => {
       try {
         setLoading(true);
         
-        // USING THE SERVICE INSTEAD OF DIRECT FETCH
         const { data: items, error } = await TourService.fetchActiveTours();
 
         if (error) {
@@ -71,7 +71,7 @@ const ActiveToursHomeGrid = () => {
   if (loading) {
     return (
       <div className="min-h-96 flex items-center justify-center">
-        <Loading
+        <BasicCycleLoading
           message="Loading popular tours..."
           variant="spinner"
           size="md"

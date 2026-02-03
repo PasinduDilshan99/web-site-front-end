@@ -2,7 +2,10 @@ import React from "react";
 
 const ContactResponseTime = () => {
   return (
-    <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+    <div
+      className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm "
+      style={{ width: "350px" }}
+    >
       <div className="flex items-center gap-3 mb-4">
         <div className="p-3 bg-blue-100 rounded-lg">
           <svg
@@ -26,15 +29,15 @@ const ContactResponseTime = () => {
       </div>
       <div className="space-y-3">
         <div className="flex justify-between items-center">
-          <span className="text-gray-700">Within 1 hour:</span>
+          <span className="text-gray-700">Within 15 minutes:</span>
           <span className="font-semibold text-green-600">WhatsApp</span>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-gray-700">Within 4 hours:</span>
+          <span className="text-gray-700">Within 10 minutes:</span>
           <span className="font-semibold text-blue-600">Phone Calls</span>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-gray-700">Within 24 hours:</span>
+          <span className="text-gray-700">Within 2 hours:</span>
           <span className="font-semibold text-purple-600">Email/Form</span>
         </div>
       </div>

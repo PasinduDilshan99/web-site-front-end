@@ -7,6 +7,7 @@ import AnimatedButton from "../../../components/common-components/buttons/Animat
 import { useRouter } from "next/navigation";
 import { WhyChooseUsService } from "@/services/whyChooseUsService";
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";
+import BasicCycleLoading from "@/components/common-components/basic-loading/BasicCycleLoading";
 
 // Default icon SVG component with Sunset Purple theme
 const DefaultIcon = ({ color = "#A855F7" }: { color?: string }) => (
@@ -88,7 +89,7 @@ const WhyChooseUs = () => {
   // Loading state
   if (loading) {
     return (
-      <Loading
+      <BasicCycleLoading
         message="Loading why choose us details..."
         variant="spinner"
         size="md"
@@ -108,7 +109,7 @@ const WhyChooseUs = () => {
 
   return (
     <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-r from-purple-100 to-amber-100">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 ">
+      <div className="mx-auto px-3 sm:px-4 md:px-6 lg:px-8 ">
         {/* Section Header - Fully Responsive */}
         <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
           <SectionHeader

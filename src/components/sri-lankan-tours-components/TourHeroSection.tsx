@@ -1,6 +1,7 @@
 "use client";
 import { HeroSectionService } from "@/services/heroSectionService";
 import { TourHeroData } from "@/types/hero-section-types";
+import { NUMBER_OF_TOUR_CATEGORIES } from "@/utils/constant";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 
@@ -160,11 +161,11 @@ const TourHeroSection = () => {
       </div>
 
       {/* Tour Badge */}
-      <div className="absolute top-3 left-3 sm:top-4 sm:left-4 md:top-6 md:left-6 z-10">
+      <div className="absolute top-3 left-3 sm:top-4 sm:left-4 md:top-6 md:left-6 z-10 hidden lg:flex">
         <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-amber-500/20 backdrop-blur-sm rounded-full border border-amber-400/30">
           <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-amber-400 rounded-full animate-pulse"></div>
           <span className="text-xs sm:text-sm font-medium text-white">
-            <span className="text-amber-200 font-bold">{heroData.length}</span>{" "}
+            <span className="text-amber-200 font-bold">{NUMBER_OF_TOUR_CATEGORIES}</span>{" "}
             Tour Categories
           </span>
         </div>
@@ -264,7 +265,7 @@ const TourHeroSection = () => {
             </div>
 
             {/* Tour Highlights */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 md:gap-4">
+            <div className="lg:grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 md:gap-4 hidden">
               <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl border border-white/20 hover:bg-white/15 transition-all duration-300">
                 <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0">
                   <svg
@@ -348,7 +349,7 @@ const TourHeroSection = () => {
         <>
           <button
             onClick={prevSlide}
-            className="absolute left-2 sm:left-3 md:left-4 lg:left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-2 sm:p-2.5 md:p-3 rounded-full hover:bg-white/20 transition-all duration-300 group z-10"
+            className="hidden lg:flex absolute left-2 sm:left-3 md:left-4 lg:left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-2 sm:p-2.5 md:p-3 rounded-full hover:bg-white/20 transition-all duration-300 group z-10"
             aria-label="Previous slide"
           >
             <svg
@@ -368,7 +369,7 @@ const TourHeroSection = () => {
 
           <button
             onClick={nextSlide}
-            className="absolute right-2 sm:right-3 md:right-4 lg:right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-2 sm:p-2.5 md:p-3 rounded-full hover:bg-white/20 transition-all duration-300 group z-10"
+            className="hidden lg:flex absolute right-2 sm:right-3 md:right-4 lg:right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-2 sm:p-2.5 md:p-3 rounded-full hover:bg-white/20 transition-all duration-300 group z-10"
             aria-label="Next slide"
           >
             <svg
@@ -419,7 +420,7 @@ const TourHeroSection = () => {
       )}
 
       {/* Quick Actions */}
-      <div className="absolute bottom-20 sm:bottom-24 md:bottom-28 right-3 sm:right-4 md:right-6 z-10">
+      {/* <div className="absolute bottom-20 sm:bottom-24 md:bottom-28 right-3 sm:right-4 md:right-6 z-10">
         <div className="flex flex-col gap-2">
           <button
             onClick={() => (window.location.href = "/plan-your-trip")}
@@ -442,7 +443,7 @@ const TourHeroSection = () => {
             <span className="sm:hidden">Custom</span>
           </button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

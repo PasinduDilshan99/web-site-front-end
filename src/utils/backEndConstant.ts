@@ -1,6 +1,8 @@
-const PROTOCOL = process.env.NEXT_PUBLIC_API_PROTOCOL;
-const DOMAIN = process.env.NEXT_PUBLIC_API_DOMAIN;
-const PORT = process.env.NEXT_PUBLIC_API_PORT;
+// http://159.198.43.146:8080/felicita
+const PROTOCOL = "http";
+// const DOMAIN = "159.198.43.146";
+const DOMAIN = "localhost";
+const PORT = "8080";
 const CONTEXT_ROOT = "felicita";
 const VERSION = "/v0";
 const API = "/api";
@@ -28,6 +30,9 @@ const PLAN_YOUR_TRIP = "/plan-your-trip";
 const SERVICE_PROVIDER = "/service-provider";
 const VEHICLES = "/vehicles";
 const EMPLOYEE = "/employee"
+const INQUIRY = "/inquiry"
+const OUR_STORY = "/our-story"
+const CONTACT_US = "/contact-us"
 
 export const BASE_PATH = `${PROTOCOL}://${DOMAIN}:${PORT}/${CONTEXT_ROOT}`;
 
@@ -129,6 +134,25 @@ export const ADD_BLOG_COMMENT_DATA = `${BASE_PATH}${API}${VERSION}${BLOG}/add-co
 export const GET_ALL_GALLERY_IMAGES_DATA = `${BASE_PATH}${API}${VERSION}${GALLERY}/all`;
 export const GET_ACTIVE_GALLERY_IMAGES_DATA = `${BASE_PATH}${API}${VERSION}${GALLERY}/active`;
 
+// Inquiry
+export const ADD_INQUIRY_DATA = `${BASE_PATH}${API}${VERSION}${INQUIRY}/create`;
+
+// Footer
+export const GET_ALL_FOOTER_DATA = `${BASE_PATH}${API}${VERSION}${FOOTER}/all`;
+export const GET_ACTIVE_FOOTER_DATA = `${BASE_PATH}${API}${VERSION}${FOOTER}/active`;
+
+// Our Story
+export const GET_OUR_STORY_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${OUR_STORY}/details`;
+
+// Contact Us
+export const GET_CONTACT_US_CONTACT_METHODS_DATA = `${BASE_PATH}${API}${VERSION}${CONTACT_US}/contact-methods`;
+
+// FAQ
+export const GET_ALL_FAQ_DATA = `${BASE_PATH}${API}${VERSION}${FAQ}/all`;
+export const GET_ACTIVE_FAQ_DATA = `${BASE_PATH}${API}${VERSION}${FAQ}/active`;
+export const UPDATE_FAQ_VIEW_COUNT_DATA = `${BASE_PATH}${API}${VERSION}${FAQ}/view-count`;
+export const GET_FAQ_OPTIONS_DATA = `${BASE_PATH}${API}${VERSION}${FAQ}/options`;
+export const ADD_FAQ_REQUEST_DATA = `${BASE_PATH}${API}${VERSION}${FAQ}/insert-faq-request`;
 
 // Employees
 export const GET_EMPLOYEE_DETAILS_BY_TOUR_ID_DATA = `${BASE_PATH}${API}${VERSION}${EMPLOYEE}/employee-details`;
@@ -137,7 +161,6 @@ export const GET_EMPLOYEE_DETAILS_BY_TOUR_ID_DATA = `${BASE_PATH}${API}${VERSION
 export const GET_TOUR_DETAILS_BY_ID_BE = `${BASE_PATH}${VERSION}${API}${TOUR}`;
 
 
-export const UPDATE_FAQ_VIEW_COUNT = `${BASE_PATH}${VERSION}${API}${FAQ}/view-count`;
 
 export const GET_VISIBLE_PARTNERS = `${BASE_PATH}${VERSION}${API}${PARTNERS}/visible`;
 
@@ -158,13 +181,10 @@ export const GET_ALL_ACTIVE_USER_LEVEL_WITH_BENEFITS_BE = `${BASE_PATH}${API}${V
 export const GET_ALL_ACTIVE_USER_BENEFITS_BE = `${BASE_PATH}${API}${VERSION}${USER_BENEFITS}/active`;
 export const GET_ALL_ACTIVE_PROMOTIONS_BE = `${BASE_PATH}${API}${VERSION}${PROMOTIONS}/active`;
 
-export const GET_ACTIVE_FOOTER_DATA = `${BASE_PATH}${API}${VERSION}${FOOTER}/active`;
 export const GET_PLAN_YOUR_TRIP_ACTIVE_DESTINATIONS = `${BASE_PATH}${API}${VERSION}${PLAN_YOUR_TRIP}/active`;
 export const GET_PLAN_YOUR_TRIP_DESTINATIONS_TOURS = `${BASE_PATH}${API}${VERSION}${PLAN_YOUR_TRIP}/tours`;
 
-// FAQ
-export const GET_VISIBLE_FAQ_DATA = `${BASE_PATH}${VERSION}${API}${FAQ}/visible`;
-export const INSERT_FAQ_REQUEST = `${BASE_PATH}${VERSION}${API}${FAQ}/insert-faq-request`;
+
 
 // Accommodations
 export const GET_AVAILABLE_ACCOMMODATION = `${BASE_PATH}${VERSION}${API}${ACCOMMODATION}/available`;

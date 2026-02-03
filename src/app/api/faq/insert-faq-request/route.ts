@@ -4,14 +4,14 @@ import {
   InsertFAQErrorResponseType,
   GenericErrorResponseType 
 } from "@/types/faq-types";
-import { INSERT_FAQ_REQUEST } from "@/utils/backEndConstant";
+import { ADD_FAQ_REQUEST_DATA } from "@/utils/backEndConstant";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   try {
     const body: InsertFAQRequestType = await request.json();
 
-    const response = await fetch(INSERT_FAQ_REQUEST, {
+    const response = await fetch(ADD_FAQ_REQUEST_DATA, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

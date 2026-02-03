@@ -14,6 +14,7 @@ import ActivityHistorySection from "@/components/activities-components/ActivityH
 import ActivityHistoryGallery from "@/components/activities-components/ActivityHistoryGallery";
 import { ActivityData, ActivityHistory, ActivityHistoryImage, Review } from "@/types/activity-types";
 import { ActivityService } from "@/services/activityService";
+import ActivityDetailsHeroSection from "@/components/activities-components/ActivityDetailsHeroSection";
 
 
 const ActivityDetailsPage = () => {
@@ -300,7 +301,7 @@ const ActivityDetailsPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 to-purple-50">
-      <ActivityHeader activity={activity} />
+      <ActivityDetailsHeroSection activity={activity} />
 
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -314,40 +315,40 @@ const ActivityDetailsPage = () => {
             <ActivityKeyInfo activity={activity} />
             <ActivitySeasons season={activity.season} />
             <ActivityRequirements requirements={activity.requirements} />
-            <ActivitySchedules schedules={activity.schedules} />
+            {/* <ActivitySchedules schedules={activity.schedules} /> */}
           </div>
         </div>
       </div>
 
       {/* Activity History Section */}
-      <div className="container mx-auto px-4 py-8">
+      {/* <div className="container mx-auto px-4 py-8">
         <ActivityHistorySection
           histories={histories}
           loading={historyLoading}
           error={historyError}
           onRetry={retryFetchActivityHistory}
         />
-      </div>
+      </div> */}
 
       {/* Activity History Gallery */}
-      <div className="container mx-auto px-4">
+      {/* <div className="container mx-auto px-4">
         <ActivityHistoryGallery
           imagesData={historyImages}
           loading={historyImagesLoading}
           error={historyImagesError}
           onRetry={retryFetchActivityHistoryImages}
         />
-      </div>
+      </div> */}
 
       {/* Reviews Section */}
-      <div className="container mx-auto px-4 py-8">
+      {/* <div className="container mx-auto px-4 py-8">
         <ReviewsSection
           reviews={reviews}
           loading={reviewsLoading}
           error={reviewsError}
           // onRetry={retryFetchReviews}
         />
-      </div>
+      </div> */}
     </div>
   );
 };

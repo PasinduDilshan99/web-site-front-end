@@ -29,15 +29,15 @@ const AboutUsPage = () => {
       {/* <div>
         <AllEmployees />
       </div> */}
-      <div>
+      {/* <div>
         <AboutUsStatistics />
-      </div>
+      </div> */}
       <div>
         <WhyChooseUs />
       </div>
-      <div>
+      {/* <div>
         <EmployeeDetailsWithSocialMedia />
-      </div>
+      </div> */}
 
       {/* <div>
         <TourGuides />

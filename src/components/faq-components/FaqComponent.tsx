@@ -1,9 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import {
-  GET_ALL_FAQ_DATA,
-  UPDATE_FAQ_VIEW_COUNT,
-} from "@/utils/frontEndConstant";
 import { FaqList } from "./FaqList";
 import { FaqFooter } from "./FaqFooter";
 import { FaqLoading } from "./FaqLoading";
@@ -11,6 +7,7 @@ import { FaqError } from "./FaqError";
 import { FaqEmpty } from "./FaqEmpty";
 import { FaqItem, FaqProps } from "@/types/faq-types";
 import { FaqHeader } from "./FaqHeader";
+import { FaqService } from "@/services/faqService"; // Correct import path
 
 export const FaqComponent = ({ showAll = false, displayLimit }: FaqProps) => {
   const [loading, setLoading] = useState(true);
@@ -51,26 +48,47 @@ export const FaqComponent = ({ showAll = false, displayLimit }: FaqProps) => {
 
   const updateViewCount = async ({ faqId }: { faqId: number }) => {
     try {
-      const response = await fetch(UPDATE_FAQ_VIEW_COUNT, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ faqId }),
-      });
+      // USING THE SERVICE INSTEAD OF DIRECT FETCH
+      const result = await FaqService.updateViewCount(faqId);
 
-      if (!response.ok) {
-        const text = await response.text();
-        console.error("Backend returned error:", text);
-        throw new Error("Failed to update FAQ view count");
+      if (result.success) {
+        // Update the view count locally
+        setFaqData((prevData) =>
+          prevData.map((item) =>
+            item.faqId === faqId
+              ? { 
+                  ...item, 
+                  faqViewCount: (item.faqViewCount || 0) + 1 
+                }
+              : item
+          )
+        );
+        return true;
+      } else {
+        // Show error only in development
+        if (process.env.NODE_ENV === 'development') {
+          console.warn("View count update failed:", result.error || "Unknown error");
+        }
+        return false;
       }
-
-      const data = await response.json();
-      return data;
     } catch (err) {
-      console.error("Error updating FAQ item:", err);
-      console.warn("View count update failed, but continuing...");
+      console.error("Error updating FAQ view count:", err);
+      return false;
     }
+  };
+
+  // Alternative: Simple increment without waiting for server response
+  const incrementLocalViewCount = (faqId: number) => {
+    setFaqData((prevData) =>
+      prevData.map((item) =>
+        item.faqId === faqId
+          ? { 
+              ...item, 
+              faqViewCount: (item.faqViewCount || 0) + 1 
+            }
+          : item
+      )
+    );
   };
 
   useEffect(() => {
@@ -78,20 +96,14 @@ export const FaqComponent = ({ showAll = false, displayLimit }: FaqProps) => {
       try {
         setLoading(true);
 
-        const response = await fetch(GET_ALL_FAQ_DATA);
-        const data = await response.json();
+        // USING THE SERVICE INSTEAD OF DIRECT FETCH
+        const { data: faqs, error } = await FaqService.fetchAllFaqs();
 
-        if (response.ok && data.code === 200) {
-          const items: FaqItem[] = data.data || [];
-          const activeFaqs = items.filter(
-            (item) =>
-              item.faqStatus === "VISIBLE" && item.faqStatusStatus === "ACTIVE"
-          );
-
-          setFaqData(activeFaqs);
-          setError(null);
+        if (error) {
+          setError(error);
         } else {
-          setError(data.message || "Failed to fetch FAQ items");
+          setFaqData(faqs);
+          setError(null);
         }
       } catch (err) {
         console.error("Error fetching FAQ items:", err);
@@ -118,20 +130,15 @@ export const FaqComponent = ({ showAll = false, displayLimit }: FaqProps) => {
     });
 
     if (!wasOpen) {
+      // Optimistically update the view count locally first
+      incrementLocalViewCount(faqId);
+      
+      // Then try to update on the server (fire and forget)
       try {
-        const result = await updateViewCount({ faqId: faqId });
-
-        if (result) {
-          setFaqData((prevData) =>
-            prevData.map((item) =>
-              item.faqId === faqId
-                ? { ...item, faqViewCount: (item.faqViewCount || 0) + 1 }
-                : item
-            )
-          );
-        }
+        await FaqService.incrementViewCount(faqId);
       } catch (error) {
-        console.error("Failed to update view count:", error);
+        // Silently fail - user doesn't need to know if view count update fails
+        console.error("Failed to update view count on server:", error);
       }
     }
   };

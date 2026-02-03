@@ -7,41 +7,32 @@ import ContactTipsForQuickResponse from "./ContactTipsForQuickResponse";
 import { countries, Country } from "@/utils/countries";
 import Inquire from "@/app/components/inquire/Inquire";
 import LocationDetails from "@/app/components/inquire/LocationDetails";
+import { COMPANY_CONTACT_NUMBER } from "@/utils/constant";
+import { InquiryService } from "@/services/inquiryService"; // Import service
+import { 
+  InquiryFormData, 
+  InquiryFormErrors 
+} from "@/types/inquiry-types"; // Import types
 
-interface FormData {
+interface FormData extends InquiryFormData {
   fullName: string;
   email: string | null;
   phone: string | null;
   country: string | null;
   preferredContactMethod: string | null;
   preferredDestination: string | null;
-  adults: number ;
+  adults: number;
   kids: number;
   arrivalDate: string;
   departureDate: string;
   message: string;
 }
 
-interface FormErrors {
+interface FormErrors extends InquiryFormErrors {
   fullName?: string;
   email?: string;
   phone?: string;
   preferredContactMethod?: string;
-}
-
-// Define the API request type
-interface InquiryRequest {
-  name: string;
-  email: string | null;
-  phoneNumber: string | null;
-  country: string | null;
-  preferredContactMethod: string | null;
-  preferredDestination: string | null;
-  adults: number;
-  kids: number;
-  arrivalDate: string | null;
-  departureDate: string | null;
-  message: string | null;
 }
 
 const ContactForm = () => {
@@ -63,7 +54,7 @@ const ContactForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  
+
   // Country selector states
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -100,8 +91,8 @@ const ContactForm = () => {
     if (searchTerm.trim() === "") {
       setFilteredCountries(countries);
     } else {
-      const filtered = countries.filter(country =>
-        country.name.toLowerCase().includes(searchTerm.toLowerCase())
+      const filtered = countries.filter((country) =>
+        country.name.toLowerCase().includes(searchTerm.toLowerCase()),
       );
       setFilteredCountries(filtered);
     }
@@ -110,7 +101,10 @@ const ContactForm = () => {
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (countryDropdownRef.current && !countryDropdownRef.current.contains(event.target as Node)) {
+      if (
+        countryDropdownRef.current &&
+        !countryDropdownRef.current.contains(event.target as Node)
+      ) {
         setShowCountryDropdown(false);
       }
     };
@@ -124,7 +118,7 @@ const ContactForm = () => {
   // Set selected country when country code changes in formData
   useEffect(() => {
     if (formData.country) {
-      const country = countries.find(c => c.code === formData.country);
+      const country = countries.find((c) => c.code === formData.country);
       setSelectedCountry(country || null);
       if (country) {
         setSearchTerm(country.name);
@@ -153,27 +147,31 @@ const ContactForm = () => {
     // Email validation based on preferred contact method
     if (formData.preferredContactMethod === "EMAIL") {
       if (!formData.email?.trim()) {
-        newErrors.email = "Email is required when selecting email as contact method";
+        newErrors.email =
+          "Email is required when selecting email as contact method";
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
         newErrors.email = "Please enter a valid email address";
       }
     }
 
     // Phone validation based on preferred contact method
-    if (formData.preferredContactMethod === "WHATSAPP" || formData.preferredContactMethod === "CALL") {
+    if (
+      formData.preferredContactMethod === "WHATSAPP" ||
+      formData.preferredContactMethod === "CALL"
+    ) {
       if (!formData.phone?.trim()) {
-        newErrors.phone = "Phone number is required for WhatsApp or Phone Call contact methods";
-      } 
-      // else if (!/^[\d\s\+\-\(\)]{10,}$/.test(formData.phone)) {
-      //   newErrors.phone = "Please enter a valid phone number";
-      // }
+        newErrors.phone =
+          "Phone number is required for WhatsApp or Phone Call contact methods";
+      }
     }
 
     // If no contact method selected, require either email or phone
     if (!formData.preferredContactMethod) {
       if (!formData.email?.trim() && !formData.phone?.trim()) {
-        newErrors.email = "Please provide either email or phone number when no contact method is selected";
-        newErrors.phone = "Please provide either email or phone number when no contact method is selected";
+        newErrors.email =
+          "Please provide either email or phone number when no contact method is selected";
+        newErrors.phone =
+          "Please provide either email or phone number when no contact method is selected";
       }
     }
 
@@ -184,7 +182,7 @@ const ContactForm = () => {
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
 
@@ -210,27 +208,32 @@ const ContactForm = () => {
     }
   };
 
-  const handleCountrySearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCountrySearchChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const value = e.target.value;
     setSearchTerm(value);
-    
+
     if (!showCountryDropdown && value.length > 0) {
       setShowCountryDropdown(true);
     }
-    
+
     // Clear selected country if search doesn't match
-    if (selectedCountry && !value.toLowerCase().includes(selectedCountry.name.toLowerCase())) {
+    if (
+      selectedCountry &&
+      !value.toLowerCase().includes(selectedCountry.name.toLowerCase())
+    ) {
       setSelectedCountry(null);
-      setFormData(prev => ({ ...prev, country: "" }));
+      setFormData((prev) => ({ ...prev, country: "" }));
     }
   };
 
   const handleCountrySelect = (country: Country) => {
     setSelectedCountry(country);
     setSearchTerm(country.name);
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      country: country.code
+      country: country.code,
     }));
     setShowCountryDropdown(false);
   };
@@ -241,22 +244,22 @@ const ContactForm = () => {
     }
   };
 
-  const prepareInquiryData = (): InquiryRequest => {
+  const prepareInquiryData = () => {
     // Get country name from selected country or use the code if not found
     let countryName = "";
     if (selectedCountry) {
       countryName = selectedCountry.name;
     } else if (formData.country) {
-      const country = countries.find(c => c.code === formData.country);
+      const country = countries.find((c) => c.code === formData.country);
       countryName = country ? country.name : formData.country;
     }
 
     // Format phone number - remove country code if present and use only digits
-    let phoneNumber = formData.phone?.replace(/\D/g, ''); // Remove all non-digits
-    
+    let phoneNumber = formData.phone?.replace(/\D/g, ""); // Remove all non-digits
+
     // If we have a selected country with phone code, remove it from the beginning
     if (selectedCountry?.phoneCode) {
-      const countryCode = selectedCountry.phoneCode.replace(/\D/g, '');
+      const countryCode = selectedCountry.phoneCode.replace(/\D/g, "");
       if (phoneNumber?.startsWith(countryCode)) {
         phoneNumber = phoneNumber.substring(countryCode.length);
       }
@@ -291,34 +294,14 @@ const ContactForm = () => {
       // Prepare data for API
       const inquiryData = prepareInquiryData();
 
-      // Make API call
-      const response = await fetch('http://localhost:8080/felicita/api/v0/inquiry/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          // Note: You'll need to handle authentication tokens differently
-          // 'Cookie': 'your-auth-tokens-here' // This should come from your auth context
-        },
-        credentials: 'include', // This will send cookies if your API uses them
-        body: JSON.stringify(inquiryData),
-      });
+      // USING THE SERVICE INSTEAD OF DIRECT FETCH
+      const { data: result, error } = await InquiryService.createInquiry(inquiryData);
 
-      if (!response.ok) {
-        let errorMessage = 'Failed to submit inquiry';
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.message || errorMessage;
-        } catch (e) {
-          // If response is not JSON, use status text
-          errorMessage = response.statusText || errorMessage;
-        }
-        throw new Error(errorMessage);
+      if (error) {
+        throw new Error(error);
       }
 
-      // Parse response if needed
-      const result = await response.json();
-      console.log('Inquiry created successfully:', result);
-
+      console.log("Inquiry created successfully:", result);
       setIsSubmitted(true);
 
       // Reset form after successful submission
@@ -345,11 +328,14 @@ const ContactForm = () => {
           successElement.scrollIntoView({ behavior: "smooth" });
         }
       }, 100);
-
     } catch (error) {
       console.error("Error submitting form:", error);
-      setSubmitError(error instanceof Error ? error.message : "There was an error submitting your form. Please try again.");
-      
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : "There was an error submitting your form. Please try again.",
+      );
+
       // Scroll to error message
       setTimeout(() => {
         const errorElement = document.getElementById("error-message");
@@ -398,8 +384,9 @@ const ContactForm = () => {
   const isEmailRequired = formData.preferredContactMethod === "EMAIL";
 
   // Check if phone should be required based on contact method
-  const isPhoneRequired = formData.preferredContactMethod === "WHATSAPP" || 
-                         formData.preferredContactMethod === "CALL";
+  const isPhoneRequired =
+    formData.preferredContactMethod === "WHATSAPP" ||
+    formData.preferredContactMethod === "CALL";
 
   return (
     <div className="py-16 px-4 md:px-8 bg-gradient-to-b from-white to-gray-50">
@@ -409,10 +396,10 @@ const ContactForm = () => {
           <div className="lg:col-span-2">
             <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-200">
               <div className="mb-8">
-                <h2 className="text-3xl font-bold text-gray-800 mb-3">
+                <h2 className="text-md lg:text-3xl font-bold text-gray-800 mb-3">
                   Send Us a Message
                 </h2>
-                <p className="text-gray-600 mb-4">
+                <p className="text-sm lg:text-2xl text-gray-600 mb-4">
                   Fill out the form below and one of our travel experts will
                   contact you through your preferred method.
                 </p>
@@ -442,7 +429,9 @@ const ContactForm = () => {
                       </svg>
                     </div>
                     <div>
-                      <h4 className="text-red-700 font-medium mb-1">Submission Error</h4>
+                      <h4 className="text-red-700 font-medium mb-1">
+                        Submission Error
+                      </h4>
                       <p className="text-red-600 text-sm">{submitError}</p>
                     </div>
                   </div>
@@ -469,10 +458,10 @@ const ContactForm = () => {
                       />
                     </svg>
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-800 mb-3">
+                  <h3 className="text-md lg:text-2xl font-bold text-gray-800 mb-3">
                     Message Sent Successfully!
                   </h3>
-                  <p className="text-gray-600 mb-6">
+                  <p className="text-md lg:text-2xl text-gray-600 mb-6">
                     Thank you for contacting us. One of our travel consultants
                     will get back to you through your preferred contact method.
                   </p>
@@ -491,13 +480,13 @@ const ContactForm = () => {
                           d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                         />
                       </svg>
-                      <span className="font-medium">
+                      <span className="text-md lg:text-2xl font-medium">
                         We usually respond within 24 hours
                       </span>
                     </div>
                     <button
                       onClick={handleReset}
-                      className="px-6 py-3 bg-teal-500 text-white font-medium rounded-lg hover:bg-teal-600 transition-colors"
+                      className="px-6 py-3 bg-teal-500 text-white font-medium rounded-lg hover:bg-teal-600 transition-colors text-md lg:text-xl"
                     >
                       Send Another Message
                     </button>
@@ -506,7 +495,7 @@ const ContactForm = () => {
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Personal Information */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm lg:text-lg">
                     {/* Full Name - Always Required */}
                     <div>
                       <label
@@ -592,64 +581,75 @@ const ContactForm = () => {
                         </div>
 
                         {/* Country Dropdown */}
-                        {showCountryDropdown && filteredCountries.length > 0 && (
-                          <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-64 overflow-y-auto">
-                            <div className="py-1">
-                              {filteredCountries.map((country) => (
-                                <button
-                                  type="button"
-                                  key={country.code}
-                                  className={`w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center justify-between ${
-                                    selectedCountry?.code === country.code
-                                      ? "bg-teal-50 text-teal-700"
-                                      : "text-gray-700"
-                                  }`}
-                                  onClick={() => handleCountrySelect(country)}
-                                >
-                                  <div className="flex items-center gap-3">
-                                    <span className={`text-sm ${
+                        {showCountryDropdown &&
+                          filteredCountries.length > 0 && (
+                            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-64 overflow-y-auto">
+                              <div className="py-1">
+                                {filteredCountries.map((country) => (
+                                  <button
+                                    type="button"
+                                    key={country.code}
+                                    className={`w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center justify-between ${
                                       selectedCountry?.code === country.code
-                                        ? "font-semibold"
-                                        : ""
-                                    }`}>
-                                      {country.name}
+                                        ? "bg-teal-50 text-teal-700"
+                                        : "text-gray-700"
+                                    }`}
+                                    onClick={() => handleCountrySelect(country)}
+                                  >
+                                    <div className="flex items-center gap-3">
+                                      <span
+                                        className={`text-sm ${
+                                          selectedCountry?.code === country.code
+                                            ? "font-semibold"
+                                            : ""
+                                        }`}
+                                      >
+                                        {country.name}
+                                      </span>
+                                    </div>
+                                    <span
+                                      className={`text-xs px-2 py-1 rounded ${
+                                        selectedCountry?.code === country.code
+                                          ? "bg-teal-100 text-teal-700"
+                                          : "bg-gray-100 text-gray-600"
+                                      }`}
+                                    >
+                                      {country.phoneCode}
                                     </span>
-                                  </div>
-                                  <span className={`text-xs px-2 py-1 rounded ${
-                                    selectedCountry?.code === country.code
-                                      ? "bg-teal-100 text-teal-700"
-                                      : "bg-gray-100 text-gray-600"
-                                  }`}>
-                                    {country.phoneCode}
-                                  </span>
-                                </button>
-                              ))}
+                                  </button>
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
 
                         {/* No Results Message */}
-                        {showCountryDropdown && searchTerm.trim() !== "" && filteredCountries.length === 0 && (
-                          <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg">
-                            <div className="px-4 py-6 text-center text-gray-500">
-                              <svg
-                                className="w-8 h-8 mx-auto mb-2 text-gray-300"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                />
-                              </svg>
-                              <p className="text-sm">No countries found for {searchTerm}</p>
-                              <p className="text-xs text-gray-400 mt-1">Try a different search term</p>
+                        {showCountryDropdown &&
+                          searchTerm.trim() !== "" &&
+                          filteredCountries.length === 0 && (
+                            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg">
+                              <div className="px-4 py-6 text-center text-gray-500">
+                                <svg
+                                  className="w-8 h-8 mx-auto mb-2 text-gray-300"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                  />
+                                </svg>
+                                <p className="text-sm">
+                                  No countries found for {searchTerm}
+                                </p>
+                                <p className="text-xs text-gray-400 mt-1">
+                                  Try a different search term
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
                       </div>
                       <p className="mt-1 text-xs text-gray-500">
                         Type country name to search and select
@@ -663,7 +663,9 @@ const ContactForm = () => {
                         className="block text-sm font-medium text-gray-700 mb-2"
                       >
                         Email Address{" "}
-                        {isEmailRequired && <span className="text-red-500">*</span>}
+                        {isEmailRequired && (
+                          <span className="text-red-500">*</span>
+                        )}
                       </label>
                       <div className="relative">
                         <input
@@ -700,7 +702,8 @@ const ContactForm = () => {
                       )}
                       {!isEmailRequired && (
                         <p className="mt-1 text-xs text-gray-500">
-                          Optional unless you select email as preferred contact method
+                          Optional unless you select email as preferred contact
+                          method
                         </p>
                       )}
                     </div>
@@ -712,7 +715,9 @@ const ContactForm = () => {
                         className="block text-sm font-medium text-gray-700 mb-2"
                       >
                         Phone Number{" "}
-                        {isPhoneRequired && <span className="text-red-500">*</span>}
+                        {isPhoneRequired && (
+                          <span className="text-red-500">*</span>
+                        )}
                       </label>
                       <div className="relative">
                         <div className="flex">
@@ -728,9 +733,15 @@ const ContactForm = () => {
                             value={formData.phone || ""}
                             onChange={handleChange}
                             className={`text-gray-500 flex-1 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all ${
-                              errors.phone ? "border-red-500" : "border-gray-300"
+                              errors.phone
+                                ? "border-red-500"
+                                : "border-gray-300"
                             } ${selectedCountry ? "rounded-l-none" : ""}`}
-                            placeholder={selectedCountry ? "77 123 4567" : "+94 77 123 4567"}
+                            placeholder={
+                              selectedCountry
+                                ? "77 123 4567"
+                                : "+94 77 123 4567"
+                            }
                           />
                         </div>
                         {errors.phone && (
@@ -781,13 +792,14 @@ const ContactForm = () => {
                         ))}
                       </select>
                       <p className="mt-1 text-xs text-gray-500">
-                        Select how you&apos;d prefer us to contact you. This helps us provide better service.
+                        Select how you&apos;d prefer us to contact you. This
+                        helps us provide better service.
                       </p>
                     </div>
                   </div>
 
                   {/* Travel Details */}
-                  <div className="bg-gray-50 rounded-xl p-6">
+                  <div className="bg-gray-50 rounded-xl lg:p-6 text-sm lg:text-lg">
                     <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
                       <svg
                         className="w-5 h-5 text-teal-600"
@@ -903,7 +915,7 @@ const ContactForm = () => {
                           <label
                             htmlFor="departureDate"
                             className="block text-sm font-medium text-gray-700 mb-2"
-                            >
+                          >
                             Departure Date
                           </label>
                           <input
@@ -922,7 +934,7 @@ const ContactForm = () => {
                   </div>
 
                   {/* Message - Optional */}
-                  <div>
+                  <div className="text-sm lg:text-lg">
                     <label
                       htmlFor="message"
                       className="block text-sm font-medium text-gray-700 mb-2"
@@ -940,7 +952,8 @@ const ContactForm = () => {
                     />
                     <div className="mt-2 flex items-center justify-between">
                       <p className="text-xs text-gray-500">
-                        Optional - but helpful for us to understand your needs better
+                        Optional - but helpful for us to understand your needs
+                        better
                       </p>
                       <span
                         className={`text-xs ${
@@ -955,7 +968,7 @@ const ContactForm = () => {
                   </div>
 
                   {/* Submit Button */}
-                  <div className="pt-6 border-t border-gray-200">
+                  <div className="pt-6 border-t border-gray-200 text-sm lg:text-lg">
                     <button
                       type="submit"
                       disabled={isSubmitting}
@@ -988,7 +1001,7 @@ const ContactForm = () => {
                       )}
                     </button>
 
-                    <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
+                    <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-100 ">
                       <div className="flex items-start gap-3">
                         <div className="flex-shrink-0">
                           <svg
@@ -1005,17 +1018,18 @@ const ContactForm = () => {
                             />
                           </svg>
                         </div>
-                        <div>
+                        <div className="text-sm lg:text-lg">
                           <p className="text-sm text-gray-700">
                             <span className="font-semibold text-blue-600">
-                              We&apos;ll contact you through your preferred method.
+                              We&apos;ll contact you through your preferred
+                              method.
                             </span>{" "}
                             For urgent inquiries, please call us at{" "}
                             <a
-                              href="tel:+94112345678"
+                              href={`tel:${COMPANY_CONTACT_NUMBER}`}
                               className="text-teal-600 font-medium hover:text-teal-700"
                             >
-                              +94 11 234 5678
+                              {COMPANY_CONTACT_NUMBER}
                             </a>
                           </p>
                         </div>
@@ -1030,18 +1044,23 @@ const ContactForm = () => {
           {/* Right Column - Information */}
           <div className="space-y-6">
             {/* Contact Tips */}
-            <ContactTipsForQuickResponse />
+            <div className="hidden lg:flex">
+              <ContactTipsForQuickResponse />
+            </div>
 
             {/* Response Time */}
-            <ContactResponseTime />
+            <div className="hidden lg:flex">
+              <ContactResponseTime />
+            </div>
 
             {/* Working Hours */}
             {/* <ContactWorkingHours /> */}
 
             {/* Timezone */}
             {/* <ContactTimeZone /> */}
-
-            <LocationDetails/>
+            <div>
+              <LocationDetails />
+            </div>
           </div>
         </div>
       </div>

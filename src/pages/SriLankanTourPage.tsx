@@ -410,7 +410,7 @@ const SriLankanTourPage: React.FC = () => {
               onChange={(e) =>
                 handleItemsPerPageChange(Number(e.target.value))
               }
-              className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="border text-gray-500 border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             >
               <option value={6}>6</option>
               <option value={8}>8</option>
@@ -450,24 +450,24 @@ const SriLankanTourPage: React.FC = () => {
       </div>
 
       {/* Reviews Section */}
-      <ReviewsSection
+      {/* <ReviewsSection
         reviews={reviews}
         loading={reviewsLoading}
         error={reviewsError}
         onRetry={fetchReviews}
-      />
-      <TourHistorySection
+      /> */}
+      {/* <TourHistorySection
         histories={histories}
         loading={historyLoading}
         error={historyError}
         onRetry={fetchTourHistory}
-      />
-      <TourHistoryGallery
+      /> */}
+      {/* <TourHistoryGallery
         images={galleryImages}
         loading={galleryLoading}
         error={galleryError}
         onRetry={fetchTourHistoryImages}
-      />
+      /> */}
     </div>
   );
 };

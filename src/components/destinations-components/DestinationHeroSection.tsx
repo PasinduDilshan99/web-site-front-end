@@ -163,7 +163,7 @@ const DestinationHeroSection = () => {
 
   if (error || heroData.length === 0) {
     return (
-      <div className="relative w-full h-[650px] md:h-[750px] overflow-hidden bg-gradient-to-br from-teal-900 via-emerald-800 to-cyan-800 flex items-center justify-center">
+      <div className="relative w-full h-[650px] lg:h-[750px] overflow-hidden bg-gradient-to-br from-teal-900 via-emerald-800 to-cyan-800 flex items-center justify-center">
         <div className="text-center text-white px-4">
           <div className="mb-6">
             <h1 className="text-4xl md:text-5xl font-bold mb-3">
@@ -198,7 +198,7 @@ const DestinationHeroSection = () => {
   const currentType = getDestinationType(currentSlideData);
 
   return (
-    <div className="relative w-full h-[850px] overflow-hidden bg-gradient-to-br from-teal-900 via-emerald-800 to-cyan-800">
+    <div className="relative w-full h-[650px] lg:h-[850px] overflow-hidden bg-gradient-to-br from-teal-900 via-emerald-800 to-cyan-800">
       {/* Image Slider */}
       <div className="relative w-full h-full">
         {heroData.map((item, index) => (
@@ -228,25 +228,25 @@ const DestinationHeroSection = () => {
 
 
       {/* Destination Badge */}
-      <div className="absolute top-20 left-6">
+      {/* <div className="absolute top-20 left-6">
         <div className="flex items-center gap-2 px-4 py-2 bg-teal-500/20 backdrop-blur-sm rounded-full border border-teal-400/30">
           <div className="w-2 h-2 bg-teal-400 rounded-full animate-pulse"></div>
           <span className="text-sm font-medium text-white">
             <span className="text-teal-200 font-bold">{heroData.length}</span> Destinations
           </span>
         </div>
-      </div>
+      </div> */}
 
 
       {/* Slide Counter */}
       {filteredDestinations.length > 1 && (
-        <div className="absolute top-32 right-6 text-white/70 text-sm backdrop-blur-sm bg-black/20 px-3 py-1 rounded-full">
+        <div className="absolute top-12 lg:top-24 right-6 text-white/70 text-sm backdrop-blur-sm bg-black/20 px-3 py-1 rounded-full">
           {currentSlide + 1} / {filteredDestinations.length}
         </div>
       )}
 
       {/* Content Overlay */}
-      <div className="absolute inset-0 flex items-center pt-32 md:pt-20">
+      <div className="absolute inset-0 flex items-center pt-16 lg:pt-20">
         <div className="container mx-auto px-4 md:px-6 lg:px-8">
           <div className="max-w-5xl text-white mx-auto">
             {/* Destination Info Badge */}
@@ -319,7 +319,7 @@ const DestinationHeroSection = () => {
             </div>
 
             <div className="mb-8">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight tracking-tight">
+              <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold mb-4 leading-tight tracking-tight">
                 {currentSlideData.title || "Discover Sri Lanka"}
               </h1>
 
@@ -334,7 +334,7 @@ const DestinationHeroSection = () => {
             </div>
 
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 md:p-8 max-w-3xl mb-8 border border-white/20 shadow-2xl">
-              <p className="text-lg md:text-xl mb-6 text-gray-100 leading-relaxed">
+              <p className="text-md md:text-lg lg:text-xl mb-6 text-gray-100 leading-relaxed">
                 {currentSlideData.description ||
                   "Explore diverse destinations across Sri Lanka, from ancient cities to tropical beaches, hill stations to wildlife parks."}
               </p>
@@ -347,10 +347,10 @@ const DestinationHeroSection = () => {
                       onClick={() =>
                         handleButtonClick(currentSlideData.primaryButtonLink)
                       }
-                      className="px-8 py-4 bg-gradient-to-r from-teal-500 to-emerald-600 text-white font-semibold rounded-xl hover:from-teal-600 hover:to-emerald-700 transform hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-3 group"
+                      className="px-6 lg:px-8 py-2 lg:py-4 text-sm lg:text-lg bg-gradient-to-r   from-teal-500 to-emerald-600 text-white font-semibold rounded-xl hover:from-teal-600 hover:to-emerald-700 transform hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-3 group"
                     >
                       <svg
-                        className="w-6 h-6 group-hover:rotate-12 transition-transform duration-300"
+                        className="w-4 h-4 lg:w-6 lg:h-6 group-hover:rotate-12 transition-transform duration-300"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -376,10 +376,10 @@ const DestinationHeroSection = () => {
                       onClick={() =>
                         handleButtonClick(currentSlideData.secondaryButtonLink)
                       }
-                      className="px-8 py-4 border-2 border-white/50 text-white font-semibold rounded-xl hover:bg-white hover:text-teal-900 transition-all duration-300 flex items-center gap-3 group"
+                      className="px-6 lg:px-8 py-2 lg:py-4 text-sm lg:text-lg border-2 border-white/50 text-white font-semibold rounded-xl hover:bg-white hover:text-teal-900 transition-all duration-300 flex items-center gap-3 group"
                     >
                       <svg
-                        className="w-6 h-6 group-hover:scale-110 transition-transform duration-300"
+                        className="w-4 h-4 lg:w-6 lg:h-6 group-hover:scale-110 transition-transform duration-300"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -399,7 +399,7 @@ const DestinationHeroSection = () => {
             </div>
 
             {/* Destination Highlights */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="hidden lg:grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="flex items-center gap-3 px-5 py-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 hover:bg-white/15 transition-all duration-300">
                 <div className="w-12 h-12 rounded-full bg-teal-500/20 flex items-center justify-center">
                   <svg
@@ -473,7 +473,7 @@ const DestinationHeroSection = () => {
         <>
           <button
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group md:left-6"
+            className="hidden lg:flex absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group md:left-6"
             aria-label="Previous slide"
           >
             <svg
@@ -493,7 +493,7 @@ const DestinationHeroSection = () => {
 
           <button
             onClick={nextSlide}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group md:right-6"
+            className="hidden lg:flex absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group md:right-6"
             aria-label="Next slide"
           >
             <svg
@@ -544,7 +544,7 @@ const DestinationHeroSection = () => {
       )}
 
       {/* Quick Actions */}
-      <div className="absolute bottom-40 right-6 hidden md:block">
+      {/* <div className="absolute bottom-40 right-6 hidden md:block">
         <div className="flex flex-col gap-2">
           <button
             onClick={() => window.location.href = "/destinations/map"}
@@ -585,10 +585,10 @@ const DestinationHeroSection = () => {
             Plan Itinerary
           </button>
         </div>
-      </div>
+      </div> */}
 
       {/* Weather & Climate */}
-      <div className="absolute bottom-40 left-6 hidden md:block">
+      {/* <div className="absolute bottom-40 left-6 hidden md:block">
         <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
           <div className="flex items-center gap-3 mb-2">
             <svg
@@ -611,7 +611,7 @@ const DestinationHeroSection = () => {
           </div>
           <p className="text-xs text-white/60">Tropical • Year-round</p>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

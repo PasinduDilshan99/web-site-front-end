@@ -1,13 +1,10 @@
-import { UPDATE_FAQ_VIEW_COUNT } from "@/utils/backEndConstant";
+import { UPDATE_FAQ_VIEW_COUNT_DATA } from "@/utils/backEndConstant";
 import { NextResponse } from "next/server";
 
 export async function PUT(req: Request) {
   try {
     const requestBody = await req.json();
-    console.log('=================requestBody===================');
-    console.log(requestBody);
-    console.log('====================================');
-    const response = await fetch(UPDATE_FAQ_VIEW_COUNT, {
+    const response = await fetch(UPDATE_FAQ_VIEW_COUNT_DATA, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

@@ -24,12 +24,12 @@ export default function RootLayout({
       <body >
         <AuthProvider>
           {/* <DecemberSnowfall /> */}
-          <GlobalGradientScrollbar />
-          <LinkBar />
+          {/* <GlobalGradientScrollbar /> */}
+          {/* <LinkBar /> */}
           <NavBar />
           <main >{children}</main>
           <Footer />
-          {/* <ChatBot /> */}
+          <ChatBot />
         </AuthProvider>
       </body>
     </html>

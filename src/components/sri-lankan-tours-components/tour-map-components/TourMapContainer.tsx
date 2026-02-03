@@ -36,7 +36,7 @@ interface TourMapContainerProps {
   tourId: number;
 }
 
-const API_BASE_URL = "http://localhost:8080/felicita/v0/api";
+const API_BASE_URL = "http://localhost:8080/felicita/api/v0";
 
 export default function TourMapContainer({ tourId }: TourMapContainerProps) {
   const [returnToStart, setReturnToStart] = useState(false);

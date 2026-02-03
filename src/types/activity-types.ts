@@ -76,6 +76,7 @@ export interface ActiveActivitiesCategoriesType {
   updatedBy: number | null;
   terminatedAt: string | null;
   terminatedBy: number | null;
+  numberOfActivities: number;
   images: CategoryImage[];
 }
 
