@@ -70,14 +70,14 @@ const SLTourDayWiseDetails: React.FC<SLTourDayWiseDetailsProps> = ({
     setExpandedDays((prev) =>
       prev.includes(dayNumber)
         ? prev.filter((day) => day !== dayNumber)
-        : [...prev, dayNumber]
+        : [...prev, dayNumber],
     );
   };
 
   const toggleActivity = (
     dayNumber: number,
     destinationId: number,
-    activityId: number
+    activityId: number,
   ) => {
     const key = `${dayNumber}-${destinationId}-${activityId}`;
     setExpandedActivities((prev) => ({
@@ -92,7 +92,7 @@ const SLTourDayWiseDetails: React.FC<SLTourDayWiseDetailsProps> = ({
     description?: string,
     type: "destination" | "activity" = "destination",
     allImages: Array<{ url: string; title: string; description?: string }> = [],
-    initialIndex: number = 0
+    initialIndex: number = 0,
   ) => {
     setImageModal({
       isOpen: true,
@@ -173,7 +173,7 @@ const SLTourDayWiseDetails: React.FC<SLTourDayWiseDetailsProps> = ({
   const isActivityExpanded = (
     dayNumber: number,
     destinationId: number,
-    activityId: number
+    activityId: number,
   ) => {
     const key = `${dayNumber}-${destinationId}-${activityId}`;
     return expandedActivities[key] || false;
@@ -266,24 +266,38 @@ const SLTourDayWiseDetails: React.FC<SLTourDayWiseDetailsProps> = ({
           {/* Header */}
 
           {/* Days Navigation */}
-          <div className="mb-8">
-            <div className="flex overflow-x-auto pb-4 space-x-4 scrollbar-hide">
-              {days.map((day) => (
-                <button
-                  key={day.dayNumber}
-                  onClick={() => toggleDay(day.dayNumber)}
-                  className={`flex-shrink-0 px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
-                    expandedDays.includes(day.dayNumber)
-                      ? "bg-gradient-to-r from-purple-600 to-amber-600 text-white shadow-lg transform scale-105"
-                      : "bg-white text-gray-700 border border-gray-200 hover:border-purple-300 hover:shadow-md"
-                  }`}
-                >
-                  Day {day.dayNumber}
-                  <div className="text-xs mt-1 opacity-80">
-                    {day.destinations.length} destinations
-                  </div>
-                </button>
-              ))}
+          <div className="mb-6 sm:mb-8">
+            <div className="relative">
+              {/* Scrollable container */}
+              <div className="flex overflow-x-auto pb-3 sm:pb-4 space-x-3 sm:space-x-4 scrollbar-hide">
+                {days.map((day) => (
+                  <button
+                    key={day.dayNumber}
+                    onClick={() => toggleDay(day.dayNumber)}
+                    className={`flex-shrink-0 px-4 py-2.5 sm:px-5 sm:py-3 md:px-6 md:py-3 rounded-lg sm:rounded-xl font-medium transition-all duration-300 whitespace-nowrap ${
+                      expandedDays.includes(day.dayNumber)
+                        ? "bg-gradient-to-r from-purple-600 to-amber-600 text-white shadow-md sm:shadow-lg transform scale-[1.02] sm:scale-105"
+                        : "bg-white text-gray-700 border border-gray-200 hover:border-purple-300 hover:shadow-sm sm:hover:shadow-md"
+                    }`}
+                  >
+                    <div className="flex flex-col items-center">
+                      <span className="text-sm sm:text-base font-semibold">
+                        Day {day.dayNumber}
+                      </span>
+                      <div className="text-xs mt-0.5 sm:mt-1 opacity-80">
+                        {day.destinations.length}{" "}
+                        {day.destinations.length === 1
+                          ? "Destinations"
+                          : "Destinations"}
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              {/* Optional: Gradient fade edges for mobile */}
+              {/* <div className="absolute top-0 right-0 w-8 h-full bg-gradient-to-l from-white to-transparent pointer-events-none md:hidden"></div> */}
+              {/* <div className="absolute top-0 left-0 w-8 h-full bg-gradient-to-r from-white to-transparent pointer-events-none md:hidden"></div> */}
             </div>
           </div>
 
@@ -301,60 +315,71 @@ const SLTourDayWiseDetails: React.FC<SLTourDayWiseDetailsProps> = ({
                 {/* Day Header */}
                 <button
                   onClick={() => toggleDay(day.dayNumber)}
-                  className={`w-full p-6 flex justify-between items-center transition-all duration-300 ${
+                  className={`w-full p-3 sm:p-4 md:p-5 flex items-center gap-3 transition-all duration-200 ${
                     expandedDays.includes(day.dayNumber)
                       ? "bg-gradient-to-r from-purple-600 to-amber-600"
                       : "bg-gradient-to-r from-purple-500 to-amber-500"
                   }`}
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center justify-center w-14 h-14 bg-white/20 rounded-xl backdrop-blur-sm transition-transform duration-300 hover:scale-110">
-                      <span className="text-2xl font-bold text-white">
+                  {/* Day number */}
+                  <div className="relative flex-shrink-0">
+                    <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-lg sm:rounded-xl backdrop-blur-sm">
+                      <span className="text-lg sm:text-xl font-bold text-white">
                         {day.dayNumber}
                       </span>
                     </div>
-                    <div className="text-left">
-                      <h3 className="text-2xl font-bold text-white">
+                    {/* Active indicator */}
+                    {expandedDays.includes(day.dayNumber) && (
+                      <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
+                    )}
+                  </div>
+
+                  {/* Day info */}
+                  <div className="flex-1 min-w-0 text-left">
+                    <div className="flex items-center justify-between mb-1">
+                      <h3 className="text-base sm:text-lg font-bold text-white">
                         Day {day.dayNumber}
                       </h3>
-                      <div className="flex items-center gap-3 text-white/90 text-sm mt-1">
-                        <div className="flex items-center gap-1">
-                          <MapPin className="w-4 h-4 transition-transform duration-300 hover:scale-110" />
-                          <span>{day.destinations.length} destinations</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Compass className="w-4 h-4 transition-transform duration-300 hover:scale-110" />
-                          <span>
-                            {day.destinations.reduce(
-                              (acc, curr) => acc + curr.activities.length,
-                              0
-                            )}{" "}
-                            activities
-                          </span>
-                        </div>
+                      <div className="flex items-center gap-1 text-xs text-white/80">
+                        <span>
+                          {day.destinations.reduce(
+                            (acc, curr) => acc + curr.activities.length,
+                            0,
+                          )}
+                        </span>
+                        <Compass className="w-3 h-3" />
                       </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-white font-medium">
-                      {expandedDays.includes(day.dayNumber)
-                        ? "Collapse"
-                        : "Expand"}
-                    </span>
-                    <div className="transition-transform duration-300 hover:scale-110">
-                      {expandedDays.includes(day.dayNumber) ? (
-                        <ChevronUp className="w-6 h-6 text-white" />
-                      ) : (
-                        <ChevronDown className="w-6 h-6 text-white" />
-                      )}
+
+                    {/* Stats bar */}
+                    <div className="flex items-center gap-2 text-xs text-white/80">
+                      <div className="flex items-center gap-1">
+                        <MapPin className="w-3 h-3" />
+                        <span>{day.destinations.length} stops</span>
+                      </div>
+                      <span>•</span>
+                      <span>
+                        {expandedDays.includes(day.dayNumber)
+                          ? "Viewing"
+                          : "Tap to view"}
+                      </span>
                     </div>
+                  </div>
+
+                  {/* Expand icon */}
+                  <div className="flex-shrink-0">
+                    {expandedDays.includes(day.dayNumber) ? (
+                      <ChevronUp className="w-5 h-5 text-white" />
+                    ) : (
+                      <ChevronDown className="w-5 h-5 text-white" />
+                    )}
                   </div>
                 </button>
 
                 {/* Day Content with Animation */}
                 <div
                   style={getAnimationStyles.dayContent(
-                    expandedDays.includes(day.dayNumber)
+                    expandedDays.includes(day.dayNumber),
                   )}
                 >
                   {expandedDays.includes(day.dayNumber) && (

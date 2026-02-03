@@ -1,4 +1,4 @@
-import { TourDetails } from "@/types/packages-types";
+import { TourDetails } from "@/types/package-types";
 import React from "react";
 
 interface SLTourDetailsOverviewProps {
@@ -10,20 +10,24 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
 }) => {
   const formatDuration = (days: number) => {
     const nights = days - 1;
-    return `${nights < 10 ? "0" + nights : nights} Days ${
-      days < 10 ? "0" + days : days
-    } Nights`;
+
+    return `${days.toString().padStart(2, "0")} Days ${nights
+      .toString()
+      .padStart(2, "0")} Nights`;
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Tour Overview</h2>
+    <div className="bg-white rounded-lg sm:rounded-2xl shadow-md sm:shadow-lg p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
+      <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">
+        Tour Overview
+      </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      {/* Responsive grid layout */}
+      <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-4 sm:mb-6">
         <SLTourDetailsInfoItem
           icon={
             <svg
-              className="w-5 h-5 text-amber-600"
+              className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -42,7 +46,7 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
         <SLTourDetailsInfoItem
           icon={
             <svg
-              className="w-5 h-5 text-purple-600"
+              className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -58,10 +62,10 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
           bgColor="bg-purple-100"
         />
 
-        <SLTourDetailsInfoItem
+        {/* <SLTourDetailsInfoItem
           icon={
             <svg
-              className="w-5 h-5 text-amber-600"
+              className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -75,12 +79,12 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
           label="Category"
           value={tour.tourCategoryName}
           bgColor="bg-amber-100"
-        />
+        /> */}
 
         <SLTourDetailsInfoItem
           icon={
             <svg
-              className="w-5 h-5 text-purple-600"
+              className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -97,20 +101,24 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
         />
       </div>
 
-      <div className="flex gap-3 mb-6">
-        <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-amber-100 text-amber-800 border border-amber-200">
+      {/* Responsive badge container */}
+      <div className="flex flex-wrap gap-2 sm:gap-3 mb-4 sm:mb-6">
+        <span className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium bg-amber-100 text-amber-800 border border-amber-200">
           {tour.tourTypeName}
         </span>
-        <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-purple-100 text-purple-800 border border-purple-200">
+        <span className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium bg-purple-100 text-purple-800 border border-purple-200">
           {tour.tourCategoryName}
         </span>
-        <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-green-100 text-green-800 border border-green-200">
+        <span className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium bg-green-100 text-green-800 border border-green-200">
           {tour.statusName}
         </span>
       </div>
 
+      {/* Responsive text */}
       <div className="prose max-w-none">
-        <p className="text-gray-700 leading-relaxed">{tour.tourDescription}</p>
+        <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
+          {tour.tourDescription}
+        </p>
       </div>
     </div>
   );
@@ -122,15 +130,17 @@ const SLTourDetailsInfoItem: React.FC<{
   value: string;
   bgColor: string;
 }> = ({ icon, label, value, bgColor }) => (
-  <div className="flex items-center gap-3">
+  <div className="flex items-center gap-2 sm:gap-3">
     <div
-      className={`w-10 h-10 ${bgColor} rounded-full flex items-center justify-center flex-shrink-0`}
+      className={`w-8 h-8 sm:w-10 sm:h-10 ${bgColor} rounded-full flex items-center justify-center flex-shrink-0`}
     >
       {icon}
     </div>
-    <div>
-      <p className="text-sm text-gray-600">{label}</p>
-      <p className="font-semibold text-gray-800">{value}</p>
+    <div className="min-w-0 flex-1">
+      <p className="text-xs sm:text-sm text-gray-600 truncate">{label}</p>
+      <p className="font-semibold text-gray-800 text-sm sm:text-base truncate">
+        {value}
+      </p>
     </div>
   </div>
 );

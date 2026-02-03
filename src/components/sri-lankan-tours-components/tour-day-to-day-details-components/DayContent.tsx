@@ -7,8 +7,16 @@ import AccommodationsSection from "./AccommodationsSection";
 
 interface DayContentProps {
   day: DayDetails;
-  isActivityExpanded: (dayNumber: number, destinationId: number, activityId: number) => boolean;
-  toggleActivity: (dayNumber: number, destinationId: number, activityId: number) => void;
+  isActivityExpanded: (
+    dayNumber: number,
+    destinationId: number,
+    activityId: number,
+  ) => boolean;
+  toggleActivity: (
+    dayNumber: number,
+    destinationId: number,
+    activityId: number,
+  ) => void;
   formatCurrency: (amount: number) => string;
   formatTime: (time: string) => string;
   openImageModal: (
@@ -17,7 +25,7 @@ interface DayContentProps {
     description?: string,
     type?: "destination" | "activity",
     allImages?: Array<{ url: string; title: string; description?: string }>,
-    initialIndex?: number
+    initialIndex?: number,
   ) => void;
 }
 
@@ -33,7 +41,7 @@ const DayContent: React.FC<DayContentProps> = ({
     <div className="space-y-8">
       {/* Destinations Section */}
       <div className="space-y-6">
-        <h3 className="text-2xl font-bold text-gray-900 mb-6">
+        <h3 className="text-lg lg:text-2xl font-bold text-gray-900 mb-6">
           Destinations & Activities
         </h3>
         {day.destinations.map((destinationWithActivities, idx) => (
@@ -50,7 +58,6 @@ const DayContent: React.FC<DayContentProps> = ({
           />
         ))}
       </div>
-
       {/* Accommodations Section */}
       <AccommodationsSection accommodations={day.accommodations} />
     </div>

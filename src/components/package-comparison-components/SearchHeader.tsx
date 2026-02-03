@@ -20,15 +20,15 @@ const SearchHeader: React.FC<SearchHeaderProps> = ({
   handleTourSelect,
 }) => {
   return (
-    <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
+    <div className="top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="text-center mb-6">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-2xl lg:text-4xl font-bold text-gray-900 mb-2">
             Compare Tour Packages
           </h1>
-          <p className="text-gray-600">
+          <div className="text-gray-600 text-md lg:text-lg">
             Select a tour and compare available packages side by side
-          </p>
+          </div>
         </div>
 
         {/* Search Bar */}
@@ -44,7 +44,7 @@ const SearchHeader: React.FC<SearchHeaderProps> = ({
               }}
               onFocus={() => setShowTourDropdown(true)}
               placeholder="Search for tours by name, category, or type..."
-              className="w-full pl-12 pr-12 py-4 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-200"
+              className="text-gray-800 w-full pl-12 pr-12 py-4 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-200"
             />
             <button
               onClick={() => setShowTourDropdown(!showTourDropdown)}

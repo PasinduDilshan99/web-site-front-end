@@ -39,7 +39,7 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 sticky top-4 sm:top-6">
+    <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 sticky top-4 sm:top-16">
       <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">
         Book This Package
       </h3>
@@ -64,12 +64,12 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
           </div>
         )}
         <div className="text-xs sm:text-sm text-gray-600 text-center mt-1 sm:mt-2">
-          per package
+          per person
         </div>
       </div>
 
       {/* Validity Period */}
-      <div className="mb-4 sm:mb-6">
+      {/* <div className="mb-4 sm:mb-6">
         <div className="flex items-center justify-between text-xs sm:text-sm text-gray-600 mb-2">
           <span>Valid From:</span>
           <span className="font-medium">{formatDate(packageData.startDate)}</span>
@@ -78,10 +78,10 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
           <span>Valid To:</span>
           <span className="font-medium">{formatDate(packageData.endDate)}</span>
         </div>
-      </div>
+      </div> */}
 
       {/* Participants */}
-      <div className="mb-4 sm:mb-6">
+      {/* <div className="mb-4 sm:mb-6">
         <label className="block text-xs sm:text-sm font-semibold text-gray-800 mb-1.5 sm:mb-2">
           Number of Participants
         </label>
@@ -113,7 +113,7 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
             ({packageData.minPersonCount}-{packageData.maxPersonCount})
           </span>
         </div>
-      </div>
+      </div> */}
 
       {/* Package Features Summary */}
       {packageData.packageFeatures && packageData.packageFeatures.length > 0 && (
@@ -146,7 +146,7 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
       )}
 
       {/* Total Price */}
-      <div className="border-t border-gray-200 pt-3 sm:pt-4 mb-4 sm:mb-6">
+      {/* <div className="border-t border-gray-200 pt-3 sm:pt-4 mb-4 sm:mb-6">
         <div className="flex justify-between items-center mb-1 sm:mb-2">
           <span className="font-semibold text-gray-800 text-sm sm:text-base">Total Price:</span>
           <span className="text-lg sm:text-xl md:text-2xl font-bold text-green-600">
@@ -156,7 +156,7 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
         <div className="text-xs sm:text-sm text-gray-600 text-center">
           For {participants} participant{participants > 1 ? "s" : ""}
         </div>
-      </div>
+      </div> */}
 
       {/* Book Now Button */}
       <button

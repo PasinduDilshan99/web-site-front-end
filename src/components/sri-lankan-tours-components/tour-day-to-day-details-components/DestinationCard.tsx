@@ -18,10 +18,18 @@ interface DestinationCardProps {
     description?: string,
     type?: "destination" | "activity",
     allImages?: Array<{ url: string; title: string; description?: string }>,
-    initialIndex?: number
+    initialIndex?: number,
   ) => void;
-  isActivityExpanded: (dayNumber: number, destinationId: number, activityId: number) => boolean;
-  toggleActivity: (dayNumber: number, destinationId: number, activityId: number) => void;
+  isActivityExpanded: (
+    dayNumber: number,
+    destinationId: number,
+    activityId: number,
+  ) => boolean;
+  toggleActivity: (
+    dayNumber: number,
+    destinationId: number,
+    activityId: number,
+  ) => void;
 }
 
 const DestinationCard: React.FC<DestinationCardProps> = ({
@@ -39,10 +47,11 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
   return (
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
       {/* Destination Header */}
-      <div className="p-6 border-b border-gray-100">
-        <div className="flex items-start gap-4">
+      <div className="p-4 sm:p-5 md:p-6 border-b border-gray-100">
+        <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4 md:gap-6">
+          {/* Destination Image */}
           <div
-            className="relative w-24 h-24 rounded-lg overflow-hidden flex-shrink-0 cursor-pointer group"
+            className="relative w-full sm:w-20 md:w-24 aspect-square rounded-lg overflow-hidden flex-shrink-0 cursor-pointer group"
             onClick={() => {
               const images = destination.images.map((img) => ({
                 url: img.imageUrl,
@@ -55,7 +64,7 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
                 destination.destinationDescription,
                 "destination",
                 images,
-                0
+                0,
               );
             }}
           >
@@ -65,43 +74,66 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
                 alt={destination.images[0].imageName}
                 fill
                 className="object-cover transition-transform duration-500 group-hover:scale-110"
-                sizes="96px"
+                sizes="(max-width: 640px) 100vw, (max-width: 768px) 20vw, 96px"
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
-                <Maximize2 className="w-8 h-8 text-white" />
+                <Maximize2 className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-white" />
               </div>
             )}
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
-              <Maximize2 className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <Maximize2 className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </div>
           </div>
-          <div className="flex-1">
-            <div className="flex items-start justify-between">
-              <div>
-                <h4 className="text-xl font-semibold text-gray-900 mb-2">
-                  {destination.destinationName}
-                </h4>
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="flex items-center gap-1 text-sm text-gray-600">
-                    <MapPin className="w-4 h-4 transition-transform duration-300 hover:scale-110" />
-                    <span>{destination.location}</span>
+
+          {/* Destination Content */}
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
+              {/* Left section - Destination info */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between sm:block">
+                  <h4 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900 mb-1 sm:mb-2 truncate">
+                    {destination.destinationName}
+                  </h4>
+                  {/* Mobile-only destination number */}
+                  <div className="sm:hidden flex items-center gap-2">
+                    <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                      {destination.category}
+                    </span>
+                    <div className="text-sm font-bold text-blue-600">
+                      #{index + 1}
+                    </div>
                   </div>
-                  <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full transition-all duration-300 hover:scale-105">
+                </div>
+
+                {/* Location and category */}
+                <div className="flex flex-col xs:flex-row xs:items-center gap-2 xs:gap-3 mb-2 sm:mb-3">
+                  <div className="flex items-center gap-1 text-sm text-gray-600">
+                    <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500 flex-shrink-0" />
+                    <span className="truncate">{destination.location}</span>
+                  </div>
+                  {/* Desktop category badge */}
+                  <span className="hidden sm:inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full transition-all duration-300 hover:scale-105">
                     {destination.category}
                   </span>
                 </div>
               </div>
-              <div className="text-right">
-                <div className="text-sm font-medium text-gray-500">
+
+              {/* Right section - Desktop destination number */}
+              <div className="hidden sm:flex flex-col items-end text-right">
+                <div className="text-xs sm:text-sm font-medium text-gray-500 mb-1">
                   Destination
                 </div>
-                <div className="text-lg font-bold text-blue-600 transition-transform duration-300 hover:scale-110">
+                <div className="text-lg sm:text-xl font-bold text-blue-600 transition-transform duration-300 hover:scale-110">
                   #{index + 1}
                 </div>
               </div>
             </div>
-            <p className="text-gray-700">{destination.destinationDescription}</p>
+
+            {/* Destination description */}
+            <p className="text-gray-700 text-sm sm:text-base leading-relaxed mt-2 sm:mt-3 line-clamp-2 sm:line-clamp-3 md:line-clamp-4">
+              {destination.destinationDescription}
+            </p>
           </div>
         </div>
       </div>
@@ -127,7 +159,7 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
                     image.imageDescription,
                     "destination",
                     images,
-                    imageIdx
+                    imageIdx,
                   );
                 }}
               >
@@ -169,9 +201,13 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
                 activity={activity}
                 dayNumber={dayNumber}
                 destinationId={destination.destinationId}
-                isExpanded={isActivityExpanded(dayNumber, destination.destinationId, activity.id)}
+                isExpanded={isActivityExpanded(
+                  dayNumber,
+                  destination.destinationId,
+                  activity.id,
+                )}
                 onToggle={(key) => {
-                  const [dayNum, destId, actId] = key.split('-').map(Number);
+                  const [dayNum, destId, actId] = key.split("-").map(Number);
                   toggleActivity(dayNum, destId, actId);
                 }}
                 formatCurrency={formatCurrency}

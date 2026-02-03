@@ -303,7 +303,7 @@ const PackagePage = () => {
             )}
 
             {/* Tour Details */}
-            {tourData && <TourDetailsSection tourData={tourData} />}
+            {/* {tourData && <TourDetailsSection tourData={tourData} />} */}
 
             {/* Destinations */}
             {destinations.length > 0 && (
@@ -318,17 +318,17 @@ const PackagePage = () => {
         </div>
 
         {/* Reviews Section */}
-        <div className="mt-8 sm:mt-12 md:mt-16">
+        {/* <div className="mt-8 sm:mt-12 md:mt-16">
           <ReviewsSection
             reviews={reviews}
             // loading={reviewsLoading}
             // error={reviewsError}
             // onRetry={handleReviewsRetry}
           />
-        </div>
+        </div> */}
 
         {/* History Section */}
-        {history.length > 0 && (
+        {/* {history.length > 0 && (
           <div className="mt-8 sm:mt-12 md:mt-16">
             <HistoryCarousel
               historyData={history}
@@ -337,10 +337,10 @@ const PackagePage = () => {
               onRetry={handleHistoryRetry}
             />
           </div>
-        )}
+        )} */}
 
         {/* Package History Gallery Section */}
-        {historyImages.length > 0 && (
+        {/* {historyImages.length > 0 && (
           <div className="mt-8 sm:mt-12 md:mt-16">
             <PackageHistoryGallery
               imagesData={historyImages}
@@ -349,7 +349,7 @@ const PackagePage = () => {
               onRetry={handleHistoryImagesRetry}
             />
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );
