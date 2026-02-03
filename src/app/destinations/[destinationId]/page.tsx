@@ -11,9 +11,8 @@ import DestinationDetailsSidebar from "@/components/destinations-components/dest
 import DestinationHistory from "@/components/destinations-components/DestinationHistory";
 import DestinationHistoryGallery from "@/components/destinations-components/DestinationHistoryGallery";
 import { DestinationHistoryImage, DestinationHistoryType,Review,DestinationData } from "@/types/destination-types";
-import NavBar from "@/components/common-components/navBar/NavBar";
-import Footer from "@/app/components/footer/Footer";
 import { DestinationService } from "@/services/destinationService";
+import DestinationDetailsHeroSection from "@/components/destinations-components/DestinationDetailsHeroSection";
 
 const DestinationDetailsPage = () => {
   const params = useParams();
@@ -137,9 +136,8 @@ const DestinationDetailsPage = () => {
 
   return (
     <>
-      <NavBar />
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-purple-50">
-        <DestinationDetailsHeader destination={destination} />
+        <DestinationDetailsHeroSection destination={destination} />
 
         <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -159,7 +157,7 @@ const DestinationDetailsPage = () => {
           </div>
 
           {/* Destination History Section */}
-          <div className="mt-12">
+          {/* <div className="mt-12">
             <DestinationHistory
               historyData={history}
               // loading={historyLoading}
@@ -168,10 +166,10 @@ const DestinationDetailsPage = () => {
               description="Discover the fascinating stories and historical events that shaped this amazing destination"
               // onRetry={handleRetryHistory}
             />
-          </div>
+          </div> */}
 
           {/* Reviews Section */}
-          <div className="mt-12">
+          {/* <div className="mt-12">
             {reviewsLoading ? (
               <div className="bg-white rounded-2xl shadow-lg p-8">
                 <div className="flex justify-center items-center py-8">
@@ -216,10 +214,10 @@ const DestinationDetailsPage = () => {
                 error={reviewsError}
               />
             )}
-          </div>
+          </div> */}
 
           {/* Destination History Gallery Section */}
-          <div className="mt-12">
+          {/* <div className="mt-12">
             <DestinationHistoryGallery
               imagesData={historyImages}
               // loading={historyImagesLoading}
@@ -228,10 +226,9 @@ const DestinationDetailsPage = () => {
               description="Browse through captivating photographs that capture the essence of this destination's history"
               // onRetry={handleRetryHistoryImages}
             />
-          </div>
+          </div> */}
         </div>
       </div>
-      <Footer />
     </>
   );
 };

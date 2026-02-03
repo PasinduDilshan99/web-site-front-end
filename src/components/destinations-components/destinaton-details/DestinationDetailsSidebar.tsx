@@ -16,7 +16,7 @@ const DestinationDetailsSidebar: React.FC<DestinationDetailsSidebarProps> = ({
   return (
     <>
       <QuickInfoCard destination={destination} />
-      <BookingCard destination={destination} />
+      {/* <BookingCard destination={destination} /> */}
       {destination.images.length > 0 && (
         <GalleryPreview
           destination={destination}

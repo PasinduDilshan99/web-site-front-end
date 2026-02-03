@@ -1,4 +1,5 @@
 import { Activity } from "@/types/destination-types";
+import Link from "next/link";
 import React from "react";
 
 interface ActivitiesTabProps {
@@ -31,7 +32,7 @@ const ActivitiesTab: React.FC<ActivitiesTabProps> = ({ activities }) => {
 
   return (
     <div>
-      <h3 className="text-xl font-bold text-gray-900 mb-4">
+      <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-4">
         Activities ({activities.length})
       </h3>
       <div className="space-y-4">
@@ -41,17 +42,17 @@ const ActivitiesTab: React.FC<ActivitiesTabProps> = ({ activities }) => {
             className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
           >
             <div className="flex justify-between items-start mb-3">
-              <h4 className="text-lg font-semibold text-gray-900">
+              <h4 className="text-md lg:text-lg font-semibold text-gray-900">
                 {activity.activityName}
               </h4>
               <div className="flex space-x-2">
-                <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded text-sm font-medium">
+                <span className="text-xs lg:text-sm  bg-purple-100 text-purple-800 px-2 py-1 rounded font-medium">
                   {activity.activitiesCategory}
                 </span>
               </div>
             </div>
 
-            <p className="text-gray-600 mb-3">{activity.activityDescription}</p>
+            <p className="text-gray-600 mb-3 text-sm lg:text-md">{activity.activityDescription}</p>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               <div className="flex items-center text-gray-600">
@@ -106,7 +107,7 @@ const ActivitiesTab: React.FC<ActivitiesTabProps> = ({ activities }) => {
             </div>
 
             <div className="mt-3 flex justify-between items-center">
-              <div className="flex space-x-4">
+              {/* <div className="flex space-x-4">
                 <div>
                   <span className="text-sm text-gray-500">Local</span>
                   <p className="font-semibold text-amber-600">
@@ -119,7 +120,7 @@ const ActivitiesTab: React.FC<ActivitiesTabProps> = ({ activities }) => {
                     LKR {activity.priceForeigners.toLocaleString()}
                   </p>
                 </div>
-              </div>
+              </div> */}
 
               <div className="flex space-x-1">
                 {activity.season.split(",").map((season, index) => (
@@ -133,6 +134,12 @@ const ActivitiesTab: React.FC<ActivitiesTabProps> = ({ activities }) => {
                   </span>
                 ))}
               </div>
+              <Link
+                href={`/activities/${activity.activityId}`}
+                className="ml-4 px-4 py-2 bg-amber-600 text-white text-sm font-medium rounded-md hover:bg-amber-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                View Details
+              </Link>
             </div>
           </div>
         ))}

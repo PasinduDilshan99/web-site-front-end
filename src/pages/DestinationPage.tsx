@@ -338,7 +338,7 @@ const DestinationPage: React.FC = () => {
         {/* Results Section */}
         <div id="results-section" className="mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <h3 className="text-2xl font-semibold text-gray-900">
+            <h3 className="text-xl lg:text-2xl font-semibold text-gray-900">
               {totalDestinations} Destination
               {totalDestinations !== 1 ? "s" : ""} Found
             </h3>
@@ -357,7 +357,7 @@ const DestinationPage: React.FC = () => {
                 onChange={(e) =>
                   handleItemsPerPageChange(Number(e.target.value))
                 }
-                className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm"
+                className="text-gray-800 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm"
               >
                 <option value={4}>4 per page</option>
                 <option value={6}>6 per page</option>
@@ -395,26 +395,26 @@ const DestinationPage: React.FC = () => {
         </div>
 
         {/* Reviews Section */}
-        <ReviewsSection
+        {/* <ReviewsSection
           reviews={reviews}
           loading={reviewsLoading}
           error={reviewsError}
-        />
+        /> */}
 
-        <DestinationHistory
+        {/* <DestinationHistory
           historyData={history}
           // loading={historyLoading}
           // error={historyError}
           title="Destination History & Heritage"
           description="Discover the fascinating stories and historical events that shaped these amazing destinations"
-        />
-        <DestinationHistoryGallery
+        /> */}
+        {/* <DestinationHistoryGallery
           imagesData={historyImages}
           // loading={historyImagesLoading}
           // error={historyImagesError}
           title="Historical Images Collection"
           description="Browse through captivating photographs that capture the essence of our destinations' history"
-        />
+        /> */}
       </div>
     </>
   );
@@ -491,7 +491,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
   };
 
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-8 pt-6 border-t border-gray-200">
+    <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-8 pt-6 border-t border-gray-200 text-gray-800">
       <div className="text-sm text-gray-600">
         Showing {startItem} to {endItem} of {totalItems} destinations
       </div>
