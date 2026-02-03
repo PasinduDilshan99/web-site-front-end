@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { TourDetails, TourImage } from "@/types/packages-types";
+import { TourDetails, TourImage } from "@/types/package-types";
 
 interface SLTourHeroSectionProps {
   tour: {
@@ -108,7 +108,7 @@ const PackageComparisonHeaderSection: React.FC<SLTourHeroSectionProps> = ({
           <div className="container mx-auto px-4 md:px-6 lg:px-8 pb-12">
             <div className="max-w-4xl text-white">
               {/* Tour Category Badge */}
-              <div className="mb-4 flex flex-wrap gap-3">
+              {/* <div className="mb-4 flex flex-wrap gap-3">
                 <span className="px-4 py-2 bg-amber-500/90 backdrop-blur-sm rounded-full text-sm font-semibold">
                   {tour.tourDetails.tourCategoryName}
                 </span>
@@ -131,15 +131,15 @@ const PackageComparisonHeaderSection: React.FC<SLTourHeroSectionProps> = ({
                   </svg>
                   {tour.tourDetails.duration} Days
                 </span>
-              </div>
+              </div> */}
 
               {/* Tour Title and Description */}
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
                 {tour.tourDetails.tourName}
               </h1>
 
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 max-w-3xl mb-6">
-                <p className="text-lg md:text-xl text-gray-100 leading-relaxed mb-4">
+                <p className="text-md lg:text-xl text-gray-100 leading-relaxed mb-4">
                   {tour.tourDetails.tourDescription}
                 </p>
 

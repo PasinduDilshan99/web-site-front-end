@@ -84,7 +84,7 @@ const PackageInfo: React.FC<PackageInfoProps> = ({ packageData }) => {
       )}
 
       {/* Validity Period */}
-      <div className="mb-4 sm:mb-6">
+      {/* <div className="mb-4 sm:mb-6">
         <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2 sm:mb-3">Validity Period</h3>
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 p-3 sm:p-4 bg-blue-50 rounded-lg">
           <div className="flex items-center gap-2">
@@ -103,10 +103,10 @@ const PackageInfo: React.FC<PackageInfoProps> = ({ packageData }) => {
             <span className="text-gray-700 text-sm sm:text-base">{formatDate(packageData.endDate)}</span>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Pricing Details */}
-      <div>
+      {/* <div>
         <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2 sm:mb-3">Pricing Details</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
           <div className="space-y-1.5 sm:space-y-2">
@@ -154,7 +154,7 @@ const PackageInfo: React.FC<PackageInfoProps> = ({ packageData }) => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

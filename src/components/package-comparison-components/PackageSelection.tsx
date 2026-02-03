@@ -1,5 +1,5 @@
 import React from "react";
-import { Package } from "@/types/package-comparison-types";
+import { Package } from "@/types/package-types";
 
 interface PackageSelectionProps {
   packages: Package[];
@@ -23,7 +23,7 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
   return (
     <div className="mb-12">
       <div className="bg-white rounded-2xl shadow-lg p-8">
-        <h3 className="text-2xl font-bold text-gray-900 mb-6">
+        <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-6">
           Select Packages to Compare
         </h3>
 
@@ -36,7 +36,7 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
             <select
               value={package1Id}
               onChange={(e) => onPackageSelect(e.target.value, true)}
-              className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-200"
+              className="text-gray-700 w-full p-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-200"
             >
               <option value="">Select a package</option>
               {packages.map((pkg) => (
@@ -56,7 +56,7 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
             <select
               value={package2Id}
               onChange={(e) => onPackageSelect(e.target.value, false)}
-              className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-200"
+              className="text-gray-700 w-full p-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-200"
             >
               <option value="">Select a package</option>
               {packages
@@ -74,7 +74,7 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
         {/* Comparison Button */}
         {selectedPackage1 && selectedPackage2 && (
           <div className="mt-8 text-center">
-            <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
+            <div className="text-sm lg:text-lg inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
               <span>
                 Comparing {selectedPackage1.packageName} vs{" "}
                 {selectedPackage2.packageName}

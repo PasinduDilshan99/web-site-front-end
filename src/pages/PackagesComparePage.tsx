@@ -204,23 +204,57 @@ const PackagesComparePage = () => {
 
     return (
       <div className="mt-12">
-        <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+        <h2 className="text-xl lg:text-3xl font-bold text-gray-900 mb-8 text-center">
           Package Comparison
         </h2>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+<div className="mb-6 sm:mb-8">
+  <div className="flex flex-col sm:grid sm:grid-cols-2 gap-4 sm:gap-6">
+    {/* Mobile Header */}
+    <div className="sm:hidden">
+      <h3 className="text-lg font-bold text-gray-900 mb-2">Compare Packages</h3>
+    </div>
+
+    {/* Mobile Horizontal Scroll */}
+    <div className="sm:hidden">
+      <div className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide -mx-4 px-4">
+        <div className="flex-shrink-0 w-[80vw]">
+          <div className="mb-2 text-xs font-medium text-blue-600">Package 1</div>
           <PackageSummaryCard
             package={selectedPackage1}
             formatCurrency={formatCurrency}
             renderPackageImages={renderPackageImages}
           />
+        </div>
+        <div className="flex-shrink-0 w-[80vw]">
+          <div className="mb-2 text-xs font-medium text-green-600">Package 2</div>
           <PackageSummaryCard
             package={selectedPackage2}
             formatCurrency={formatCurrency}
             renderPackageImages={renderPackageImages}
           />
         </div>
+      </div>
+    </div>
+
+    {/* Desktop Layout */}
+    <div className="hidden sm:block">
+      <PackageSummaryCard
+        package={selectedPackage1}
+        formatCurrency={formatCurrency}
+        renderPackageImages={renderPackageImages}
+      />
+    </div>
+    <div className="hidden sm:block">
+      <PackageSummaryCard
+        package={selectedPackage2}
+        formatCurrency={formatCurrency}
+        renderPackageImages={renderPackageImages}
+      />
+    </div>
+  </div>
+</div>
 
         {/* Day-by-Day Comparison Table */}
         <DayComparisonTable

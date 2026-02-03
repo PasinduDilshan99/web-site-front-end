@@ -8,13 +8,13 @@ interface TourDetailsProps {
 }
 
 const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
-const formatDuration = (days: number) => {
-  const nights = days > 0 ? days - 1 : 0;
-  const formattedDays = days < 10 ? "0" + days : days.toString();
-  const formattedNights = nights < 10 ? "0" + nights : nights.toString();
-  
-  return `${formattedDays} Days ${formattedNights} Nights`;
-};
+  const formatDuration = (days: number) => {
+    const nights = days > 0 ? days - 1 : 0;
+    const formattedDays = days < 10 ? "0" + days : days.toString();
+    const formattedNights = nights < 10 ? "0" + nights : nights.toString();
+
+    return `${formattedDays} Days ${formattedNights} Nights`;
+  };
 
   const calculatePrice = () => {
     const basePrice = 50;
@@ -52,23 +52,46 @@ const formatDuration = (days: number) => {
       </div>
 
       {/* Locations */}
-      <div className="flex items-center gap-2 mb-3 sm:mb-4 text-sm sm:text-base text-gray-600">
-        <span className="inline-flex w-4 h-4 sm:w-5 sm:h-5 bg-blue-100 rounded-full items-center justify-center flex-shrink-0">
-          <svg
-            className="w-2 h-2 sm:w-3 sm:h-3 text-blue-600"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              fillRule="evenodd"
-              d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </span>
-        <span className="truncate text-sm sm:text-base">
-          {tour.startLocation} → {tour.endLocation}
-        </span>
+      <div className="flex  gap-2 mb-3 sm:mb-4 text-gray-600">
+        {/* Start Location */}
+        <div className="flex items-center gap-2 text-sm sm:text-base">
+          <span className="inline-flex w-4 h-4 sm:w-5 sm:h-5 bg-blue-100 rounded-full items-center justify-center flex-shrink-0">
+            <svg
+              className="w-2 h-2 sm:w-3 sm:h-3 text-blue-600"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </span>
+          <span className="truncate">
+            <strong>Start:</strong> {tour.startLocation}
+          </span>
+        </div>
+
+        {/* End Location */}
+        <div className="flex items-center gap-2 text-sm sm:text-base">
+          <span className="inline-flex w-4 h-4 sm:w-5 sm:h-5 bg-green-100 rounded-full items-center justify-center flex-shrink-0">
+            <svg
+              className="w-2 h-2 sm:w-3 sm:h-3 text-green-600"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </span>
+          <span className="truncate">
+            <strong>End:</strong> {tour.endLocation}
+          </span>
+        </div>
       </div>
 
       {/* Description */}
@@ -79,8 +102,8 @@ const formatDuration = (days: number) => {
       {/* Price and Book Now Button */}
       <div className="flex items-center justify-between mb-3 sm:mb-4">
         <div className="text-sm sm:text-base text-gray-500">
-          From{" "}
-          <span className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800">
+          Starting From -{" "}
+          <span className="text-md lg:text-lg font-bold text-gray-800">
             ${price}
           </span>
         </div>

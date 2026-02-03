@@ -53,11 +53,11 @@ const DayByDayItinerary: React.FC<DayByDayItineraryProps> = ({ itinerary }) => {
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 sm:gap-3">
-                  <div className="bg-purple-600 text-white rounded-lg w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center font-bold text-sm sm:text-base">
+                  <div className="text-purple-600 rounded-lg w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center font-bold text-sm sm:text-base">
                     Day {day.dayNumber}
                   </div>
                   <div>
-                    <h3 className="text-base sm:text-lg font-semibold text-gray-900">Day {day.dayNumber} - {day.hotelName}</h3>
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900"> {day.hotelName}</h3>
                     <p className="text-xs sm:text-sm text-gray-600 truncate">{day.hotelLocation}</p>
                   </div>
                 </div>

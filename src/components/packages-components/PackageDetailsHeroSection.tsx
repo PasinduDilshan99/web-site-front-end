@@ -135,14 +135,14 @@ const PackageDetailsHeroSection: React.FC<PackageHeaderProps> = ({ packageData }
               {/* Package Meta */}
               <div className="flex flex-wrap gap-3 sm:gap-4 md:gap-6 text-white">
                 {/* Validity */}
-                <div className="flex items-center gap-1.5 sm:gap-2">
+                {/* <div className="flex items-center gap-1.5 sm:gap-2">
                   <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
                   </svg>
                   <span className="text-xs sm:text-sm md:text-base">
                     Valid: {formatDate(packageData.startDate)} - {formatDate(packageData.endDate)}
                   </span>
-                </div>
+                </div> */}
 
                 {/* People */}
                 <div className="flex items-center gap-1.5 sm:gap-2">
@@ -165,7 +165,7 @@ const PackageDetailsHeroSection: React.FC<PackageHeaderProps> = ({ packageData }
             </div>
 
             {/* Right Column - Price Box */}
-            <div className="bg-white/20 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 min-w-[160px] sm:min-w-[180px] md:min-w-[200px] text-center mt-4 md:mt-0">
+            {/* <div className="bg-white/20 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 min-w-[160px] sm:min-w-[180px] md:min-w-[200px] text-center mt-4 md:mt-0">
               {packageData.discountPercentage > 0 ? (
                 <>
                   <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-1">
@@ -184,7 +184,7 @@ const PackageDetailsHeroSection: React.FC<PackageHeaderProps> = ({ packageData }
                 </div>
               )}
               <div className="text-xs sm:text-sm text-white/80 mt-1 sm:mt-2">per package</div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

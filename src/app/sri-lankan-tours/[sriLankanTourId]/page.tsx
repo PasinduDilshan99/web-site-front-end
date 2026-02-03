@@ -17,8 +17,22 @@ import { Calendar } from "lucide-react";
 import { PackageSchedulesComponent } from "@/components/sri-lankan-tours-components/tour-day-to-day-details-components/PackageSchedules";
 import { PackageService } from "@/services/packageService"; // Import package service
 import { EmployeeService } from "@/services/employeeService"; // Import employee service
-import { Accommodation, DayDetails, TourDetails, TourExtraDetails, TourHistory, TourHistoryImage, TourReview } from "@/types/tour-types"; // Import types
-import { Package, PackageDayAccommodation, PackageExtraDetailsData, PackageSchedule, PackageSchedulesData } from "@/types/package-types"; // Import package types
+import {
+  Accommodation,
+  DayDetails,
+  TourDetails,
+  TourExtraDetails,
+  TourHistory,
+  TourHistoryImage,
+  TourReview,
+} from "@/types/tour-types"; // Import types
+import {
+  Package,
+  PackageDayAccommodation,
+  PackageExtraDetailsData,
+  PackageSchedule,
+  PackageSchedulesData,
+} from "@/types/package-types"; // Import package types
 import { TourAssignedEmployeeResponse } from "@/types/employee-types"; // Import employee types
 import { TourService } from "@/services/tourService";
 
@@ -42,7 +56,7 @@ const SriLankanTourDetailsPage = () => {
   const [dayDetails, setDayDetails] = React.useState<DayDetails[]>([]);
   const [dayDetailsLoading, setDayDetailsLoading] = React.useState(true);
   const [dayDetailsError, setDayDetailsError] = React.useState<string | null>(
-    null
+    null,
   );
   const router = useRouter();
   const [tourExtraDetails, setTourExtraDetails] =
@@ -59,7 +73,9 @@ const SriLankanTourDetailsPage = () => {
   const [packagesError, setPackagesError] = useState<string | null>(null);
   const [dayDetailsWithAccommodations, setDayDetailsWithAccommodations] =
     useState<DayDetails[]>([]);
-  const [packageExtraDetails, setPackageExtraDetails] = useState<PackageExtraDetailsData[]>([]);
+  const [packageExtraDetails, setPackageExtraDetails] = useState<
+    PackageExtraDetailsData[]
+  >([]);
   const [packageExtraDetailsLoading, setPackageExtraDetailsLoading] =
     useState(false);
   const [packageExtraDetailsError, setPackageExtraDetailsError] = useState<
@@ -67,7 +83,9 @@ const SriLankanTourDetailsPage = () => {
   >(null);
 
   // Add package schedules states
-  const [packageSchedules, setPackageSchedules] = useState<PackageSchedulesData[]>([]);
+  const [packageSchedules, setPackageSchedules] = useState<
+    PackageSchedulesData[]
+  >([]);
   const [packageSchedulesLoading, setPackageSchedulesLoading] = useState(false);
   const [packageSchedulesError, setPackageSchedulesError] = useState<
     string | null
@@ -79,7 +97,7 @@ const SriLankanTourDetailsPage = () => {
 
   // Function to convert PackageDayAccommodation to Accommodation
   const convertToAccommodation = (
-    packageAccommodation: PackageDayAccommodation
+    packageAccommodation: PackageDayAccommodation,
   ): Accommodation => {
     return {
       day: packageAccommodation.dayNumber,
@@ -123,11 +141,11 @@ const SriLankanTourDetailsPage = () => {
   // Function to merge accommodations with day details
   const mergeAccommodationsWithDayDetails = (
     dayDetails: DayDetails[],
-    selectedPackage: Package
+    selectedPackage: Package,
   ): DayDetails[] => {
     return dayDetails.map((day) => {
       const packageAccommodation = selectedPackage.packageDayByDayDtoList.find(
-        (acc) => acc.dayNumber === day.dayNumber
+        (acc) => acc.dayNumber === day.dayNumber,
       );
 
       if (packageAccommodation) {
@@ -148,7 +166,7 @@ const SriLankanTourDetailsPage = () => {
     }
 
     const selectedPackageDetails = packageExtraDetails.find(
-      (detail) => detail.packageId === selectedPackage.packageId
+      (detail) => detail.packageId === selectedPackage.packageId,
     );
 
     if (!selectedPackageDetails) {
@@ -192,7 +210,7 @@ const SriLankanTourDetailsPage = () => {
     }
 
     const selectedPackageSchedules = packageSchedules.find(
-      (schedules) => schedules.packageId === selectedPackage.packageId
+      (schedules) => schedules.packageId === selectedPackage.packageId,
     );
 
     return selectedPackageSchedules?.packageSchedules || [];
@@ -214,7 +232,7 @@ const SriLankanTourDetailsPage = () => {
 
       try {
         setTourLoading(true);
-        
+
         // Fetch all data using services
         const [
           tourDetailsResult,
@@ -226,7 +244,7 @@ const SriLankanTourDetailsPage = () => {
           employeeResult,
           historyResult,
           historyImagesResult,
-          dayDetailsResult
+          dayDetailsResult,
         ] = await Promise.all([
           TourService.getTourDetails(tourId),
           TourService.getTourReviewsById(tourId),
@@ -237,7 +255,7 @@ const SriLankanTourDetailsPage = () => {
           EmployeeService.getAssignedEmployee(tourId),
           TourService.getTourHistoryById(tourId),
           TourService.getTourHistoryImagesById(tourId),
-          TourService.getDayWiseDetails(tourId)
+          TourService.getDayWiseDetails(tourId),
         ]);
 
         // Set tour details
@@ -258,16 +276,22 @@ const SriLankanTourDetailsPage = () => {
         if (packagesResult.error) setPackagesError(packagesResult.error);
 
         // Set tour extra details
-        if (tourExtraDetailsResult.data) setTourExtraDetails(tourExtraDetailsResult.data);
-        if (tourExtraDetailsResult.error) setTourExtraDetailsError(tourExtraDetailsResult.error);
+        if (tourExtraDetailsResult.data)
+          setTourExtraDetails(tourExtraDetailsResult.data);
+        if (tourExtraDetailsResult.error)
+          setTourExtraDetailsError(tourExtraDetailsResult.error);
 
         // Set package extra details
-        if (packageExtraDetailsResult.data) setPackageExtraDetails(packageExtraDetailsResult.data);
-        if (packageExtraDetailsResult.error) setPackageExtraDetailsError(packageExtraDetailsResult.error);
+        if (packageExtraDetailsResult.data)
+          setPackageExtraDetails(packageExtraDetailsResult.data);
+        if (packageExtraDetailsResult.error)
+          setPackageExtraDetailsError(packageExtraDetailsResult.error);
 
         // Set package schedules
-        if (packageSchedulesResult.data) setPackageSchedules(packageSchedulesResult.data);
-        if (packageSchedulesResult.error) setPackageSchedulesError(packageSchedulesResult.error);
+        if (packageSchedulesResult.data)
+          setPackageSchedules(packageSchedulesResult.data);
+        if (packageSchedulesResult.error)
+          setPackageSchedulesError(packageSchedulesResult.error);
 
         // Set employee details
         if (employeeResult.data) setAssignUser(employeeResult.data);
@@ -278,13 +302,14 @@ const SriLankanTourDetailsPage = () => {
         if (historyResult.error) setHistoryError(historyResult.error);
 
         // Set history images
-        if (historyImagesResult.data) setGalleryImages(historyImagesResult.data);
-        if (historyImagesResult.error) setGalleryError(historyImagesResult.error);
+        if (historyImagesResult.data)
+          setGalleryImages(historyImagesResult.data);
+        if (historyImagesResult.error)
+          setGalleryError(historyImagesResult.error);
 
         // Set day details
         if (dayDetailsResult.data) setDayDetails(dayDetailsResult.data);
         if (dayDetailsResult.error) setDayDetailsError(dayDetailsResult.error);
-
       } catch (err) {
         console.error("Error fetching data:", err);
         setTourError(err instanceof Error ? err.message : "An error occurred");
@@ -310,7 +335,7 @@ const SriLankanTourDetailsPage = () => {
     if (dayDetails.length > 0 && selectedPackage) {
       const mergedDayDetails = mergeAccommodationsWithDayDetails(
         dayDetails,
-        selectedPackage
+        selectedPackage,
       );
       setDayDetailsWithAccommodations(mergedDayDetails);
     } else {
@@ -438,166 +463,170 @@ const SriLankanTourDetailsPage = () => {
 
   // Package selector component
   const PackageSelector = () => {
-    if (packagesLoading) {
-      return (
-        <div className="mb-8 p-4 bg-gradient-to-r from-purple-50 to-amber-50 rounded-xl">
-          <div className="text-center py-4">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
-            <p className="mt-2 text-gray-600">Loading packages...</p>
-          </div>
-        </div>
-      );
-    }
-
-    if (packagesError) {
-      return (
-        <div className="mb-8 p-4 bg-gradient-to-r from-red-50 to-orange-50 rounded-xl border border-red-200">
-          <div className="text-center">
-            <p className="text-red-600 mb-2">Failed to load packages</p>
-            <button
-              onClick={handleRetryPackages}
-              className="px-4 py-2 bg-gradient-to-r from-purple-600 to-amber-600 text-white rounded-lg hover:opacity-90"
-            >
-              Retry
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    if (packages.length === 0) {
-      return null;
-    }
-
+  if (packagesLoading) {
     return (
-      <div className="mb-8 p-6 bg-gradient-to-r from-purple-50 to-amber-50 rounded-2xl shadow-lg">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-          <div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">
-              Select Your Package
-            </h3>
-            <p className="text-gray-600 max-w-xl">
-              Choose the package that best suits your preferences and budget
-            </p>
-          </div>
-          <div>
-            <button
-              className="group flex items-center gap-2 px-6 py-3 text-purple-600 font-medium border-2 border-purple-200 rounded-xl hover:border-purple-600 hover:bg-purple-600 hover:text-white transition-all duration-300 shadow-sm hover:shadow-md"
-              onClick={() =>
-                router.push(
-                  `/packages/packages-compare?tour-name=${
-                    tour?.tourName || "name"
-                  }&tour-id=${sriLankanTourId}`
-                )
-              }
-            >
-              <svg
-                className="w-5 h-5 transition-transform duration-300 group-hover:scale-110"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
-              Compare Packages
-            </button>
-          </div>
+      <div className="mb-6 sm:mb-8 p-3 sm:p-4 bg-gradient-to-r from-purple-50 to-amber-50 rounded-lg sm:rounded-xl">
+        <div className="text-center py-3 sm:py-4">
+          <div className="inline-block animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-purple-600"></div>
+          <p className="mt-2 text-sm sm:text-base text-gray-600">Loading packages...</p>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {packages.map((pkg) => (
-            <div
-              key={pkg.packageId}
-              onClick={() => handlePackageSelect(pkg)}
-              className={`p-5 rounded-xl border-2 cursor-pointer transition-all duration-300 hover:shadow-lg ${
-                selectedPackage?.packageId === pkg.packageId
-                  ? "border-purple-600 bg-white transform scale-[1.02]"
-                  : "border-gray-200 bg-white hover:border-purple-300"
-              }`}
-              style={{
-                borderLeftColor:
-                  selectedPackage?.packageId === pkg.packageId
-                    ? pkg.color
-                    : undefined,
-                borderLeftWidth: "6px",
-              }}
-            >
-              <div className="flex justify-between items-start mb-3">
-                <div>
-                  <h4 className="text-lg font-bold text-gray-900">
-                    {pkg.packageName}
-                  </h4>
-                  <p className="text-sm text-gray-600 mt-1">
-                    {pkg.packageDescription}
-                  </p>
-                </div>
-                {selectedPackage?.packageId === pkg.packageId && (
-                  <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center">
-                    <div className="w-2 h-2 bg-white rounded-full"></div>
-                  </div>
-                )}
-              </div>
-
-              <div className="mb-4">
-                <div className="flex items-baseline">
-                  <span className="text-2xl font-bold text-gray-900">
-                    LKR {pkg.pricePerPerson.toLocaleString()}
-                  </span>
-                  <span className="text-sm text-gray-500 ml-2">per person</span>
-                </div>
-                {pkg.discount > 0 && (
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
-                      Save {pkg.discount}%
-                    </span>
-                  </div>
-                )}
-              </div>
-              <div>
-                <button
-                  className="px-6 py-3 bg-white text-purple-600 font-medium rounded-lg border border-purple-200 hover:border-purple-300 hover:bg-purple-50 transition-all duration-200 hover:shadow-md"
-                  onClick={() =>
-                    router.push(`/packages/${selectedPackage?.packageId}`)
-                  }
-                >
-                  Show All Details
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {selectedPackage && (
-          <div className="mt-6 p-4 bg-white rounded-xl border border-purple-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="font-bold text-gray-900">
-                  Selected Package: {selectedPackage.packageName}
-                </h4>
-                <p className="text-sm text-gray-600">
-                  {selectedPackage.packageDescription}
-                </p>
-                <div className="mt-2 text-sm text-purple-600 font-medium">
-                  Package-specific details and schedules will be shown below
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="text-lg font-bold text-purple-600">
-                  LKR {selectedPackage.pricePerPerson.toLocaleString()}
-                </div>
-                <div className="text-sm text-gray-500">per person</div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     );
-  };
+  }
+
+  if (packagesError) {
+    return (
+      <div className="mb-6 sm:mb-8 p-3 sm:p-4 bg-gradient-to-r from-red-50 to-orange-50 rounded-lg sm:rounded-xl border border-red-200">
+        <div className="text-center">
+          <p className="text-red-600 mb-2 text-sm sm:text-base">Failed to load packages</p>
+          <button
+            onClick={handleRetryPackages}
+            className="px-3 py-2 sm:px-4 sm:py-2 bg-gradient-to-r from-purple-600 to-amber-600 text-white rounded-lg hover:opacity-90 text-sm sm:text-base"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (packages.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="mb-6 sm:mb-8 p-4 sm:p-6 lg:p-8 bg-gradient-to-r from-purple-50 to-amber-50 rounded-lg sm:rounded-xl lg:rounded-2xl shadow-md sm:shadow-lg lg:shadow-lg">
+      {/* Header section */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6 mb-6 sm:mb-8">
+        <div className="flex-1">
+          <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
+            Select Your Package
+          </h3>
+          <p className="text-gray-600 text-sm sm:text-base max-w-xl">
+            Choose the package that best suits your preferences and budget
+          </p>
+        </div>
+        <div className="flex-shrink-0">
+          <button
+            className="group flex items-center justify-center gap-2 px-4 py-2 sm:px-5 sm:py-3 md:px-6 md:py-3 text-purple-600 font-medium border-2 border-purple-200 rounded-lg sm:rounded-xl hover:border-purple-600 hover:bg-purple-600 hover:text-white transition-all duration-300 shadow-sm hover:shadow-md w-full md:w-auto text-sm sm:text-base"
+            onClick={() =>
+              router.push(
+                `/packages/packages-compare?tour-name=${
+                  tour?.tourName || "name"
+                }&tour-id=${sriLankanTourId}`,
+              )
+            }
+          >
+            <svg
+              className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover:scale-110"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
+            </svg>
+            Compare Packages
+          </button>
+        </div>
+      </div>
+
+      {/* Packages grid - responsive columns */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
+        {packages.map((pkg) => (
+          <div
+            key={pkg.packageId}
+            onClick={() => handlePackageSelect(pkg)}
+            className={`p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl border-2 cursor-pointer transition-all duration-300 hover:shadow-md lg:hover:shadow-lg ${
+              selectedPackage?.packageId === pkg.packageId
+                ? "border-purple-600 bg-white transform sm:scale-[1.02]"
+                : "border-gray-200 bg-white hover:border-purple-300"
+            }`}
+            style={{
+              borderLeftColor:
+                selectedPackage?.packageId === pkg.packageId
+                  ? pkg.color
+                  : undefined,
+              borderLeftWidth: "4px",
+            }}
+          >
+            <div className="flex justify-between items-start mb-2 sm:mb-3">
+              <div className="flex-1 min-w-0">
+                <h4 className="text-base sm:text-lg font-bold text-gray-900 truncate">
+                  {pkg.packageName}
+                </h4>
+                <p className="text-xs sm:text-sm text-gray-600 mt-1 line-clamp-2">
+                  {pkg.packageDescription}
+                </p>
+              </div>
+              {selectedPackage?.packageId === pkg.packageId && (
+                <div className="w-5 h-5 sm:w-6 sm:h-6 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0 ml-2">
+                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-white rounded-full"></div>
+                </div>
+              )}
+            </div>
+
+            <div className="mb-3 sm:mb-4">
+              <div className="flex items-baseline">
+                <span className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
+                  LKR {pkg.pricePerPerson.toLocaleString()}
+                </span>
+                <span className="text-xs sm:text-sm text-gray-500 ml-1 sm:ml-2">per person</span>
+              </div>
+              {pkg.discount > 0 && (
+                <div className="flex items-center gap-1 sm:gap-2 mt-1">
+                  <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                    Save {pkg.discount}%
+                  </span>
+                </div>
+              )}
+            </div>
+            <div>
+              <button
+                className="px-4 py-2 sm:px-5 sm:py-2.5 lg:px-6 lg:py-3 bg-white text-purple-600 font-medium rounded-lg border border-purple-200 hover:border-purple-300 hover:bg-purple-50 transition-all duration-200 hover:shadow-sm w-full text-xs sm:text-sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  router.push(`/packages/${selectedPackage?.packageId}`);
+                }}
+              >
+                Show All Details
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {selectedPackage && (
+        <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-white rounded-lg sm:rounded-xl border border-purple-200">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+            <div className="flex-1 min-w-0">
+              <h4 className="font-bold text-gray-900 text-sm sm:text-base">
+                Selected Package:{" "}
+                <span className="text-purple-600">{selectedPackage.packageName}</span>
+              </h4>
+              <p className="text-xs sm:text-sm text-gray-600 mt-1 line-clamp-2">
+                {selectedPackage.packageDescription}
+              </p>
+              <div className="mt-1 sm:mt-2 text-xs sm:text-sm text-purple-600 font-medium">
+                Package-specific details and schedules will be shown below
+              </div>
+            </div>
+            <div className="text-right sm:text-left">
+              <div className="text-base sm:text-lg font-bold text-purple-600">
+                LKR {selectedPackage.pricePerPerson.toLocaleString()}
+              </div>
+              <div className="text-xs sm:text-sm text-gray-500">per person</div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
   if (tourLoading) {
     return (
@@ -651,14 +680,19 @@ const SriLankanTourDetailsPage = () => {
           <div className="lg:col-span-2">
             <SLTourDetailsOverview tour={tour} />
 
-            <div className="text-center mb-12">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-600 to-amber-600 rounded-2xl shadow-lg mb-6 transition-all duration-300 hover:scale-105 hover:shadow-xl">
-                <Calendar className="w-10 h-10 text-white" />
+            <div className="text-center mb-8 sm:mb-10 md:mb-12">
+              {/* Icon container with responsive sizing */}
+              <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-gradient-to-br from-purple-600 to-amber-600 rounded-lg sm:rounded-xl md:rounded-2xl shadow-md sm:shadow-lg md:shadow-lg mb-4 sm:mb-5 md:mb-6 transition-all duration-300 hover:scale-105 hover:shadow-xl">
+                <Calendar className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-white" />
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+
+              {/* Responsive heading */}
+              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
                 Detailed Tour Itinerary
               </h2>
-              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+
+              {/* Responsive paragraph */}
+              <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl sm:max-w-3xl mx-auto px-4 sm:px-0">
                 Day-by-day breakdown of your journey through Sri Lanka
               </p>
             </div>
