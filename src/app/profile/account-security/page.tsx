@@ -8,10 +8,9 @@ import {
 } from "@/types/account-security";
 import { useState, useEffect } from "react";
 
-
 export default function AccountSecurityPage() {
   const [securityData, setSecurityData] = useState<AccountSecurityData | null>(
-    null
+    null,
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -63,7 +62,7 @@ export default function AccountSecurityPage() {
 
   const getMobileVerificationStatus = (
     verifications: MobileVerification[],
-    type: "primary" | "secondory"
+    type: "primary" | "secondory",
   ) => {
     const verification = verifications.find((v) => v.whichMobile === type);
     return (
@@ -76,7 +75,7 @@ export default function AccountSecurityPage() {
 
   const getEmailVerificationStatus = (
     verifications: EmailVerification[],
-    type: "primary" | "secondary"
+    type: "primary" | "secondary",
   ) => {
     const verification = verifications.find((v) => v.whichEmail === type);
     return (
@@ -99,7 +98,7 @@ export default function AccountSecurityPage() {
   };
 
   const handleRequestMobileOtp = async (
-    whichMobile: "primary" | "secondory"
+    whichMobile: "primary" | "secondory",
   ) => {
     if (!mobileNumber.trim()) {
       showMessage("error", "Please enter your mobile number");
@@ -181,7 +180,7 @@ export default function AccountSecurityPage() {
       console.error("Failed to send email verification:", err);
       showMessage(
         "error",
-        "Failed to send verification email. Please try again."
+        "Failed to send verification email. Please try again.",
       );
     } finally {
       setSendingOtp(false);
@@ -282,19 +281,19 @@ export default function AccountSecurityPage() {
 
   const primaryMobileVerification = getMobileVerificationStatus(
     securityData.mobileVerifications,
-    "primary"
+    "primary",
   );
   const secondaryMobileVerification = getMobileVerificationStatus(
     securityData.mobileVerifications,
-    "secondory"
+    "secondory",
   );
   const primaryEmailVerification = getEmailVerificationStatus(
     securityData.emailVerifications,
-    "primary"
+    "primary",
   );
   const secondaryEmailVerification = getEmailVerificationStatus(
     securityData.emailVerifications,
-    "secondary"
+    "secondary",
   );
 
   return (
@@ -387,12 +386,12 @@ export default function AccountSecurityPage() {
                           ? handleRequestMobileOtp(
                               activeVerification.which as
                                 | "primary"
-                                | "secondory"
+                                | "secondory",
                             )
                           : handleRequestEmailOtp(
                               activeVerification.which as
                                 | "primary"
-                                | "secondary"
+                                | "secondary",
                             )
                       }
                       disabled={sendingOtp}
@@ -442,7 +441,7 @@ export default function AccountSecurityPage() {
         )}
 
         {/* Mobile Numbers Section */}
-        <div className="bg-white rounded-2xl shadow-lg border border-amber-200 overflow-hidden mb-6">
+        {/* <div className="bg-white rounded-2xl shadow-lg border border-amber-200 overflow-hidden mb-6">
           <div className="bg-gradient-to-r from-amber-500 to-purple-600 p-6 text-white">
             <h2 className="text-xl font-bold flex items-center">
               <span className="mr-3">📱</span>
@@ -454,7 +453,6 @@ export default function AccountSecurityPage() {
           </div>
 
           <div className="divide-y divide-gray-100">
-            {/* Primary Mobile */}
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
@@ -494,7 +492,6 @@ export default function AccountSecurityPage() {
               </div>
             </div>
 
-            {/* Secondary Mobile */}
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
@@ -536,40 +533,45 @@ export default function AccountSecurityPage() {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Email Addresses Section */}
-        <div className="bg-white rounded-2xl shadow-lg border border-purple-200 overflow-hidden">
-          <div className="bg-gradient-to-r from-purple-500 to-amber-600 p-6 text-white">
-            <h2 className="text-xl font-bold flex items-center">
-              <span className="mr-3">📧</span>
-              Email Addresses
-            </h2>
-            <p className="text-purple-100 text-sm mt-1">
-              Keep your email addresses verified for important updates
-            </p>
+        <div className="bg-white rounded-lg sm:rounded-xl md:rounded-2xl shadow-md sm:shadow-lg border border-purple-200 overflow-hidden">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-purple-500 to-amber-600 p-4 sm:p-5 md:p-6 text-white">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="text-lg sm:text-xl">📧</div>
+              <div>
+                <h2 className="text-lg sm:text-xl font-bold">
+                  Email Addresses
+                </h2>
+                <p className="text-purple-100 text-xs sm:text-sm mt-0.5 sm:mt-1">
+                  Keep your email addresses verified for important updates
+                </p>
+              </div>
+            </div>
           </div>
 
           <div className="divide-y divide-gray-100">
             {/* Primary Email */}
-            <div className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <h3 className="font-semibold text-gray-800 text-lg">
+            <div className="p-4 sm:p-5 md:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-gray-800 text-base sm:text-lg">
                     Primary Email Address
                   </h3>
-                  <p className="text-gray-600 text-sm mt-1">
+                  <p className="text-gray-600 text-sm mt-1 truncate">
                     {securityData.email}
                   </p>
-                  <div className="flex items-center space-x-2 mt-2">
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-2">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-semibold border ${getStatusColor(
-                        primaryEmailVerification.statusName
+                        primaryEmailVerification.statusName,
                       )}`}
                     >
                       {primaryEmailVerification.statusName}
                     </span>
-                    <span className="text-gray-500 text-xs">
+                    <span className="text-gray-500 text-xs truncate">
                       {primaryEmailVerification.statusDescription}
                     </span>
                   </div>
@@ -582,35 +584,35 @@ export default function AccountSecurityPage() {
                       step: "request",
                     })
                   }
-                  className="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors duration-200 text-sm font-semibold"
+                  className="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors duration-200 text-sm font-semibold whitespace-nowrap w-full sm:w-auto"
                 >
                   {primaryEmailVerification.statusName === "Verified"
                     ? "Re-verify"
-                    : "Verify"}
+                    : "Verify Now"}
                 </button>
               </div>
             </div>
 
             {/* Secondary Email */}
-            <div className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <h3 className="font-semibold text-gray-800 text-lg">
+            <div className="p-4 sm:p-5 md:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-gray-800 text-base sm:text-lg">
                     Secondary Email Address
                   </h3>
                   <p className="text-gray-600 text-sm mt-1">
                     Add a secondary email for backup and recovery
                   </p>
                   {secondaryEmailVerification.statusName !== "Not Verified" && (
-                    <div className="flex items-center space-x-2 mt-2">
+                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-2">
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-semibold border ${getStatusColor(
-                          secondaryEmailVerification.statusName
+                          secondaryEmailVerification.statusName,
                         )}`}
                       >
                         {secondaryEmailVerification.statusName}
                       </span>
-                      <span className="text-gray-500 text-xs">
+                      <span className="text-gray-500 text-xs truncate">
                         {secondaryEmailVerification.statusDescription}
                       </span>
                     </div>
@@ -624,9 +626,11 @@ export default function AccountSecurityPage() {
                       step: "request",
                     })
                   }
-                  className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors duration-200 text-sm font-semibold"
+                  className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors duration-200 text-sm font-semibold whitespace-nowrap w-full sm:w-auto"
                 >
-                  Add & Verify
+                  {secondaryEmailVerification.statusName === "Not Verified"
+                    ? "Add & Verify"
+                    : "Manage"}
                 </button>
               </div>
             </div>
@@ -640,9 +644,9 @@ export default function AccountSecurityPage() {
             Security Tips
           </h3>
           <div className="text-sm text-gray-600 space-y-2">
-            <p>• Keep your mobile numbers and email addresses updated</p>
+            <p>• Keep your email addresses updated</p>
             <p>• Verify all contact methods for account recovery</p>
-            <p>• Use a secondary email/mobile for backup</p>
+            <p>• Use a secondary email for backup</p>
             <p>• Never share your verification codes with anyone</p>
           </div>
         </div>

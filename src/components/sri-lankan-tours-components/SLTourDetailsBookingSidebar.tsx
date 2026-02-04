@@ -11,6 +11,7 @@ import {
   Shield,
 } from "lucide-react";
 import { TourAssignedEmployeeResponse } from "@/types/employee-types";
+import { useAuth } from "@/context/AuthContext";
 
 interface SLTourDetailsBookingSidebarProps {
   tour: TourDetails;
@@ -29,6 +30,11 @@ const SLTourDetailsBookingSidebar: React.FC<
   assignUserLoading,
   assignUserError,
 }) => {
+
+  const {user} = useAuth();
+  console.log('====================================');
+  console.log(user);
+  console.log('====================================');
   const [expandedTourDetails, setExpandedTourDetails] = useState(false);
   const price = selectedPackage?.pricePerPerson || 50;
   const originalPrice = selectedPackage?.totalPrice;

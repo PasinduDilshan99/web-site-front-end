@@ -92,7 +92,7 @@ export default function UserProfileContent({
       <label className="text-xs font-semibold text-amber-600 uppercase tracking-wide mb-1">
         {label}
       </label>
-      <p className="text-gray-800 font-medium">{value || "N/A"}</p>
+      <p className="text-gray-800 font-medium text-sm lg:text-lg">{value || "N/A"}</p>
     </div>
   );
 
@@ -101,7 +101,7 @@ export default function UserProfileContent({
       <div className="w-8 h-8 bg-gradient-to-r from-amber-500 to-purple-600 rounded-lg flex items-center justify-center">
         <span className="text-white font-bold text-sm">{icon}</span>
       </div>
-      <h2 className="text-xl font-bold text-gray-800">{title}</h2>
+      <h2 className="text-md lg:text-xl font-bold text-gray-800">{title}</h2>
     </div>
   );
 
@@ -222,14 +222,14 @@ export default function UserProfileContent({
 
             {/* Wallet & Benefits */}
             <div className="bg-gradient-to-br from-amber-50 to-white rounded-2xl shadow-lg border border-amber-200 p-6">
-              <SectionHeader title="Wallet & Benefits" icon="💰" />
+              <SectionHeader title="Benefits" icon="💰" />
               
               <div className="space-y-4">
-                <InfoCard>
+                {/* <InfoCard>
                   <InfoField label="Wallet Number" value={userProfile.walletNumber} />
-                </InfoCard>
+                </InfoCard> */}
                 
-                <InfoCard>
+                {/* <InfoCard>
                   <div className="mb-3">
                     <label className="text-xs font-semibold text-amber-600 uppercase tracking-wide mb-1">
                       Wallet Amount
@@ -238,7 +238,7 @@ export default function UserProfileContent({
                       LKR {userProfile.walletAmount.toLocaleString()}
                     </p>
                   </div>
-                </InfoCard>
+                </InfoCard> */}
                 
                 <InfoCard>
                   <div className="mb-3">
@@ -251,7 +251,7 @@ export default function UserProfileContent({
                   </div>
                 </InfoCard>
                 
-                <InfoCard>
+                {/* <InfoCard>
                   <div className="mb-3">
                     <label className="text-xs font-semibold text-amber-600 uppercase tracking-wide mb-1">
                       Wallet Status
@@ -264,7 +264,7 @@ export default function UserProfileContent({
                       {userProfile.walletStatus}
                     </span>
                   </div>
-                </InfoCard>
+                </InfoCard> */}
               </div>
             </div>
 

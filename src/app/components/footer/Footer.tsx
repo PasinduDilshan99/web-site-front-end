@@ -192,7 +192,7 @@ const Footer = () => {
             </p>
 
             {/* Social Media Links */}
-            <div className="flex space-x-4">
+            {/* <div className="flex space-x-4">
               {footerData.socialMedia
                 .filter((social) => social.status === "ACTIVE")
                 .map((social) => (
@@ -207,7 +207,7 @@ const Footer = () => {
                     {getSocialIcon(social.name)}
                   </a>
                 ))}
-            </div>
+            </div> */}
           </div>
 
           {/* Dynamic Sections */}

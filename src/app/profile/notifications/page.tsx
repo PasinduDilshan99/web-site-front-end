@@ -244,8 +244,8 @@ export default function NotificationsPage() {
                 🔔
               </div>
               <div>
-                <h2 className="text-xl font-bold">Notification Preferences</h2>
-                <p className="text-amber-100 text-sm">Choose what notifications you want to receive</p>
+                <h2 className="text-lg lg:text-xl font-bold">Notification Preferences</h2>
+                <p className="text-amber-100 text-sx lg:text-sm">Choose what notifications you want to receive</p>
               </div>
             </div>
           </div>
@@ -264,10 +264,10 @@ export default function NotificationsPage() {
                         {getFieldIcon(camelCaseField)}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-gray-800 text-lg">
+                        <h3 className="font-semibold text-gray-800 text-md lg:text-lg">
                           {getFieldDisplayName(camelCaseField)}
                         </h3>
-                        <p className="text-gray-600 text-sm mt-1">
+                        <p className="text-gray-600 text-xs lg:text-sm mt-1">
                           {getFieldDescription(camelCaseField)}
                         </p>
                         {updatedAt && (
@@ -283,21 +283,21 @@ export default function NotificationsPage() {
                       <button
                         onClick={() => handleToggle(camelCaseField, isEnabled)}
                         disabled={updating === camelCaseField}
-                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 ${
+                        className={`relative inline-flex h-4 w-8 lg:h-6 lg:w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 ${
                           isEnabled 
                             ? 'bg-purple-600' 
-                            : 'bg-gray-200'
+                            : 'bg-gray-600'
                         } ${updating === camelCaseField ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                       >
                         <span
-                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
+                          className={`inline-block h-2 w-2 lg:h-4 lg:w-4 transform rounded-full bg-white transition-transform duration-200 ${
                             isEnabled ? 'translate-x-6' : 'translate-x-1'
                           }`}
                         />
                       </button>
 
                       {updating === camelCaseField && (
-                        <div className="w-4 h-4 border-2 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
+                        <div className="h-2 w-2 lg:h-4 lg:w-4 border-2 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
                       )}
                     </div>
                   </div>

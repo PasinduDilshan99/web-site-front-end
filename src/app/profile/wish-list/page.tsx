@@ -94,9 +94,9 @@ export default function WishListPage() {
             {item.discount}% OFF
           </div>
         )}
-        <div className="absolute bottom-3 left-3 bg-black/50 text-white px-2 py-1 rounded text-xs">
+        {/* <div className="absolute bottom-3 left-3 bg-black/50 text-white px-2 py-1 rounded text-xs">
           {item.packageDate}
-        </div>
+        </div> */}
       </div>
       
       <div className="p-4">
@@ -107,14 +107,14 @@ export default function WishListPage() {
           {item.packageDescription}
         </p>
         
-        <div className="flex justify-between items-center mb-2">
+        {/* <div className="flex justify-between items-center mb-2">
           <span className="text-amber-600 font-bold text-lg">
             {formatCurrency(item.packagePrice)}
           </span>
           <span className="text-purple-600 text-sm font-semibold">
             {item.tourName}
           </span>
-        </div>
+        </div> */}
         
         <div className="flex justify-between items-center text-xs text-gray-500">
           <span>Added {formatDate(item.createdAt)}</span>
@@ -338,8 +338,8 @@ export default function WishListPage() {
                   : 'bg-white text-gray-700 border border-amber-200 hover:border-purple-300 hover:shadow-md'
               }`}
             >
-              <span className="text-lg">{icon}</span>
-              <span className="font-semibold">{label}</span>
+              <span className="text-sm lg:text-lg">{icon}</span>
+              <span className="font-semibold text-xs lg:text-md">{label}</span>
               <span className={`px-2 py-1 rounded-full text-xs font-bold ${
                 activeTab === key ? 'bg-white text-purple-600' : 'bg-amber-100 text-amber-800'
               }`}>
