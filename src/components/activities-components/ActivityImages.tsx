@@ -46,7 +46,7 @@ const ActivityImages: React.FC<ActivityImagesProps> = ({
               onClick={() => setSelectedImageIndex(index)}
               className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${
                 selectedImageIndex === index
-                  ? "border-amber-500"
+                  ? "border-cyan-500"
                   : "border-gray-300"
               }`}
             >

@@ -159,7 +159,7 @@ export const FaqComponent = ({ showAll = false, displayLimit }: FaqProps) => {
   }
 
   return (
-    <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-br from-amber-50 via-purple-100 to-orange-100">
+<section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-br from-slate-50 via-sky-50 to-teal-50">
       <div className="max-w-sm sm:max-w-2xl md:max-w-4xl lg:max-w-6xl xl:max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
         <FaqHeader />
         <FaqList
@@ -174,6 +174,6 @@ export const FaqComponent = ({ showAll = false, displayLimit }: FaqProps) => {
           showAll={showAll}
         />
       </div>
-    </section>
+</section>
   );
 };

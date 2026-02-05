@@ -89,7 +89,7 @@ const ActiveToursHomeGrid = () => {
   }
 
   return (
-    <div className="w-full bg-gradient-to-br from-amber-50 to-purple-50 py-8 md:py-8 lg:py-8 xl:py-12">
+    <div className="w-full bg-white py-8 md:py-8 lg:py-8 xl:py-12">
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">

@@ -24,7 +24,7 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 h-full flex flex-col">
+    <div className="bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 h-full flex flex-col border border-sky-100">
       {/* Image Gallery */}
       <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
         {destination.images.length > 0 ? (
@@ -43,7 +43,7 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
             }}
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-amber-400 to-purple-600 flex items-center justify-center">
+          <div className="w-full h-full bg-gradient-to-br from-sky-400 to-teal-500 flex items-center justify-center">
             <span className="text-white font-semibold text-lg">
               {destination.destinationName}
             </span>
@@ -51,14 +51,16 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
         )}
 
         {/* Discount Badge */}
-        {/* <div className="absolute top-3 left-3 bg-purple-400 text-white px-3 py-1 rounded-full text-sm font-semibold z-10">
-          {discount}% Off
-        </div> */}
+        {discount > 0 && (
+          <div className="absolute top-3 left-3 bg-gradient-to-r from-sky-500 to-teal-500 text-white px-3 py-1 rounded-full text-sm font-semibold z-10 shadow-md">
+            {discount}% Off
+          </div>
+        )}
 
         {/* Favorite Button */}
-        <button className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-100 transition-colors z-10">
+        <button className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-sky-50 transition-colors z-10 group">
           <svg
-            className="w-4 h-4 text-gray-400"
+            className="w-4 h-4 text-gray-400 group-hover:text-sky-500 transition-colors"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -74,14 +76,14 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
 
         {/* Thumbnail Images */}
         {destination.images.length > 1 && (
-          <div className="absolute bottom-3 right-3 flex flex-col space-y-2">
+          <div className="absolute bottom-3 right-3 flex flex-row gap-2 space-y-2">
             {destination.images.slice(0, 4).map((image, index) => (
               <div
                 key={image.imageId}
                 className={`w-14 h-10 rounded-lg overflow-hidden border-2 cursor-pointer transition-all duration-200 hover:scale-105 ${
                   activeImageIndex === index
-                    ? "border-amber-500 shadow-lg"
-                    : "border-white hover:border-amber-300"
+                    ? "border-sky-500 shadow-lg"
+                    : "border-white hover:border-sky-300"
                 }`}
                 onClick={() => handleImageSwitch(index)}
               >
@@ -97,7 +99,7 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
 
         {/* Image Counter */}
         {destination.images.length > 1 && (
-          <div className="absolute bottom-3 left-3 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs">
+          <div className="absolute bottom-3 left-3 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs backdrop-blur-sm">
             {activeImageIndex + 1} / {destination.images.length}
           </div>
         )}
@@ -107,7 +109,7 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
       <div className="p-5 flex-1 flex flex-col">
         {/* Duration and Rating */}
         <div className="flex justify-between items-center mb-3">
-          <div className="flex items-center text-gray-500 text-sm">
+          <div className="flex items-center text-sky-600 text-sm font-medium">
             <svg
               className="w-4 h-4 mr-1"
               fill="none"
@@ -139,7 +141,7 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
               </svg>
             ))}
-            <span className="ml-1 text-sm font-semibold text-gray-700">
+            <span className="ml-1 text-sm font-semibold text-sky-700">
               {destination.rating}
             </span>
           </div>
@@ -151,9 +153,9 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
         </h3>
 
         {/* Location */}
-        <p className="text-gray-500 text-sm mb-4 flex items-center">
+        <p className="text-sky-600 text-sm mb-4 flex items-center font-medium">
           <svg
-            className="w-4 h-4 mr-1 text-purple-500"
+            className="w-4 h-4 mr-1"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -175,28 +177,35 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
         </p>
 
         {/* Category */}
-        <p className="text-gray-600 text-sm mb-4">{destination.categoryName}</p>
+        <p className="text-teal-600 text-sm mb-4 font-medium bg-teal-50 px-3 py-1 rounded-full w-fit">
+          {destination.categoryName}
+        </p>
 
         <div className="flex justify-between items-center mt-auto">
           {/* Activities Count */}
+          <div className="flex items-center">
+            <svg className="w-4 h-4 mr-1 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            <span className="text-gray-600 text-sm font-medium">
+              {destination.activities.length} activities
+            </span>
+          </div>
 
-          <p className="text-gray-500 text-sm mb-4">
-            {destination.activities.length} activities available
-          </p>
           {/* Price and Button */}
-
           {/* <div className="flex items-center space-x-2">
             <span className="text-sm text-gray-500 line-through">
               ${originalPrice}.00
             </span>
-            <span className="text-lg font-bold text-purple-600">
+            <span className="text-lg font-bold bg-gradient-to-r from-sky-600 to-teal-600 bg-clip-text text-transparent">
               ${currentPrice}.00
             </span>
           </div> */}
 
           <button
             onClick={handleExploreClick}
-            className="bg-purple-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+            className="bg-gradient-to-r from-sky-500 to-teal-500 hover:from-sky-600 hover:to-teal-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 shadow-md hover:shadow-lg"
           >
             Explore
           </button>

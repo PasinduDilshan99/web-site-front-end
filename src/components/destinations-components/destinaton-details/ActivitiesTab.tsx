@@ -17,36 +17,36 @@ const ActivitiesTab: React.FC<ActivitiesTabProps> = ({ activities }) => {
       const trimmed = season.trim();
       switch (trimmed) {
         case "Summer":
-          return "bg-yellow-100 text-yellow-800";
+          return "bg-gradient-to-r from-sky-100 to-teal-100 text-sky-800 border border-sky-200";
         case "Winter":
-          return "bg-blue-100 text-blue-800";
+          return "bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-800 border border-blue-200";
         case "Spring":
-          return "bg-green-100 text-green-800";
+          return "bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border border-green-200";
         case "Autumn":
-          return "bg-orange-100 text-orange-800";
+          return "bg-gradient-to-r from-amber-100 to-orange-100 text-amber-800 border border-amber-200";
         default:
-          return "bg-gray-100 text-gray-800";
+          return "bg-gray-100 text-gray-800 border border-gray-200";
       }
     });
   };
 
   return (
     <div>
-      <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-4">
+      <h3 className="text-lg lg:text-xl font-bold text-sky-900 mb-4">
         Activities ({activities.length})
       </h3>
       <div className="space-y-4">
         {activities.map((activity) => (
           <div
             key={activity.activityId}
-            className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+            className="border border-sky-100 rounded-lg p-4 hover:shadow-md transition-shadow bg-gradient-to-br from-white to-sky-50"
           >
             <div className="flex justify-between items-start mb-3">
               <h4 className="text-md lg:text-lg font-semibold text-gray-900">
                 {activity.activityName}
               </h4>
               <div className="flex space-x-2">
-                <span className="text-xs lg:text-sm  bg-purple-100 text-purple-800 px-2 py-1 rounded font-medium">
+                <span className="text-xs lg:text-sm bg-gradient-to-r from-sky-100 to-teal-100 text-sky-800 px-2 py-1 rounded font-medium border border-sky-200">
                   {activity.activitiesCategory}
                 </span>
               </div>
@@ -57,7 +57,7 @@ const ActivitiesTab: React.FC<ActivitiesTabProps> = ({ activities }) => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               <div className="flex items-center text-gray-600">
                 <svg
-                  className="w-4 h-4 mr-2 text-amber-500"
+                  className="w-4 h-4 mr-2 text-sky-500"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -73,7 +73,7 @@ const ActivitiesTab: React.FC<ActivitiesTabProps> = ({ activities }) => {
               </div>
               <div className="flex items-center text-gray-600">
                 <svg
-                  className="w-4 h-4 mr-2 text-purple-500"
+                  className="w-4 h-4 mr-2 text-teal-500"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -89,7 +89,7 @@ const ActivitiesTab: React.FC<ActivitiesTabProps> = ({ activities }) => {
               </div>
               <div className="flex items-center text-gray-600">
                 <svg
-                  className="w-4 h-4 mr-2 text-green-500"
+                  className="w-4 h-4 mr-2 text-emerald-500"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -107,21 +107,6 @@ const ActivitiesTab: React.FC<ActivitiesTabProps> = ({ activities }) => {
             </div>
 
             <div className="mt-3 flex justify-between items-center">
-              {/* <div className="flex space-x-4">
-                <div>
-                  <span className="text-sm text-gray-500">Local</span>
-                  <p className="font-semibold text-amber-600">
-                    LKR {activity.priceLocal.toLocaleString()}
-                  </p>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-500">Foreigners</span>
-                  <p className="font-semibold text-purple-600">
-                    LKR {activity.priceForeigners.toLocaleString()}
-                  </p>
-                </div>
-              </div> */}
-
               <div className="flex space-x-1">
                 {activity.season.split(",").map((season, index) => (
                   <span
@@ -136,7 +121,7 @@ const ActivitiesTab: React.FC<ActivitiesTabProps> = ({ activities }) => {
               </div>
               <Link
                 href={`/activities/${activity.activityId}`}
-                className="ml-4 px-4 py-2 bg-amber-600 text-white text-sm font-medium rounded-md hover:bg-amber-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="ml-4 px-4 py-2 bg-gradient-to-r from-sky-500 to-teal-500 text-white text-sm font-medium rounded-md hover:from-sky-600 hover:to-teal-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
               >
                 View Details
               </Link>

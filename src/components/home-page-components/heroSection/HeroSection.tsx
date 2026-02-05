@@ -174,41 +174,41 @@ const HeroSection = () => {
 
       {/* Content Overlay */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="text-center text-white px-6 max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-            {currentSlideData.imageTitle}
-            <span className="block bg-gradient-to-r from-amber-400 to-purple-500 bg-clip-text text-transparent">
-              {currentSlideData.imageSubTitle}
-            </span>
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 text-gray-200 max-w-2xl mx-auto leading-relaxed">
-            {currentSlideData.imageDescription ||
-              "Discover amazing experiences with us"}
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            {currentSlideData.imagePrimaryButtonText && (
-              <button
-                onClick={() =>
-                  handleButtonClick(currentSlideData.imagePrimaryButtonLink)
-                }
-                className="px-8 py-4 bg-gradient-to-r from-purple-600 to-amber-600 text-white font-semibold rounded-full hover:from-amber-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg"
-              >
-                {currentSlideData.imagePrimaryButtonText}
-              </button>
-            )}
-            {currentSlideData.imageSecondaryButtonText && (
-              <button
-                onClick={() =>
-                  handleButtonClick(currentSlideData.imageSecondaryButtonLink)
-                }
-                className="px-8 py-4 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-gray-900 transition-all duration-300"
-              >
-                {currentSlideData.imageSecondaryButtonText}
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
+  <div className="text-center text-white px-6 max-w-4xl mx-auto">
+    <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+      {currentSlideData.imageTitle}
+      <span className="block bg-gradient-to-r from-cyan-400 to-emerald-500 bg-clip-text text-transparent">
+        {currentSlideData.imageSubTitle}
+      </span>
+    </h1>
+    <p className="text-xl md:text-2xl mb-8 text-gray-200 max-w-2xl mx-auto leading-relaxed">
+      {currentSlideData.imageDescription ||
+        "Discover amazing experiences with us"}
+    </p>
+    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+      {currentSlideData.imagePrimaryButtonText && (
+        <button
+          onClick={() =>
+            handleButtonClick(currentSlideData.imagePrimaryButtonLink)
+          }
+          className="px-8 py-4 bg-gradient-to-r from-blue-600 to-emerald-500 text-white font-semibold rounded-full hover:from-cyan-600 hover:to-emerald-600 transform hover:scale-105 transition-all duration-300 shadow-lg"
+        >
+          {currentSlideData.imagePrimaryButtonText}
+        </button>
+      )}
+      {currentSlideData.imageSecondaryButtonText && (
+        <button
+          onClick={() =>
+            handleButtonClick(currentSlideData.imageSecondaryButtonLink)
+          }
+          className="px-8 py-4 border-2 border-cyan-300 text-white font-semibold rounded-full hover:bg-cyan-500 hover:border-cyan-500 hover:text-white transition-all duration-300"
+        >
+          {currentSlideData.imageSecondaryButtonText}
+        </button>
+      )}
+    </div>
+  </div>
+</div>
 
       {/* Navigation Arrows */}
       {heroData.length > 1 && (
@@ -271,16 +271,16 @@ const HeroSection = () => {
       )}
 
       {/* Progress Bar */}
-      {heroData.length > 1 && (
-        <div className="absolute bottom-0 left-0 w-full h-1 bg-white/20">
-          <div
-            className="h-full bg-gradient-to-r from-amber-400 to-purple-600 transition-all duration-300"
-            style={{
-              width: `${((currentSlide + 1) / heroData.length) * 100}%`,
-            }}
-          />
-        </div>
-      )}
+{heroData.length > 1 && (
+  <div className="absolute bottom-0 left-0 w-full h-1 bg-white/20">
+    <div
+      className="h-full bg-gradient-to-r from-cyan-400 to-emerald-500 transition-all duration-300"
+      style={{
+        width: `${((currentSlide + 1) / heroData.length) * 100}%`,
+      }}
+    />
+  </div>
+)}
 
       {/* Auto-play Indicator */}
       {heroData.length > 1 && (

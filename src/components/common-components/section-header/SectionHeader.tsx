@@ -13,8 +13,8 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
   title,
   subtitle,
   description,
-  fromColor = "#A855F7",
-  toColor = "#F59E0B",
+  fromColor = "#96f7e4",
+  toColor = "#0092b8",
   align = "center",
 }) => {
   const alignment =
@@ -33,16 +33,16 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
       )}
 
       <h2
-        className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold mb-3 sm:mb-4 md:mb-6 leading-tight bg-clip-text text-transparent`}
-        style={{
-          backgroundImage: `linear-gradient(to right, ${fromColor}, ${toColor})`,
-        }}
+        className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold mb-3   leading-tight  text-sky-800`}
+        // style={{
+        //   backgroundImage: `linear-gradient(to right, ${fromColor}, ${toColor})`,
+        // }}
       >
         {title}
       </h2>
 
       {description && (
-        <p className="text-gray-700 max-w-2xl mx-auto text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl md:max-w-2xl">
+        <p className="text-gray-700 max-w-2xl mx-auto text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl md:max-w-4xl">
           {description}
         </p>
       )}
@@ -51,7 +51,7 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
         className="mt-4 sm:mt-6 h-1 mx-auto rounded-full"
         style={{
           width: "8rem",
-          backgroundImage: `linear-gradient(to right, ${fromColor}, ${toColor})`,
+          backgroundImage: `linear-gradient(to right, #96f7e4, #0092b8)`,
         }}
       ></div>
     </div>

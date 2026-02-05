@@ -24,7 +24,6 @@ const NavBar = () => {
 
   const { user, loading: authLoading } = useAuth();
 
-  // Get max visible items based on screen size
   const getMaxVisibleItems = () => {
     switch (screenSize) {
       case "laptop":
@@ -100,12 +99,10 @@ const NavBar = () => {
   if (loading || authLoading) return <BasicLoading width="w-full" height="h-16" />;
   if (error) return null;
 
-  // Filter only visible items
   const visibleNavBarItems = navBarData.filter(
     (item) => item.status === "VISIBLE"
   );
 
-  // Separate visible items and items for "More" dropdown
   const maxVisibleItems = getMaxVisibleItems();
   const visibleItems = visibleNavBarItems.slice(0, maxVisibleItems);
   const moreItems = visibleNavBarItems.slice(maxVisibleItems);
@@ -132,8 +129,8 @@ const NavBar = () => {
           isScrolled ? "-translate-y-full" : "translate-y-0"
         }`}
         style={{
-          backgroundColor: "rgba(255, 251, 250, 0.95)",
-          borderColor: "rgba(168, 85, 247, 0.2)",
+          backgroundColor: "rgba(248, 250, 252, 0.97)",
+          borderColor: "rgba(14, 165, 233, 0.2)",
         }}
       >
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -150,13 +147,13 @@ const NavBar = () => {
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="inline-flex items-center justify-center p-2 rounded-lg transition-all duration-300"
-                style={{ color: "#5A4D75" }}
+                style={{ color: "#075985" }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.color = "#8B5FBF";
-                  e.currentTarget.style.backgroundColor = "rgba(139, 95, 191, 0.08)";
+                  e.currentTarget.style.color = "#0ea5e9";
+                  e.currentTarget.style.backgroundColor = "rgba(14, 165, 233, 0.08)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.color = "#5A4D75";
+                  e.currentTarget.style.color = "#075985";
                   e.currentTarget.style.backgroundColor = "transparent";
                 }}
               >
@@ -186,8 +183,8 @@ const NavBar = () => {
           isScrolled ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
         }`}
         style={{
-          backgroundColor: "rgba(255, 251, 250, 0.98)",
-          borderColor: "rgba(139, 95, 191, 0.3)",
+          backgroundColor: "rgba(248, 250, 252, 0.99)",
+          borderColor: "rgba(14, 165, 233, 0.3)",
         }}
       >
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -204,13 +201,13 @@ const NavBar = () => {
               <button
                 onClick={() => setIsScrolledMenuOpen(!isScrolledMenuOpen)}
                 className="inline-flex items-center justify-center p-1.5 rounded-md transition-all duration-300"
-                style={{ color: "#5A4D75" }}
+                style={{ color: "#075985" }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.color = "#8B5FBF";
-                  e.currentTarget.style.backgroundColor = "rgba(139, 95, 191, 0.08)";
+                  e.currentTarget.style.color = "#0ea5e9";
+                  e.currentTarget.style.backgroundColor = "rgba(14, 165, 233, 0.08)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.color = "#5A4D75";
+                  e.currentTarget.style.color = "#075985";
                   e.currentTarget.style.backgroundColor = "transparent";
                 }}
               >

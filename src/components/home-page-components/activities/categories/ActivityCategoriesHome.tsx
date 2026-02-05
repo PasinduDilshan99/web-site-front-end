@@ -193,7 +193,7 @@ const ActivityCategoriesHome = () => {
   const canShowCarousel = activeActivitiesCategories.length > cardsPerView;
 
   return (
-    <div className="bg-gray-50 py-8 sm:py-12 lg:py-16 xl:py-20 px-4 sm:px-6 lg:px-8">
+    <div className="bg-white py-8 sm:py-12 lg:py-16 xl:py-20 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         {/* Header Section */}
         <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
@@ -391,22 +391,22 @@ const ActivityCategoriesHome = () => {
             )}
 
             {/* Dots Indicator */}
-            {canShowCarousel && (
-              <div className="flex justify-center mt-6 sm:mt-8 gap-2">
-                {Array.from({ length: maxIndex + 1 }).map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => goToSlide(index)}
-                    className={`transition-all duration-300 rounded-full ${
-                      currentIndex === index
-                        ? "w-8 sm:w-10 h-2 sm:h-2.5 bg-gradient-to-r from-purple-500 to-amber-500"
-                        : "w-2 sm:w-2.5 h-2 sm:h-2.5 bg-gray-300 hover:bg-gray-400"
-                    }`}
-                    aria-label={`Go to slide ${index + 1}`}
-                  />
-                ))}
-              </div>
-            )}
+{canShowCarousel && (
+  <div className="flex justify-center mt-6 sm:mt-8 gap-2">
+    {Array.from({ length: maxIndex + 1 }).map((_, index) => (
+      <button
+        key={index}
+        onClick={() => goToSlide(index)}
+        className={`transition-all duration-300 rounded-full ${
+          currentIndex === index
+            ? "w-8 sm:w-10 h-2 sm:h-2.5 bg-gradient-to-r from-cyan-500 to-emerald-500"
+            : "w-2 sm:w-2.5 h-2 sm:h-2.5 bg-gray-300 hover:bg-gray-400"
+        }`}
+        aria-label={`Go to slide ${index + 1}`}
+      />
+    ))}
+  </div>
+)}
 
             {/* Auto-play Toggle */}
             {canShowCarousel && (

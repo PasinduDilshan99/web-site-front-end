@@ -77,7 +77,7 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
                 sizes="(max-width: 640px) 100vw, (max-width: 768px) 20vw, 96px"
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
+              <div className="w-full h-full bg-gradient-to-br from-sky-500 to-teal-500 flex items-center justify-center">
                 <Maximize2 className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-white" />
               </div>
             )}
@@ -92,15 +92,15 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
               {/* Left section - Destination info */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between sm:block">
-                  <h4 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900 mb-1 sm:mb-2 truncate">
+                  <h4 className="text-lg sm:text-xl md:text-2xl font-semibold text-sky-900 mb-1 sm:mb-2 truncate">
                     {destination.destinationName}
                   </h4>
                   {/* Mobile-only destination number */}
                   <div className="sm:hidden flex items-center gap-2">
-                    <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                    <span className="px-2 py-1 bg-sky-100 text-sky-700 text-xs font-medium rounded-full">
                       {destination.category}
                     </span>
-                    <div className="text-sm font-bold text-blue-600">
+                    <div className="text-sm font-bold text-sky-600">
                       #{index + 1}
                     </div>
                   </div>
@@ -113,7 +113,7 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
                     <span className="truncate">{destination.location}</span>
                   </div>
                   {/* Desktop category badge */}
-                  <span className="hidden sm:inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full transition-all duration-300 hover:scale-105">
+                  <span className="hidden sm:inline-block px-3 py-1 bg-sky-100 text-sky-700 text-xs font-medium rounded-full transition-all duration-300 hover:scale-105">
                     {destination.category}
                   </span>
                 </div>
@@ -121,10 +121,10 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
 
               {/* Right section - Desktop destination number */}
               <div className="hidden sm:flex flex-col items-end text-right">
-                <div className="text-xs sm:text-sm font-medium text-gray-500 mb-1">
+                <div className="text-xs sm:text-sm font-medium text-sky-500 mb-1">
                   Destination
                 </div>
-                <div className="text-lg sm:text-xl font-bold text-blue-600 transition-transform duration-300 hover:scale-110">
+                <div className="text-lg sm:text-xl font-bold text-sky-600 transition-transform duration-300 hover:scale-110">
                   #{index + 1}
                 </div>
               </div>
@@ -141,7 +141,7 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
       {/* Destination Gallery */}
       {destination.images.length > 0 && (
         <div className="p-6 border-b border-gray-100">
-          <h5 className="font-semibold text-gray-900 mb-4">Gallery</h5>
+          <h5 className="font-semibold text-sky-900 mb-4">Gallery</h5>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {destination.images.map((image, imageIdx) => (
               <div
@@ -187,10 +187,10 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
       {activities.length > 0 && (
         <div className="p-6">
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-green-100 rounded-lg transition-transform duration-300 hover:scale-110">
-              <TrendingUp className="w-5 h-5 text-green-600" />
+            <div className="p-2 bg-teal-100 rounded-lg transition-transform duration-300 hover:scale-110">
+              <TrendingUp className="w-5 h-5 text-teal-600" />
             </div>
-            <h5 className="font-semibold text-gray-900">
+            <h5 className="font-semibold text-sky-900">
               Available Activities ({activities.length})
             </h5>
           </div>

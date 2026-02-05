@@ -14,7 +14,6 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [imageLoaded, setImageLoaded] = useState(false);
 
-  // Auto-play functionality for image slider
   useEffect(() => {
     if (!isAutoPlaying || tour.images.length <= 1) return;
 
@@ -46,14 +45,14 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
   };
 
   const getFallbackImage = () => {
-    return "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80";
+    return "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80";
   };
 
   if (!tour.images.length) {
     return (
-      <div className="relative h-96 bg-gradient-to-r from-amber-600 to-purple-600 flex items-center justify-center">
+      <div className="relative h-96 bg-gradient-to-r from-sky-600 to-teal-600 flex items-center justify-center">
         <div className="absolute bottom-0 left-0 right-0 p-6 text-white bg-gradient-to-t from-black/60 to-transparent">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-7xl mx-auto text-center">
             <h1 className="text-4xl font-bold mb-2">{tour.tourName}</h1>
             <p className="text-xl opacity-90">{tour.tourDescription}</p>
           </div>
@@ -67,7 +66,7 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
   return (
     <>
       {/* Hero Section with Slider */}
-      <div className="relative h-[500px] md:h-[600px] overflow-hidden bg-gradient-to-r from-amber-600 to-purple-600">
+      <div className="relative h-[500px] md:h-[600px] overflow-hidden bg-gradient-to-r from-sky-600 to-teal-600">
         {/* Image Slider */}
         <div className="relative w-full h-full">
           {tour.images.map((image, index) => (
@@ -96,19 +95,19 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
           ))}
         </div>
 
-        {/* Content Overlay */}
-        <div className="absolute inset-0 flex items-end">
-          <div className="container mx-auto px-4 md:px-6 lg:px-8 pb-12">
-            <div className="max-w-4xl text-white">
-              {/* Tour Category Badge */}
-              <div className="mb-4 hidden lg:flex flex-wrap gap-3">
-                <span className="px-4 py-2 bg-amber-500/90 backdrop-blur-sm rounded-full text-sm font-semibold">
+        {/* Content Overlay - CENTERED */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="container mx-auto px-4 md:px-6 lg:px-8">
+            <div className="max-w-6xl text-white text-center">
+              {/* Tour Category Badge - CENTERED */}
+              <div className="mb-6 flex flex-wrap gap-3 justify-center">
+                <span className="px-4 py-2 bg-sky-500/90 backdrop-blur-sm rounded-full text-sm font-semibold">
                   {tour.tourCategoryName}
                 </span>
-                <span className="px-4 py-2 bg-purple-500/90 backdrop-blur-sm rounded-full text-sm font-semibold">
+                <span className="px-4 py-2 bg-teal-500/90 backdrop-blur-sm rounded-full text-sm font-semibold">
                   {tour.tourTypeName}
                 </span>
-                <span className="px-4 py-2 bg-blue-500/90 backdrop-blur-sm rounded-full text-sm font-semibold flex items-center gap-2">
+                <span className="px-4 py-2 bg-cyan-500/90 backdrop-blur-sm rounded-full text-sm font-semibold flex items-center gap-2">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
@@ -116,45 +115,38 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
                 </span>
               </div>
 
-              {/* Tour Title and Description */}
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
+              {/* Tour Title - CENTERED */}
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
                 {tour.tourName}
               </h1>
               
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 max-w-3xl mb-6">
-                <p className="text-md md:text-lg text-gray-100 leading-relaxed mb-4">
+              {/* Description Container - CENTERED */}
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 md:p-8 mx-auto max-w-4xl mb-8">
+                <p className="text-md md:text-lg text-gray-100 leading-relaxed mb-6">
                   {tour.tourDescription}
                 </p>
 
-                {/* Tour Info */}
-                <div className="flex flex-wrap gap-4 text-sm">
-                  <div className="flex items-center gap-2">
-                    <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {/* Tour Info - CENTERED */}
+                <div className="flex flex-wrap gap-4 justify-center text-sm">
+                  <div className="flex items-center gap-2 px-4 py-2 bg-sky-500/20 rounded-full">
+                    <svg className="w-5 h-5 text-sky-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                     <span className="font-medium">{tour.startLocation} → {tour.endLocation}</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <svg className="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="flex items-center gap-2 px-4 py-2 bg-teal-500/20 rounded-full">
+                    <svg className="w-5 h-5 text-teal-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                     </svg>
                     <span className="font-medium">{tour.seasonName}</span>
                   </div>
-                  {/* {tour.schedules && tour.schedules.length > 0 && (
-                    <div className="flex items-center gap-2">
-                      <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      <span className="font-medium">{tour.schedules.length} Available Schedules</span>
-                    </div>
-                  )} */}
                 </div>
               </div>
 
-              {/* Image Counter */}
+              {/* Image Counter - CENTERED */}
               {tour.images.length > 1 && (
-                <div className="flex items-center gap-2 px-4 py-2 bg-black/40 backdrop-blur-sm rounded-full inline-flex">
+                <div className="flex items-center gap-2 px-4 py-2 bg-black/40 backdrop-blur-sm rounded-full inline-flex mx-auto">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
@@ -212,16 +204,16 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
           </div>
         )}
 
-        {/* Slide Indicators */}
+        {/* Slide Indicators - CENTERED */}
         {tour.images.length > 1 && (
-          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3">
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3">
             {tour.images.map((_, index) => (
               <button
                 key={index}
                 onClick={() => goToSlide(index)}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
                   index === selectedImageIndex
-                    ? "bg-amber-400 scale-125"
+                    ? "bg-gradient-to-r from-sky-400 to-teal-400 scale-125 shadow-lg"
                     : "bg-white/50 hover:bg-white/75"
                 }`}
                 aria-label={`Go to image ${index + 1}`}
@@ -234,7 +226,7 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
         {tour.images.length > 1 && (
           <div className="absolute bottom-0 left-0 w-full h-1 bg-white/10">
             <div
-              className="h-full bg-gradient-to-r from-amber-400 to-purple-400 transition-all duration-300"
+              className="h-full bg-gradient-to-r from-sky-400 via-teal-400 to-cyan-400 transition-all duration-500"
               style={{
                 width: `${((selectedImageIndex + 1) / tour.images.length) * 100}%`,
               }}
@@ -246,15 +238,15 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
       {/* Image Thumbnails */}
       {tour.images.length > 1 && (
         <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-amber-500 scrollbar-track-gray-200">
+          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-sky-500 scrollbar-track-gray-200">
             {tour.images.map((image, index) => (
               <button
                 key={image.imageId}
                 onClick={() => goToSlide(index)}
                 className={`relative flex-shrink-0 w-28 h-28 rounded-lg overflow-hidden border-2 transition-all duration-300 ${
                   selectedImageIndex === index
-                    ? "border-amber-500 ring-4 ring-amber-200 scale-105"
-                    : "border-gray-300 hover:border-purple-400 hover:scale-105"
+                    ? "border-sky-500 ring-4 ring-sky-200 scale-105"
+                    : "border-gray-300 hover:border-teal-400 hover:scale-105"
                 }`}
               >
                 <img
@@ -267,7 +259,7 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
                   }}
                 />
                 {selectedImageIndex === index && (
-                  <div className="absolute inset-0 bg-amber-500/20 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-sky-500/20 flex items-center justify-center">
                     <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>

@@ -109,7 +109,9 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
         </div>
         <Link
           href={`/sri-lankan-tours/${tour.tourId}`}
-          className="bg-gradient-to-r from-amber-600 to-purple-600 hover:from-purple-700 hover:to-amber-700 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
+          className="bg-white text-teal-600 border-2 border-teal-600
+           px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base font-medium transition-all 
+           duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
         >
           More Details
         </Link>

@@ -42,8 +42,8 @@ const MobileNav: React.FC<MobileNavProps> = ({
           isMenuOpen ? "translate-y-0" : "-translate-y-full"
         }`}
         style={{
-          backgroundColor: "rgba(255, 251, 250, 0.98)",
-          borderColor: "rgba(139, 95, 191, 0.3)",
+          backgroundColor: "rgba(248, 250, 252, 0.98)",
+          borderColor: "rgba(14, 165, 233, 0.3)",
         }}
       >
         <div className="px-4 pt-4 pb-6 space-y-2">
@@ -54,17 +54,17 @@ const MobileNav: React.FC<MobileNavProps> = ({
           {/* Mobile Auth Links */}
           <div
             className="border-t pt-4 mt-4"
-            style={{ borderColor: "rgba(139, 95, 191, 0.2)" }}
+            style={{ borderColor: "rgba(14, 165, 233, 0.2)" }}
           >
             {user ? (
               <>
                 <div className="flex items-center space-x-3 px-4 py-3 mb-2">
                   <UserAvatar user={user} size="large" />
                   <div>
-                    <div style={{ color: "#5A4D75" }} className="font-medium">
+                    <div style={{ color: "#075985" }} className="font-medium">
                       {`${user.firstName} ${user.lastName}`}
                     </div>
-                    <div style={{ color: "#7A6F8F" }} className="text-sm">
+                    <div style={{ color: "#0369a1" }} className="text-sm">
                       {user.email}
                     </div>
                   </div>
@@ -72,13 +72,13 @@ const MobileNav: React.FC<MobileNavProps> = ({
                 <Link
                   href="/profile"
                   className="block px-4 py-3 rounded-lg font-medium transition-all duration-300 border border-transparent backdrop-blur-sm"
-                  style={{ color: "#5A4D75" }}
+                  style={{ color: "#075985" }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.color = "#8B5FBF";
-                    e.currentTarget.style.backgroundColor = "rgba(139, 95, 191, 0.08)";
+                    e.currentTarget.style.color = "#0ea5e9";
+                    e.currentTarget.style.backgroundColor = "rgba(14, 165, 233, 0.08)";
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.color = "#5A4D75";
+                    e.currentTarget.style.color = "#075985";
                     e.currentTarget.style.backgroundColor = "transparent";
                   }}
                   onClick={handleClose}
@@ -88,13 +88,13 @@ const MobileNav: React.FC<MobileNavProps> = ({
                 <button
                   onClick={handleLogout}
                   className="block w-full text-left px-4 py-3 rounded-lg font-medium transition-all duration-300 border border-transparent backdrop-blur-sm"
-                  style={{ color: "#D14D72" }}
+                  style={{ color: "#dc2626" }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.color = "#E97777";
-                    e.currentTarget.style.backgroundColor = "rgba(209, 77, 114, 0.08)";
+                    e.currentTarget.style.color = "#ef4444";
+                    e.currentTarget.style.backgroundColor = "rgba(220, 38, 38, 0.08)";
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.color = "#D14D72";
+                    e.currentTarget.style.color = "#dc2626";
                     e.currentTarget.style.backgroundColor = "transparent";
                   }}
                 >
@@ -107,17 +107,17 @@ const MobileNav: React.FC<MobileNavProps> = ({
                   href="/login"
                   className="block px-4 py-3 rounded-lg font-medium transition-all duration-300 border backdrop-blur-sm text-center mb-2"
                   style={{
-                    color: "#8B5FBF",
-                    backgroundColor: "rgba(139, 95, 191, 0.05)",
-                    borderColor: "rgba(139, 95, 191, 0.3)",
+                    color: "#0ea5e9",
+                    backgroundColor: "rgba(14, 165, 233, 0.05)",
+                    borderColor: "rgba(14, 165, 233, 0.3)",
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.color = "#FFFFFF";
-                    e.currentTarget.style.backgroundColor = "#8B5FBF";
+                    e.currentTarget.style.backgroundColor = "#0ea5e9";
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.color = "#8B5FBF";
-                    e.currentTarget.style.backgroundColor = "rgba(139, 95, 191, 0.05)";
+                    e.currentTarget.style.color = "#0ea5e9";
+                    e.currentTarget.style.backgroundColor = "rgba(14, 165, 233, 0.05)";
                   }}
                   onClick={handleClose}
                 >
@@ -127,16 +127,16 @@ const MobileNav: React.FC<MobileNavProps> = ({
                   href="/signup"
                   className="block px-4 py-3 rounded-lg font-medium transition-all duration-300 border border-transparent backdrop-blur-sm text-center"
                   style={{
-                    background: "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
+                    background: "linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%)",
                     color: "#FFFFFF",
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background =
-                      "linear-gradient(135deg, #7A4FA8 0%, #D4A73A 100%)";
+                      "linear-gradient(135deg, #0284c7 0%, #0d9488 100%)";
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.background =
-                      "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)";
+                      "linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%)";
                   }}
                   onClick={handleClose}
                 >
@@ -163,8 +163,8 @@ const UserAvatar = ({ user, size = "medium" }: { user: User; size?: "small" | "m
     <div
       className={`rounded-full flex items-center justify-center overflow-hidden ${dimensions[size]}`}
       style={{
-        background: "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
-        border: "2px solid rgba(139, 95, 191, 0.3)",
+        background: "linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%)",
+        border: "2px solid rgba(14, 165, 233, 0.3)",
       }}
     >
       <span className="text-white font-bold">

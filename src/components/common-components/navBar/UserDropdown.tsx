@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { User } from "@/context/AuthContext";
-import { useRouter, usePathname } from "next/navigation"; // <-- ADD THIS
+import { useRouter, usePathname } from "next/navigation";
 
 interface UserDropdownProps {
   user: User;
@@ -16,7 +16,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
   onCloseAll,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const router = useRouter(); // <-- ADD THIS
+  const router = useRouter();
   const pathname = usePathname();
 
   const handleLogout = async () => {
@@ -35,13 +35,13 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
           className="flex items-center space-x-2 cursor-pointer p-2 rounded-lg transition-all duration-300"
           style={{
             backgroundColor: isDropdownOpen
-              ? "rgba(139, 95, 191, 0.08)"
+              ? "rgba(14, 165, 233, 0.08)"
               : "transparent",
           }}
           onMouseEnter={(e) => {
             if (!isDropdownOpen) {
               e.currentTarget.style.backgroundColor =
-                "rgba(139, 95, 191, 0.08)";
+                "rgba(14, 165, 233, 0.08)";
             }
           }}
           onMouseLeave={(e) => {
@@ -54,8 +54,8 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
           <div
             className="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden"
             style={{
-              background: "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
-              border: "2px solid rgba(139, 95, 191, 0.3)",
+              background: "linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%)",
+              border: "2px solid rgba(14, 165, 233, 0.3)",
             }}
           >
             <span className="font-bold text-sm text-white">
@@ -63,7 +63,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
               {user.lastName.charAt(0).toUpperCase()}
             </span>
           </div>
-          <span className="font-medium text-sm" style={{ color: "#5A4D75" }}>
+          <span className="font-medium text-sm" style={{ color: "#075985" }}>
             {user.firstName}
           </span>
         </div>
@@ -73,8 +73,8 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
           <div
             className="absolute right-0 top-full mt-2 w-48 rounded-lg shadow-xl z-50"
             style={{
-              backgroundColor: "rgba(255, 251, 250, 0.98)",
-              border: "1px solid rgba(139, 95, 191, 0.2)",
+              backgroundColor: "rgba(248, 250, 252, 0.98)",
+              border: "1px solid rgba(14, 165, 233, 0.2)",
               backdropFilter: "blur(16px)",
             }}
           >
@@ -82,13 +82,13 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
               <div
                 className="px-3 py-2 text-sm border-b"
                 style={{
-                  color: "#7A6F8F",
-                  borderColor: "rgba(139, 95, 191, 0.1)",
+                  color: "#0369a1",
+                  borderColor: "rgba(14, 165, 233, 0.1)",
                 }}
               >
                 Signed in as
                 <br />
-                <span style={{ color: "#000" }}>
+                <span style={{ color: "#075985", fontWeight: "600" }}>
                   {user.firstName} {user.lastName}
                 </span>
               </div>
@@ -96,15 +96,15 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
                 href="/profile"
                 className="block px-3 py-2 rounded-md transition-colors duration-300"
                 style={{
-                  color: "#5A4D75",
+                  color: "#075985",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.color = "#8B5FBF";
+                  e.currentTarget.style.color = "#0ea5e9";
                   e.currentTarget.style.backgroundColor =
-                    "rgba(139, 95, 191, 0.08)";
+                    "rgba(14, 165, 233, 0.08)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.color = "#5A4D75";
+                  e.currentTarget.style.color = "#075985";
                   e.currentTarget.style.backgroundColor = "transparent";
                 }}
                 onClick={() => {
@@ -118,15 +118,15 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
                 href="/profile/notifications"
                 className="block px-3 py-2 rounded-md transition-colors duration-300"
                 style={{
-                  color: "#5A4D75",
+                  color: "#075985",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.color = "#8B5FBF";
+                  e.currentTarget.style.color = "#0ea5e9";
                   e.currentTarget.style.backgroundColor =
-                    "rgba(139, 95, 191, 0.08)";
+                    "rgba(14, 165, 233, 0.08)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.color = "#5A4D75";
+                  e.currentTarget.style.color = "#075985";
                   e.currentTarget.style.backgroundColor = "transparent";
                 }}
                 onClick={() => {
@@ -140,16 +140,16 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
                 onClick={handleLogout}
                 className="block w-full text-left px-3 py-2 rounded-md transition-colors duration-300 mt-2 border-t pt-2"
                 style={{
-                  color: "#D14D72",
-                  borderColor: "rgba(139, 95, 191, 0.1)",
+                  color: "#dc2626",
+                  borderColor: "rgba(14, 165, 233, 0.1)",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.color = "#E97777";
+                  e.currentTarget.style.color = "#ef4444";
                   e.currentTarget.style.backgroundColor =
-                    "rgba(209, 77, 114, 0.08)";
+                    "rgba(220, 38, 38, 0.08)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.color = "#D14D72";
+                  e.currentTarget.style.color = "#dc2626";
                   e.currentTarget.style.backgroundColor = "transparent";
                 }}
               >

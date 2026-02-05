@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import ActivityImageSlideshow from "./ActivityImageSlideshow";
-import { ActiveActivitiesType } from "@/types/activities-types";
+import { ActiveActivitiesType } from "@/types/activity-types";
 import { useRouter } from "next/navigation";
 
 interface ActivityCardProps {
@@ -23,7 +23,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
   const getStatusColor = (status: string) => {
     const colors = {
       ACTIVE: "bg-green-100 text-green-800 border border-green-200",
-      UPCOMING: "bg-blue-100 text-blue-800 border border-blue-200",
+      UPCOMING: "bg-sky-100 text-sky-800 border border-sky-200",
       COMPLETED: "bg-gray-100 text-gray-800 border border-gray-200",
       CANCELLED: "bg-red-100 text-red-800 border border-red-200",
     };
@@ -43,7 +43,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
   };
 
   return (
-    <div className="group bg-white rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
+    <div className="group bg-white rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-sky-100">
       {/* Activity Image Slideshow */}
       <div className="relative">
         <ActivityImageSlideshow
@@ -52,7 +52,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
         />
 
         {/* Category Badge */}
-        <div className="absolute top-2 sm:top-3 left-2 sm:left-3 bg-black/70 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
+        <div className="absolute top-2 sm:top-3 left-2 sm:left-3 bg-sky-600/90 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
           {activity.category_name}
         </div>
 
@@ -89,7 +89,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
       {/* Activity Content */}
       <div className="p-3 sm:p-4 md:p-6">
         {/* Activity Title and Description */}
-        <h2 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 mb-1 sm:mb-2 line-clamp-1">
+        <h2 className="text-base sm:text-lg md:text-xl font-bold text-sky-900 mb-1 sm:mb-2 line-clamp-1">
           {activity.name}
         </h2>
         <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4 line-clamp-2 leading-relaxed">
@@ -100,7 +100,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
         <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-3 sm:mb-4">
           <div className="flex items-center space-x-1 sm:space-x-2">
             <svg
-              className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600 flex-shrink-0"
+              className="w-3 h-3 sm:w-4 sm:h-4 text-sky-600 flex-shrink-0"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -112,14 +112,14 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <span className="text-xs sm:text-sm font-medium text-gray-700">
+            <span className="text-xs sm:text-sm font-medium text-sky-800">
               {activity.duration_hours} hours
             </span>
           </div>
 
           <div className="flex items-center space-x-1 sm:space-x-2">
             <svg
-              className="w-3 h-3 sm:w-4 sm:h-4 text-green-600 flex-shrink-0"
+              className="w-3 h-3 sm:w-4 sm:h-4 text-teal-600 flex-shrink-0"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -131,7 +131,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
                 d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
               />
             </svg>
-            <span className="text-xs sm:text-sm font-medium text-gray-700">
+            <span className="text-xs sm:text-sm font-medium text-teal-800">
               {activity.min_participate}-{activity.max_participate}
             </span>
           </div>
@@ -141,7 +141,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
         <div className="mb-3 sm:mb-4">
           <div className="flex items-center space-x-1 sm:space-x-2 mb-1 sm:mb-2">
             <svg
-              className="w-3 h-3 sm:w-4 sm:h-4 text-orange-600 flex-shrink-0"
+              className="w-3 h-3 sm:w-4 sm:h-4 text-orange-500 flex-shrink-0"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -153,7 +153,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
                 d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
               />
             </svg>
-            <span className="text-xs sm:text-sm font-semibold text-gray-900">
+            <span className="text-xs sm:text-sm font-semibold text-sky-900">
               Best Seasons
             </span>
           </div>
@@ -161,7 +161,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
             {getSeasonBadges(activity.season).map((season, idx) => (
               <span
                 key={idx}
-                className="bg-orange-100 text-orange-800 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs"
+                className="bg-amber-100 text-amber-800 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs"
               >
                 {season}
               </span>
@@ -174,7 +174,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
           <div className="mb-3 sm:mb-4">
             <div className="flex items-center space-x-1 sm:space-x-2 mb-1 sm:mb-2">
               <svg
-                className="w-3 h-3 sm:w-4 sm:h-4 text-purple-600 flex-shrink-0"
+                className="w-3 h-3 sm:w-4 sm:h-4 text-teal-600 flex-shrink-0"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -186,7 +186,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
                   d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
                 />
               </svg>
-              <span className="text-xs sm:text-sm font-semibold text-gray-900">
+              <span className="text-xs sm:text-sm font-semibold text-sky-900">
                 Requirements
               </span>
             </div>
@@ -204,7 +204,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
                 </span>
               ))}
               {activity.requirements.length > 2 && (
-                <span className="bg-gray-100 text-gray-600 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs">
+                <span className="bg-sky-100 text-sky-600 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs">
                   +{activity.requirements.length - 2} more
                 </span>
               )}
@@ -217,7 +217,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
           <div className="mb-3 sm:mb-4">
             <div className="flex items-center space-x-1 sm:space-x-2 mb-1 sm:mb-2">
               <svg
-                className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600 flex-shrink-0"
+                className="w-3 h-3 sm:w-4 sm:h-4 text-sky-600 flex-shrink-0"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -229,7 +229,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
                   d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                 />
               </svg>
-              <span className="text-xs sm:text-sm font-semibold text-gray-900">
+              <span className="text-xs sm:text-sm font-semibold text-sky-900">
                 Schedules
               </span>
             </div>
@@ -237,24 +237,24 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
               {activity.schedules.slice(0, 1).map((schedule) => (
                 <div
                   key={schedule.id}
-                  className="bg-gray-50 rounded-lg p-2 sm:p-3 text-xs sm:text-sm"
+                  className="bg-sky-50 rounded-lg p-2 sm:p-3 text-xs sm:text-sm"
                 >
-                  <div className="font-medium text-gray-900">
+                  <div className="font-medium text-sky-900">
                     {schedule.name}
                   </div>
-                  <div className="text-gray-600 text-xs">
+                  <div className="text-sky-600 text-xs">
                     {formatDate(schedule.assume_start_date)} -{" "}
                     {formatDate(schedule.assume_end_date)}
                   </div>
                   {schedule.special_note && (
-                    <div className="text-blue-600 text-xs mt-1">
+                    <div className="text-sky-600 text-xs mt-1">
                       💡 {schedule.special_note}
                     </div>
                   )}
                 </div>
               ))}
               {activity.schedules.length > 1 && (
-                <div className="text-center text-xs text-gray-500">
+                <div className="text-center text-xs text-sky-500">
                   +{activity.schedules.length - 1} more schedules
                 </div>
               )}
@@ -263,8 +263,8 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
         )} */}
 
         {/* Availability Times */}
-        {/* <div className="mb-3 sm:mb-4 bg-blue-50 rounded-lg p-2 sm:p-3">
-          <div className="text-xs sm:text-sm text-gray-700">
+        {/* <div className="mb-3 sm:mb-4 bg-sky-50 rounded-lg p-2 sm:p-3">
+          <div className="text-xs sm:text-sm text-sky-700">
             <span className="font-semibold">Available:</span>{" "}
             {activity.available_from} - {activity.available_to}
           </div>
@@ -273,7 +273,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
         {/* Action Button */}
         <button
           onClick={handleBookNow}
-          className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 sm:py-3 rounded-lg sm:rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 text-sm sm:text-base"
+          className="w-full bg-gradient-to-r from-sky-600 to-teal-600 text-white py-2 sm:py-3 rounded-lg sm:rounded-xl font-semibold hover:from-sky-700 hover:to-teal-700 transition-all duration-300 transform hover:scale-105 text-sm sm:text-base shadow-md hover:shadow-lg"
         >
           More Details
         </button>

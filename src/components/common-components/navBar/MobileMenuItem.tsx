@@ -21,8 +21,8 @@ const MobileMenuItem: React.FC<MobileMenuItemProps> = ({
 
   // Styles based on scrolled state
   const containerClasses = isScrolled 
-    ? "border-b border-gray-100 last:border-b-0"
-    : "border-b border-gray-100 last:border-b-0";
+    ? "border-b border-sky-100 last:border-b-0"
+    : "border-b border-sky-100 last:border-b-0";
   
   const buttonClasses = isScrolled
     ? "flex items-center justify-between w-full px-3 py-2 rounded-md font-medium transition-all duration-300 border border-transparent backdrop-blur-sm text-sm"
@@ -46,14 +46,14 @@ const MobileMenuItem: React.FC<MobileMenuItemProps> = ({
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           className={buttonClasses}
-          style={{ color: "#5A4D75" }}
+          style={{ color: "#075985" }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.color = "#8B5FBF";
-            e.currentTarget.style.backgroundColor = "rgba(139, 95, 191, 0.08)";
-            e.currentTarget.style.borderColor = "rgba(139, 95, 191, 0.3)";
+            e.currentTarget.style.color = "#0ea5e9";
+            e.currentTarget.style.backgroundColor = "rgba(14, 165, 233, 0.08)";
+            e.currentTarget.style.borderColor = "rgba(14, 165, 233, 0.3)";
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.color = "#5A4D75";
+            e.currentTarget.style.color = "#075985";
             e.currentTarget.style.backgroundColor = "transparent";
             e.currentTarget.style.borderColor = "transparent";
           }}
@@ -84,15 +84,15 @@ const MobileMenuItem: React.FC<MobileMenuItemProps> = ({
                 key={submenu.id}
                 href={submenu.linkUrl}
                 className={submenuLinkClasses}
-                style={{ color: "#5A4D75" }}
+                style={{ color: "#075985" }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.color = "#8B5FBF";
+                  e.currentTarget.style.color = "#0ea5e9";
                   e.currentTarget.style.backgroundColor =
-                    "rgba(139, 95, 191, 0.08)";
-                  e.currentTarget.style.borderColor = "rgba(139, 95, 191, 0.3)";
+                    "rgba(14, 165, 233, 0.08)";
+                  e.currentTarget.style.borderColor = "rgba(14, 165, 233, 0.3)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.color = "#5A4D75";
+                  e.currentTarget.style.color = "#075985";
                   e.currentTarget.style.backgroundColor = "transparent";
                   e.currentTarget.style.borderColor = "transparent";
                 }}
@@ -107,7 +107,7 @@ const MobileMenuItem: React.FC<MobileMenuItemProps> = ({
                 <div>
                   <div>{submenu.name}</div>
                   {submenu.description && !isScrolled && (
-                    <div className="text-xs opacity-70 mt-1">
+                    <div className="text-xs text-sky-600 mt-1">
                       {submenu.description}
                     </div>
                   )}
@@ -125,14 +125,14 @@ const MobileMenuItem: React.FC<MobileMenuItemProps> = ({
       <Link
         href={item.linkUrl}
         className={linkClasses}
-        style={{ color: "#5A4D75" }}
+        style={{ color: "#075985" }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.color = "#8B5FBF";
-          e.currentTarget.style.backgroundColor = "rgba(139, 95, 191, 0.08)";
-          e.currentTarget.style.borderColor = "rgba(139, 95, 191, 0.3)";
+          e.currentTarget.style.color = "#0ea5e9";
+          e.currentTarget.style.backgroundColor = "rgba(14, 165, 233, 0.08)";
+          e.currentTarget.style.borderColor = "rgba(14, 165, 233, 0.3)";
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.color = "#5A4D75";
+          e.currentTarget.style.color = "#075985";
           e.currentTarget.style.backgroundColor = "transparent";
           e.currentTarget.style.borderColor = "transparent";
         }}

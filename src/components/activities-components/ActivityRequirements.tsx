@@ -15,14 +15,14 @@ const ActivityRequirements: React.FC<ActivityRequirementsProps> = ({
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6">
       <h2 className="text-lg lg:text-xl font-bold text-gray-900 mb-4 flex items-center">
-        <span className="w-2 h-2 bg-amber-500 rounded-full mr-2"></span>
+        <span className="w-2 h-2 bg-gradient-to-r from-sky-500 to-teal-500 rounded-full mr-2"></span>
         Requirements
       </h2>
       <div className="grid gap-3">
         {requirements.map((req) => (
           <div
             key={req.id}
-            className="flex items-center justify-between p-4 bg-gray-50 rounded-xl"
+            className="flex items-center justify-between p-4 bg-gradient-to-r from-sky-50 to-teal-50 rounded-xl border border-sky-100 hover:border-sky-200 transition-all duration-200"
           >
             <div className="flex items-center space-x-3">
               <div
@@ -34,7 +34,7 @@ const ActivityRequirements: React.FC<ActivityRequirementsProps> = ({
                 <p className="text-sm text-gray-600">{req.description}</p>
               </div>
             </div>
-            <span className="px-3 py-1 bg-white rounded-full text-sm font-medium border">
+            <span className="px-3 py-1 bg-white rounded-full text-sm font-medium border border-sky-200 text-sky-700">
               {req.value}
             </span>
           </div>

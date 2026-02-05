@@ -32,15 +32,10 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false);
 
-  // Helper function to check if a nav item is active
   const isItemActive = (item: NavBarItem) => {
-    // Exact match for main nav items
     if (pathname === item.linkUrl) return true;
-
-    // Check if current path starts with nav item link (for nested routes)
     if (pathname?.startsWith(item.linkUrl) && item.linkUrl !== "/") return true;
 
-    // Check if any submenu item matches current path
     if (item.submenus && item.submenus.length > 0) {
       return item.submenus.some((submenu) => {
         if (pathname === submenu.linkUrl) return true;
@@ -75,30 +70,11 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
           <Image
             src="/felicita_trips.png"
             alt={companyName}
-            width={150} // Adjust based on your logo size
-            height={50} // Adjust based on your logo size
-            className="h-10 w-auto" // Tailwind classes for responsive sizing
+            width={150}
+            height={50}
+            className="h-10 w-auto"
           />
         </Link>
-        {/* <Link
-          href="/"
-          className="text-xl font-bold bg-clip-text text-transparent hover:transition-all duration-300"
-          style={{
-            backgroundImage:
-              "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundImage =
-              "linear-gradient(135deg, #7A4FA8 0%, #D4A73A 100%)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundImage =
-              "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)";
-          }}
-          onClick={closeAllDropdowns}
-        >
-          {companyName}
-        </Link> */}
       </div>
 
       {/* Desktop Menu */}
@@ -128,21 +104,21 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
               href={item.linkUrl}
               className="relative font-medium transition-colors duration-300 group px-3 py-2 rounded-lg"
               style={{
-                color: isActive ? "#8B5FBF" : "#5A4D75",
+                color: isActive ? "#0ea5e9" : "#075985",
                 backgroundColor: isActive
-                  ? "rgba(139, 95, 191, 0.08)"
+                  ? "rgba(14, 165, 233, 0.08)"
                   : "transparent",
               }}
               onMouseEnter={(e) => {
                 if (!isActive) {
-                  e.currentTarget.style.color = "#8B5FBF";
+                  e.currentTarget.style.color = "#0ea5e9";
                   e.currentTarget.style.backgroundColor =
-                    "rgba(139, 95, 191, 0.08)";
+                    "rgba(14, 165, 233, 0.08)";
                 }
               }}
               onMouseLeave={(e) => {
                 if (!isActive) {
-                  e.currentTarget.style.color = "#5A4D75";
+                  e.currentTarget.style.color = "#075985";
                   e.currentTarget.style.backgroundColor = "transparent";
                 }
               }}
@@ -155,7 +131,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                 }`}
                 style={{
                   background:
-                    "linear-gradient(90deg, #8B5FBF 0%, #E9B949 100%)",
+                    "linear-gradient(90deg, #0ea5e9 0%, #0d9488 100%)",
                 }}
               ></span>
             </Link>
@@ -195,24 +171,24 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                 pathname === "/login" ? "active-login" : ""
               }`}
               style={{
-                color: pathname === "/login" ? "#FFFFFF" : "#8B5FBF",
+                color: pathname === "/login" ? "#FFFFFF" : "#0ea5e9",
                 backgroundColor:
-                  pathname === "/login" ? "#8B5FBF" : "transparent",
+                  pathname === "/login" ? "#0ea5e9" : "transparent",
                 borderColor:
-                  pathname === "/login" ? "#8B5FBF" : "rgba(139, 95, 191, 0.3)",
+                  pathname === "/login" ? "#0ea5e9" : "rgba(14, 165, 233, 0.3)",
               }}
               onMouseEnter={(e) => {
                 if (pathname !== "/login") {
                   e.currentTarget.style.color = "#FFFFFF";
-                  e.currentTarget.style.backgroundColor = "#8B5FBF";
-                  e.currentTarget.style.borderColor = "#8B5FBF";
+                  e.currentTarget.style.backgroundColor = "#0ea5e9";
+                  e.currentTarget.style.borderColor = "#0ea5e9";
                 }
               }}
               onMouseLeave={(e) => {
                 if (pathname !== "/login") {
-                  e.currentTarget.style.color = "#8B5FBF";
+                  e.currentTarget.style.color = "#0ea5e9";
                   e.currentTarget.style.backgroundColor = "transparent";
-                  e.currentTarget.style.borderColor = "rgba(139, 95, 191, 0.3)";
+                  e.currentTarget.style.borderColor = "rgba(14, 165, 233, 0.3)";
                 }
               }}
               onClick={closeAllDropdowns}
@@ -227,20 +203,20 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
               style={{
                 background:
                   pathname === "/signup"
-                    ? "linear-gradient(135deg, #7A4FA8 0%, #D4A73A 100%)"
-                    : "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
+                    ? "linear-gradient(135deg, #0284c7 0%, #0d9488 100%)"
+                    : "linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%)",
                 color: "#FFFFFF",
               }}
               onMouseEnter={(e) => {
                 if (pathname !== "/signup") {
                   e.currentTarget.style.background =
-                    "linear-gradient(135deg, #7A4FA8 0%, #D4A73A 100%)";
+                    "linear-gradient(135deg, #0284c7 0%, #0d9488 100%)";
                 }
               }}
               onMouseLeave={(e) => {
                 if (pathname !== "/signup") {
                   e.currentTarget.style.background =
-                    "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)";
+                    "linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%)";
                 }
               }}
               onClick={closeAllDropdowns}

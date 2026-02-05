@@ -2,7 +2,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
   PopularDestinationsDetailsType,
-  Filters,Review,
+  Filters,
+  Review,
   EnhancedDestination,
   DestinationHistoryType,
   DestinationHistoryImage,
@@ -23,15 +24,20 @@ const DestinationPage: React.FC = () => {
   const [destinations, setDestinations] = useState<EnhancedDestination[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [history, setHistory] = useState<DestinationHistoryType[]>([]);
-  const [historyImages, setHistoryImages] = useState<DestinationHistoryImage[]>([]);
+  const [historyImages, setHistoryImages] = useState<DestinationHistoryImage[]>(
+    [],
+  );
   const [loading, setLoading] = useState<boolean>(true);
   const [reviewsLoading, setReviewsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [reviewsError, setReviewsError] = useState<string | null>(null);
   const [historyLoading, setHistoryLoading] = useState<boolean>(true);
   const [historyError, setHistoryError] = useState<string | null>(null);
-  const [historyImagesLoading, setHistoryImagesLoading] = useState<boolean>(true);
-  const [historyImagesError, setHistoryImagesError] = useState<string | null>(null);
+  const [historyImagesLoading, setHistoryImagesLoading] =
+    useState<boolean>(true);
+  const [historyImagesError, setHistoryImagesError] = useState<string | null>(
+    null,
+  );
 
   // Filter states
   const [filters, setFilters] = useState<Filters>({
@@ -63,7 +69,8 @@ const DestinationPage: React.FC = () => {
   // Fetch filter options (initial data)
   const fetchFilterOptions = useCallback(async (): Promise<void> => {
     try {
-      const { categories, locations, durations } = await destinationService.fetchFilterOptions();
+      const { categories, locations, durations } =
+        await destinationService.fetchFilterOptions();
       setCategories(categories);
       setLocations(locations);
       setDurations(durations);
@@ -76,7 +83,7 @@ const DestinationPage: React.FC = () => {
   const fetchDestinationsWithFilters = useCallback(async (): Promise<void> => {
     try {
       setLoading(true);
-      
+
       // Prepare API request
       const requestBody: DestinationSearchRequest = {
         name: filters.search || null,
@@ -90,7 +97,8 @@ const DestinationPage: React.FC = () => {
         pageNumber: currentPage,
       };
 
-      const { data, error } = await destinationService.fetchDestinationsWithFilters(requestBody);
+      const { data, error } =
+        await destinationService.fetchDestinationsWithFilters(requestBody);
 
       if (error) {
         throw new Error(error);
@@ -98,13 +106,18 @@ const DestinationPage: React.FC = () => {
 
       if (data) {
         // Enhance destinations with mock rating and popularity data
-        const enhancedDestinations: EnhancedDestination[] = data.destinationResponseDtos.map(
-          (destination: PopularDestinationsDetailsType) => ({
-            ...destination,
-            rating: DestinationService.generateMockRating(destination.destinationId),
-            popularity: DestinationService.generateMockPopularity(destination.destinationId),
-          })
-        );
+        const enhancedDestinations: EnhancedDestination[] =
+          data.destinationResponseDtos.map(
+            (destination: PopularDestinationsDetailsType) => ({
+              ...destination,
+              rating: DestinationService.generateMockRating(
+                destination.destinationId,
+              ),
+              popularity: DestinationService.generateMockPopularity(
+                destination.destinationId,
+              ),
+            }),
+          );
         setDestinations(enhancedDestinations);
         setTotalDestinations(data.destinationCount);
         setTotalPages(Math.ceil(data.destinationCount / itemsPerPage));
@@ -127,14 +140,16 @@ const DestinationPage: React.FC = () => {
     try {
       setReviewsLoading(true);
       const { data, error } = await destinationService.fetchReviews();
-      
+
       if (error) {
         throw new Error(error);
       }
       setReviews(data);
       setReviewsError(null);
     } catch (err) {
-      setReviewsError(err instanceof Error ? err.message : "Failed to load reviews");
+      setReviewsError(
+        err instanceof Error ? err.message : "Failed to load reviews",
+      );
     } finally {
       setReviewsLoading(false);
     }
@@ -145,14 +160,18 @@ const DestinationPage: React.FC = () => {
     try {
       setHistoryLoading(true);
       const { data, error } = await destinationService.fetchHistory();
-      
+
       if (error) {
         throw new Error(error);
       }
       setHistory(data);
       setHistoryError(null);
     } catch (err) {
-      setHistoryError(err instanceof Error ? err.message : "Failed to load destination history");
+      setHistoryError(
+        err instanceof Error
+          ? err.message
+          : "Failed to load destination history",
+      );
     } finally {
       setHistoryLoading(false);
     }
@@ -163,14 +182,16 @@ const DestinationPage: React.FC = () => {
     try {
       setHistoryImagesLoading(true);
       const { data, error } = await destinationService.fetchHistoryImages();
-      
+
       if (error) {
         throw new Error(error);
       }
       setHistoryImages(data);
       setHistoryImagesError(null);
     } catch (err) {
-      setHistoryImagesError(err instanceof Error ? err.message : "Failed to load history images");
+      setHistoryImagesError(
+        err instanceof Error ? err.message : "Failed to load history images",
+      );
     } finally {
       setHistoryImagesLoading(false);
     }
@@ -190,7 +211,7 @@ const DestinationPage: React.FC = () => {
         setError(err instanceof Error ? err.message : "An error occurred");
       }
     };
-    
+
     fetchInitialData();
   }, []); // Empty dependency array - runs only once on mount
 
@@ -224,7 +245,10 @@ const DestinationPage: React.FC = () => {
     return Math.round(basePrice);
   };
 
-  const handleFilterChange = (filterName: keyof Filters,value: Filters[keyof Filters]): void => {
+  const handleFilterChange = (
+    filterName: keyof Filters,
+    value: Filters[keyof Filters],
+  ): void => {
     setFilters((prev) => ({
       ...prev,
       [filterName]: value,
@@ -312,7 +336,7 @@ const DestinationPage: React.FC = () => {
   return (
     <>
       <DestinationHeroSection />
-      <div className="mx-auto px-4 py-8 bg-gradient-to-br from-purple-100 via-purple-100 to-amber-100 min-h-screen">
+      <div className="mx-auto px-4 py-8 bg-gradient-to-br from-white via-blue-50 to-cyan-50 min-h-screen">
         {/* Page Header */}
         <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
           <SectionHeader
@@ -338,7 +362,7 @@ const DestinationPage: React.FC = () => {
         {/* Results Section */}
         <div id="results-section" className="mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <h3 className="text-xl lg:text-2xl font-semibold text-gray-900">
+            <h3 className="text-xl lg:text-2xl font-semibold text-sky-900">
               {totalDestinations} Destination
               {totalDestinations !== 1 ? "s" : ""} Found
             </h3>
@@ -347,7 +371,7 @@ const DestinationPage: React.FC = () => {
             <div className="flex items-center gap-3">
               <label
                 htmlFor="itemsPerPage"
-                className="text-sm font-medium text-gray-700 whitespace-nowrap"
+                className="text-sm font-medium text-sky-700 whitespace-nowrap"
               >
                 Show:
               </label>
@@ -357,7 +381,7 @@ const DestinationPage: React.FC = () => {
                 onChange={(e) =>
                   handleItemsPerPageChange(Number(e.target.value))
                 }
-                className="text-gray-800 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm"
+                className="text-sky-900 px-3 py-2 border border-sky-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm bg-white transition-all duration-200 hover:border-sky-400"
               >
                 <option value={4}>4 per page</option>
                 <option value={6}>6 per page</option>
@@ -491,8 +515,8 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
   };
 
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-8 pt-6 border-t border-gray-200 text-gray-800">
-      <div className="text-sm text-gray-600">
+    <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-8 pt-6 border-t border-sky-200 text-sky-800">
+      <div className="text-sm text-sky-600 font-medium">
         Showing {startItem} to {endItem} of {totalItems} destinations
       </div>
 
@@ -500,7 +524,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-3 py-2 rounded-md border border-gray-300 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+          className="px-3 py-2 rounded-md border border-sky-300 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-sky-50 transition-all duration-200 text-sky-700 hover:border-sky-400 hover:shadow-sm"
         >
           Previous
         </button>
@@ -510,12 +534,12 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
             key={index}
             onClick={() => typeof page === "number" && onPageChange(page)}
             disabled={page === "..."}
-            className={`px-3 py-2 rounded-md text-sm font-medium min-w-[40px] ${
+            className={`px-3 py-2 rounded-md text-sm font-medium min-w-[40px] transition-all duration-200 ${
               page === currentPage
-                ? "bg-gradient-to-r from-purple-600 to-amber-600 text-white"
+                ? "bg-gradient-to-r from-sky-600 to-teal-600 text-white shadow-md"
                 : page === "..."
-                ? "cursor-default"
-                : "border border-gray-300 hover:bg-gray-50 transition-colors"
+                  ? "cursor-default text-sky-500"
+                  : "border border-sky-300 text-sky-700 hover:bg-sky-50 hover:border-sky-400 hover:shadow-sm"
             }`}
           >
             {page}
@@ -525,7 +549,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="px-3 py-2 rounded-md border border-gray-300 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+          className="px-3 py-2 rounded-md border border-sky-300 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-sky-50 transition-all duration-200 text-sky-700 hover:border-sky-400 hover:shadow-sm"
         >
           Next
         </button>
@@ -539,12 +563,12 @@ const NoResults: React.FC<{ onResetFilters: () => void }> = ({
   onResetFilters,
 }) => (
   <div className="text-center py-12">
-    <div className="text-gray-500 text-lg mb-4">
+    <div className="text-sky-700 text-lg mb-4">
       No destinations found matching your filters.
     </div>
     <button
       onClick={onResetFilters}
-      className="px-6 py-2 bg-gradient-to-r from-purple-600 to-amber-600 text-white rounded-lg hover:from-purple-700 hover:to-amber-700 transition-colors"
+      className="px-6 py-2 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:from-sky-700 hover:to-teal-700 transition-all duration-300 shadow-md hover:shadow-lg"
     >
       Reset Filters
     </button>

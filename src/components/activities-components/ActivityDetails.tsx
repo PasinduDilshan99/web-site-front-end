@@ -9,7 +9,7 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = ({ activity }) => {
   const getStatusColor = (status: string) => {
     const colors = {
       ACTIVE: "bg-emerald-100 text-emerald-800 border border-emerald-200",
-      UPCOMING: "bg-amber-100 text-amber-800 border border-amber-200",
+      UPCOMING: "bg-sky-100 text-sky-800 border border-sky-200",
       COMPLETED: "bg-gray-100 text-gray-800 border border-gray-200",
       CANCELLED: "bg-red-100 text-red-800 border border-red-200",
     };
@@ -32,7 +32,7 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = ({ activity }) => {
     <div className="bg-white rounded-2xl shadow-lg p-6">
       <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
         <div>
-          <span className="inline-block bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-xs lg:text-sm font-medium mb-2">
+          <span className="inline-block bg-sky-100 text-sky-800 px-3 py-1 rounded-full text-xs lg:text-sm font-medium mb-2">
             {activity.category_name}
           </span>
           <h1 className="text-xl lg:text-3xl font-bold text-gray-900">{activity.name}</h1>
@@ -51,7 +51,7 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = ({ activity }) => {
       </p>
 
       {/* Price Section */}
-      {/* <div className="mt-6 p-4 bg-gradient-to-r from-amber-50 to-purple-50 rounded-xl border border-amber-200">
+      {/* <div className="mt-6 p-4 bg-gradient-to-r from-sky-50 to-teal-50 rounded-xl border border-sky-200">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <div className="flex items-baseline space-x-2">
@@ -67,7 +67,7 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = ({ activity }) => {
               <span className="text-gray-600">per person (local)</span>
             </div>
           </div>
-          <button className="bg-gradient-to-r from-amber-500 to-purple-600 hover:from-amber-600 hover:to-purple-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105">
+          <button className="bg-gradient-to-r from-sky-500 to-teal-600 hover:from-sky-600 hover:to-teal-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105">
             Book Now
           </button>
         </div>
