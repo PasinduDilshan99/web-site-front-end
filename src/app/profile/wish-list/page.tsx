@@ -6,6 +6,8 @@ import { PackageWishItem, TourWishItem, DestinationWishItem, ActivityWishItem } 
 import { USER_PROFILE_WISH_LIST_VIEW_PRIVILEGE } from '@/utils/privileges';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { WishListService } from '@/services/wishListService';
+import { InsertWishListRequest } from '@/types/wish-list-types';
 
 export default function WishListPage() {
   const [wishListData, setWishListData] = useState<{
@@ -22,6 +24,10 @@ export default function WishListPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'all' | 'packages' | 'tours' | 'destinations' | 'activities'>('all');
+  const [removingItem, setRemovingItem] = useState<{
+    type: 'package' | 'tour' | 'destination' | 'activity';
+    id: number;
+  } | null>(null);
   const apiService = new UserProfileAPIService();
   const router = useRouter();
 
@@ -59,6 +65,85 @@ export default function WishListPage() {
     }
   };
 
+  const handleRemoveFromWishList = async (
+    type: 'package' | 'tour' | 'destination' | 'activity',
+    id: number
+  ) => {
+    if (removingItem) return; // Prevent multiple simultaneous removals
+    
+    setRemovingItem({ type, id });
+    
+    try {
+      // Prepare request body based on item type
+      const requestBody: InsertWishListRequest = {};
+      
+      switch (type) {
+        case 'package':
+          requestBody.packageId = id;
+          break;
+        case 'tour':
+          requestBody.tourId = id;
+          break;
+        case 'destination':
+          requestBody.destinationId = id;
+          break;
+        case 'activity':
+          requestBody.activityId = id;
+          break;
+      }
+
+      // Call the appropriate API (same API for adding/removing)
+      let response;
+      switch (type) {
+        case 'package':
+          response = await WishListService.addPackageWishList(requestBody);
+          break;
+        case 'tour':
+          response = await WishListService.addTourWishList(requestBody);
+          break;
+        case 'destination':
+          response = await WishListService.addDestinationWishList(requestBody);
+          break;
+        case 'activity':
+          response = await WishListService.addActivityWishList(requestBody);
+          break;
+      }
+
+      // Check if API call was successful
+      if (response.code === 200) {
+        // Remove item from local state
+        setWishListData(prev => {
+          const newState = { ...prev };
+          switch (type) {
+            case 'package':
+              newState.packages = prev.packages.filter(item => item.packageId !== id);
+              break;
+            case 'tour':
+              newState.tours = prev.tours.filter(item => item.tourId !== id);
+              break;
+            case 'destination':
+              newState.destinations = prev.destinations.filter(item => item.destinationId !== id);
+              break;
+            case 'activity':
+              newState.activities = prev.activities.filter(item => item.activityId !== id);
+              break;
+          }
+          return newState;
+        });
+        
+        // Show success message (optional)
+        console.log(response.message);
+      } else {
+        throw new Error(response.message || 'Failed to remove item');
+      }
+    } catch (err) {
+      console.error('Failed to remove item from wish list:', err);
+      // You could show an error toast here
+    } finally {
+      setRemovingItem(null);
+    }
+  };
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-LK', {
       style: 'currency',
@@ -91,242 +176,360 @@ export default function WishListPage() {
 
   const stats = getCategoryStats();
 
-  const CardContainer = ({ children, category }: { children: React.ReactNode; category: string }) => (
-    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group transform hover:translate-y-[-4px]">
+  // Wish Icon Button Component
+  const WishIconButton = ({ 
+    type, 
+    id, 
+    isRemoving 
+  }: { 
+    type: 'package' | 'tour' | 'destination' | 'activity'; 
+    id: number;
+    isRemoving?: boolean;
+  }) => (
+    <button
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        handleRemoveFromWishList(type, id);
+      }}
+      disabled={isRemoving}
+      className={`absolute top-3 left-3 w-10 h-10 flex items-center justify-center rounded-full shadow-lg transition-all duration-300 z-10 ${
+        isRemoving 
+          ? 'bg-gray-100 cursor-not-allowed' 
+          : 'bg-white hover:bg-red-50 hover:scale-110 active:scale-95'
+      }`}
+      aria-label="Remove from wish list"
+    >
+      {isRemoving ? (
+        <div className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+      ) : (
+        <svg 
+          className="w-5 h-5 text-red-500" 
+          fill="currentColor" 
+          viewBox="0 0 24 24"
+        >
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+        </svg>
+      )}
+    </button>
+  );
+
+  const CardContainer = ({ 
+    children, 
+    category, 
+    onClick 
+  }: { 
+    children: React.ReactNode; 
+    category: string;
+    onClick?: (e: React.MouseEvent) => void;
+  }) => (
+    <div 
+      className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group transform hover:translate-y-[-4px] relative"
+      onClick={onClick}
+    >
       {children}
     </div>
   );
 
-  const PackageCard = ({ item }: { item: PackageWishItem }) => (
-    <CardContainer category="packages">
-      <div className="relative h-52 md:h-56 overflow-hidden">
-        <img 
-          src={item.packageImages[0] || '/images/placeholder.jpg'} 
-          alt={item.packageName}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          loading="lazy"
-        />
-        {item.discount > 0 && (
-          <div className="absolute top-3 right-3 bg-gradient-to-r from-red-500 to-red-600 text-white px-3 py-1.5 rounded-lg text-sm font-semibold shadow-lg">
-            {item.discount}% OFF
-          </div>
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-      </div>
-      
-      <div className="p-5 md:p-6">
-        <div className="flex justify-between items-start mb-3">
-          <h3 className="font-bold text-gray-900 text-lg md:text-xl mb-1 group-hover:text-sky-600 transition-colors duration-300 line-clamp-1">
-            {item.packageName}
-          </h3>
-          <span className="px-3 py-1 bg-sky-50 text-sky-700 rounded-full text-xs font-semibold border border-sky-200">
-            Package
-          </span>
+  const PackageCard = ({ item }: { item: PackageWishItem }) => {
+    const isRemoving = removingItem?.type === 'package' && removingItem?.id === item.packageId;
+    
+    return (
+      <CardContainer 
+        category="packages"
+        onClick={() => handleItemClick(`/packages/${item.packageId}`)}
+      >
+        <div className="relative h-52 md:h-56 overflow-hidden">
+          <img 
+            src={item.packageImages[0] || '/images/placeholder.jpg'} 
+            alt={item.packageName}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+          />
+          {/* Wish Icon Button */}
+          <WishIconButton 
+            type="package" 
+            id={item.packageId} 
+            isRemoving={isRemoving}
+          />
+          
+          {item.discount > 0 && (
+            <div className="absolute top-3 right-3 bg-gradient-to-r from-red-500 to-red-600 text-white px-3 py-1.5 rounded-lg text-sm font-semibold shadow-lg">
+              {item.discount}% OFF
+            </div>
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
         
-        <p className="text-gray-600 text-sm md:text-base mb-4 line-clamp-2">
-          {item.packageDescription}
-        </p>
-        
-        <div className="flex items-center justify-between text-sm text-gray-500 border-t border-gray-100 pt-4">
-          <div className="flex items-center space-x-4">
-            <span className="flex items-center">
-              <svg className="w-4 h-4 mr-1 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              {formatDate(item.createdAt)}
+        <div className="p-5 md:p-6">
+          <div className="flex justify-between items-start mb-3">
+            <h3 className="font-bold text-gray-900 text-lg md:text-xl mb-1 group-hover:text-sky-600 transition-colors duration-300 line-clamp-1">
+              {item.packageName}
+            </h3>
+            <span className="px-3 py-1 bg-sky-50 text-sky-700 rounded-full text-xs font-semibold border border-sky-200">
+              Package
             </span>
           </div>
-          <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-            item.status === 'ACTIVE' 
-              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
-              : 'bg-gray-100 text-gray-700 border border-gray-300'
-          }`}>
-            {item.status}
-          </span>
+          
+          <p className="text-gray-600 text-sm md:text-base mb-4 line-clamp-2">
+            {item.packageDescription}
+          </p>
+          
+          {item.packagePrice && (
+            <div className="mb-4">
+              <div className="text-lg font-bold text-sky-600">
+                {formatCurrency(item.packagePrice)}
+              </div>
+              {item.discount > 0 && (
+                <div className="text-sm text-gray-500 line-through">
+                  {formatCurrency(item.packagePrice * (100 / (100 - item.discount)))}
+                </div>
+              )}
+            </div>
+          )}
+          
+          <div className="flex items-center justify-between text-sm text-gray-500 border-t border-gray-100 pt-4">
+            <div className="flex items-center space-x-4">
+              <span className="flex items-center">
+                <svg className="w-4 h-4 mr-1 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                {formatDate(item.createdAt)}
+              </span>
+            </div>
+            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+              item.status === 'ACTIVE' 
+                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
+                : 'bg-gray-100 text-gray-700 border border-gray-300'
+            }`}>
+              {item.status}
+            </span>
+          </div>
         </div>
-      </div>
-    </CardContainer>
-  );
+      </CardContainer>
+    );
+  };
 
-  const TourCard = ({ item }: { item: TourWishItem }) => (
-    <CardContainer category="tours">
-      <div className="relative h-52 md:h-56 overflow-hidden">
-        <img 
-          src={item.tourImages[0] || '/images/placeholder.jpg'} 
-          alt={item.tourName}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          loading="lazy"
-        />
-        <div className="absolute bottom-3 left-3 bg-gradient-to-r from-blue-600/90 to-sky-600/90 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">
-          {item.season}
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-      </div>
-      
-      <div className="p-5 md:p-6">
-        <div className="flex justify-between items-start mb-3">
-          <h3 className="font-bold text-gray-900 text-lg md:text-xl mb-1 group-hover:text-teal-600 transition-colors duration-300 line-clamp-1">
-            {item.tourName}
-          </h3>
-          <span className="px-3 py-1 bg-teal-50 text-teal-700 rounded-full text-xs font-semibold border border-teal-200">
-            Tour
-          </span>
-        </div>
-        
-        <p className="text-gray-600 text-sm md:text-base mb-4 line-clamp-2">
-          {item.tourDescription}
-        </p>
-        
-        <div className="flex items-center space-x-2 mb-4">
-          <svg className="w-4 h-4 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-          <span className="text-blue-600 text-sm font-medium">
-            {item.tourStartLocation} → {item.tourEndLocation}
-          </span>
+  const TourCard = ({ item }: { item: TourWishItem }) => {
+    const isRemoving = removingItem?.type === 'tour' && removingItem?.id === item.tourId;
+    
+    return (
+      <CardContainer 
+        category="tours"
+        onClick={() => handleItemClick(`/tours/${item.tourId}`)}
+      >
+        <div className="relative h-52 md:h-56 overflow-hidden">
+          <img 
+            src={item.tourImages[0] || '/images/placeholder.jpg'} 
+            alt={item.tourName}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+          />
+          {/* Wish Icon Button */}
+          <WishIconButton 
+            type="tour" 
+            id={item.tourId} 
+            isRemoving={isRemoving}
+          />
+          
+          <div className="absolute bottom-3 left-3 bg-gradient-to-r from-blue-600/90 to-sky-600/90 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">
+            {item.season}
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
         
-        <div className="flex items-center justify-between text-sm text-gray-500 border-t border-gray-100 pt-4">
-          <div className="flex items-center space-x-4">
-            <span className="flex items-center">
-              <svg className="w-4 h-4 mr-1 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              {formatDate(item.createdAt)}
+        <div className="p-5 md:p-6">
+          <div className="flex justify-between items-start mb-3">
+            <h3 className="font-bold text-gray-900 text-lg md:text-xl mb-1 group-hover:text-teal-600 transition-colors duration-300 line-clamp-1">
+              {item.tourName}
+            </h3>
+            <span className="px-3 py-1 bg-teal-50 text-teal-700 rounded-full text-xs font-semibold border border-teal-200">
+              Tour
             </span>
           </div>
-          <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-            item.status === 'ACTIVE' 
-              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
-              : 'bg-gray-100 text-gray-700 border border-gray-300'
-          }`}>
-            {item.status}
-          </span>
+          
+          <p className="text-gray-600 text-sm md:text-base mb-4 line-clamp-2">
+            {item.tourDescription}
+          </p>
+          
+          <div className="flex items-center space-x-2 mb-4">
+            <svg className="w-4 h-4 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span className="text-blue-600 text-sm font-medium">
+              {item.tourStartLocation} → {item.tourEndLocation}
+            </span>
+          </div>
+          
+          <div className="flex items-center justify-between text-sm text-gray-500 border-t border-gray-100 pt-4">
+            <div className="flex items-center space-x-4">
+              <span className="flex items-center">
+                <svg className="w-4 h-4 mr-1 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                {formatDate(item.createdAt)}
+              </span>
+            </div>
+            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+              item.status === 'ACTIVE' 
+                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
+                : 'bg-gray-100 text-gray-700 border border-gray-300'
+            }`}>
+              {item.status}
+            </span>
+          </div>
         </div>
-      </div>
-    </CardContainer>
-  );
+      </CardContainer>
+    );
+  };
 
-  const DestinationCard = ({ item }: { item: DestinationWishItem }) => (
-    <CardContainer category="destinations">
-      <div className="relative h-52 md:h-56 overflow-hidden">
-        <img 
-          src={item.destinationImages[0] || '/images/placeholder.jpg'} 
-          alt={item.destinationName}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          loading="lazy"
-        />
-        <div className="absolute bottom-3 left-3 bg-gradient-to-r from-emerald-600/90 to-teal-600/90 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">
-          {item.destinationCategory}
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-      </div>
-      
-      <div className="p-5 md:p-6">
-        <div className="flex justify-between items-start mb-3">
-          <h3 className="font-bold text-gray-900 text-lg md:text-xl mb-1 group-hover:text-emerald-600 transition-colors duration-300 line-clamp-1">
-            {item.destinationName}
-          </h3>
-          <span className="px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-semibold border border-emerald-200">
-            Destination
-          </span>
-        </div>
-        
-        <p className="text-gray-600 text-sm md:text-base mb-4 line-clamp-2">
-          {item.destinationDescription}
-        </p>
-        
-        <div className="flex items-center space-x-2 mb-4">
-          <svg className="w-4 h-4 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-          <span className="text-emerald-600 text-sm font-medium">
-            {item.destinationLocation}
-          </span>
+  const DestinationCard = ({ item }: { item: DestinationWishItem }) => {
+    const isRemoving = removingItem?.type === 'destination' && removingItem?.id === item.destinationId;
+    
+    return (
+      <CardContainer 
+        category="destinations"
+        onClick={() => handleItemClick(`/destinations/${item.destinationId}`)}
+      >
+        <div className="relative h-52 md:h-56 overflow-hidden">
+          <img 
+            src={item.destinationImages[0] || '/images/placeholder.jpg'} 
+            alt={item.destinationName}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+          />
+          {/* Wish Icon Button */}
+          <WishIconButton 
+            type="destination" 
+            id={item.destinationId} 
+            isRemoving={isRemoving}
+          />
+          
+          <div className="absolute bottom-3 left-3 bg-gradient-to-r from-emerald-600/90 to-teal-600/90 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">
+            {item.destinationCategory}
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
         
-        <div className="flex items-center justify-between text-sm text-gray-500 border-t border-gray-100 pt-4">
-          <div className="flex items-center space-x-4">
-            <span className="flex items-center">
-              <svg className="w-4 h-4 mr-1 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              {formatDate(item.createdAt)}
+        <div className="p-5 md:p-6">
+          <div className="flex justify-between items-start mb-3">
+            <h3 className="font-bold text-gray-900 text-lg md:text-xl mb-1 group-hover:text-emerald-600 transition-colors duration-300 line-clamp-1">
+              {item.destinationName}
+            </h3>
+            <span className="px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-semibold border border-emerald-200">
+              Destination
             </span>
           </div>
-          <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-            item.status === 'ACTIVE' 
-              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
-              : 'bg-gray-100 text-gray-700 border border-gray-300'
-          }`}>
-            {item.status}
-          </span>
+          
+          <p className="text-gray-600 text-sm md:text-base mb-4 line-clamp-2">
+            {item.destinationDescription}
+          </p>
+          
+          <div className="flex items-center space-x-2 mb-4">
+            <svg className="w-4 h-4 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span className="text-emerald-600 text-sm font-medium">
+              {item.destinationLocation}
+            </span>
+          </div>
+          
+          <div className="flex items-center justify-between text-sm text-gray-500 border-t border-gray-100 pt-4">
+            <div className="flex items-center space-x-4">
+              <span className="flex items-center">
+                <svg className="w-4 h-4 mr-1 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                {formatDate(item.createdAt)}
+              </span>
+            </div>
+            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+              item.status === 'ACTIVE' 
+                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
+                : 'bg-gray-100 text-gray-700 border border-gray-300'
+            }`}>
+              {item.status}
+            </span>
+          </div>
         </div>
-      </div>
-    </CardContainer>
-  );
+      </CardContainer>
+    );
+  };
 
-  const ActivityCard = ({ item }: { item: ActivityWishItem }) => (
-    <CardContainer category="activities">
-      <div className="relative h-52 md:h-56 overflow-hidden">
-        <img 
-          src={item.activityImages[0] || '/images/placeholder.jpg'} 
-          alt={item.activityName}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          loading="lazy"
-        />
-        <div className="absolute bottom-3 left-3 bg-gradient-to-r from-purple-600/90 to-violet-600/90 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">
-          {item.activityDuration}h • {item.season}
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-      </div>
-      
-      <div className="p-5 md:p-6">
-        <div className="flex justify-between items-start mb-3">
-          <h3 className="font-bold text-gray-900 text-lg md:text-xl mb-1 group-hover:text-purple-600 transition-colors duration-300 line-clamp-1">
-            {item.activityName}
-          </h3>
-          <span className="px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-xs font-semibold border border-purple-200">
-            Activity
-          </span>
-        </div>
-        
-        <p className="text-gray-600 text-sm md:text-base mb-4 line-clamp-2">
-          {item.activityDescription}
-        </p>
-        
-        <div className="flex items-center space-x-2 mb-4">
-          <svg className="w-4 h-4 text-purple-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
-          <span className="text-purple-600 text-sm font-medium">
-            {item.activitiesCategory}
-          </span>
+  const ActivityCard = ({ item }: { item: ActivityWishItem }) => {
+    const isRemoving = removingItem?.type === 'activity' && removingItem?.id === item.activityId;
+    
+    return (
+      <CardContainer 
+        category="activities"
+        onClick={() => handleItemClick(`/activities/${item.activityId}`)}
+      >
+        <div className="relative h-52 md:h-56 overflow-hidden">
+          <img 
+            src={item.activityImages[0] || '/images/placeholder.jpg'} 
+            alt={item.activityName}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+          />
+          {/* Wish Icon Button */}
+          <WishIconButton 
+            type="activity" 
+            id={item.activityId} 
+            isRemoving={isRemoving}
+          />
+          
+          <div className="absolute bottom-3 left-3 bg-gradient-to-r from-purple-600/90 to-violet-600/90 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">
+            {item.activityDuration}h • {item.season}
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
         
-        <div className="flex items-center justify-between text-sm text-gray-500 border-t border-gray-100 pt-4">
-          <div className="flex items-center space-x-4">
-            <span className="flex items-center">
-              <svg className="w-4 h-4 mr-1 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              {formatDate(item.createdAt)}
+        <div className="p-5 md:p-6">
+          <div className="flex justify-between items-start mb-3">
+            <h3 className="font-bold text-gray-900 text-lg md:text-xl mb-1 group-hover:text-purple-600 transition-colors duration-300 line-clamp-1">
+              {item.activityName}
+            </h3>
+            <span className="px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-xs font-semibold border border-purple-200">
+              Activity
             </span>
           </div>
-          <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-            item.status === 'ACTIVE' 
-              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
-              : 'bg-gray-100 text-gray-700 border border-gray-300'
-          }`}>
-            {item.status}
-          </span>
+          
+          <p className="text-gray-600 text-sm md:text-base mb-4 line-clamp-2">
+            {item.activityDescription}
+          </p>
+          
+          <div className="flex items-center space-x-2 mb-4">
+            <svg className="w-4 h-4 text-purple-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <span className="text-purple-600 text-sm font-medium">
+              {item.activitiesCategory}
+            </span>
+          </div>
+          
+          <div className="flex items-center justify-between text-sm text-gray-500 border-t border-gray-100 pt-4">
+            <div className="flex items-center space-x-4">
+              <span className="flex items-center">
+                <svg className="w-4 h-4 mr-1 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                {formatDate(item.createdAt)}
+              </span>
+            </div>
+            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+              item.status === 'ACTIVE' 
+                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
+                : 'bg-gray-100 text-gray-700 border border-gray-300'
+            }`}>
+              {item.status}
+            </span>
+          </div>
         </div>
-      </div>
-    </CardContainer>
-  );
+      </CardContainer>
+    );
+  };
 
   const filteredItems = {
     packages: activeTab === 'all' || activeTab === 'packages' ? wishListData.packages : [],
