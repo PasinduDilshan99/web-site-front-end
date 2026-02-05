@@ -34,6 +34,7 @@ export interface ActiveToursType {
   statusName: string;
   schedules: Schedule[];
   images: TourImage[];
+  wish: boolean;
 }
 
 export interface ActiveToursAPIResponse {
@@ -43,7 +44,6 @@ export interface ActiveToursAPIResponse {
   data: ActiveToursType[];
   timestamp: string;
 }
-
 
 export interface PopularTourReview {
   reviewId: number;
@@ -127,6 +127,7 @@ export interface ActiveToursType {
   statusName: string;
   schedules: Schedule[];
   images: TourImage[];
+  wish: boolean;
 }
 
 export interface Schedule {
@@ -267,7 +268,6 @@ export interface TourHistory {
   historyStatus: number;
   tourSchedule: TourSchedule;
 }
-
 
 export interface TourHistoryImage {
   imageId: number;
@@ -421,7 +421,6 @@ export interface DayDetailsApiResponse {
   data: DayDetails[];
   timestamp: string;
 }
-
 
 export interface DestinationWithActivities {
   destination: Destination;
@@ -581,7 +580,7 @@ export interface TourExtraDetailItem {
   description?: string;
   title?: string;
   displayOrder: number;
-  status: 'ACTIVE' | 'INACTIVE';
+  status: "ACTIVE" | "INACTIVE";
 }
 
 export interface TourExtraDetails {
@@ -591,10 +590,9 @@ export interface TourExtraDetails {
   travelTips: TourExtraDetailItem[];
 }
 
-export interface Tour{
-    tourDetails: TourDetails;
-    images: TourImage[];
-
+export interface Tour {
+  tourDetails: TourDetails;
+  images: TourImage[];
 }
 
 export interface TourImage {

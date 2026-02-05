@@ -1,8 +1,9 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import ActivityImageSlideshow from "./ActivityImageSlideshow";
 import { ActiveActivitiesType } from "@/types/activity-types";
 import { useRouter } from "next/navigation";
+import { WishListService } from "@/services/wishListService";
 
 interface ActivityCardProps {
   activity: ActiveActivitiesType;
@@ -10,6 +11,9 @@ interface ActivityCardProps {
 
 const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
   const router = useRouter();
+  const [isWishlisted, setIsWishlisted] = useState(activity.wish);
+  const [loadingWishlist, setLoadingWishlist] = useState(false);
+
   // Format date
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -42,8 +46,24 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
     return seasonString.split(",").map((s) => s.trim());
   };
 
+  // Handle wish list toggle
+  const handleWishlistToggle = async () => {
+    if (loadingWishlist) return; // prevent double click
+    setLoadingWishlist(true);
+    try {
+      const response = await WishListService.addActivityWishList({ activityId: activity.id });
+      console.log(response);
+      setIsWishlisted((prev) => !prev);
+    } catch (err) {
+      console.error("Failed to update wishlist", err);
+      alert("Failed to update wishlist. Try again.");
+    } finally {
+      setLoadingWishlist(false);
+    }
+  };
+
   return (
-    <div className="group bg-white rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-sky-100">
+    <div className="group bg-white rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-sky-100 relative">
       {/* Activity Image Slideshow */}
       <div className="relative">
         <ActivityImageSlideshow
@@ -55,6 +75,37 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
         <div className="absolute top-2 sm:top-3 left-2 sm:left-3 bg-sky-600/90 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
           {activity.category_name}
         </div>
+
+        {/* Wishlist Heart Icon */}
+        <button
+          onClick={handleWishlistToggle}
+          className="absolute top-2 sm:top-3 right-2 sm:right-3 p-1 rounded-full bg-white/80 hover:bg-white transition-all"
+          title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+        >
+          {isWishlisted ? (
+            <svg
+              className="w-5 h-5 text-red-500"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            </svg>
+          ) : (
+            <svg
+              className="w-5 h-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 21.682 4.318 12.682a4.5 4.5 0 010-6.364z"
+              />
+            </svg>
+          )}
+        </button>
 
         {/* Status Badge */}
         {/* <div className="absolute top-2 sm:top-3 right-2 sm:right-3">
@@ -168,8 +219,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
             ))}
           </div>
         </div>
-
-        {/* Requirements */}
+{/* Requirements */}
         {/* {activity.requirements.length > 0 && (
           <div className="mb-3 sm:mb-4">
             <div className="flex items-center space-x-1 sm:space-x-2 mb-1 sm:mb-2">

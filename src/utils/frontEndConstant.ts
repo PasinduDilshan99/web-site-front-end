@@ -25,6 +25,8 @@ const EMPLOYEES = "/employees";
 const INQUIRY = "/inquiry";
 const OUR_STORY = "/our-story"
 const CONTACT_US = "/contact-us"
+const WISH_LIST = "/wish-list"
+
 
 // Link Bar
 export const GET_ACTIVE_LINK_BAR_DATA = `${API}${LINK_BAR}`;
@@ -144,6 +146,12 @@ export const GET_ACTIVE_FAQ_DATA_FE = `${API}${FAQ}/active`;
 export const UPDATE_FAQ_VIEW_COUNT_DATA_FE = `${API}${FAQ}/update-view-count`;
 export const GET_FAQ_OPTIONS_DATA_FE =`${API}${FAQ}/options`;
 export const ADD_FAQ_REQUEST_DATA_FE = `${API}${FAQ}/insert-faq-request`;
+
+// Wish List
+export const ADD_ACTIVITY_WISH_LIST_DATA= `${API}${WISH_LIST}/insert-activity-wish-list`;
+export const ADD_DESTINATION_WISH_LIST_DATA= `${API}${WISH_LIST}/insert-destination-wish-list`;
+export const ADD_TOUR_WISH_LIST_DATA= `${API}${WISH_LIST}/insert-tour-wish-list`;
+export const ADD_PACKAGE_WISH_LIST_DATA= `${API}${WISH_LIST}/insert-package-wish-list`;
 
 
 export const GET_TOUR_DETAILS_BY_ID_FE = `${API}${TOUR}/details-by-id`;

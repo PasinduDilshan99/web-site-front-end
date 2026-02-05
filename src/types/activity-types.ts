@@ -49,6 +49,7 @@ export interface ActiveActivitiesType {
   updated_at: string;
   category_name: string;
   category_description: string;
+  wish: boolean;
 }
 
 export interface CategoryImage {
@@ -228,7 +229,7 @@ export interface History {
 }
 
 export interface ActivityHistoryImage {
-imageId: number;
+  imageId: number;
   imageName: string;
   imageDescription: string;
   imageUrl: string;

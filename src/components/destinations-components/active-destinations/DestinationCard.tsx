@@ -1,6 +1,7 @@
 import { EnhancedDestination } from "@/types/destination-types";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { WishListService } from "@/services/wishListService";
 
 interface DestinationCardProps {
   destination: EnhancedDestination;
@@ -8,6 +9,8 @@ interface DestinationCardProps {
 
 const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isWishlisted, setIsWishlisted] = useState(destination.wish || false);
+  const [loadingWishlist, setLoadingWishlist] = useState(false);
   const router = useRouter();
 
   const discount = getDiscountPercentage(destination.destinationId);
@@ -23,8 +26,23 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
     router.push(`/destinations/${destination.destinationId}`);
   };
 
+  // Handle wishlist toggle
+  const handleWishlistToggle = async () => {
+    if (loadingWishlist) return; // prevent double click
+    setLoadingWishlist(true);
+    try {
+      await WishListService.addDestinationWishList({ destinationId: destination.destinationId });
+      setIsWishlisted((prev) => !prev);
+    } catch (err) {
+      console.error("Failed to update wishlist", err);
+      alert("Failed to update wishlist. Try again.");
+    } finally {
+      setLoadingWishlist(false);
+    }
+  };
+
   return (
-    <div className="bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 h-full flex flex-col border border-sky-100">
+    <div className="bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 h-full flex flex-col border border-sky-100 relative">
       {/* Image Gallery */}
       <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
         {destination.images.length > 0 ? (
@@ -57,21 +75,35 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
           </div>
         )}
 
-        {/* Favorite Button */}
-        <button className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-sky-50 transition-colors z-10 group">
-          <svg
-            className="w-4 h-4 text-gray-400 group-hover:text-sky-500 transition-colors"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-            />
-          </svg>
+        {/* Wishlist Heart Icon */}
+        <button
+          onClick={handleWishlistToggle}
+          className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-sky-50 transition-colors z-10"
+          title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+        >
+          {isWishlisted ? (
+            <svg
+              className="w-4 h-4 text-red-500"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            </svg>
+          ) : (
+            <svg
+              className="w-4 h-4 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+              />
+            </svg>
+          )}
         </button>
 
         {/* Thumbnail Images */}
@@ -194,14 +226,7 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
           </div>
 
           {/* Price and Button */}
-          {/* <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-500 line-through">
-              ${originalPrice}.00
-            </span>
-            <span className="text-lg font-bold bg-gradient-to-r from-sky-600 to-teal-600 bg-clip-text text-transparent">
-              ${currentPrice}.00
-            </span>
-          </div> */}
+          {/* ...your existing commented code... */}
 
           <button
             onClick={handleExploreClick}

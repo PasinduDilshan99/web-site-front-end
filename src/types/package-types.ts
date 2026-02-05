@@ -159,6 +159,7 @@ export interface ActivePackagesForFilters {
   schedules: Schedule[];
   features: Feature[];
   images: PackageImage[];
+  wish: boolean;
 }
 
 export interface ActivePackagesType {
@@ -480,7 +481,6 @@ export interface Activity {
   maxParticipate: number;
   season: string;
 }
-
 
 export interface ExtendedActivity extends Activity {
   destinationName: string;

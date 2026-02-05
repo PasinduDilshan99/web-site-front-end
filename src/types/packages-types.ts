@@ -74,6 +74,7 @@ export interface ActivePackagesForFilters {
   schedules: Schedule[];
   features: Feature[];
   images: PackageImage[];
+  wish: boolean;
 }
 
 export interface ApiResponse<T> {
@@ -249,7 +250,7 @@ export interface PackageHistory {
 }
 
 export interface PackageHistoryImage {
-imageId: number;
+  imageId: number;
   imageName: string;
   imageDescription: string;
   imageUrl: string;

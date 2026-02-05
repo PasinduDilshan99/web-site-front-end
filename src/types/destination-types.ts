@@ -419,6 +419,7 @@ export interface PopularDestinationsDetailsType {
   statusName: string;
   activities: Activity[];
   images: DestinationImage[];
+  wish:boolean;
 }
 
 export interface Activity {

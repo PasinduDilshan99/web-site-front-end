@@ -11,10 +11,15 @@ export async function POST(request: NextRequest) {
 
     console.log("Destinations API - Request body:", body);
 
+    // Get cookies from incoming request
+    const cookieHeader = request.headers.get("cookie") || "";
+
     const response = await fetch(GET_DESTINATIONS_DETAILS_BY_REQUEST_DATA, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        // Forward cookies
+        "Cookie": cookieHeader,
       },
       body: JSON.stringify(body),
       cache: "no-store",

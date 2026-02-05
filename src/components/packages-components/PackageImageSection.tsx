@@ -1,6 +1,8 @@
-import React from "react";
+// components/PackageImageSection.tsx
+import React, { useState } from "react";
 import Image from "next/image";
 import { ActivePackagesForFilters } from "@/types/packages-types";
+import { WishListService } from "@/services/wishListService";
 
 interface PackageImageSectionProps {
   package: ActivePackagesForFilters;
@@ -13,6 +15,9 @@ const PackageImageSection: React.FC<PackageImageSectionProps> = ({
   currentImageIndex,
   onImageIndexChange,
 }) => {
+  const [isWishlisted, setIsWishlisted] = useState(pkg.wish || false);
+  const [loadingWishlist, setLoadingWishlist] = useState(false);
+
   const handleImageClick = (event: React.MouseEvent) => {
     event.stopPropagation();
     if (pkg.images && pkg.images.length > 1) {
@@ -39,9 +44,25 @@ const PackageImageSection: React.FC<PackageImageSectionProps> = ({
     onImageIndexChange(pkg.packageId, newIndex);
   };
 
+  // Wishlist toggle handler
+  const handleWishlistToggle = async (event: React.MouseEvent) => {
+    event.stopPropagation();
+    if (loadingWishlist) return;
+    setLoadingWishlist(true);
+    try {
+      await WishListService.addPackageWishList({ packageId: pkg.packageId });
+      setIsWishlisted((prev) => !prev);
+    } catch (err) {
+      console.error("Failed to update wishlist", err);
+      alert("Failed to update wishlist. Try again.");
+    } finally {
+      setLoadingWishlist(false);
+    }
+  };
+
   return (
     <div
-      className="relative h-40 sm:h-48 md:h-56 lg:h-52 xl:h-56 overflow-hidden cursor-pointer"
+      className="relative h-40 sm:h-48 md:h-56 lg:h-52 xl:h-56 overflow-hidden cursor-pointer group"
       onClick={handleImageClick}
     >
       {pkg.images && pkg.images.length > 0 && pkg.images.map((image, index) => (
@@ -63,6 +84,50 @@ const PackageImageSection: React.FC<PackageImageSectionProps> = ({
         </div>
       ))}
 
+      {/* Wishlist Heart Icon */}
+      <button
+        onClick={handleWishlistToggle}
+        className="absolute top-2 sm:top-3 right-2 sm:right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-sky-50 transition-colors z-20"
+        title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+      >
+        {isWishlisted ? (
+          <svg
+            className="w-4 h-4 text-red-500"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+          </svg>
+        ) : (
+          <svg
+            className="w-4 h-4 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+            />
+          </svg>
+        )}
+      </button>
+
+      {pkg.discountPercentage > 0 && (
+        <div className="absolute top-2 sm:top-3 right-12 sm:right-16 bg-gradient-to-r from-red-500 to-red-600 text-white px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-bold shadow-lg z-10">
+          {pkg.discountPercentage}% OFF
+        </div>
+      )}
+
+      {pkg.images && pkg.images.length > 1 && (
+        <div className="absolute top-2 sm:top-3 left-2 sm:left-3 bg-sky-800/80 text-white px-2 py-1 rounded-full text-xs z-10 backdrop-blur-sm">
+          {currentImageIndex + 1}/{pkg.images.length}
+        </div>
+      )}
+
+      {/* Dots */}
       {pkg.images && pkg.images.length > 1 && (
         <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1 sm:space-x-2 z-10">
           {pkg.images.map((_, index) => (
@@ -80,6 +145,7 @@ const PackageImageSection: React.FC<PackageImageSectionProps> = ({
         </div>
       )}
 
+      {/* Arrow navigation */}
       {pkg.images && pkg.images.length > 1 && (
         <>
           <button
@@ -93,12 +159,7 @@ const PackageImageSection: React.FC<PackageImageSectionProps> = ({
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
           <button
@@ -112,27 +173,10 @@ const PackageImageSection: React.FC<PackageImageSectionProps> = ({
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
         </>
-      )}
-
-      {pkg.discountPercentage > 0 && (
-        <div className="absolute top-2 sm:top-3 right-2 sm:right-3 bg-gradient-to-r from-red-500 to-red-600 text-white px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-bold shadow-lg z-10">
-          {pkg.discountPercentage}% OFF
-        </div>
-      )}
-
-      {pkg.images && pkg.images.length > 1 && (
-        <div className="absolute top-2 sm:top-3 left-2 sm:left-3 bg-sky-800/80 text-white px-2 py-1 rounded-full text-xs z-10 backdrop-blur-sm">
-          {currentImageIndex + 1}/{pkg.images.length}
-        </div>
       )}
     </div>
   );

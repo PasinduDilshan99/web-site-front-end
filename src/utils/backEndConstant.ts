@@ -33,6 +33,7 @@ const EMPLOYEE = "/employee"
 const INQUIRY = "/inquiry"
 const OUR_STORY = "/our-story"
 const CONTACT_US = "/contact-us"
+const WISH_LIST = "/wish-list"
 
 export const BASE_PATH = `${PROTOCOL}://${DOMAIN}:${PORT}/${CONTEXT_ROOT}`;
 
@@ -156,6 +157,12 @@ export const ADD_FAQ_REQUEST_DATA = `${BASE_PATH}${API}${VERSION}${FAQ}/insert-f
 
 // Employees
 export const GET_EMPLOYEE_DETAILS_BY_TOUR_ID_DATA = `${BASE_PATH}${API}${VERSION}${EMPLOYEE}/employee-details`;
+
+// Wish List
+export const ADD_ACTIVITY_WISH_LIST_DATA= `${BASE_PATH}${API}${VERSION}${WISH_LIST}/add-activity-wish-list`;
+export const ADD_DESTINATION_WISH_LIST_DATA= `${BASE_PATH}${API}${VERSION}${WISH_LIST}/add-destination-wish-list`;
+export const ADD_TOUR_WISH_LIST_DATA= `${BASE_PATH}${API}${VERSION}${WISH_LIST}/add-tour-wish-list`;
+export const ADD_PACKAGE_WISH_LIST_DATA= `${BASE_PATH}${API}${VERSION}${WISH_LIST}/add-package-wish-list`;
 
 
 export const GET_TOUR_DETAILS_BY_ID_BE = `${BASE_PATH}${VERSION}${API}${TOUR}`;

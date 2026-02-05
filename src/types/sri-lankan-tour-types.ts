@@ -16,7 +16,7 @@ export interface Schedule {
   scheduleDescription: string;
 }
 
-export interface ActiveToursAPIResponse{
+export interface ActiveToursAPIResponse {
   code: number;
   status: string;
   message: string;
@@ -42,6 +42,7 @@ export interface ActiveToursType {
   statusName: string;
   schedules: Schedule[];
   images: TourImage[];
+  wish: boolean;
 }
 
 export interface TourListResponse {
@@ -242,7 +243,6 @@ export interface TourHistoryImagesResponse {
   timestamp: string;
 }
 
-
 // Add these interfaces to your existing types file
 
 export interface Accommodation {
@@ -422,7 +422,7 @@ export interface TourExtraDetailItem {
   description?: string;
   title?: string;
   displayOrder: number;
-  status: 'ACTIVE' | 'INACTIVE';
+  status: "ACTIVE" | "INACTIVE";
 }
 
 export interface TourExtraDetails {
