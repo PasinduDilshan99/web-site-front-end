@@ -45,11 +45,11 @@ const ExtraDetailsComparison: React.FC<ExtraDetailsComparisonProps> = ({
         {itemsToShow.map((item) => (
           <div key={item.id} className="flex items-start">
             {section === "inclusions" ? (
-              <Check className="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+              <Check className="w-5 h-5 text-teal-500 mr-2 flex-shrink-0 mt-0.5" />
             ) : section === "exclusions" ? (
               <X className="w-5 h-5 text-red-500 mr-2 flex-shrink-0 mt-0.5" />
             ) : (
-              <Info className="w-5 h-5 text-blue-500 mr-2 flex-shrink-0 mt-0.5" />
+              <Info className="w-5 h-5 text-sky-500 mr-2 flex-shrink-0 mt-0.5" />
             )}
             <span className="text-sm text-gray-700">{item.description}</span>
           </div>
@@ -58,7 +58,7 @@ const ExtraDetailsComparison: React.FC<ExtraDetailsComparisonProps> = ({
         {hasMoreItems && (
           <button
             onClick={() => packageIndex === 1 ? setShowAllPackage1(!showAllPackage1) : setShowAllPackage2(!showAllPackage2)}
-            className="flex items-center text-sm text-blue-600 hover:text-blue-800 font-medium mt-2 transition-colors"
+            className="flex items-center text-sm text-sky-600 hover:text-sky-800 font-medium mt-2 transition-colors"
           >
             {showAll ? (
               <>
@@ -89,7 +89,7 @@ const ExtraDetailsComparison: React.FC<ExtraDetailsComparisonProps> = ({
     return (
       <div className="space-y-3">
         {tipsToShow.map((tip) => (
-          <div key={tip.id} className={`${colorClass} p-3 rounded-lg`}>
+          <div key={tip.id} className={`${colorClass} p-3 rounded-lg border`}>
             <div className="font-medium">{tip.title}</div>
             <div className="text-sm mt-1">{tip.description}</div>
           </div>
@@ -98,7 +98,7 @@ const ExtraDetailsComparison: React.FC<ExtraDetailsComparisonProps> = ({
         {hasMoreTips && (
           <button
             onClick={() => packageIndex === 1 ? setShowAllPackage1(!showAllPackage1) : setShowAllPackage2(!showAllPackage2)}
-            className="flex items-center text-sm text-blue-600 hover:text-blue-800 font-medium mt-2 transition-colors"
+            className="flex items-center text-sm text-sky-600 hover:text-sky-800 font-medium mt-2 transition-colors"
           >
             {showAll ? (
               <>
@@ -125,141 +125,145 @@ const ExtraDetailsComparison: React.FC<ExtraDetailsComparisonProps> = ({
 
   return (
     <div className="mt-8">
-      <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-6">
+      <h3 className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-sky-600 to-teal-600 bg-clip-text text-transparent mb-6">
         Package Details Comparison
       </h3>
 
-      <div className="bg-white rounded-lg sm:rounded-xl shadow-md sm:shadow-lg p-4 sm:p-5 lg:p-6 mb-4 sm:mb-5 lg:mb-6">
-  {/* Tab Navigation - Scrollable on mobile */}
-  <div className="mb-4 sm:mb-5 lg:mb-6">
-    <div className="relative">
-      <div className="flex overflow-x-auto pb-2 gap-1 sm:gap-2 scrollbar-hide">
-        {(["inclusions", "exclusions", "conditions", "tips"] as const).map(
-          (tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg font-medium whitespace-nowrap transition-all duration-200 ${
-                activeTab === tab
-                  ? "bg-blue-600 text-white shadow-sm"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100 border border-gray-200"
-              } text-sm sm:text-base min-w-[80px] sm:min-w-[100px] text-center`}
-            >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
-            </button>
-          )
-        )}
-      </div>
-      
-      {/* Scroll hint for mobile */}
-      <div className="text-center mt-1 sm:hidden">
-        <span className="text-xs text-gray-500">← Scroll for more tabs →</span>
-      </div>
-    </div>
-  </div>
-
-  {/* Comparison Grid - Stack on mobile, side-by-side on larger screens */}
-  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
-    {/* Package 1 Details */}
-    <div className="space-y-4 sm:space-y-6">
-      <div className="flex items-center gap-2 mb-3 sm:mb-4">
-        <div
-          className="w-4 h-4 sm:w-5 sm:h-5 rounded-full border-2 border-white shadow-sm"
-          style={{ backgroundColor: selectedPackage1.color }}
-        />
-        <h3 className="font-bold text-gray-900 text-base sm:text-lg lg:text-xl truncate">
-          {selectedPackage1.packageName}
-        </h3>
-        <span className="ml-auto text-xs sm:text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-          Package 1
-        </span>
-      </div>
-      
-      {activeTab === "inclusions" &&
-        renderDetailsList(
-          getDetailsSection(selectedPackage1, "inclusions") as PackageInclusion[],
-          "inclusions",
-          showAllPackage1,
-          1,
-        )}
-      {activeTab === "exclusions" &&
-        renderDetailsList(
-          getDetailsSection(selectedPackage1, "exclusions") as PackageExclusion[],
-          "exclusions",
-          showAllPackage1,
-          1,        )}
-      {activeTab === "conditions" &&
-        renderDetailsList(
-          getDetailsSection(selectedPackage1, "conditions") as PackageCondition[],
-          "conditions",
-          showAllPackage1,
-          1        )}
-      {activeTab === "tips" && (
-        <div>
-          {renderTravelTips(
-            getDetailsSection(selectedPackage1, "travelTips") as TravelTip[],
-            showAllPackage1,
-            1,
-            "bg-blue-50 text-blue-800 border-blue-100"
-          )}
+      <div className="bg-white rounded-lg sm:rounded-xl shadow-md sm:shadow-lg p-4 sm:p-5 lg:p-6 mb-4 sm:mb-5 lg:mb-6 border border-sky-100">
+        {/* Tab Navigation - Scrollable on mobile */}
+        <div className="mb-4 sm:mb-5 lg:mb-6">
+          <div className="relative">
+            <div className="flex overflow-x-auto pb-2 gap-1 sm:gap-2 scrollbar-hide">
+              {(["inclusions", "exclusions", "conditions", "tips"] as const).map(
+                (tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg font-medium whitespace-nowrap transition-all duration-200 ${
+                      activeTab === tab
+                        ? "bg-gradient-to-r from-sky-600 to-teal-600 text-white shadow-sm"
+                        : "text-gray-600 hover:text-sky-900 hover:bg-sky-50 border border-sky-200"
+                    } text-sm sm:text-base min-w-[80px] sm:min-w-[100px] text-center`}
+                  >
+                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                  </button>
+                )
+              )}
+            </div>
+            
+            {/* Scroll hint for mobile */}
+            <div className="text-center mt-1 sm:hidden">
+              <span className="text-xs text-sky-500">← Scroll for more tabs →</span>
+            </div>
+          </div>
         </div>
-      )}
-    </div>
 
-    {/* Package 2 Details */}
-    <div className="space-y-4 sm:space-y-6 lg:border-l lg:border-gray-200 lg:pl-6 lg:pt-0 pt-4 sm:pt-6 border-t border-gray-200 lg:border-t-0">
-      <div className="flex items-center gap-2 mb-3 sm:mb-4">
-        <div
-          className="w-4 h-4 sm:w-5 sm:h-5 rounded-full border-2 border-white shadow-sm"
-          style={{ backgroundColor: selectedPackage2.color }}
-        />
-        <h3 className="font-bold text-gray-900 text-base sm:text-lg lg:text-xl truncate">
-          {selectedPackage2.packageName}
-        </h3>
-        <span className="ml-auto text-xs sm:text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-          Package 2
-        </span>
-      </div>
-      
-      {activeTab === "inclusions" &&
-        renderDetailsList(
-          getDetailsSection(selectedPackage2, "inclusions") as PackageInclusion[],
-          "inclusions",
-          showAllPackage2,
-          2        )}
-      {activeTab === "exclusions" &&
-        renderDetailsList(
-          getDetailsSection(selectedPackage2, "exclusions") as PackageExclusion[],
-          "exclusions",
-          showAllPackage2,
-          2        )}
-      {activeTab === "conditions" &&
-        renderDetailsList(
-          getDetailsSection(selectedPackage2, "conditions") as PackageCondition[],
-          "conditions",
-          showAllPackage2,
-          2,
-        )}
-      {activeTab === "tips" && (
-        <div>
-          {renderTravelTips(
-            getDetailsSection(selectedPackage2, "travelTips") as TravelTip[],
-            showAllPackage2,
-            2,
-            "bg-green-50 text-green-800 border-green-100"
-          )}
+        {/* Comparison Grid - Stack on mobile, side-by-side on larger screens */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
+          {/* Package 1 Details */}
+          <div className="space-y-4 sm:space-y-6">
+            <div className="flex items-center gap-2 mb-3 sm:mb-4">
+              <div
+                className="w-4 h-4 sm:w-5 sm:h-5 rounded-full border-2 border-white shadow-sm"
+                style={{ backgroundColor: selectedPackage1.color }}
+              />
+              <h3 className="font-bold text-sky-900 text-base sm:text-lg lg:text-xl truncate">
+                {selectedPackage1.packageName}
+              </h3>
+              <span className="ml-auto text-xs sm:text-sm text-sky-600 bg-sky-100 px-2 py-1 rounded-full border border-sky-200">
+                Package 1
+              </span>
+            </div>
+            
+            {activeTab === "inclusions" &&
+              renderDetailsList(
+                getDetailsSection(selectedPackage1, "inclusions") as PackageInclusion[],
+                "inclusions",
+                showAllPackage1,
+                1,
+              )}
+            {activeTab === "exclusions" &&
+              renderDetailsList(
+                getDetailsSection(selectedPackage1, "exclusions") as PackageExclusion[],
+                "exclusions",
+                showAllPackage1,
+                1,
+              )}
+            {activeTab === "conditions" &&
+              renderDetailsList(
+                getDetailsSection(selectedPackage1, "conditions") as PackageCondition[],
+                "conditions",
+                showAllPackage1,
+                1,
+              )}
+            {activeTab === "tips" && (
+              <div>
+                {renderTravelTips(
+                  getDetailsSection(selectedPackage1, "travelTips") as TravelTip[],
+                  showAllPackage1,
+                  1,
+                  "bg-gradient-to-br from-sky-50 to-white text-sky-800 border-sky-200"
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Package 2 Details */}
+          <div className="space-y-4 sm:space-y-6 lg:border-l lg:border-sky-200 lg:pl-6 lg:pt-0 pt-4 sm:pt-6 border-t border-sky-200 lg:border-t-0">
+            <div className="flex items-center gap-2 mb-3 sm:mb-4">
+              <div
+                className="w-4 h-4 sm:w-5 sm:h-5 rounded-full border-2 border-white shadow-sm"
+                style={{ backgroundColor: selectedPackage2.color }}
+              />
+              <h3 className="font-bold text-teal-900 text-base sm:text-lg lg:text-xl truncate">
+                {selectedPackage2.packageName}
+              </h3>
+              <span className="ml-auto text-xs sm:text-sm text-teal-600 bg-teal-100 px-2 py-1 rounded-full border border-teal-200">
+                Package 2
+              </span>
+            </div>
+            
+            {activeTab === "inclusions" &&
+              renderDetailsList(
+                getDetailsSection(selectedPackage2, "inclusions") as PackageInclusion[],
+                "inclusions",
+                showAllPackage2,
+                2,
+              )}
+            {activeTab === "exclusions" &&
+              renderDetailsList(
+                getDetailsSection(selectedPackage2, "exclusions") as PackageExclusion[],
+                "exclusions",
+                showAllPackage2,
+                2,
+              )}
+            {activeTab === "conditions" &&
+              renderDetailsList(
+                getDetailsSection(selectedPackage2, "conditions") as PackageCondition[],
+                "conditions",
+                showAllPackage2,
+                2,
+              )}
+            {activeTab === "tips" && (
+              <div>
+                {renderTravelTips(
+                  getDetailsSection(selectedPackage2, "travelTips") as TravelTip[],
+                  showAllPackage2,
+                  2,
+                  "bg-gradient-to-br from-teal-50 to-white text-teal-800 border-teal-200"
+                )}
+              </div>
+            )}
+          </div>
         </div>
-      )}
-    </div>
-  </div>
 
-  {/* Mobile-only quick comparison note */}
-  <div className="mt-4 pt-4 border-t border-gray-200 text-center sm:hidden">
-    <p className="text-xs text-gray-600">
-      Scroll up and down to compare both packages
-    </p>
-  </div>
-</div>
+        {/* Mobile-only quick comparison note */}
+        <div className="mt-4 pt-4 border-t border-sky-200 text-center sm:hidden">
+          <p className="text-xs text-sky-600">
+            Scroll up and down to compare both packages
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

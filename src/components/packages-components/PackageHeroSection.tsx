@@ -17,7 +17,6 @@ const PackageHeroSection = () => {
         setLoading(true);
         setError(null);
 
-        // USING THE SERVICE INSTEAD OF DIRECT FETCH
         const { data: items, error } = await HeroSectionService.fetchPackageHeroData();
 
         if (error) {
@@ -67,18 +66,18 @@ const PackageHeroSection = () => {
 
   const getFallbackImage = (index: number) => {
     const fallbackImages = [
-      "photo-1548013146-72479768bada", // Classic
-      "photo-1552465011-b4e30bf7349d", // Beach
-      "photo-1579444741990-6e31c9b09d52", // Wildlife
-      "photo-1592210454359-9043f067919b", // Hill Country
-      "photo-1566073771259-6a8506099945", // Honeymoon
-      "photo-1506929562872-bb421503ef21", // Family
-      "photo-1520250497591-112f2f40a3f4", // Budget
-      "photo-1544367567-0f2fcb009e0b", // Wellness
-      "photo-1551632811-561732d1e306", // Adventure
-      "photo-1558272729-5e0165e4fde6", // Cultural
-      "photo-1528181304800-259b08848526", // Short Break
-      "photo-1536152471326-642d4aa9cba5", // Monsoon
+      "photo-1507525428034-b723cf961d3e", // Beach sunset
+      "photo-1518837695005-2083093ee35b", // Ocean waves
+      "photo-1505142468610-359e7d316be0", // Mountain lake
+      "photo-1493246507139-91e8fad9978e", // Coastal view
+      "photo-1439066615861-d1af74d74000", // Underwater sea
+      "photo-1506905925346-21bda4d32df4", // Blue sea
+      "photo-1501854140801-50d01698950b", // Forest lake
+      "photo-1500673922987-e212871fec22", // Tropical island
+      "photo-1469474968028-56623f02e42e", // Mountain panorama
+      "photo-1506929562872-bb421503ef21", // Ocean waves 2
+      "photo-1566073771259-6a8506099945", // Beach 2
+      "photo-1558272729-5e0165e4fde6", // Coastal 2
     ];
     return `https://images.unsplash.com/${fallbackImages[index % fallbackImages.length]}?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80`;
   };
@@ -126,9 +125,9 @@ const PackageHeroSection = () => {
 
   if (loading) {
     return (
-      <div className="relative w-full h-[800px] overflow-hidden bg-gradient-to-br from-amber-900 via-orange-800 to-red-800 flex items-center justify-center">
+      <div className="relative w-full h-[800px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900 flex items-center justify-center">
         <div className="text-center text-white">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-400 mx-auto mb-4"></div>
           <p className="text-lg">Loading Tour Packages...</p>
         </div>
       </div>
@@ -137,27 +136,27 @@ const PackageHeroSection = () => {
 
   if (error || heroData.length === 0) {
     return (
-      <div className="relative w-full h-[600px] md:h-[700px] overflow-hidden bg-gradient-to-br from-amber-900 via-orange-800 to-red-800 flex items-center justify-center">
+      <div className="relative w-full h-[600px] md:h-[700px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900 flex items-center justify-center">
         <div className="text-center text-white px-4">
           <div className="mb-6">
             <h1 className="text-4xl md:text-5xl font-bold mb-3">
               Tour Packages
             </h1>
-            <div className="w-32 h-1 bg-amber-400 mx-auto rounded-full"></div>
+            <div className="w-32 h-1 bg-gradient-to-r from-sky-400 to-teal-500 mx-auto rounded-full"></div>
           </div>
-          <p className="text-xl text-red-400 mb-6">
+          <p className="text-xl text-sky-300 mb-6">
             {error || "No packages content available"}
           </p>
           <div className="space-y-4">
             <button
               onClick={() => window.location.reload()}
-              className="px-6 py-3 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors mr-4"
+              className="px-6 py-3 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:from-sky-700 hover:to-teal-700 transition-all duration-300 mr-4 shadow-md"
             >
               Retry
             </button>
             <a
               href="/tours"
-              className="px-6 py-3 border-2 border-white text-white rounded-lg hover:bg-white hover:text-gray-900 transition-all duration-300"
+              className="px-6 py-3 border-2 border-sky-300 text-white rounded-lg hover:bg-sky-50 hover:text-slate-900 transition-all duration-300"
             >
               View All Tours
             </a>
@@ -175,7 +174,7 @@ const PackageHeroSection = () => {
   };
 
   return (
-    <div className="relative w-full h-[800px] overflow-hidden bg-gradient-to-br from-amber-900 via-orange-800 to-red-800">
+    <div className="relative w-full h-[800px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
       {/* Image Slider */}
       <div className="relative w-full h-full">
         {heroData.map((item, index) => (
@@ -205,10 +204,10 @@ const PackageHeroSection = () => {
 
       {/* Package Badge */}
       <div className="absolute top-6 left-6">
-        <div className="flex items-center gap-2 px-4 py-2 bg-amber-500/20 backdrop-blur-sm rounded-full border border-amber-400/30">
-          <div className="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></div>
+        <div className="flex items-center gap-2 px-4 py-2 bg-sky-500/20 backdrop-blur-sm rounded-full border border-sky-400/30">
+          <div className="w-2 h-2 bg-sky-400 rounded-full animate-pulse"></div>
           <span className="text-sm font-medium text-white">
-            <span className="text-amber-200 font-bold">{heroData.length}</span> Packages Available
+            <span className="text-sky-200 font-bold">{heroData.length}</span> Packages Available
           </span>
         </div>
       </div>
@@ -216,20 +215,20 @@ const PackageHeroSection = () => {
 
       {/* Slide Counter */}
       {filteredPackages.length > 1 && (
-        <div className="absolute top-16 right-6 text-white/70 text-sm backdrop-blur-sm bg-black/20 px-3 py-1 rounded-full">
+        <div className="absolute top-16 right-6 text-white/80 text-sm backdrop-blur-sm bg-black/30 px-3 py-1.5 rounded-full border border-white/20">
           {currentSlide + 1} / {filteredPackages.length}
         </div>
       )}
 
-      {/* Content Overlay */}
-      <div className="absolute inset-0 flex items-center pt-20">
+      {/* Content Overlay - CENTERED */}
+      <div className="absolute inset-0 flex items-center justify-center pt-20">
         <div className="container mx-auto px-4 md:px-6 lg:px-8">
-          <div className="max-w-5xl text-white mx-auto">
-            {/* Duration Badge */}
-            <div className="mb-6 inline-block">
-              <div className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 flex items-center gap-2">
+          <div className="max-w-5xl text-white mx-auto text-center">
+            {/* Duration Badge - CENTERED */}
+            <div className="mb-6">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
                 <svg
-                  className="w-4 h-4 text-amber-300"
+                  className="w-4 h-4 text-sky-300"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -254,29 +253,29 @@ const PackageHeroSection = () => {
 
               {currentSlideData.subtitle && (
                 <div className="mb-6">
-                  <h2 className="text-2xl md:text-3xl font-semibold mb-3 text-amber-200">
+                  <h2 className="text-2xl md:text-3xl font-semibold mb-3 text-sky-100">
                     {currentSlideData.subtitle}
                   </h2>
-                  <div className="w-20 h-1 bg-amber-400 rounded-full"></div>
+                  <div className="w-20 h-1 bg-gradient-to-r from-sky-400 to-teal-400 rounded-full mx-auto shadow-lg"></div>
                 </div>
               )}
             </div>
 
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 md:p-8 max-w-3xl mb-8 border border-white/20 shadow-2xl">
-              <p className="text-lg md:text-xl mb-6 text-gray-100 leading-relaxed">
+            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 md:p-8 max-w-3xl mb-8 border border-white/10 shadow-2xl mx-auto">
+              <p className="text-lg md:text-xl mb-6 text-slate-100 leading-relaxed">
                 {currentSlideData.description ||
                   "Choose from our expertly curated tour packages, designed to provide unforgettable experiences across Sri Lanka. All packages include accommodation, transportation, and guided tours."}
               </p>
 
               {(currentSlideData.primaryButtonText ||
                 currentSlideData.secondaryButtonText) && (
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-wrap gap-4 justify-center">
                   {currentSlideData.primaryButtonText && (
                     <button
                       onClick={() =>
                         handleButtonClick(currentSlideData.primaryButtonLink)
                       }
-                      className="px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-semibold rounded-xl hover:from-amber-600 hover:to-orange-700 transform hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-3 group"
+                      className="px-8 py-4 bg-gradient-to-r from-sky-500 to-teal-500 text-white font-semibold rounded-xl hover:from-sky-600 hover:to-teal-600 transform hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-3 group"
                     >
                       <svg
                         className="w-6 h-6 group-hover:rotate-12 transition-transform duration-300"
@@ -299,7 +298,7 @@ const PackageHeroSection = () => {
                       onClick={() =>
                         handleButtonClick(currentSlideData.secondaryButtonLink)
                       }
-                      className="px-8 py-4 border-2 border-white/50 text-white font-semibold rounded-xl hover:bg-white hover:text-amber-900 transition-all duration-300 flex items-center gap-3 group"
+                      className="px-8 py-4 border-2 border-sky-300/50 text-white font-semibold rounded-xl hover:bg-sky-50/20 hover:border-sky-200 backdrop-blur-sm transition-all duration-300 flex items-center gap-3 group"
                     >
                       <svg
                         className="w-6 h-6 group-hover:scale-110 transition-transform duration-300"
@@ -321,12 +320,12 @@ const PackageHeroSection = () => {
               )}
             </div>
 
-            {/* Package Features */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="flex items-center gap-3 px-5 py-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 hover:bg-white/15 transition-all duration-300">
-                <div className="w-12 h-12 rounded-full bg-amber-500/20 flex items-center justify-center">
+            {/* Package Features - CENTERED */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+              <div className="flex items-center gap-3 px-5 py-4 bg-white/5 backdrop-blur-sm rounded-xl border border-sky-500/20 hover:border-sky-400/40 hover:bg-white/10 transition-all duration-300">
+                <div className="w-12 h-12 rounded-full bg-sky-500/20 flex items-center justify-center">
                   <svg
-                    className="w-6 h-6 text-amber-300"
+                    className="w-6 h-6 text-sky-300"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -339,15 +338,15 @@ const PackageHeroSection = () => {
                     />
                   </svg>
                 </div>
-                <div>
-                  <p className="text-sm text-amber-200">All Inclusive</p>
+                <div className="text-left">
+                  <p className="text-sm text-sky-200">All Inclusive</p>
                   <p className="text-base font-bold">No Hidden Costs</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 px-5 py-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 hover:bg-white/15 transition-all duration-300">
-                <div className="w-12 h-12 rounded-full bg-orange-500/20 flex items-center justify-center">
+              <div className="flex items-center gap-3 px-5 py-4 bg-white/5 backdrop-blur-sm rounded-xl border border-teal-500/20 hover:border-teal-400/40 hover:bg-white/10 transition-all duration-300">
+                <div className="w-12 h-12 rounded-full bg-teal-500/20 flex items-center justify-center">
                   <svg
-                    className="w-6 h-6 text-orange-300"
+                    className="w-6 h-6 text-teal-300"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -360,15 +359,15 @@ const PackageHeroSection = () => {
                     />
                   </svg>
                 </div>
-                <div>
-                  <p className="text-sm text-orange-200">Flexible Booking</p>
+                <div className="text-left">
+                  <p className="text-sm text-teal-200">Flexible Booking</p>
                   <p className="text-base font-bold">Free Cancellation</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 px-5 py-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 hover:bg-white/15 transition-all duration-300">
-                <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
+              <div className="flex items-center gap-3 px-5 py-4 bg-white/5 backdrop-blur-sm rounded-xl border border-cyan-500/20 hover:border-cyan-400/40 hover:bg-white/10 transition-all duration-300">
+                <div className="w-12 h-12 rounded-full bg-cyan-500/20 flex items-center justify-center">
                   <svg
-                    className="w-6 h-6 text-red-300"
+                    className="w-6 h-6 text-cyan-300"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -381,8 +380,8 @@ const PackageHeroSection = () => {
                   />
                 </svg>
                 </div>
-                <div>
-                  <p className="text-sm text-red-200">Expert Guides</p>
+                <div className="text-left">
+                  <p className="text-sm text-cyan-200">Expert Guides</p>
                   <p className="text-base font-bold">Local Insights</p>
                 </div>
               </div>
@@ -396,7 +395,7 @@ const PackageHeroSection = () => {
         <>
           <button
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group md:left-6"
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group md:left-6 shadow-lg"
             aria-label="Previous slide"
           >
             <svg
@@ -416,7 +415,7 @@ const PackageHeroSection = () => {
 
           <button
             onClick={nextSlide}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group md:right-6"
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group md:right-6 shadow-lg"
             aria-label="Next slide"
           >
             <svg
@@ -436,7 +435,7 @@ const PackageHeroSection = () => {
         </>
       )}
 
-      {/* Slide Indicators */}
+      {/* Slide Indicators - CENTERED */}
       {filteredPackages.length > 1 && (
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
           {filteredPackages.map((_, index) => (
@@ -445,8 +444,8 @@ const PackageHeroSection = () => {
               onClick={() => goToSlide(index)}
               className={`w-2 h-2 rounded-full transition-all duration-300 ${
                 index === currentSlide
-                  ? "bg-amber-400 scale-125"
-                  : "bg-white/50 hover:bg-white/75"
+                  ? "bg-gradient-to-r from-sky-400 to-teal-400 scale-125 shadow-lg"
+                  : "bg-white/40 hover:bg-white/60"
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />
@@ -456,9 +455,9 @@ const PackageHeroSection = () => {
 
       {/* Progress Bar */}
       {filteredPackages.length > 1 && (
-        <div className="absolute bottom-0 left-0 w-full h-1 bg-white/10">
+        <div className="absolute bottom-0 left-0 w-full h-1.5 bg-white/10">
           <div
-            className="h-full bg-gradient-to-r from-amber-400 to-orange-400 transition-all duration-300"
+            className="h-full bg-gradient-to-r from-sky-400 via-teal-400 to-cyan-400 transition-all duration-500"
             style={{
               width: `${((currentSlide + 1) / filteredPackages.length) * 100}%`,
             }}
@@ -467,11 +466,11 @@ const PackageHeroSection = () => {
       )}
 
       {/* Quick Actions */}
-      <div className="absolute bottom-28 right-6 hidden md:block">
+      {/* <div className="absolute bottom-28 right-6 hidden md:block">
         <div className="flex flex-col gap-2">
           <button
             onClick={() => window.location.href = "/packages/compare"}
-            className="px-4 py-2 bg-gradient-to-r from-amber-600 to-orange-700 text-white font-semibold rounded-lg hover:from-amber-700 hover:to-orange-800 transform hover:scale-105 transition-all duration-300 shadow-lg flex items-center gap-2 text-sm"
+            className="px-4 py-2 bg-gradient-to-r from-sky-600 to-teal-600 text-white font-semibold rounded-lg hover:from-sky-700 hover:to-teal-700 transform hover:scale-105 transition-all duration-300 shadow-lg flex items-center gap-2 text-sm"
           >
             <svg
               className="w-4 h-4"
@@ -490,7 +489,7 @@ const PackageHeroSection = () => {
           </button>
           <button
             onClick={() => window.location.href = "/packages/special-offers"}
-            className="px-4 py-2 border border-white/30 text-white font-semibold rounded-lg hover:bg-white/10 transition-all duration-300 flex items-center gap-2 text-sm"
+            className="px-4 py-2 border border-sky-300/30 text-white font-semibold rounded-lg hover:bg-sky-50/10 transition-all duration-300 flex items-center gap-2 text-sm backdrop-blur-sm"
           >
             <svg
               className="w-4 h-4"
@@ -508,7 +507,7 @@ const PackageHeroSection = () => {
             Special Offers
           </button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

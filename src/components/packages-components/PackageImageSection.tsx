@@ -1,9 +1,9 @@
 import React from "react";
 import Image from "next/image";
-import { ActivePackagesType } from "@/types/packages-types";
+import { ActivePackagesForFilters } from "@/types/packages-types";
 
 interface PackageImageSectionProps {
-  package: ActivePackagesType;
+  package: ActivePackagesForFilters;
   currentImageIndex: number;
   onImageIndexChange: (packageId: number, newIndex: number) => void;
 }
@@ -71,8 +71,8 @@ const PackageImageSection: React.FC<PackageImageSectionProps> = ({
               onClick={(e) => handleDotClick(index, e)}
               className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all duration-300 hover:scale-125 ${
                 index === currentImageIndex
-                  ? "bg-white w-4 sm:w-6"
-                  : "bg-white/50"
+                  ? "bg-gradient-to-r from-sky-400 to-teal-400 w-4 sm:w-6 shadow-md"
+                  : "bg-white/50 hover:bg-white/75"
               }`}
               aria-label={`View image ${index + 1}`}
             />
@@ -84,7 +84,7 @@ const PackageImageSection: React.FC<PackageImageSectionProps> = ({
         <>
           <button
             onClick={(e) => handleArrowClick("prev", e)}
-            className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1 sm:p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+            className="absolute left-2 top-1/2 -translate-y-1/2 bg-sky-700/80 hover:bg-sky-600/90 text-white p-1 sm:p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 hover:scale-110 shadow-lg"
             aria-label="Previous image"
           >
             <svg
@@ -103,7 +103,7 @@ const PackageImageSection: React.FC<PackageImageSectionProps> = ({
           </button>
           <button
             onClick={(e) => handleArrowClick("next", e)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1 sm:p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-sky-700/80 hover:bg-sky-600/90 text-white p-1 sm:p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 hover:scale-110 shadow-lg"
             aria-label="Next image"
           >
             <svg
@@ -124,13 +124,13 @@ const PackageImageSection: React.FC<PackageImageSectionProps> = ({
       )}
 
       {pkg.discountPercentage > 0 && (
-        <div className="absolute top-2 sm:top-3 right-2 sm:right-3 bg-red-500 text-white px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-bold shadow-lg z-10">
+        <div className="absolute top-2 sm:top-3 right-2 sm:right-3 bg-gradient-to-r from-red-500 to-red-600 text-white px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-bold shadow-lg z-10">
           {pkg.discountPercentage}% OFF
         </div>
       )}
 
       {pkg.images && pkg.images.length > 1 && (
-        <div className="absolute top-2 sm:top-3 left-2 sm:left-3 bg-black/60 text-white px-2 py-1 rounded-full text-xs z-10">
+        <div className="absolute top-2 sm:top-3 left-2 sm:left-3 bg-sky-800/80 text-white px-2 py-1 rounded-full text-xs z-10 backdrop-blur-sm">
           {currentImageIndex + 1}/{pkg.images.length}
         </div>
       )}

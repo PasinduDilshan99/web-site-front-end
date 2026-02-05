@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import {
-  ActivePackagesType,
   Filters,
   PackageReview,
   PackageHistory,
@@ -17,11 +16,12 @@ import PackageHistoryGallery from "@/components/packages-components/PackageHisto
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";
 import PackageHeroSection from "@/components/packages-components/PackageHeroSection";
 import { PackageService } from "@/services/packageService";
+import { ActivePackagesForFilters } from "@/types/package-types";
 
 // Define API response interface for packages
 interface PackageListResponse {
   packageCount: number;
-  packageResponseDtos: ActivePackagesType[];
+  packageResponseDtos: ActivePackagesForFilters[];
 }
 
 interface PaginatedPackageResponse {
@@ -33,7 +33,7 @@ interface PaginatedPackageResponse {
 }
 
 const PackagePage: React.FC = () => {
-  const [packages, setPackages] = useState<ActivePackagesType[]>([]);
+  const [packages, setPackages] = useState<ActivePackagesForFilters[]>([]);
   const [reviews, setReviews] = useState<PackageReview[]>([]);
   const [history, setHistory] = useState<PackageHistory[]>([]);
   const [historyImages, setHistoryImages] = useState<PackageHistoryImage[]>([]);
@@ -46,7 +46,7 @@ const PackagePage: React.FC = () => {
   const [reviewsError, setReviewsError] = useState<string | null>(null);
   const [historyError, setHistoryError] = useState<string | null>(null);
   const [historyImagesError, setHistoryImagesError] = useState<string | null>(
-    null
+    null,
   );
 
   // Filter states
@@ -80,8 +80,9 @@ const PackagePage: React.FC = () => {
   // Fetch filter options (initial data)
   const fetchFilterOptions = useCallback(async (): Promise<void> => {
     try {
-      const { packageTypes, locations, durations, error } = await PackageService.fetchFilterOptions();
-      
+      const { packageTypes, locations, durations, error } =
+        await PackageService.fetchFilterOptions();
+
       if (error) {
         console.error("Error fetching filter options:", error);
       } else {
@@ -101,14 +102,17 @@ const PackagePage: React.FC = () => {
 
       // Prepare API request using service helper
       const requestBody = PackageService.buildSearchRequest(filters);
-      
+
       // USING THE SERVICE INSTEAD OF DIRECT FETCH
-      const { packages: fetchedPackages, totalPackages: total, error } = 
-        await PackageService.fetchPackagesWithFilters(
-          requestBody,
-          itemsPerPage,
-          currentPage
-        );
+      const {
+        packages: fetchedPackages,
+        totalPackages: total,
+        error,
+      } = await PackageService.fetchPackagesWithFilters(
+        requestBody,
+        itemsPerPage,
+        currentPage,
+      );
 
       if (error) {
         setError(error);
@@ -174,7 +178,8 @@ const PackagePage: React.FC = () => {
       setReviewsError(null);
 
       // USING THE SERVICE INSTEAD OF DIRECT FETCH
-      const { reviews: fetchedReviews, error } = await PackageService.fetchReviews();
+      const { reviews: fetchedReviews, error } =
+        await PackageService.fetchReviews();
 
       if (error) {
         setReviewsError(error);
@@ -186,7 +191,7 @@ const PackagePage: React.FC = () => {
       setReviewsError(
         err instanceof Error
           ? err.message
-          : "An error occurred while fetching reviews"
+          : "An error occurred while fetching reviews",
       );
     } finally {
       setReviewsLoading(false);
@@ -199,7 +204,8 @@ const PackagePage: React.FC = () => {
       setHistoryError(null);
 
       // USING THE SERVICE INSTEAD OF DIRECT FETCH
-      const { history: fetchedHistory, error } = await PackageService.fetchHistory();
+      const { history: fetchedHistory, error } =
+        await PackageService.fetchHistory();
 
       if (error) {
         setHistoryError(error);
@@ -211,7 +217,7 @@ const PackagePage: React.FC = () => {
       setHistoryError(
         err instanceof Error
           ? err.message
-          : "An error occurred while fetching package history"
+          : "An error occurred while fetching package history",
       );
     } finally {
       setHistoryLoading(false);
@@ -224,7 +230,8 @@ const PackagePage: React.FC = () => {
       setHistoryImagesError(null);
 
       // USING THE SERVICE INSTEAD OF DIRECT FETCH
-      const { historyImages: fetchedImages, error } = await PackageService.fetchHistoryImages();
+      const { historyImages: fetchedImages, error } =
+        await PackageService.fetchHistoryImages();
 
       if (error) {
         setHistoryImagesError(error);
@@ -236,14 +243,17 @@ const PackagePage: React.FC = () => {
       setHistoryImagesError(
         err instanceof Error
           ? err.message
-          : "An error occurred while fetching package history images"
+          : "An error occurred while fetching package history images",
       );
     } finally {
       setHistoryImagesLoading(false);
     }
   };
 
-  const handleFilterChange = (filterName: keyof Filters,value: Filters[keyof Filters]): void => {
+  const handleFilterChange = (
+    filterName: keyof Filters,
+    value: Filters[keyof Filters],
+  ): void => {
     setFilters((prev) => ({
       ...prev,
       [filterName]: value,
@@ -347,7 +357,7 @@ const PackagePage: React.FC = () => {
   return (
     <>
       <PackageHeroSection />
-      <div className="mx-auto px-4 py-8 bg-gradient-to-br from-purple-100 via-purple-100 to-amber-100">
+      <div className="mx-auto px-4 py-8 bg-gradient-to-br from-sky-100 via-white to-cyan-100">
         {/* Page Header */}
         <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
           <SectionHeader
@@ -373,17 +383,44 @@ const PackagePage: React.FC = () => {
         {/* Results Section */}
         <div id="results-section" className="mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <h3 className="text-2xl font-semibold text-gray-900">
-              {totalPackages} Package
-              {totalPackages !== 1 ? "s" : ""} Found
-            </h3>
+            <div className="flex items-center gap-2">
+              <svg
+                className="w-5 h-5 text-sky-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                />
+              </svg>
+              <h3 className="text-2xl font-semibold text-sky-900">
+                {totalPackages} Package
+                {totalPackages !== 1 ? "s" : ""} Found
+              </h3>
+            </div>
 
-            {/* Items per page selector */}
             <div className="flex items-center gap-3">
               <label
                 htmlFor="itemsPerPage"
-                className="text-sm font-medium text-gray-700 whitespace-nowrap"
+                className="text-sm font-medium text-sky-700 whitespace-nowrap flex items-center gap-1"
               >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 10h16M4 14h16M4 18h16"
+                  />
+                </svg>
                 Show:
               </label>
               <select
@@ -392,7 +429,7 @@ const PackagePage: React.FC = () => {
                 onChange={(e) =>
                   handleItemsPerPageChange(Number(e.target.value))
                 }
-                className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm"
+                className="px-3 py-2 border border-sky-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm text-sky-900 bg-white transition-all duration-200 hover:border-sky-400"
               >
                 <option value={4}>4 per page</option>
                 <option value={6}>6 per page</option>
@@ -431,28 +468,28 @@ const PackagePage: React.FC = () => {
         </div>
 
         {/* Reviews Section */}
-        <ReviewsSection
+        {/* <ReviewsSection
           reviews={reviews}
           // loading={reviewsLoading}
           // error={reviewsError}
           // onRetry={handleReviewsRetry}
-        />
+        /> */}
 
         {/* History Section */}
-        <HistoryCarousel
+        {/* <HistoryCarousel
           historyData={history}
           loading={historyLoading}
           error={historyError}
           onRetry={handleHistoryRetry}
-        />
+        /> */}
 
         {/* Package History Gallery Section */}
-        <PackageHistoryGallery
+        {/* <PackageHistoryGallery
           imagesData={historyImages}
           loading={historyImagesLoading}
           error={historyImagesError}
           onRetry={handleHistoryImagesRetry}
-        />
+        /> */}
       </div>
     </>
   );
@@ -529,8 +566,8 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
   };
 
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-8 pt-6 border-t border-gray-200">
-      <div className="text-sm text-gray-600">
+    <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-8 pt-6 border-t border-sky-200">
+      <div className="text-sm text-sky-700 font-medium">
         Showing {startItem} to {endItem} of {totalItems} packages
       </div>
 
@@ -538,7 +575,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-3 py-2 rounded-md border border-gray-300 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+          className="px-4 py-2 rounded-lg border border-sky-300 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-sky-50 hover:border-sky-400 transition-all duration-200 text-sky-700"
         >
           Previous
         </button>
@@ -548,12 +585,12 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
             key={index}
             onClick={() => typeof page === "number" && onPageChange(page)}
             disabled={page === "..."}
-            className={`px-3 py-2 rounded-md text-sm font-medium min-w-[40px] ${
+            className={`px-4 py-2 rounded-lg text-sm font-medium min-w-[42px] transition-all duration-200 ${
               page === currentPage
-                ? "bg-gradient-to-r from-purple-600 to-amber-600 text-white"
+                ? "bg-gradient-to-r from-sky-600 to-teal-600 text-white shadow-md"
                 : page === "..."
-                ? "cursor-default"
-                : "border border-gray-300 hover:bg-gray-50 transition-colors"
+                  ? "cursor-default text-sky-600"
+                  : "border border-sky-300 text-sky-700 hover:bg-sky-50 hover:border-sky-400"
             }`}
           >
             {page}
@@ -563,7 +600,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="px-3 py-2 rounded-md border border-gray-300 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+          className="px-4 py-2 rounded-lg border border-sky-300 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-sky-50 hover:border-sky-400 transition-all duration-200 text-sky-700"
         >
           Next
         </button>
@@ -577,12 +614,25 @@ const NoResults: React.FC<{ onResetFilters: () => void }> = ({
   onResetFilters,
 }) => (
   <div className="text-center py-12">
-    <div className="text-gray-500 text-lg mb-4">
+    <div className="text-gray-600 text-lg mb-4 flex flex-col items-center">
+      <svg
+        className="w-16 h-16 text-sky-400 mb-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={1.5}
+          d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
       No packages found matching your filters.
     </div>
     <button
       onClick={onResetFilters}
-      className="px-6 py-2 bg-gradient-to-r from-purple-600 to-amber-600 text-white rounded-lg hover:from-purple-700 hover:to-amber-700 transition-colors"
+      className="px-6 py-3 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:from-sky-700 hover:to-teal-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
     >
       Reset Filters
     </button>

@@ -33,7 +33,6 @@ const FilterSection: React.FC<FilterSectionProps> = ({
     setShowAdvancedFilters(!showAdvancedFilters);
   };
 
-  // Handle price range change
   const handlePriceChange = (minMax: 'min' | 'max', value: number) => {
     if (minMax === 'min') {
       onFilterChange("priceRange", [value, filters.priceRange[1]]);
@@ -47,21 +46,21 @@ const FilterSection: React.FC<FilterSectionProps> = ({
   };
 
   return (
-    <div className="bg-gradient-to-r from-purple-50 to-amber-50 rounded-2xl p-6 md:p-8 mb-8 border-2 border-purple-200 shadow-lg">
+    <div className="bg-gradient-to-r from-sky-50 to-teal-50 rounded-2xl p-6 md:p-8 mb-8 border-2 border-sky-200 shadow-lg">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-        <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-amber-600 bg-clip-text text-transparent">
+        <h2 className="text-3xl font-bold bg-gradient-to-r from-sky-600 to-teal-600 bg-clip-text text-transparent">
           Filter Packages
         </h2>
         <div className="flex gap-3">
           <button
             onClick={onResetFilters}
-            className="px-6 py-2 bg-gradient-to-r from-purple-600 to-amber-600 text-white rounded-lg hover:from-purple-700 hover:to-amber-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg"
+            className="px-6 py-2 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:from-sky-700 hover:to-teal-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg"
           >
             Reset Filters
           </button>
           <button
             onClick={handleSearchClick}
-            className="px-6 py-2 bg-gradient-to-r from-amber-600 to-purple-600 text-white rounded-lg hover:from-amber-700 hover:to-purple-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg flex items-center gap-2"
+            className="px-6 py-2 bg-gradient-to-r from-teal-600 to-sky-600 text-white rounded-lg hover:from-teal-700 hover:to-sky-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg flex items-center gap-2"
           >
             <svg 
               className="w-4 h-4" 
@@ -85,7 +84,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         {/* Search */}
         <div className="space-y-2">
-          <label className="block text-sm font-semibold text-gray-800">
+          <label className="block text-sm font-semibold text-sky-800">
             Search
           </label>
           <input
@@ -93,16 +92,16 @@ const FilterSection: React.FC<FilterSectionProps> = ({
             placeholder="Search packages..."
             value={filters.search}
             onChange={(e) => onFilterChange("search", e.target.value)}
-            className="w-full px-4 py-2 border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500 transition-all"
+            className="w-full px-4 py-2 border-2 border-sky-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500 transition-all"
           />
         </div>
 
         {/* Price Range */}
         <div className="space-y-2">
-          <label className="block text-sm font-semibold text-gray-800">
+          <label className="block text-sm font-semibold text-sky-800">
             Price Range
           </label>
-          <div className="flex justify-between text-sm font-medium text-purple-700 mb-2">
+          <div className="flex justify-between text-sm font-medium text-sky-700 mb-2">
             <span>{formatPrice(filters.priceRange[0])}</span>
             <span>{formatPrice(filters.priceRange[1])}</span>
           </div>
@@ -113,7 +112,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
               max="100000"
               value={filters.priceRange[0]}
               onChange={(e) => handlePriceChange('min', parseInt(e.target.value, 10) || 0)}
-              className="w-1/2 px-3 py-1 border border-purple-300 rounded-md text-sm"
+              className="w-1/2 px-3 py-1 border border-sky-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-sky-400"
               placeholder="Min"
             />
             <input
@@ -122,7 +121,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
               max="100000"
               value={filters.priceRange[1]}
               onChange={(e) => handlePriceChange('max', parseInt(e.target.value, 10) || 100000)}
-              className="w-1/2 px-3 py-1 border border-purple-300 rounded-md text-sm"
+              className="w-1/2 px-3 py-1 border border-sky-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-sky-400"
               placeholder="Max"
             />
           </div>
@@ -130,15 +129,15 @@ const FilterSection: React.FC<FilterSectionProps> = ({
 
         {/* Duration */}
         <div className="space-y-2">
-          <label className="block text-sm font-semibold text-gray-800">
+          <label className="block text-sm font-semibold text-sky-800">
             Duration (Days)
           </label>
           <select
             value={filters.duration}
             onChange={(e) => onFilterChange("duration", e.target.value)}
-            className="w-full px-4 py-2 border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
+            className="w-full px-4 py-2 border-2 border-sky-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
             style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239333ea' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23038bfc' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
               backgroundRepeat: "no-repeat",
               backgroundPosition: "right 0.7rem center",
               paddingRight: "2rem",
@@ -155,15 +154,15 @@ const FilterSection: React.FC<FilterSectionProps> = ({
 
         {/* Package Type */}
         <div className="space-y-2">
-          <label className="block text-sm font-semibold text-gray-800">
+          <label className="block text-sm font-semibold text-sky-800">
             Package Type
           </label>
           <select
             value={filters.packageType}
             onChange={(e) => onFilterChange("packageType", e.target.value)}
-            className="w-full px-4 py-2 border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
+            className="w-full px-4 py-2 border-2 border-sky-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
             style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239333ea' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23038bfc' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
               backgroundRepeat: "no-repeat",
               backgroundPosition: "right 0.7rem center",
               paddingRight: "2rem",
@@ -190,15 +189,15 @@ const FilterSection: React.FC<FilterSectionProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Location - Full width on mobile, 1/3 on larger screens */}
           <div className="space-y-2 lg:col-span-1 mt-5">
-            <label className="block text-sm font-semibold text-gray-800">
+            <label className="block text-sm font-semibold text-teal-800">
               Start Location
             </label>
             <select
               value={filters.location}
               onChange={(e) => onFilterChange("location", e.target.value)}
-              className="w-full px-4 py-2 border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
+              className="w-full px-4 py-2 border-2 border-teal-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
               style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239333ea' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%230d9488' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
                 backgroundRepeat: "no-repeat",
                 backgroundPosition: "right 0.7rem center",
                 paddingRight: "2rem",
@@ -215,12 +214,12 @@ const FilterSection: React.FC<FilterSectionProps> = ({
 
           {/* Group Size - Full width on mobile, 1/3 on larger screens */}
           <div className="space-y-2 lg:col-span-1">
-            <label className="block text-sm font-semibold text-gray-800">
+            <label className="block text-sm font-semibold text-teal-800">
               Group Size
             </label>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="block text-xs text-gray-600">
+                <label className="block text-xs text-teal-600">
                   Min Persons
                 </label>
                 <input
@@ -229,11 +228,11 @@ const FilterSection: React.FC<FilterSectionProps> = ({
                   value={filters.minPersons}
                   onChange={(e) => onFilterChange("minPersons", e.target.value)}
                   min="1"
-                  className="w-full px-3 py-2 border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500 font-medium transition-all text-sm"
+                  className="w-full px-3 py-2 border-2 border-teal-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500 font-medium transition-all text-sm"
                 />
               </div>
               <div className="space-y-1">
-                <label className="block text-xs text-gray-600">
+                <label className="block text-xs text-teal-600">
                   Max Persons
                 </label>
                 <input
@@ -242,7 +241,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
                   value={filters.maxPersons}
                   onChange={(e) => onFilterChange("maxPersons", e.target.value)}
                   min="1"
-                  className="w-full px-3 py-2 border-2 border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500 font-medium transition-all text-sm"
+                  className="w-full px-3 py-2 border-2 border-teal-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500 font-medium transition-all text-sm"
                 />
               </div>
             </div>
@@ -250,26 +249,26 @@ const FilterSection: React.FC<FilterSectionProps> = ({
 
           {/* Date Range - Full width on mobile, 1/3 on larger screens */}
           <div className="space-y-2 lg:col-span-1">
-            <label className="block text-sm font-semibold text-gray-800">
+            <label className="block text-sm font-semibold text-teal-800">
               Availability
             </label>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="block text-xs text-gray-600">From Date</label>
+                <label className="block text-xs text-teal-600">From Date</label>
                 <input
                   type="date"
                   value={filters.startDate}
                   onChange={(e) => onFilterChange("startDate", e.target.value)}
-                  className="w-full px-3 py-2 border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all text-sm"
+                  className="w-full px-3 py-2 border-2 border-teal-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all text-sm"
                 />
               </div>
               <div className="space-y-1">
-                <label className="block text-xs text-gray-600">To Date</label>
+                <label className="block text-xs text-teal-600">To Date</label>
                 <input
                   type="date"
                   value={filters.endDate}
                   onChange={(e) => onFilterChange("endDate", e.target.value)}
-                  className="w-full px-3 py-2 border-2 border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all text-sm"
+                  className="w-full px-3 py-2 border-2 border-teal-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all text-sm"
                 />
               </div>
             </div>
@@ -277,15 +276,15 @@ const FilterSection: React.FC<FilterSectionProps> = ({
         </div>
       </div>
 
-      {/* Separator Line with Advanced Filters Button - Position changes based on state */}
+      {/* Separator Line with Advanced Filters Button */}
       <div className={`relative ${showAdvancedFilters ? "mt-6" : "mb-6"}`}>
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t-2 border-purple-200"></div>
+          <div className="w-full border-t-2 border-sky-300"></div>
         </div>
         <div className="relative flex justify-center">
           <button
             onClick={toggleAdvancedFilters}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-amber-500 text-white rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-sky-500 to-teal-500 text-white rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
           >
             {showAdvancedFilters ? (
               <>
@@ -355,7 +354,6 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
     value: Filters[keyof Filters];
   }
 
-  // Build active filters array with proper typing
   const activeFilters: ActiveFilter[] = [];
   
   if (filters.search) {
@@ -452,18 +450,18 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
   };
 
   return (
-    <div className="border-t-2 border-purple-200 pt-4 mt-4">
+    <div className="border-t-2 border-sky-300 pt-4 mt-4">
       <div className="flex items-center gap-2 mb-2">
-        <span className="text-sm font-semibold text-gray-800">
+        <span className="text-sm font-semibold text-sky-800">
           Active Filters:
         </span>
-        <span className="text-sm text-gray-600">({activeFilters.length})</span>
+        <span className="text-sm text-sky-600">({activeFilters.length})</span>
       </div>
       <div className="flex flex-wrap gap-2">
         {activeFilters.map((filter) => (
           <span
             key={filter.name}
-            className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-purple-100 to-amber-100 text-purple-800 rounded-full text-xs font-medium border border-purple-200 transition-all duration-200 hover:shadow-md"
+            className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-sky-100 to-teal-100 text-sky-800 rounded-full text-xs font-medium border border-sky-200 transition-all duration-200 hover:shadow-md"
           >
             {filter.label}
             <button

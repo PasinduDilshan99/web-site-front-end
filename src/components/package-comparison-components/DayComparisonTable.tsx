@@ -14,16 +14,16 @@ interface DayDataProps {
 
 const DayData: React.FC<DayDataProps> = ({ dayData }) => {
   if (!dayData) {
-    return <div className="text-gray-400 italic">No data for this day</div>;
+    return <div className="text-sky-400 italic">No data for this day</div>;
   }
 
   return (
     <div className="space-y-3 sm:space-y-4">
       {/* Day Notes */}
       {dayData.otherNotes && (
-        <div className="p-3 sm:p-4 bg-gradient-to-br from-blue-50 to-blue-50/30 rounded-lg sm:rounded-xl border border-blue-100">
+        <div className="p-3 sm:p-4 bg-gradient-to-br from-sky-50 to-teal-50/30 rounded-lg sm:rounded-xl border border-sky-200">
           <div className="flex items-start gap-2">
-            <Info className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500 flex-shrink-0 mt-0.5" />
+            <Info className="w-4 h-4 sm:w-5 sm:h-5 text-sky-600 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
               <p className="text-sm sm:text-base font-medium text-gray-900 leading-relaxed">
                 {dayData.otherNotes}
@@ -36,40 +36,40 @@ const DayData: React.FC<DayDataProps> = ({ dayData }) => {
       {/* Meals Section */}
       <div className="space-y-2 sm:space-y-3">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center">
-            <Utensils className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-teal-50 to-emerald-50 flex items-center justify-center border border-teal-100">
+            <Utensils className="w-4 h-4 sm:w-5 sm:h-5 text-teal-600" />
           </div>
-          <span className="text-sm sm:text-base font-semibold text-gray-900">
+          <span className="text-sm sm:text-base font-semibold text-teal-800">
             Meals Included
           </span>
         </div>
 
         <div className="space-y-1.5 sm:space-y-2 ml-2 sm:ml-4">
           {dayData.breakfast && (
-            <div className="flex items-center gap-2 text-sm text-gray-700 bg-white p-2 sm:p-3 rounded-lg border border-gray-100">
-              <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0"></div>
-              <span className="font-medium text-gray-900">Breakfast</span>
-              <span className="text-gray-500">•</span>
+            <div className="flex items-center gap-2 text-sm text-gray-700 bg-white p-2 sm:p-3 rounded-lg border border-sky-100">
+              <div className="w-2 h-2 rounded-full bg-teal-500 flex-shrink-0"></div>
+              <span className="font-medium text-teal-800">Breakfast</span>
+              <span className="text-sky-300">•</span>
               <span className="flex-1 text-gray-600 truncate">
                 {dayData.breakfastDescription || "Standard breakfast included"}
               </span>
             </div>
           )}
           {dayData.lunch && (
-            <div className="flex items-center gap-2 text-sm text-gray-700 bg-white p-2 sm:p-3 rounded-lg border border-gray-100">
-              <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0"></div>
-              <span className="font-medium text-gray-900">Lunch</span>
-              <span className="text-gray-500">•</span>
+            <div className="flex items-center gap-2 text-sm text-gray-700 bg-white p-2 sm:p-3 rounded-lg border border-sky-100">
+              <div className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0"></div>
+              <span className="font-medium text-emerald-800">Lunch</span>
+              <span className="text-sky-300">•</span>
               <span className="flex-1 text-gray-600 truncate">
                 {dayData.lunchDescription || "Standard lunch included"}
               </span>
             </div>
           )}
           {dayData.dinner && (
-            <div className="flex items-center gap-2 text-sm text-gray-700 bg-white p-2 sm:p-3 rounded-lg border border-gray-100">
-              <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0"></div>
-              <span className="font-medium text-gray-900">Dinner</span>
-              <span className="text-gray-500">•</span>
+            <div className="flex items-center gap-2 text-sm text-gray-700 bg-white p-2 sm:p-3 rounded-lg border border-sky-100">
+              <div className="w-2 h-2 rounded-full bg-cyan-500 flex-shrink-0"></div>
+              <span className="font-medium text-cyan-800">Dinner</span>
+              <span className="text-sky-300">•</span>
               <span className="flex-1 text-gray-600 truncate">
                 {dayData.dinnerDescription || "Standard dinner included"}
               </span>
@@ -78,7 +78,7 @@ const DayData: React.FC<DayDataProps> = ({ dayData }) => {
 
           {/* Show message if no meals specified */}
           {!dayData.breakfast && !dayData.lunch && !dayData.dinner && (
-            <div className="text-sm text-gray-500 italic p-2 sm:p-3 bg-gray-50 rounded-lg">
+            <div className="text-sm text-sky-500 italic p-2 sm:p-3 bg-sky-50 rounded-lg border border-sky-100">
               Meals not specified for this day
             </div>
           )}
@@ -87,26 +87,26 @@ const DayData: React.FC<DayDataProps> = ({ dayData }) => {
 
       {/* Accommodation Section */}
       {(dayData.hotelName || dayData.hotelLocation) && (
-        <div className="pt-3 sm:pt-4 border-t border-gray-200">
+        <div className="pt-3 sm:pt-4 border-t border-sky-200">
           <div className="flex items-center gap-2 mb-2 sm:mb-3">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center">
-              <Hotel className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" />
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-sky-50 to-blue-50 flex items-center justify-center border border-sky-200">
+              <Hotel className="w-4 h-4 sm:w-5 sm:h-5 text-sky-600" />
             </div>
-            <span className="text-sm sm:text-base font-semibold text-gray-900">
+            <span className="text-sm sm:text-base font-semibold text-sky-800">
               Accommodation
             </span>
           </div>
 
           <div className="ml-2 sm:ml-4 space-y-1.5 sm:space-y-2">
             {dayData.hotelName && (
-              <div className="font-medium text-gray-900 text-sm sm:text-base truncate">
+              <div className="font-medium text-sky-900 text-sm sm:text-base truncate">
                 {dayData.hotelName}
               </div>
             )}
 
             {dayData.hotelLocation && (
-              <div className="flex items-center gap-1 text-sm text-gray-600">
-                <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500 flex-shrink-0" />
+              <div className="flex items-center gap-1 text-sm text-sky-700">
+                <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-sky-500 flex-shrink-0" />
                 <span className="truncate">{dayData.hotelLocation}</span>
               </div>
             )}
@@ -120,12 +120,12 @@ const DayData: React.FC<DayDataProps> = ({ dayData }) => {
                       className={`w-3 h-3 sm:w-4 sm:h-4 ${
                         i < dayData.hotelCategory
                           ? "text-amber-500 fill-amber-500"
-                          : "text-gray-300"
+                          : "text-sky-300"
                       }`}
                     />
                   ))}
                 </div>
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-sky-700">
                   {dayData.hotelCategory}-star hotel
                 </span>
               </div>
@@ -136,12 +136,12 @@ const DayData: React.FC<DayDataProps> = ({ dayData }) => {
 
       {/* Transport Section */}
       {(dayData.vehicleModel || dayData.vehicleTypeName) && (
-        <div className="pt-3 sm:pt-4 border-t border-gray-200">
+        <div className="pt-3 sm:pt-4 border-t border-sky-200">
           <div className="flex items-center gap-2 mb-2 sm:mb-3">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-blue-50 to-cyan-50 flex items-center justify-center">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-blue-50 to-cyan-50 flex items-center justify-center border border-blue-200">
               <Car className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
             </div>
-            <span className="text-sm sm:text-base font-semibold text-gray-900">
+            <span className="text-sm sm:text-base font-semibold text-blue-800">
               Transportation
             </span>
           </div>
@@ -149,10 +149,10 @@ const DayData: React.FC<DayDataProps> = ({ dayData }) => {
           <div className="ml-2 sm:ml-4 space-y-1.5 sm:space-y-2">
             {dayData.vehicleModel && (
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-900">
+                <span className="text-sm font-medium text-blue-900">
                   Vehicle:
                 </span>
-                <span className="text-sm text-gray-600 truncate">
+                <span className="text-sm text-blue-700 truncate">
                   {dayData.vehicleModel}
                   {dayData.vehicleTypeName && ` (${dayData.vehicleTypeName})`}
                 </span>
@@ -161,24 +161,24 @@ const DayData: React.FC<DayDataProps> = ({ dayData }) => {
 
             <div className="flex flex-wrap gap-2 sm:gap-3">
               {dayData.seatCapacity && (
-                <div className="flex items-center gap-1 text-sm text-gray-600 bg-gray-50 px-2 py-1 rounded-lg">
-                  <Users className="w-3 h-3 sm:w-4 sm:h-4" />
+                <div className="flex items-center gap-1 text-sm text-blue-700 bg-blue-50 px-2 py-1 rounded-lg border border-blue-100">
+                  <Users className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600" />
                   <span>{dayData.seatCapacity} seats</span>
                 </div>
               )}
 
               {dayData.airCondition !== undefined && (
                 <div
-                  className={`flex items-center gap-1 text-sm px-2 py-1 rounded-lg ${
+                  className={`flex items-center gap-1 text-sm px-2 py-1 rounded-lg border ${
                     dayData.airCondition
-                      ? "bg-green-50 text-green-800"
-                      : "bg-gray-50 text-gray-600"
+                      ? "bg-teal-50 text-teal-800 border-teal-200"
+                      : "bg-sky-50 text-sky-700 border-sky-200"
                   }`}
                 >
                   {dayData.airCondition ? (
                     <>
                       <svg
-                        className="w-3 h-3 sm:w-4 sm:h-4"
+                        className="w-3 h-3 sm:w-4 sm:h-4 text-teal-600"
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
@@ -193,7 +193,7 @@ const DayData: React.FC<DayDataProps> = ({ dayData }) => {
                   ) : (
                     <>
                       <svg
-                        className="w-3 h-3 sm:w-4 sm:h-4"
+                        className="w-3 h-3 sm:w-4 sm:h-4 text-sky-600"
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
@@ -236,38 +236,38 @@ const DayComparisonTable: React.FC<DayComparisonTableProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
+    <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-8 border border-sky-100">
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-gray-50">
+          <thead className="bg-gradient-to-r from-sky-50 to-teal-50">
             <tr>
-              <th className="py-4 px-6 text-left text-sm font-semibold text-gray-900">
+              <th className="py-4 px-6 text-left text-sm font-semibold text-sky-900">
                 Day
               </th>
               <th
-                className="py-4 px-6 text-left text-sm font-semibold text-gray-900"
+                className="py-4 px-6 text-left text-sm font-semibold text-sky-900"
                 style={{ color: selectedPackage1.color }}
               >
                 {selectedPackage1.packageName}
               </th>
               <th
-                className="py-4 px-6 text-left text-sm font-semibold text-gray-900"
+                className="py-4 px-6 text-left text-sm font-semibold text-teal-900"
                 style={{ color: selectedPackage2.color }}
               >
                 {selectedPackage2.packageName}
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-sky-100">
             {Array.from({ length: maxDays }).map((_, dayIndex) => {
               const day1Data = getDayData(selectedPackage1, dayIndex);
               const day2Data = getDayData(selectedPackage2, dayIndex);
 
               return (
-                <tr key={dayIndex} className="hover:bg-gray-50">
+                <tr key={dayIndex} className="hover:bg-sky-50/50 transition-colors duration-150">
                   <td className="py-6 px-6">
                     <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 font-bold">
+                      <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-full bg-gradient-to-br from-sky-100 to-teal-100 text-sky-700 font-bold border border-sky-200">
                         Day {dayIndex + 1}
                       </div>
                     </div>

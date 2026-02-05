@@ -43,7 +43,7 @@ export interface PackageImage {
   color: string;
 }
 
-export interface ActivePackagesType {
+export interface ActivePackagesForFilters {
   packageId: number;
   packageName: string;
   packageDescription: string;

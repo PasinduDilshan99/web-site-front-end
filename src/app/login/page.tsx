@@ -51,9 +51,9 @@ export default function Page() {
 
   if (!isClient) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-amber-50/30 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       </div>
@@ -62,9 +62,9 @@ export default function Page() {
 
   if (uniqueCode) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-amber-50/30 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
           <p className="mt-4 text-gray-600">Redirecting to profile...</p>
         </div>
       </div>
@@ -72,397 +72,348 @@ export default function Page() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-amber-50/30 flex items-center justify-center p-4 sm:p-6 lg:p-8 relative overflow-hidden">
-      {/* Professional Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Geometric Patterns */}
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-purple-100/40 to-amber-100/30 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-amber-100/30 to-purple-100/40 rounded-full blur-3xl"></div>
+    <div className="min-h-screen flex">
+      {/* Left Side - Travel Image & Branding */}
+      <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-blue-600 to-blue-800 overflow-hidden">
+        {/* Background Image */}
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-80"
+          style={{
+            backgroundImage: "url('/login-image.webp')",
+            //  backgroundImage: "url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200')",
+          }}
+        />
 
-        {/* Subtle Grid Pattern */}
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0wIDBoNjB2NjBIMHoiLz48cGF0aCBkPSJNMjAgMTBoMjB2MjBIMHoiIGZpbGw9InJnYmEoMTY3LCAxMzksIDI1MCwgMC4xKSIvPjwvZz48L3N2Zz4=')] opacity-20"></div>
+        {/* Overlay */}
+        {/* <div className="absolute inset-0 bg-gradient-to-br from-blue-900/70 to-blue-600/60" /> */}
+
+        {/* Content */}
+        <div className="relative z-10 flex flex-col justify-center items-start p-16 text-white">
+          <h1
+            className="font-serif text-6xl mb-6"
+            style={{ fontFamily: "'Dancing Script', cursive" }}
+          >
+            Felicita trips
+          </h1>
+          <p className="text-xl text-blue-100 max-w-md leading-relaxed">
+            Travel is the only purchase that enriches you in ways beyond
+            material wealth
+          </p>
+        </div>
+
+        {/* Decorative Monuments */}
+        <div className="absolute bottom-0 right-0 opacity-20">
+          <svg className="w-64 h-64" viewBox="0 0 200 200" fill="currentColor">
+            {/* Simplified monument illustration */}
+            <rect x="80" y="120" width="40" height="80" />
+            <polygon points="100,100 70,120 130,120" />
+          </svg>
+        </div>
       </div>
 
-      <style jsx>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
+      {/* Right Side - Login Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white relative">
+        {/* Decorative airplane trail */}
+        <div className="absolute top-8 right-8">
+          <svg className="w-32 h-16" viewBox="0 0 200 80" fill="none">
+            <path
+              d="M 10 40 Q 60 20, 120 30 T 190 35"
+              stroke="#0EA5E9"
+              strokeWidth="2"
+              strokeDasharray="4 4"
+              opacity="0.4"
+            />
+            <path d="M 180 30 L 190 35 L 180 40 Z" fill="#0EA5E9" />
+          </svg>
+        </div>
 
-        @keyframes subtleFloat {
-          0%,
-          100% {
-            transform: translateY(0) rotate(0deg);
-          }
-          50% {
-            transform: translateY(-10px) rotate(2deg);
-          }
-        }
-
-        @keyframes shimmer {
-          0% {
-            background-position: -200% center;
-          }
-          100% {
-            background-position: 200% center;
-          }
-        }
-
-        @keyframes pulse {
-          0%,
-          100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0.8;
-          }
-        }
-
-        .animate-fade-in {
-          animation: fadeIn 0.6s ease-out;
-        }
-
-        .animate-subtle-float {
-          animation: subtleFloat 6s ease-in-out infinite;
-        }
-
-        .animate-shimmer {
-          animation: shimmer 3s infinite linear;
-          background: linear-gradient(
-            90deg,
-            transparent 0%,
-            rgba(255, 255, 255, 0.2) 50%,
-            transparent 100%
-          );
-          background-size: 200% 100%;
-        }
-
-        .animate-pulse-subtle {
-          animation: pulse 2s ease-in-out infinite;
-        }
-      `}</style>
-
-      <div className="w-full max-w-md sm:max-w-lg lg:max-w-xl relative z-10 animate-fade-in">
-        {/* Professional Card Container */}
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100/50 backdrop-blur-sm">
-          {/* Elegant Header */}
-          <div className="relative overflow-hidden">
-            {/* Gradient Background */}
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-700 via-purple-600 to-amber-600"></div>
-
-            {/* Animated Shimmer Overlay */}
-            <div className="absolute inset-0 animate-shimmer"></div>
-
-            {/* Travel-themed Illustration */}
-            <div className="relative p-8 sm:p-10 text-center">
-              <div className="inline-flex items-center justify-center mb-6 p-4 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 animate-subtle-float">
-                <div className="relative">
-                  <svg
-                    className="w-12 h-12 sm:w-16 sm:h-16 text-white"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-              </div>
-
-              <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3 tracking-tight">
-                Welcome Back
-              </h1>
-              <p className="text-lg text-amber-100 font-light">
-                Continue your journey with us
-              </p>
-            </div>
-
-            {/* Decorative Elements */}
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-amber-400/50 to-transparent"></div>
+        <div className="w-full max-w-md">
+          {/* Welcome Header */}
+          <div className="text-center mb-8">
+            <h2 className="text-5xl font-bold text-blue-500 mb-2">Welcome</h2>
+            <p className="text-gray-500">Login with Email</p>
           </div>
 
-          {/* Form Section */}
-          <div className="p-6 sm:p-8 lg:p-10">
-            {error && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-xl flex items-start space-x-3 animate-fade-in shadow-sm">
-                <svg
-                  className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start space-x-3">
+              <svg
+                className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <p className="text-sm text-red-700">{error}</p>
+            </div>
+          )}
+
+          <div className="space-y-6">
+            {/* Email Field */}
+            <div>
+              <label className="block text-sm font-medium text-blue-500 mb-2">
+                Email Id
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <svg
+                    className="h-5 w-5 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  className="w-full pl-12 pr-4 py-3.5 text-gray-900 bg-white border-2 border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-all"
+                  value={username}
+                  placeholder="thisuix@mail.com"
+                  onChange={(e) => setUsername(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
+
+            {/* Password Field */}
+            <div>
+              <label className="block text-sm font-medium text-blue-500 mb-2">
+                Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <svg
+                    className="h-5 w-5 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                    />
+                  </svg>
+                </div>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  className="w-full pl-12 pr-12 py-3.5 text-gray-900 bg-white border-2 border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-all"
+                  value={password}
+                  placeholder="••••••••••••••••"
+                  onChange={(e) => setPassword(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  disabled={isLoading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
                 >
+                  {showPassword ? (
+                    <svg
+                      className="h-5 w-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      className="h-5 w-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                      />
+                    </svg>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Forgot Password */}
+            <div className="flex justify-end">
+              <Link
+                href="/forgot-password"
+                className="text-sm text-gray-500 hover:text-blue-500 transition-colors"
+              >
+                Forgot your password?
+              </Link>
+            </div>
+
+            {/* Login Button */}
+            <button
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl active:scale-[0.99]"
+              onClick={handleLogin}
+              disabled={isLoading || !username || !password}
+            >
+              {isLoading ? (
+                <span className="flex items-center justify-center">
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Logging in...
+                </span>
+              ) : (
+                "LOGIN"
+              )}
+            </button>
+
+            {/* Divider */}
+            {/* <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-200"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-4 bg-white text-gray-500">OR</span>
+              </div>
+            </div> */}
+
+            {/* Social Login */}
+            {/* <div className="grid grid-cols-3 gap-4">
+              <button className="flex items-center justify-center py-3 px-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                <svg className="w-6 h-6" viewBox="0 0 24 24">
                   <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                    clipRule="evenodd"
+                    fill="#4285F4"
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                  />
+                  <path
+                    fill="#EA4335"
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                   />
                 </svg>
-                <p className="text-sm text-red-700 font-medium">{error}</p>
-              </div>
-            )}
-
-            <div className="space-y-6">
-              {/* Username Field */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Username
-                </label>
-                <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <svg
-                      className="h-5 w-5 text-gray-400 group-focus-within:text-purple-600 transition-colors"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                      />
-                    </svg>
-                  </div>
-                  <input
-                    type="text"
-                    className="w-full pl-12 pr-4 py-3.5 text-gray-900 bg-gray-50/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-all duration-300 hover:border-gray-300 focus:bg-white font-medium placeholder-gray-400"
-                    value={username}
-                    placeholder="Enter your username"
-                    onChange={(e) => setUsername(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    disabled={isLoading}
-                  />
-                </div>
-              </div>
-
-              {/* Password Field */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Password
-                </label>
-                <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <svg
-                      className="h-5 w-5 text-gray-400 group-focus-within:text-amber-600 transition-colors"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                      />
-                    </svg>
-                  </div>
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    className="w-full pl-12 pr-12 py-3.5 text-gray-900 bg-gray-50/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none transition-all duration-300 hover:border-gray-300 focus:bg-white font-medium placeholder-gray-400"
-                    value={password}
-                    placeholder="Enter your password"
-                    onChange={(e) => setPassword(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    disabled={isLoading}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-amber-600 transition-colors"
-                  >
-                    {showPassword ? (
-                      <svg
-                        className="h-5 w-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
-                        />
-                      </svg>
-                    ) : (
-                      <svg
-                        className="h-5 w-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                        />
-                      </svg>
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              {/* Action Row */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="remember"
-                    className="h-4 w-4 text-purple-600 rounded border-gray-300 focus:ring-purple-500"
-                  />
-                  <label
-                    htmlFor="remember"
-                    className="ml-2 text-sm text-gray-600"
-                  >
-                    Remember me
-                  </label>
-                </div>
-                <Link
-                  href="/forgot-password"
-                  className="text-sm font-medium text-purple-600 hover:text-purple-800 transition-colors hover:underline decoration-purple-300"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-
-              {/* Login Button */}
-              <button
-                className="w-full relative overflow-hidden group bg-gradient-to-r from-purple-600 to-amber-600 hover:from-purple-700 hover:to-amber-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl active:scale-[0.99]"
-                onClick={handleLogin}
-                disabled={isLoading || !username || !password}
-              >
-                {/* Shimmer Effect */}
-                <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
-
-                <span className="relative flex items-center justify-center">
-                  {isLoading ? (
-                    <>
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      Signing In...
-                    </>
-                  ) : (
-                    <>
-                      Sign In
-                      <svg
-                        className="ml-2 w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M13 7l5 5m0 0l-5 5m5-5H6"
-                        />
-                      </svg>
-                    </>
-                  )}
-                </span>
               </button>
 
-              {/* Divider */}
-              {/* <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-white text-gray-500">Or continue with</span>
-                </div>
-              </div> */}
+              <button className="flex items-center justify-center py-3 px-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                <svg
+                  className="w-6 h-6 text-blue-600"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                </svg>
+              </button>
 
-              {/* Social Login */}
-              {/* <div className="grid grid-cols-2 gap-3">
-                <button className="flex items-center justify-center space-x-2 py-3 px-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors group">
-                  <svg className="w-5 h-5 text-gray-600 group-hover:text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                  </svg>
-                  <span className="text-sm font-medium text-gray-700">Facebook</span>
-                </button>
-                
-                <button className="flex items-center justify-center space-x-2 py-3 px-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors group">
-                  <svg className="w-5 h-5 text-gray-600 group-hover:text-red-600" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                  </svg>
-                  <span className="text-sm font-medium text-gray-700">Google</span>
-                </button>
-              </div> */}
-            </div>
+              <button className="flex items-center justify-center py-3 px-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                <svg
+                  className="w-6 h-6"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                </svg>
+              </button>
+            </div> */}
           </div>
 
           {/* Footer */}
-          <div className="px-6 sm:px-8 lg:px-10 py-6 bg-gradient-to-b from-gray-50/50 to-white border-t border-gray-100">
-            <p className="text-center text-sm text-gray-600">
-              Don&apos;t have an account?{" "}
+          <div className="mt-8 text-center">
+            <p className="text-sm text-gray-600">
+              Don&apos;t have account?{" "}
               <Link
                 href="/signup"
-                className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-amber-600 hover:from-purple-700 hover:to-amber-700 transition-all duration-300"
+                className="font-semibold text-blue-500 hover:text-blue-600 transition-colors"
               >
-                Create account
-              </Link>
-            </p>
-            <p className="text-center mt-3 text-xs text-gray-500">
-              By signing in, you agree to our{" "}
-              <Link
-                href="/terms"
-                className="text-purple-600 hover:text-purple-800"
-              >
-                Terms
-              </Link>{" "}
-              and{" "}
-              <Link
-                href="/privacy"
-                className="text-purple-600 hover:text-purple-800"
-              >
-                Privacy Policy
+                Register Now
               </Link>
             </p>
           </div>
         </div>
 
-        {/* Security Badge */}
-        {/* <div className="mt-6 flex items-center justify-center space-x-4 text-xs text-gray-500 animate-pulse-subtle">
-          <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span>Secure SSL Connection</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <svg className="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-            </svg>
-            <span>Encrypted</span>
-          </div>
-        </div> */}
+        {/* Decorative Monuments Bottom Right */}
+        <div className="absolute bottom-0 right-0 opacity-10 pointer-events-none">
+          <svg className="w-96 h-64" viewBox="0 0 400 300" fill="#0EA5E9">
+            {/* Taj Mahal-like monument */}
+            <ellipse cx="200" cy="280" rx="180" ry="20" opacity="0.3" />
+            <rect x="160" y="180" width="80" height="100" rx="4" />
+            <path d="M 200 140 L 140 180 L 260 180 Z" />
+            <circle cx="200" cy="130" r="25" />
+            <rect x="120" y="200" width="30" height="80" />
+            <rect x="250" y="200" width="30" height="80" />
+            <path d="M 135 200 L 120 180 L 150 180 Z" />
+            <path d="M 265 200 L 250 180 L 280 180 Z" />
+            {/* Leaning Tower */}
+            <g transform="translate(80, 0)">
+              <rect
+                x="30"
+                y="200"
+                width="20"
+                height="80"
+                transform="skewX(-5)"
+              />
+              <rect x="30" y="200" width="20" height="10" />
+              <rect x="30" y="220" width="20" height="10" />
+              <rect x="30" y="240" width="20" height="10" />
+              <rect x="30" y="260" width="20" height="10" />
+            </g>
+            {/* Mosque dome */}
+            <g transform="translate(220, 0)">
+              <rect x="30" y="220" width="40" height="60" rx="2" />
+              <ellipse cx="50" cy="220" rx="25" ry="20" />
+              <rect x="47" y="200" width="6" height="20" />
+              <circle cx="50" cy="198" r="4" />
+            </g>
+          </svg>
+        </div>
       </div>
+
+      {/* Add Dancing Script font */}
+      <style jsx global>{`
+        @import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap");
+      `}</style>
     </div>
   );
 }

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { User } from "@/context/AuthContext";
 import { useRouter, usePathname } from "next/navigation";
+import Image from "next/image";
 
 interface UserDropdownProps {
   user: User;
@@ -58,10 +59,19 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
               border: "2px solid rgba(14, 165, 233, 0.3)",
             }}
           >
-            <span className="font-bold text-sm text-white">
-              {user.firstName.charAt(0).toUpperCase()}
-              {user.lastName.charAt(0).toUpperCase()}
-            </span>
+            {user && (
+              <Image
+                alt="profile pic"
+                src={user?.imageUrl}
+                width={400}
+                height={400}
+              />
+            ) || (
+              <span className="font-bold text-sm text-white">
+                {user?.firstName.charAt(0).toUpperCase()}
+                {user?.lastName.charAt(0).toUpperCase()}
+              </span>
+            )}
           </div>
           <span className="font-medium text-sm" style={{ color: "#075985" }}>
             {user.firstName}

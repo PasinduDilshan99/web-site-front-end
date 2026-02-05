@@ -39,42 +39,42 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 sticky top-4 sm:top-16">
-      <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">
+    <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 sticky top-4 sm:top-16 border border-sky-100">
+      <h3 className="text-lg sm:text-xl md:text-2xl font-bold bg-gradient-to-r from-sky-600 to-teal-600 bg-clip-text text-transparent mb-4 sm:mb-6">
         Book This Package
       </h3>
 
       {/* Price Display */}
-      <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gradient-to-r from-purple-50 to-amber-50 rounded-lg sm:rounded-xl border border-purple-200">
+      <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gradient-to-r from-sky-50 to-teal-50 rounded-lg sm:rounded-xl border border-sky-200">
         {packageData.discountPercentage > 0 ? (
           <>
-            <div className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 text-center mb-1 sm:mb-2">
+            <div className="text-xl sm:text-2xl md:text-3xl font-bold text-sky-900 text-center mb-1 sm:mb-2">
               {formatPrice(calculateDiscountedPrice())}
             </div>
-            <div className="text-base sm:text-lg line-through text-gray-500 text-center mb-1 sm:mb-2">
+            <div className="text-base sm:text-lg line-through text-sky-600 text-center mb-1 sm:mb-2">
               {formatPrice(packageData.totalPrice)}
             </div>
-            <div className="bg-red-500 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-bold text-center">
+            <div className="bg-gradient-to-r from-teal-600 to-cyan-600 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-bold text-center shadow-sm">
               Save {packageData.discountPercentage}%
             </div>
           </>
         ) : (
-          <div className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 text-center">
+          <div className="text-xl sm:text-2xl md:text-3xl font-bold text-sky-900 text-center">
             {formatPrice(packageData.totalPrice)}
           </div>
         )}
-        <div className="text-xs sm:text-sm text-gray-600 text-center mt-1 sm:mt-2">
-          per person
+        <div className="text-xs sm:text-sm text-sky-700 text-center mt-1 sm:mt-2">
+          per package
         </div>
       </div>
 
       {/* Validity Period */}
       {/* <div className="mb-4 sm:mb-6">
-        <div className="flex items-center justify-between text-xs sm:text-sm text-gray-600 mb-2">
+        <div className="flex items-center justify-between text-xs sm:text-sm text-sky-700 mb-2">
           <span>Valid From:</span>
           <span className="font-medium">{formatDate(packageData.startDate)}</span>
         </div>
-        <div className="flex items-center justify-between text-xs sm:text-sm text-gray-600">
+        <div className="flex items-center justify-between text-xs sm:text-sm text-sky-700">
           <span>Valid To:</span>
           <span className="font-medium">{formatDate(packageData.endDate)}</span>
         </div>
@@ -82,7 +82,7 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
 
       {/* Participants */}
       {/* <div className="mb-4 sm:mb-6">
-        <label className="block text-xs sm:text-sm font-semibold text-gray-800 mb-1.5 sm:mb-2">
+        <label className="block text-xs sm:text-sm font-semibold text-sky-800 mb-1.5 sm:mb-2">
           Number of Participants
         </label>
         <div className="flex items-center gap-2 sm:gap-3">
@@ -93,11 +93,11 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
               )
             }
             disabled={participants <= packageData.minPersonCount}
-            className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gray-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+            className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-sky-200 hover:bg-sky-300 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base text-sky-800 transition-colors"
           >
             -
           </button>
-          <span className="font-semibold text-gray-900 text-base sm:text-lg">{participants}</span>
+          <span className="font-semibold text-sky-900 text-base sm:text-lg">{participants}</span>
           <button
             onClick={() =>
               setParticipants(
@@ -105,11 +105,11 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
               )
             }
             disabled={participants >= packageData.maxPersonCount}
-            className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gray-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+            className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-sky-200 hover:bg-sky-300 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base text-sky-800 transition-colors"
           >
             +
           </button>
-          <span className="text-xs sm:text-sm text-gray-600 ml-1 sm:ml-2">
+          <span className="text-xs sm:text-sm text-sky-700 ml-1 sm:ml-2">
             ({packageData.minPersonCount}-{packageData.maxPersonCount})
           </span>
         </div>
@@ -117,13 +117,13 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
 
       {/* Package Features Summary */}
       {packageData.packageFeatures && packageData.packageFeatures.length > 0 && (
-        <div className="border-t border-gray-200 pt-3 sm:pt-4 mb-4 sm:mb-6">
-          <h4 className="font-semibold text-gray-800 text-sm sm:text-base mb-2 sm:mb-3">Package Includes</h4>
-          <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-600">
+        <div className="border-t border-sky-200 pt-3 sm:pt-4 mb-4 sm:mb-6">
+          <h4 className="font-semibold text-sky-800 text-sm sm:text-base mb-2 sm:mb-3">Package Includes</h4>
+          <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-sky-700">
             {packageData.packageFeatures.slice(0, 3).map((feature) => (
               <li key={feature.featureId} className="flex items-center gap-1.5 sm:gap-2">
                 <svg
-                  className="w-3 h-3 sm:w-4 sm:h-4 text-green-500 flex-shrink-0"
+                  className="w-3 h-3 sm:w-4 sm:h-4 text-teal-500 flex-shrink-0"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -137,7 +137,7 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
               </li>
             ))}
             {packageData.packageFeatures.length > 3 && (
-              <li className="text-purple-600 text-xs sm:text-sm">
+              <li className="text-sky-600 hover:text-sky-700 text-xs sm:text-sm font-medium cursor-pointer">
                 + {packageData.packageFeatures.length - 3} more features
               </li>
             )}
@@ -146,14 +146,14 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
       )}
 
       {/* Total Price */}
-      {/* <div className="border-t border-gray-200 pt-3 sm:pt-4 mb-4 sm:mb-6">
+      {/* <div className="border-t border-sky-200 pt-3 sm:pt-4 mb-4 sm:mb-6">
         <div className="flex justify-between items-center mb-1 sm:mb-2">
-          <span className="font-semibold text-gray-800 text-sm sm:text-base">Total Price:</span>
-          <span className="text-lg sm:text-xl md:text-2xl font-bold text-green-600">
+          <span className="font-semibold text-sky-800 text-sm sm:text-base">Total Price:</span>
+          <span className="text-lg sm:text-xl md:text-2xl font-bold text-teal-600">
             {formatPrice(calculateTotalPrice())}
           </span>
         </div>
-        <div className="text-xs sm:text-sm text-gray-600 text-center">
+        <div className="text-xs sm:text-sm text-sky-700 text-center">
           For {participants} participant{participants > 1 ? "s" : ""}
         </div>
       </div> */}
@@ -161,17 +161,17 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
       {/* Book Now Button */}
       <button
         onClick={handleBookNow}
-        className="w-full py-2.5 sm:py-3 md:py-4 bg-gradient-to-r from-purple-600 to-amber-600 text-white font-semibold rounded-lg sm:rounded-xl hover:from-purple-700 hover:to-amber-700 transition-all duration-300 shadow-lg hover:shadow-xl text-sm sm:text-base"
+        className="w-full py-2.5 sm:py-3 md:py-4 bg-gradient-to-r from-sky-600 to-teal-600 text-white font-semibold rounded-lg sm:rounded-xl hover:from-sky-700 hover:to-teal-700 transition-all duration-300 shadow-lg hover:shadow-xl text-sm sm:text-base"
       >
         Book Now
       </button>
 
       {/* Quick Actions */}
       <div className="flex gap-2 sm:gap-3 mt-3 sm:mt-4">
-        <button className="flex-1 py-1.5 sm:py-2 border border-gray-300 text-gray-700 rounded-lg hover:border-gray-400 transition-colors text-xs sm:text-sm">
+        <button className="flex-1 py-1.5 sm:py-2 border border-sky-300 text-sky-700 rounded-lg hover:border-sky-400 hover:bg-sky-50 transition-colors text-xs sm:text-sm">
           Save for Later
         </button>
-        <button className="flex-1 py-1.5 sm:py-2 border border-gray-300 text-gray-700 rounded-lg hover:border-gray-400 transition-colors text-xs sm:text-sm">
+        <button className="flex-1 py-1.5 sm:py-2 border border-sky-300 text-sky-700 rounded-lg hover:border-sky-400 hover:bg-sky-50 transition-colors text-xs sm:text-sm">
           Share
         </button>
       </div>

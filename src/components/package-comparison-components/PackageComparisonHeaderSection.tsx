@@ -49,18 +49,18 @@ const PackageComparisonHeaderSection: React.FC<SLTourHeroSectionProps> = ({
   };
 
   const getFallbackImage = () => {
-    return "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80";
+    return "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80";
   };
 
   if (!tour.images.length) {
     return (
-      <div className="relative h-96 bg-gradient-to-r from-amber-600 to-purple-600 flex items-center justify-center">
+      <div className="relative h-96 bg-gradient-to-r from-sky-600 to-teal-600 flex items-center justify-center">
         <div className="absolute bottom-0 left-0 right-0 p-6 text-white bg-gradient-to-t from-black/60 to-transparent">
           <div className="max-w-7xl mx-auto">
-            <h1 className="text-4xl font-bold mb-2">
+            <h1 className="text-4xl font-bold mb-2 text-center">
               {tour.tourDetails.tourName}
             </h1>
-            <p className="text-xl opacity-90">
+            <p className="text-xl opacity-90 text-center">
               {tour.tourDetails.tourDescription}
             </p>
           </div>
@@ -74,7 +74,7 @@ const PackageComparisonHeaderSection: React.FC<SLTourHeroSectionProps> = ({
   return (
     <>
       {/* Hero Section with Slider */}
-      <div className="relative h-[500px] md:h-[600px] overflow-hidden bg-gradient-to-r from-amber-600 to-purple-600">
+      <div className="relative h-[500px] md:h-[600px] overflow-hidden bg-gradient-to-r from-sky-600 to-teal-600">
         {/* Image Slider */}
         <div className="relative w-full h-full">
           {tour.images.map((image, index) => (
@@ -103,51 +103,25 @@ const PackageComparisonHeaderSection: React.FC<SLTourHeroSectionProps> = ({
           ))}
         </div>
 
-        {/* Content Overlay */}
-        <div className="absolute inset-0 flex items-end">
-          <div className="container mx-auto px-4 md:px-6 lg:px-8 pb-12">
-            <div className="max-w-4xl text-white">
-              {/* Tour Category Badge */}
-              {/* <div className="mb-4 flex flex-wrap gap-3">
-                <span className="px-4 py-2 bg-amber-500/90 backdrop-blur-sm rounded-full text-sm font-semibold">
-                  {tour.tourDetails.tourCategoryName}
-                </span>
-                <span className="px-4 py-2 bg-purple-500/90 backdrop-blur-sm rounded-full text-sm font-semibold">
-                  {tour.tourDetails.tourTypeName}
-                </span>
-                <span className="px-4 py-2 bg-blue-500/90 backdrop-blur-sm rounded-full text-sm font-semibold flex items-center gap-2">
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  {tour.tourDetails.duration} Days
-                </span>
-              </div> */}
-
+        {/* Content Overlay - CENTERED */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="container mx-auto px-4 md:px-6 lg:px-8">
+            <div className="max-w-4xl text-white mx-auto text-center">
               {/* Tour Title and Description */}
-              <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
                 {tour.tourDetails.tourName}
               </h1>
 
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 max-w-3xl mb-6">
-                <p className="text-md lg:text-xl text-gray-100 leading-relaxed mb-4">
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 max-w-3xl mb-8 mx-auto">
+                <p className="text-md lg:text-xl text-gray-100 leading-relaxed mb-6">
                   {tour.tourDetails.tourDescription}
                 </p>
 
-                {/* Tour Info */}
-                <div className="flex flex-wrap gap-4 text-sm">
-                  <div className="flex items-center gap-2">
+                {/* Tour Info - CENTERED */}
+                <div className="flex flex-wrap justify-center gap-4 text-sm">
+                  <div className="flex items-center gap-2 bg-sky-900/30 px-4 py-2 rounded-full">
                     <svg
-                      className="w-5 h-5 text-green-400"
+                      className="w-5 h-5 text-sky-300"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -170,9 +144,9 @@ const PackageComparisonHeaderSection: React.FC<SLTourHeroSectionProps> = ({
                       {tour.tourDetails.endLocation}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 bg-teal-900/30 px-4 py-2 rounded-full">
                     <svg
-                      className="w-5 h-5 text-yellow-400"
+                      className="w-5 h-5 text-teal-300"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -189,9 +163,9 @@ const PackageComparisonHeaderSection: React.FC<SLTourHeroSectionProps> = ({
                     </span>
                   </div>
                   {tour.tourDetails.statusName && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 bg-cyan-900/30 px-4 py-2 rounded-full">
                       <svg
-                        className="w-5 h-5 text-blue-400"
+                        className="w-5 h-5 text-cyan-300"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -213,7 +187,7 @@ const PackageComparisonHeaderSection: React.FC<SLTourHeroSectionProps> = ({
 
               {/* Image Counter */}
               {tour.images.length > 1 && (
-                <div className="flex items-center gap-2 px-4 py-2 bg-black/40 backdrop-blur-sm rounded-full inline-flex">
+                <div className="flex items-center justify-center gap-2 px-4 py-2 bg-black/40 backdrop-blur-sm rounded-full inline-flex">
                   <svg
                     className="w-4 h-4"
                     fill="none"
@@ -241,7 +215,7 @@ const PackageComparisonHeaderSection: React.FC<SLTourHeroSectionProps> = ({
           <div className="hidden md:flex">
             <button
               onClick={prevSlide}
-              className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
+              className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group shadow-lg"
               aria-label="Previous image"
             >
               <svg
@@ -261,7 +235,7 @@ const PackageComparisonHeaderSection: React.FC<SLTourHeroSectionProps> = ({
 
             <button
               onClick={nextSlide}
-              className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
+              className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group shadow-lg"
               aria-label="Next image"
             >
               <svg
@@ -283,15 +257,15 @@ const PackageComparisonHeaderSection: React.FC<SLTourHeroSectionProps> = ({
 
         {/* Slide Indicators */}
         {tour.images.length > 1 && (
-          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3">
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3">
             {tour.images.map((_, index) => (
               <button
                 key={index}
                 onClick={() => goToSlide(index)}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
                   index === selectedImageIndex
-                    ? "bg-amber-400 scale-125"
-                    : "bg-white/50 hover:bg-white/75"
+                    ? "bg-gradient-to-r from-sky-400 to-teal-400 scale-125 shadow-lg"
+                    : "bg-white/40 hover:bg-white/60"
                 }`}
                 aria-label={`Go to image ${index + 1}`}
               />
@@ -303,7 +277,7 @@ const PackageComparisonHeaderSection: React.FC<SLTourHeroSectionProps> = ({
         {tour.images.length > 1 && (
           <div className="absolute bottom-0 left-0 w-full h-1 bg-white/10">
             <div
-              className="h-full bg-gradient-to-r from-amber-400 to-purple-400 transition-all duration-300"
+              className="h-full bg-gradient-to-r from-sky-400 via-teal-400 to-cyan-400 transition-all duration-500"
               style={{
                 width: `${
                   ((selectedImageIndex + 1) / tour.images.length) * 100
@@ -317,15 +291,15 @@ const PackageComparisonHeaderSection: React.FC<SLTourHeroSectionProps> = ({
       {/* Image Thumbnails */}
       {tour.images.length > 1 && (
         <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-amber-500 scrollbar-track-gray-200">
+          <div className="flex gap-4 overflow-x-auto pb-4 justify-center scrollbar-thin scrollbar-thumb-sky-500 scrollbar-track-gray-200">
             {tour.images.map((image, index) => (
               <button
                 key={image.imageId}
                 onClick={() => goToSlide(index)}
                 className={`relative flex-shrink-0 w-28 h-28 rounded-lg overflow-hidden border-2 transition-all duration-300 ${
                   selectedImageIndex === index
-                    ? "border-amber-500 ring-4 ring-amber-200 scale-105"
-                    : "border-gray-300 hover:border-purple-400 hover:scale-105"
+                    ? "border-sky-500 ring-4 ring-sky-200 scale-105 shadow-lg"
+                    : "border-gray-300 hover:border-teal-400 hover:scale-105"
                 }`}
               >
                 <img
@@ -338,7 +312,7 @@ const PackageComparisonHeaderSection: React.FC<SLTourHeroSectionProps> = ({
                   }}
                 />
                 {selectedImageIndex === index && (
-                  <div className="absolute inset-0 bg-amber-500/20 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-sky-500/20 flex items-center justify-center">
                     <svg
                       className="w-8 h-8 text-white"
                       fill="currentColor"

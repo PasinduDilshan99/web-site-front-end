@@ -1,7 +1,10 @@
 // app/profile/requested-tours/page.tsx
 "use client"
+import { useAuth } from '@/context/AuthContext';
 import { UserProfileAPIService } from '@/services/userProfileAPIService';
 import { RequestedTour } from '@/types/requested-tours';
+import { USER_PROFILE_REQUESTED_TOURS_VIEW_PRIVILEGE } from '@/utils/privileges';
+import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 export default function RequestedToursPage() {
@@ -10,6 +13,17 @@ export default function RequestedToursPage() {
   const [error, setError] = useState<string | null>(null);
   const [expandedBooking, setExpandedBooking] = useState<number | null>(null);
   const apiService = new UserProfileAPIService();
+  const {user} = useAuth()
+  const router = useRouter()
+
+    useEffect(() => {
+      if (
+        user &&
+        !user.privileges.includes(USER_PROFILE_REQUESTED_TOURS_VIEW_PRIVILEGE)
+      ) {
+        router.push("/profile");
+      }
+    }, [user, router]);
 
   useEffect(() => {
     loadRequestedTours();
@@ -40,7 +54,7 @@ export default function RequestedToursPage() {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
-      month: 'long',
+      month: 'short',
       day: 'numeric'
     });
   };
@@ -48,7 +62,7 @@ export default function RequestedToursPage() {
   const formatDateTime = (dateTimeString: string) => {
     return new Date(dateTimeString).toLocaleDateString('en-US', {
       year: 'numeric',
-      month: 'long',
+      month: 'short',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
@@ -71,7 +85,7 @@ export default function RequestedToursPage() {
       case 'MEDIUM':
         return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       case 'LOW':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-emerald-100 text-emerald-800 border-emerald-200';
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200';
     }
@@ -80,13 +94,13 @@ export default function RequestedToursPage() {
   const getApprovalStatusColor = (status: string) => {
     switch (status) {
       case 'APPROVED':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-emerald-100 text-emerald-800 border-emerald-200';
       case 'PENDING_APPROVAL':
-        return 'bg-amber-100 text-amber-800 border-amber-200';
+        return 'bg-sky-100 text-sky-800 border-sky-200';
       case 'REJECTED':
         return 'bg-red-100 text-red-800 border-red-200';
       case 'UNDER_REVIEW':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-cyan-100 text-cyan-800 border-cyan-200';
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200';
     }
@@ -95,13 +109,13 @@ export default function RequestedToursPage() {
   const getRequestStatusColor = (status: string) => {
     switch (status) {
       case 'AWAITING_APPROVAL':
-        return 'bg-amber-100 text-amber-800 border-amber-200';
+        return 'bg-sky-100 text-sky-800 border-sky-200';
       case 'PROCESSING':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-cyan-100 text-cyan-800 border-cyan-200';
       case 'DOCUMENTS_REQUIRED':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'bg-amber-100 text-amber-800 border-amber-200';
       case 'INITIATED':
-        return 'bg-purple-100 text-purple-800 border-purple-200';
+        return 'bg-teal-100 text-teal-800 border-teal-200';
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200';
     }
@@ -110,13 +124,13 @@ export default function RequestedToursPage() {
   const getPaymentStatusColor = (status: string) => {
     switch (status) {
       case 'COMPLETED':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-emerald-100 text-emerald-800 border-emerald-200';
       case 'PENDING':
-        return 'bg-amber-100 text-amber-800 border-amber-200';
+        return 'bg-sky-100 text-sky-800 border-sky-200';
       case 'FAILED':
         return 'bg-red-100 text-red-800 border-red-200';
       case 'PARTIAL':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-cyan-100 text-cyan-800 border-cyan-200';
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200';
     }
@@ -125,13 +139,13 @@ export default function RequestedToursPage() {
   const getDocumentStatusColor = (status: string) => {
     switch (status) {
       case 'COMPLETE':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-emerald-100 text-emerald-800 border-emerald-200';
       case 'PENDING_VERIFICATION':
-        return 'bg-amber-100 text-amber-800 border-amber-200';
+        return 'bg-sky-100 text-sky-800 border-sky-200';
       case 'REJECTED':
         return 'bg-red-100 text-red-800 border-red-200';
       case 'UPLOADED':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-cyan-100 text-cyan-800 border-cyan-200';
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200';
     }
@@ -146,19 +160,17 @@ export default function RequestedToursPage() {
   };
 
   const getDaysColor = (days: number) => {
-    if (days < 0) return 'text-red-600';
-    if (days <= 7) return 'text-red-600';
-    if (days <= 14) return 'text-orange-600';
-    if (days <= 30) return 'text-yellow-600';
-    return 'text-green-600';
+    if (days < 0) return 'text-red-600 font-semibold';
+    if (days <= 7) return 'text-red-600 font-semibold';
+    if (days <= 14) return 'text-orange-600 font-semibold';
+    if (days <= 30) return 'text-amber-600 font-semibold';
+    return 'text-emerald-600 font-semibold';
   };
 
   const handleCancelRequest = async (bookingId: number) => {
     if (window.confirm('Are you sure you want to cancel this tour request?')) {
       try {
-        // Implement cancel request API call here
         console.log('Cancelling booking:', bookingId);
-        // Refresh the list after cancellation
         await loadRequestedTours();
       } catch (error) {
         console.error('Failed to cancel request:', error);
@@ -168,19 +180,18 @@ export default function RequestedToursPage() {
   };
 
   const handleSubmitDocument = (bookingId: number) => {
-    // Implement document submission logic
     alert(`Submit documents for booking ${bookingId}`);
   };
 
   if (loading) {
     return (
-      <div className="flex-1 p-4 md:p-6 lg:p-8 bg-gradient-to-br from-amber-25 to-purple-25 min-h-screen">
-        <div className="max-w-6xl mx-auto">
+      <div className="flex-1 p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-sky-25 to-teal-25 min-h-screen">
+        <div className="max-w-7xl mx-auto">
           <div className="animate-pulse">
-            <div className="h-8 bg-gradient-to-r from-amber-200 to-purple-200 rounded w-1/4 mb-6"></div>
+            <div className="h-8 bg-gradient-to-r from-sky-200 to-teal-200 rounded w-1/4 mb-6"></div>
             <div className="space-y-6">
               {[...Array(2)].map((_, i) => (
-                <div key={i} className="h-64 bg-gradient-to-r from-amber-100 to-purple-100 rounded-2xl"></div>
+                <div key={i} className="h-64 bg-gradient-to-r from-sky-100 to-teal-100 rounded-2xl"></div>
               ))}
             </div>
           </div>
@@ -191,15 +202,15 @@ export default function RequestedToursPage() {
 
   if (error) {
     return (
-      <div className="flex-1 p-4 md:p-6 lg:p-8 bg-gradient-to-br from-amber-25 to-purple-25 min-h-screen">
+      <div className="flex-1 p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-sky-25 to-teal-25 min-h-screen">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-lg border border-amber-200 p-8 text-center">
-            <div className="text-red-500 text-6xl mb-4">🚫</div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">Unable to Load Requested Tours</h3>
-            <p className="text-gray-600 mb-6">{error}</p>
+          <div className="bg-white rounded-2xl shadow-xl border border-sky-200 p-6 md:p-8 text-center">
+            <div className="text-red-500 text-5xl md:text-6xl mb-4">🚫</div>
+            <h3 className="text-lg md:text-xl font-semibold text-gray-800 mb-2">Unable to Load Requested Tours</h3>
+            <p className="text-gray-600 mb-6 text-sm md:text-base">{error}</p>
             <button
               onClick={loadRequestedTours}
-              className="px-6 py-3 bg-gradient-to-r from-amber-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all duration-300"
+              className="px-5 py-2.5 md:px-6 md:py-3 bg-gradient-to-r from-sky-500 to-teal-600 text-white rounded-lg hover:shadow-lg transition-all duration-300 text-sm md:text-base"
             >
               Try Again
             </button>
@@ -211,13 +222,16 @@ export default function RequestedToursPage() {
 
   if (requestedTours.length === 0) {
     return (
-      <div className="flex-1 p-4 md:p-6 lg:p-8 bg-gradient-to-br from-amber-25 to-purple-25 min-h-screen">
+      <div className="flex-1 p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-sky-25 to-teal-25 min-h-screen">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-lg border border-amber-200 p-8 text-center">
-            <div className="text-amber-400 text-6xl mb-4">📋</div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">No Tour Requests</h3>
-            <p className="text-gray-600 mb-6">You havent requested any tours yet. Start planning your next adventure!</p>
-            <button className="px-6 py-3 bg-gradient-to-r from-amber-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all duration-300">
+          <div className="bg-white rounded-2xl shadow-xl border border-sky-200 p-6 md:p-8 text-center">
+            <div className="text-sky-400 text-5xl md:text-6xl mb-4">📋</div>
+            <h3 className="text-lg md:text-xl font-semibold text-gray-800 mb-2">No Tour Requests</h3>
+            <p className="text-gray-600 mb-6 text-sm md:text-base">You haven&apos;t requested any tours yet. Start planning your next adventure!</p>
+            <button 
+              onClick={() => router.push('/tours')}
+              className="px-5 py-2.5 md:px-6 md:py-3 bg-gradient-to-r from-sky-500 to-teal-600 text-white rounded-lg hover:shadow-lg transition-all duration-300 text-sm md:text-base"
+            >
               Browse Tours
             </button>
           </div>
@@ -227,61 +241,88 @@ export default function RequestedToursPage() {
   }
 
   return (
-    <div className="flex-1 p-4 md:p-6 lg:p-8 bg-gradient-to-br from-amber-25 to-purple-25 min-h-screen">
-      <div className="max-w-6xl mx-auto">
+    <div className="flex-1 p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-sky-25 to-teal-25 min-h-screen">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-amber-600 to-purple-600 bg-clip-text text-transparent">
+        <div className="mb-6 md:mb-8">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-sky-600 to-teal-600 bg-clip-text text-transparent">
             Requested Tours
           </h1>
-          <p className="text-gray-600 mt-2">Your tour requests and booking status</p>
+          <p className="text-gray-600 mt-2 text-sm md:text-base">Your tour requests and booking status</p>
         </div>
 
-        {/* Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white rounded-2xl shadow-lg border border-amber-200 p-4 text-center">
-            <div className="text-2xl font-bold text-amber-600">{requestedTours.length}</div>
-            <div className="text-sm text-gray-600">Total Requests</div>
+        {/* Statistics - Responsive Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
+          <div className="bg-white rounded-xl md:rounded-2xl shadow-lg border border-sky-200 p-3 md:p-4 text-center">
+            <div className="text-xl md:text-2xl font-bold text-sky-600">{requestedTours.length}</div>
+            <div className="text-xs md:text-sm text-gray-600 mt-1">Total Requests</div>
           </div>
-          <div className="bg-white rounded-2xl shadow-lg border border-purple-200 p-4 text-center">
-            <div className="text-2xl font-bold text-purple-600">
+          <div className="bg-white rounded-xl md:rounded-2xl shadow-lg border border-teal-200 p-3 md:p-4 text-center">
+            <div className="text-xl md:text-2xl font-bold text-teal-600">
               {requestedTours.filter(t => t.approvalStatus === 'PENDING_APPROVAL').length}
             </div>
-            <div className="text-sm text-gray-600">Pending Approval</div>
+            <div className="text-xs md:text-sm text-gray-600 mt-1">Pending Approval</div>
           </div>
-          <div className="bg-white rounded-2xl shadow-lg border border-red-200 p-4 text-center">
-            <div className="text-2xl font-bold text-red-600">
+          <div className="bg-white rounded-xl md:rounded-2xl shadow-lg border border-red-200 p-3 md:p-4 text-center">
+            <div className="text-xl md:text-2xl font-bold text-red-600">
               {requestedTours.filter(t => t.requestUrgency === 'URGENT').length}
             </div>
-            <div className="text-sm text-gray-600">Urgent Requests</div>
+            <div className="text-xs md:text-sm text-gray-600 mt-1">Urgent Requests</div>
           </div>
-          <div className="bg-white rounded-2xl shadow-lg border border-blue-200 p-4 text-center">
-            <div className="text-2xl font-bold text-blue-600">
+          <div className="bg-white rounded-xl md:rounded-2xl shadow-lg border border-cyan-200 p-3 md:p-4 text-center">
+            <div className="text-xl md:text-2xl font-bold text-cyan-600">
               {formatCurrency(requestedTours.reduce((sum, tour) => sum + tour.finalAmount, 0))}
             </div>
-            <div className="text-sm text-gray-600">Total Amount</div>
+            <div className="text-xs md:text-sm text-gray-600 mt-1">Total Amount</div>
           </div>
         </div>
 
         {/* Requested Tours List */}
-        <div className="space-y-6">
+        <div className="space-y-4 md:space-y-6">
           {requestedTours.map((tour) => (
-            <div key={tour.bookingId} className="bg-white rounded-2xl shadow-lg border border-amber-200 overflow-hidden">
-              {/* Tour Header */}
-              <div className="bg-gradient-to-r from-amber-500 to-purple-600 p-6 text-white">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <h2 className="text-xl font-bold">{tour.tourName}</h2>
-                      <span className={`px-3 py-1 rounded-full text-sm font-semibold border ${getRequestStatusColor(tour.requestStatus)}`}>
+            <div key={tour.bookingId} className="bg-white rounded-xl md:rounded-2xl shadow-lg border border-sky-200 overflow-hidden">
+              {/* Tour Header - Responsive Layout */}
+              <div className="bg-gradient-to-r from-sky-700 to-teal-600 p-4 md:p-6 text-white">
+                <div className="flex flex-col md:flex-row justify-between items-start gap-3 md:gap-0">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-2 md:mb-3">
+                      <h2 className="text-base md:text-lg lg:text-xl font-bold truncate">{tour.tourName}</h2>
+                      <span className={`px-2 py-1 rounded-full text-xs font-semibold border ${getRequestStatusColor(tour.requestStatus)}`}>
                         {tour.requestStatus.replace('_', ' ')}
                       </span>
-                      <span className={`px-3 py-1 rounded-full text-sm font-semibold border ${getApprovalStatusColor(tour.approvalStatus)}`}>
+                      <span className={`px-2 py-1 rounded-full text-xs font-semibold border ${getApprovalStatusColor(tour.approvalStatus)}`}>
                         {tour.approvalStatus.replace('_', ' ')}
                       </span>
                     </div>
-                    <p className="text-amber-100 mb-2">{tour.tourDescription}</p>
-                    <div className="flex flex-wrap gap-4 text-sm">
+                    <p className="text-sky-100 text-sm md:text-base mb-3 line-clamp-2">{tour.tourDescription}</p>
+                    
+                    {/* Mobile: Stacked info */}
+                    <div className="space-y-2 md:hidden">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-1">
+                          <span>📅</span>
+                          <span className="text-xs">{formatDate(tour.travelStartDate)}</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <span>👥</span>
+                          <span className="text-xs">{tour.totalPersons} travelers</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-1">
+                          <span>💰</span>
+                          <span className="text-xs">{formatCurrency(tour.finalAmount)}</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <span className={`text-xs ${getDaysColor(tour.daysUntilTravel)}`}>
+                            {tour.daysUntilTravel > 0 ? `${tour.daysUntilTravel}d` : `${Math.abs(tour.daysUntilTravel)}d ago`}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Desktop: Horizontal info */}
+                    <div className="hidden md:flex flex-wrap gap-4 text-sm">
                       <div className="flex items-center space-x-1">
                         <span>📅</span>
                         <span>{formatDate(tour.travelStartDate)} - {formatDate(tour.travelEndDate)}</span>
@@ -302,22 +343,18 @@ export default function RequestedToursPage() {
                       </div>
                       <div className="flex items-center space-x-1">
                         <span>🏷️</span>
-                        <span className={`px-2 py-1 rounded-full border ${getUrgencyColor(tour.requestUrgency)}`}>
+                        <span className={`px-2 py-1 rounded-full text-xs border ${getUrgencyColor(tour.requestUrgency)}`}>
                           {tour.requestUrgency}
                         </span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <span>🗓️</span>
-                        <span>{tour.requestAge}</span>
                       </div>
                     </div>
                   </div>
                   <button
                     onClick={() => toggleBookingExpansion(tour.bookingId)}
-                    className="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition-colors"
+                    className="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition-colors self-start"
                   >
                     <svg 
-                      className={`w-6 h-6 transform transition-transform ${
+                      className={`w-5 h-5 md:w-6 md:h-6 transform transition-transform ${
                         expandedBooking === tour.bookingId ? 'rotate-180' : ''
                       }`}
                       fill="none" 
@@ -332,53 +369,53 @@ export default function RequestedToursPage() {
 
               {/* Expanded Details */}
               {expandedBooking === tour.bookingId && (
-                <div className="p-6 space-y-6">
-                  {/* Status and Action Bar */}
-                  <div className="flex flex-wrap gap-4 items-center justify-between p-4 bg-gray-50 rounded-xl">
-                    <div className="flex flex-wrap gap-4">
+                <div className="p-4 md:p-6 space-y-4 md:space-y-6">
+                  {/* Status and Action Bar - Responsive */}
+                  <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between p-4 bg-sky-50 rounded-xl border border-sky-100">
+                    <div className="space-y-2 sm:space-y-0 sm:space-x-4 flex flex-wrap">
                       <div>
-                        <span className="text-sm text-gray-600 block mb-1">Booking Reference:</span>
-                        <span className="font-semibold text-gray-800">{tour.bookingReference}</span>
+                        <span className="text-xs text-gray-600 block mb-1">Booking Ref:</span>
+                        <span className="font-semibold text-gray-800 text-sm md:text-base">{tour.bookingReference}</span>
                       </div>
                       <div>
-                        <span className="text-sm text-gray-600 block mb-1">Requested On:</span>
-                        <span className="font-semibold text-gray-800">{formatDate(tour.bookingDate)}</span>
+                        <span className="text-xs text-gray-600 block mb-1">Requested:</span>
+                        <span className="font-semibold text-gray-800 text-sm md:text-base">{formatDate(tour.bookingDate)}</span>
                       </div>
                       <div>
-                        <span className="text-sm text-gray-600 block mb-1">Travel Dates:</span>
-                        <span className="font-semibold text-gray-800">
-                          {formatDate(tour.travelStartDate)} to {formatDate(tour.travelEndDate)}
+                        <span className="text-xs text-gray-600 block mb-1">Travel Dates:</span>
+                        <span className="font-semibold text-gray-800 text-sm md:text-base">
+                          {formatDate(tour.travelStartDate)} - {formatDate(tour.travelEndDate)}
                         </span>
                       </div>
                     </div>
-                    <div className="flex gap-3">
+                    <div className="flex gap-2 mt-3 sm:mt-0">
                       {tour.documents.some(doc => doc.requiredForApproval && doc.documentStatus === 'PENDING_VERIFICATION') && (
                         <button
                           onClick={() => handleSubmitDocument(tour.bookingId)}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                          className="px-3 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition-colors text-sm"
                         >
-                          Upload Documents
+                          Upload Docs
                         </button>
                       )}
                       {tour.approvalStatus === 'PENDING_APPROVAL' && (
                         <button
                           onClick={() => handleCancelRequest(tour.bookingId)}
-                          className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                          className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
                         >
-                          Cancel Request
+                          Cancel
                         </button>
                       )}
                     </div>
                   </div>
 
-                  {/* Package & Payment Info */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
-                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center">
-                        <span className="text-amber-600 mr-2">📦</span>
+                  {/* Package & Payment Info - Responsive Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                    <div className="bg-sky-50 rounded-xl p-4 border border-sky-200">
+                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center text-sm md:text-base">
+                        <span className="text-sky-600 mr-2">📦</span>
                         Package Details
                       </h3>
-                      <div className="space-y-2 text-sm">
+                      <div className="space-y-2 text-xs md:text-sm">
                         <div className="flex justify-between">
                           <span className="text-gray-600">Package:</span>
                           <span className="font-semibold">{tour.packageName}</span>
@@ -393,24 +430,24 @@ export default function RequestedToursPage() {
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600">Discount:</span>
-                          <span className="font-semibold text-green-600">{tour.discountPercentage}%</span>
+                          <span className="font-semibold text-emerald-600">{tour.discountPercentage}%</span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="bg-purple-50 rounded-xl p-4 border border-purple-200">
-                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center">
-                        <span className="text-purple-600 mr-2">🧾</span>
+                    <div className="bg-teal-50 rounded-xl p-4 border border-teal-200">
+                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center text-sm md:text-base">
+                        <span className="text-teal-600 mr-2">🧾</span>
                         Payment Summary
                       </h3>
-                      <div className="space-y-2 text-sm">
+                      <div className="space-y-2 text-xs md:text-sm">
                         <div className="flex justify-between">
                           <span className="text-gray-600">Total Amount:</span>
                           <span className="font-semibold">{formatCurrency(tour.totalAmount)}</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600">Discount:</span>
-                          <span className="font-semibold text-green-600">-{formatCurrency(tour.discountAmount)}</span>
+                          <span className="font-semibold text-emerald-600">-{formatCurrency(tour.discountAmount)}</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600">Tax & Insurance:</span>
@@ -418,38 +455,38 @@ export default function RequestedToursPage() {
                         </div>
                         <div className="flex justify-between border-t border-gray-200 pt-2">
                           <span className="text-gray-800 font-semibold">Final Amount:</span>
-                          <span className="font-bold text-purple-600">{formatCurrency(tour.finalAmount)}</span>
+                          <span className="font-bold text-teal-600">{formatCurrency(tour.finalAmount)}</span>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Participants */}
+                  {/* Participants - Responsive Grid */}
                   <div>
-                    <h3 className="font-semibold text-gray-800 mb-3 flex items-center">
-                      <span className="text-blue-600 mr-2">👥</span>
+                    <h3 className="font-semibold text-gray-800 mb-3 flex items-center text-sm md:text-base">
+                      <span className="text-cyan-600 mr-2">👥</span>
                       Participants ({tour.participants.length})
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                       {tour.participants.map((participant, index) => (
-                        <div key={index} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <div key={index} className="bg-gray-50 rounded-lg p-3 md:p-4 border border-gray-200">
                           <div className="flex justify-between items-start mb-2">
-                            <h4 className="font-semibold text-gray-800">
+                            <h4 className="font-semibold text-gray-800 text-sm md:text-base truncate">
                               {participant.firstName} {participant.lastName}
                             </h4>
                             <span className={`px-2 py-1 rounded-full text-xs border ${getDocumentStatusColor(participant.documentStatus)}`}>
                               {participant.documentStatus}
                             </span>
                           </div>
-                          <div className="space-y-1 text-sm text-gray-600">
+                          <div className="space-y-1 text-xs md:text-sm text-gray-600">
                             <div>Age: {participant.age} • {participant.gender}</div>
                             <div>Passport: {participant.passportNumber}</div>
                             <div>Nationality: {participant.nationality}</div>
                             {participant.allergies !== 'None' && (
-                              <div className="text-amber-600">Allergies: {participant.allergies}</div>
+                              <div className="text-amber-600 text-xs">Allergies: {participant.allergies}</div>
                             )}
                             {participant.emergencyContactName && (
-                              <div className="text-sm">
+                              <div className="text-xs">
                                 Emergency: {participant.emergencyContactName} ({participant.emergencyContactRelationship})
                               </div>
                             )}
@@ -459,37 +496,48 @@ export default function RequestedToursPage() {
                     </div>
                   </div>
 
-                  {/* Activities */}
+                  {/* Activities - Responsive */}
                   {tour.activities.length > 0 && (
                     <div>
-                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center">
-                        <span className="text-green-600 mr-2">🎯</span>
+                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center text-sm md:text-base">
+                        <span className="text-emerald-600 mr-2">🎯</span>
                         Requested Activities ({tour.activities.length})
                       </h3>
                       <div className="space-y-3">
                         {tour.activities.map((activity, index) => (
-                          <div key={index} className="bg-green-50 rounded-lg p-4 border border-green-200">
-                            <div className="flex justify-between items-start mb-2">
-                              <div>
-                                <h4 className="font-semibold text-gray-800">{activity.activityName}</h4>
-                                <p className="text-gray-600 text-sm mb-1">{activity.activityDescription}</p>
+                          <div key={index} className="bg-emerald-50 rounded-lg p-3 md:p-4 border border-emerald-200">
+                            <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2 mb-2">
+                              <div className="flex-1 min-w-0">
+                                <h4 className="font-semibold text-gray-800 text-sm md:text-base">{activity.activityName}</h4>
+                                <p className="text-gray-600 text-xs md:text-sm mb-1 line-clamp-2">{activity.activityDescription}</p>
                               </div>
-                              <div className="text-right">
-                                <div className="font-bold text-green-600">{formatCurrency(activity.totalPrice)}</div>
+                              <div className="flex justify-between md:flex-col md:items-end gap-2">
+                                <div className="font-bold text-emerald-600 text-sm md:text-base">{formatCurrency(activity.totalPrice)}</div>
                                 <span className={`px-2 py-1 rounded-full text-xs border ${getDocumentStatusColor(activity.activityStatus)}`}>
                                   {activity.activityStatus}
                                 </span>
                               </div>
                             </div>
-                            <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                              <div>📅 {formatDate(activity.activityDate)}</div>
-                              <div>⏰ {formatTime(activity.startTime)} - {formatTime(activity.endTime)}</div>
-                              <div>🕒 {activity.durationHours}h</div>
-                              <div>📍 {activity.destinationName}</div>
-                              <div>👥 {activity.numberOfParticipants} participants</div>
-                              <div className={`px-2 py-1 rounded-full border ${
+                            <div className="flex flex-wrap gap-2 md:gap-3 text-xs md:text-sm text-gray-600">
+                              <div className="flex items-center gap-1">
+                                <span>📅</span>
+                                <span>{formatDate(activity.activityDate)}</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <span>⏰</span>
+                                <span>{formatTime(activity.startTime)} - {formatTime(activity.endTime)}</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <span>🕒</span>
+                                <span>{activity.durationHours}h</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <span>📍</span>
+                                <span>{activity.destinationName}</span>
+                              </div>
+                              <div className={`px-2 py-1 rounded-full border text-xs ${
                                 activity.availabilityStatus === 'AVAILABLE' 
-                                  ? 'bg-green-100 text-green-800 border-green-200' 
+                                  ? 'bg-emerald-100 text-emerald-800 border-emerald-200' 
                                   : 'bg-red-100 text-red-800 border-red-200'
                               }`}>
                                 {activity.availabilityStatus}
@@ -501,92 +549,86 @@ export default function RequestedToursPage() {
                     </div>
                   )}
 
-                  {/* Payments */}
+                  {/* Payments - Responsive */}
                   {tour.payments.length > 0 && (
                     <div>
-                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center">
+                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center text-sm md:text-base">
                         <span className="text-purple-600 mr-2">💳</span>
                         Payment Details
                       </h3>
                       <div className="space-y-3">
                         {tour.payments.map((payment, index) => (
-                          <div key={index} className="bg-purple-50 rounded-lg p-4 border border-purple-200">
-                            <div className="flex justify-between items-start mb-2">
-                              <div>
-                                <h4 className="font-semibold text-gray-800">{payment.paymentReference}</h4>
-                                <p className="text-gray-600 text-sm">
+                          <div key={index} className="bg-purple-50 rounded-lg p-3 md:p-4 border border-purple-200">
+                            <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2 mb-2">
+                              <div className="flex-1 min-w-0">
+                                <h4 className="font-semibold text-gray-800 text-sm md:text-base">{payment.paymentReference}</h4>
+                                <p className="text-gray-600 text-xs md:text-sm">
                                   {payment.paymentMethod.replace('_', ' ')} • 
                                   Installment {payment.installmentNumber}/{payment.totalInstallments}
                                 </p>
                               </div>
-                              <div className="text-right">
-                                <div className="font-bold text-purple-600">{formatCurrency(payment.amount)}</div>
+                              <div className="flex justify-between md:flex-col md:items-end gap-2">
+                                <div className="font-bold text-purple-600 text-sm md:text-base">{formatCurrency(payment.amount)}</div>
                                 <span className={`px-2 py-1 rounded-full text-xs border ${getPaymentStatusColor(payment.paymentStatus)}`}>
                                   {payment.paymentStatus}
                                 </span>
                               </div>
                             </div>
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 text-xs md:text-sm text-gray-600">
                               {payment.paymentDate && (
                                 <div>
-                                  <span className="text-gray-500">Paid:</span>
-                                  <div className="font-medium">{formatDateTime(payment.paymentDate)}</div>
+                                  <span className="text-gray-500 block mb-1">Paid:</span>
+                                  <div className="font-medium truncate">{formatDateTime(payment.paymentDate)}</div>
                                 </div>
                               )}
                               <div>
-                                <span className="text-gray-500">Due Date:</span>
+                                <span className="text-gray-500 block mb-1">Due:</span>
                                 <div className="font-medium">{formatDate(payment.dueDate)}</div>
                               </div>
                               <div>
-                                <span className="text-gray-500">Invoice:</span>
-                                <div className="font-medium">{payment.invoiceNumber}</div>
+                                <span className="text-gray-500 block mb-1">Invoice:</span>
+                                <div className="font-medium truncate">{payment.invoiceNumber}</div>
                               </div>
                               <div>
-                                <span className="text-gray-500">Priority:</span>
+                                <span className="text-gray-500 block mb-1">Priority:</span>
                                 <div className={`px-2 py-1 rounded-full text-xs inline-block ${getUrgencyColor(payment.paymentPriority)}`}>
                                   {payment.paymentPriority.replace('_', ' ')}
                                 </div>
                               </div>
                             </div>
-                            {payment.depositRequired && (
-                              <div className="mt-3 p-2 bg-amber-50 border border-amber-200 rounded text-sm">
-                                <span className="text-amber-700 font-medium">Deposit Required:</span>
-                                <span className="ml-2">{formatCurrency(payment.depositAmount)}</span>
-                              </div>
-                            )}
                           </div>
                         ))}
                       </div>
                     </div>
                   )}
 
-                  {/* Documents */}
+                  {/* Documents - Responsive Grid */}
                   {tour.documents.length > 0 && (
                     <div>
-                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center">
+                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center text-sm md:text-base">
                         <span className="text-amber-600 mr-2">📄</span>
                         Documents ({tour.documents.length})
                       </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-3">
                         {tour.documents.map((document, index) => (
                           <div 
                             key={index} 
-                            className="bg-amber-50 rounded-lg p-4 border border-amber-200 hover:bg-amber-100 transition-colors cursor-pointer"
+                            className="bg-amber-50 rounded-lg p-3 md:p-4 border border-amber-200 hover:bg-amber-100 transition-colors cursor-pointer"
                             onClick={() => downloadDocument(document.documentUrl, document.documentName)}
                           >
                             <div className="flex justify-between items-start mb-2">
-                              <div className="flex-1">
-                                <h4 className="font-semibold text-gray-800 truncate">{document.documentName}</h4>
-                                <p className="text-gray-600 text-sm">{document.documentType}</p>
+                              <div className="flex-1 min-w-0">
+                                <h4 className="font-semibold text-gray-800 text-sm truncate">{document.documentName}</h4>
+                                <p className="text-gray-600 text-xs">{document.documentType}</p>
                               </div>
                               <span className={`px-2 py-1 rounded-full text-xs border ${getDocumentStatusColor(document.documentStatus)}`}>
                                 {document.documentStatus.replace('_', ' ')}
                               </span>
                             </div>
-                            <div className="flex justify-between items-center text-sm text-gray-500">
+                            <div className="flex justify-between items-center text-xs text-gray-500">
                               <span>{(document.fileSize / 1024).toFixed(1)} KB</span>
                               {document.requiredForApproval && (
-                                <span className="text-red-600 font-medium">Required for Approval</span>
+                                <span className="text-red-600 font-medium text-xs">Required</span>
                               )}
                             </div>
                           </div>
@@ -596,26 +638,26 @@ export default function RequestedToursPage() {
                   )}
 
                   {/* Contact Information */}
-                  <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
-                    <h3 className="font-semibold text-gray-800 mb-3 flex items-center">
-                      <span className="text-blue-600 mr-2">📞</span>
+                  <div className="bg-cyan-50 rounded-xl p-4 border border-cyan-200">
+                    <h3 className="font-semibold text-gray-800 mb-3 flex items-center text-sm md:text-base">
+                      <span className="text-cyan-600 mr-2">📞</span>
                       Contact Information
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 text-xs md:text-sm">
                       <div>
-                        <span className="text-gray-600">Full Name:</span>
-                        <div className="font-semibold text-gray-800">{tour.userFullName}</div>
+                        <span className="text-gray-600 block mb-1">Full Name:</span>
+                        <div className="font-semibold text-gray-800 truncate">{tour.userFullName}</div>
                       </div>
                       <div>
-                        <span className="text-gray-600">Email:</span>
-                        <div className="font-semibold text-gray-800">{tour.email}</div>
+                        <span className="text-gray-600 block mb-1">Email:</span>
+                        <div className="font-semibold text-gray-800 truncate">{tour.email}</div>
                       </div>
                       <div>
-                        <span className="text-gray-600">Mobile:</span>
+                        <span className="text-gray-600 block mb-1">Mobile:</span>
                         <div className="font-semibold text-gray-800">{tour.mobileNumber1}</div>
                       </div>
                       <div>
-                        <span className="text-gray-600">Username:</span>
+                        <span className="text-gray-600 block mb-1">Username:</span>
                         <div className="font-semibold text-gray-800">{tour.username}</div>
                       </div>
                     </div>

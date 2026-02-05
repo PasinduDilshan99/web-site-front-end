@@ -5,6 +5,7 @@ import { NavBarItem } from "@/types/nav-bar-types";
 import { User } from "@/context/AuthContext";
 import { useAuth } from "@/context/AuthContext";
 import MobileMenuItem from "./MobileMenuItem";
+import Image from "next/image";
 
 interface ScrolledMobileNavProps {
   visibleNavBarItems: NavBarItem[];
@@ -33,9 +34,7 @@ const ScrolledMobileNav: React.FC<ScrolledMobileNavProps> = ({
   return (
     <div
       className={`lg:hidden fixed left-0 right-0 top-14 z-40 overflow-hidden transition-all duration-300 ease-in-out ${
-        isScrolledMenuOpen
-          ? "max-h-screen opacity-100"
-          : "max-h-0 opacity-0"
+        isScrolledMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
       }`}
     >
       <div
@@ -64,26 +63,38 @@ const ScrolledMobileNav: React.FC<ScrolledMobileNavProps> = ({
           >
             {user ? (
               <>
-                <div className="flex items-center space-x-2 px-3 py-2 mb-2">
+                <div className="flex items-center space-x-3 px-4 py-3 mb-2">
+                  {/* Replace UserAvatar with custom implementation */}
                   <div
-                    className="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden border-2"
+                    className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden"
                     style={{
-                      background:
-                        "linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%)",
-                      borderColor: "rgba(255, 255, 255, 0.3)",
+                      background: user?.imageUrl
+                        ? "none"
+                        : "linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%)",
+                      border: "2px solid rgba(14, 165, 233, 0.3)",
                     }}
                   >
-                    <span className="text-white font-bold text-sm">
-                      {user.firstName.charAt(0).toUpperCase()}
-                      {user.lastName.charAt(0).toUpperCase()}
-                    </span>
+                    {user?.imageUrl ? (
+                      <Image
+                        alt="profile pic"
+                        src={user.imageUrl}
+                        width={400}
+                        height={400}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="font-bold text-lg text-white">
+                        {user.firstName.charAt(0).toUpperCase()}
+                        {user.lastName.charAt(0).toUpperCase()}
+                      </span>
+                    )}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div
-                      style={{ color: "#075985" }}
-                      className="font-medium text-sm truncate"
-                    >
+                  <div>
+                    <div style={{ color: "#075985" }} className="font-medium">
                       {`${user.firstName} ${user.lastName}`}
+                    </div>
+                    <div style={{ color: "#0369a1" }} className="text-sm">
+                      {user.email}
                     </div>
                   </div>
                 </div>

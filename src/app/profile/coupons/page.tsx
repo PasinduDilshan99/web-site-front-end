@@ -1,7 +1,10 @@
 // app/profile/coupons/page.tsx
 "use client"
+import { useAuth } from '@/context/AuthContext';
 import { UserProfileAPIService } from '@/services/userProfileAPIService';
 import { CouponData } from '@/types/coupon';
+import { USER_PROFILE_COUPONS_VIEW_PRIVILEGE } from '@/utils/privileges';
+import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 export default function CouponsPage() {
@@ -10,6 +13,17 @@ export default function CouponsPage() {
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'ALL' | 'ACTIVE' | 'EXPIRED' | 'USED'>('ALL');
   const apiService = new UserProfileAPIService();
+  const router = useRouter();
+  const {user} = useAuth()
+
+  useEffect(() => {
+    if (
+      user &&
+      !user.privileges.includes(USER_PROFILE_COUPONS_VIEW_PRIVILEGE)
+    ) {
+      router.push("/profile");
+    }
+  }, [user, router]);
 
   useEffect(() => {
     loadCouponsData();
@@ -48,11 +62,11 @@ export default function CouponsPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'ACTIVE':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-emerald-50 text-emerald-700 border-emerald-200';
       case 'EXPIRED':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'bg-gray-100 text-gray-700 border-gray-300';
       case 'USED':
-        return 'bg-purple-100 text-purple-800 border-purple-200';
+        return 'bg-sky-50 text-sky-700 border-sky-200';
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200';
     }
@@ -61,26 +75,13 @@ export default function CouponsPage() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'ACTIVE':
-        return '🟢';
+        return '🎁';
       case 'EXPIRED':
-        return '🔴';
+        return '⌛';
       case 'USED':
-        return '🟣';
+        return '✅';
       default:
-        return '⚪';
-    }
-  };
-
-  const getCouponTypeColor = (type: string) => {
-    switch (type.toLowerCase()) {
-      case 'seasonal':
-        return 'bg-amber-100 text-amber-800 border-amber-200';
-      case 'first-time':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'loyalty':
-        return 'bg-purple-100 text-purple-800 border-purple-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return '🎫';
     }
   };
 
@@ -113,22 +114,26 @@ export default function CouponsPage() {
 
   if (loading) {
     return (
-      <div className="flex-1 p-4 md:p-6 lg:p-8 bg-gradient-to-br from-amber-25 to-purple-25 min-h-screen">
-        <div className="max-w-6xl mx-auto">
-          <div className="animate-pulse">
-            <div className="h-8 bg-gradient-to-r from-amber-200 to-purple-200 rounded w-1/4 mb-6"></div>
+      <div className="flex-1 p-4 md:p-6 lg:p-8 bg-gradient-to-br from-gray-50 to-white min-h-screen">
+        <div className="max-w-7xl mx-auto">
+          <div className="animate-pulse space-y-8">
+            {/* Header Skeleton */}
+            <div>
+              <div className="h-8 w-64 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-lg mb-3"></div>
+              <div className="h-4 w-48 bg-gray-200 rounded"></div>
+            </div>
             
             {/* Stats Loading */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-20 bg-gradient-to-r from-amber-100 to-purple-100 rounded-xl"></div>
+                <div key={i} className="h-20 bg-gradient-to-r from-gray-100 to-gray-200 rounded-xl"></div>
               ))}
             </div>
 
             {/* Coupons Loading */}
             <div className="space-y-4">
               {[...Array(3)].map((_, i) => (
-                <div key={i} className="h-48 bg-gradient-to-r from-amber-50 to-purple-50 rounded-lg"></div>
+                <div key={i} className="h-48 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl"></div>
               ))}
             </div>
           </div>
@@ -139,15 +144,19 @@ export default function CouponsPage() {
 
   if (error) {
     return (
-      <div className="flex-1 p-4 md:p-6 lg:p-8 bg-gradient-to-br from-amber-25 to-purple-25 min-h-screen">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-lg border border-amber-200 p-8 text-center">
-            <div className="text-red-500 text-6xl mb-4">🎫</div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">Unable to Load Coupons</h3>
-            <p className="text-gray-600 mb-6">{error}</p>
+      <div className="flex-1 p-4 md:p-6 lg:p-8 flex items-center justify-center min-h-[60vh]">
+        <div className="max-w-md w-full mx-auto text-center">
+          <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-xl border border-gray-200 p-8">
+            <div className="w-16 h-16 bg-gradient-to-r from-red-100 to-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-800 mb-3">Coupons Unavailable</h3>
+            <p className="text-gray-600 mb-6">We couldn&apos;t load your coupons at this time.</p>
             <button
               onClick={loadCouponsData}
-              className="px-6 py-3 bg-gradient-to-r from-amber-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all duration-300"
+              className="px-6 py-3 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02] w-full md:w-auto"
             >
               Try Again
             </button>
@@ -158,229 +167,251 @@ export default function CouponsPage() {
   }
 
   return (
-    <div className="flex-1 p-4 sm:p-6 md:p-8 bg-gradient-to-br from-amber-50 to-purple-50 min-h-screen">
-  <div className="max-w-6xl mx-auto">
-    {/* Header */}
-    <div className="mb-6 sm:mb-8">
-      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-amber-600 to-purple-600 bg-clip-text text-transparent">
-        Coupons & Offers
-      </h1>
-      <p className="text-gray-600 mt-1 sm:mt-2 text-sm sm:text-base">
-        Your available coupons and special offers
-      </p>
-    </div>
-
-    {/* Statistics Cards - Responsive grid */}
-    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
-      {(['ALL', 'ACTIVE', 'USED', 'EXPIRED'] as const).map((status) => (
-        <button
-          key={status}
-          onClick={() => setFilter(status)}
-          className={`bg-white rounded-lg sm:rounded-xl shadow-sm sm:shadow-md border p-3 sm:p-4 text-center transition-all duration-300 hover:shadow-md sm:hover:shadow-lg active:scale-[0.98] ${
-            filter === status 
-              ? 'border-purple-500 shadow-md scale-[1.02] sm:scale-105' 
-              : 'border-amber-200 hover:border-purple-300'
-          }`}
-        >
-          <div className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-md sm:rounded-lg flex items-center justify-center mx-auto mb-1.5 sm:mb-2 ${
-            filter === status ? 'bg-purple-100' : 'bg-amber-50'
-          }`}>
-            <span className="text-lg sm:text-xl">{getStatusIcon(status)}</span>
-          </div>
-          <div className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800">{stats[status]}</div>
-          <div className={`text-xs sm:text-sm font-medium ${
-            filter === status ? 'text-purple-600' : 'text-gray-600'
-          }`}>
-            {status === 'ALL' ? 'All Coupons' : status}
-          </div>
-        </button>
-      ))}
-    </div>
-
-    {/* Coupons List */}
-    {filteredCoupons.length === 0 ? (
-      <div className="bg-white rounded-xl sm:rounded-2xl shadow-md sm:shadow-lg border border-amber-200 p-6 sm:p-8 text-center mb-6 sm:mb-8">
-        <div className="text-amber-400 text-4xl sm:text-5xl md:text-6xl mb-3 sm:mb-4">🎫</div>
-        <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-1.5 sm:mb-2">
-          {filter === 'ALL' ? 'No Coupons Available' : `No ${filter} Coupons`}
-        </h3>
-        <p className="text-gray-600 text-sm sm:text-base">
-          {filter === 'ALL' 
-            ? "You don't have any coupons yet." 
-            : `You don't have any ${filter.toLowerCase()} coupons.`
-          }
-        </p>
-        <button className="mt-4 px-4 py-2 bg-gradient-to-r from-amber-500 to-purple-600 text-white rounded-lg hover:shadow-md transition-all duration-200 text-sm font-semibold">
-          Explore Available Offers
-        </button>
-      </div>
-    ) : (
-      <div className="space-y-4 sm:space-y-6">
-        {filteredCoupons.map((coupon) => (
-          <div
-            key={coupon.allocationId}
-            className={`bg-white rounded-xl sm:rounded-2xl shadow-md sm:shadow-lg border overflow-hidden transition-all duration-300 hover:shadow-lg sm:hover:shadow-xl ${
-              coupon.active && !coupon.used && !coupon.expired
-                ? 'border-amber-300 hover:border-purple-400'
-                : 'border-gray-200'
-            }`}
-          >
-            {/* Coupon Header */}
-            <div className={`p-4 sm:p-6 ${
-              coupon.active && !coupon.used && !coupon.expired
-                ? 'bg-gradient-to-r from-amber-500 to-purple-600 text-white'
-                : 'bg-gray-100 text-gray-600'
-            }`}>
-              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4 mb-3 sm:mb-4">
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-base sm:text-lg md:text-xl font-bold mb-1 truncate">{coupon.couponDetails.couponName}</h3>
-                  <p className="text-xs sm:text-sm opacity-90 line-clamp-2">{coupon.couponDetails.couponDescription}</p>
-                </div>
-                <span className={`px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-semibold self-start ${
-                  coupon.active && !coupon.used && !coupon.expired
-                    ? 'bg-white text-purple-600'
-                    : 'bg-gray-200 text-gray-700'
-                }`}>
-                  {coupon.couponDetails.couponType}
-                </span>
-              </div>
-
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
-                <div className="flex items-center gap-2">
-                  <code className="text-base sm:text-lg font-mono font-bold bg-black/20 px-2 sm:px-3 py-1 rounded truncate min-w-0 flex-1">
-                    {coupon.couponDetails.couponCode}
-                  </code>
-                  <button
-                    onClick={() => copyToClipboard(coupon.couponDetails.couponCode)}
-                    className="p-1 hover:bg-white/20 rounded transition-colors flex-shrink-0"
-                    title="Copy code"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                    </svg>
-                  </button>
-                </div>
-                <div className="text-xl sm:text-2xl md:text-3xl font-bold">
-                  {coupon.discountInfo.discountDisplay}
-                </div>
-              </div>
+    <div className="flex-1 p-4 sm:p-6 md:p-8 bg-gradient-to-br from-gray-50 to-white min-h-screen">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-6 sm:mb-8 md:mb-10">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
+                Coupons & Offers
+              </h1>
+              <p className="text-gray-600 text-sm md:text-base">Manage your available coupons and special offers</p>
             </div>
+            <div className="flex items-center space-x-2">
+              <span className="px-3 py-1.5 bg-sky-50 text-sky-700 rounded-lg text-sm font-medium border border-sky-200">
+                {stats.ALL} Total Coupons
+              </span>
+            </div>
+          </div>
+        </div>
 
-            {/* Coupon Details */}
-            <div className="pt-2 sm:p-4">
-              {/* Discount Limits */}
-              <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
-                <div className="bg-gray-50 p-2.5 sm:p-3 rounded-lg">
-                  <p className="text-xs sm:text-sm text-gray-600 mb-1">Minimum Cart</p>
-                  <p className="font-semibold text-gray-800 text-sm sm:text-base">
-                    {formatCurrency(coupon.discountInfo.minimumCartValue)}
-                  </p>
-                </div>
-                <div className="bg-gray-50 p-2.5 sm:p-3 rounded-lg">
-                  <p className="text-xs sm:text-sm text-gray-600 mb-1">Max Discount</p>
-                  <p className="font-semibold text-gray-800 text-sm sm:text-base">
-                    {formatCurrency(coupon.discountInfo.maximumDiscount)}
-                  </p>
-                </div>
+        {/* Statistics Cards - Responsive grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+          {(['ALL', 'ACTIVE', 'USED', 'EXPIRED'] as const).map((status) => (
+            <button
+              key={status}
+              onClick={() => setFilter(status)}
+              className={`bg-white rounded-lg sm:rounded-xl shadow-sm sm:shadow-md border p-4 sm:p-5 text-center transition-all duration-300 hover:shadow-md sm:hover:shadow-lg active:scale-[0.98] ${
+                filter === status 
+                  ? 'border-sky-500 shadow-md ring-2 ring-sky-100' 
+                  : 'border-gray-200 hover:border-sky-300'
+              }`}
+            >
+              <div className={`w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-lg flex items-center justify-center mx-auto mb-2 sm:mb-3 ${
+                filter === status ? 'bg-sky-50' : 'bg-gray-50'
+              }`}>
+                <span className="text-xl sm:text-2xl">{getStatusIcon(status)}</span>
               </div>
+              <div className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800">{stats[status]}</div>
+              <div className={`text-xs sm:text-sm font-medium mt-1 ${
+                filter === status ? 'text-sky-600' : 'text-gray-600'
+              }`}>
+                {status === 'ALL' ? 'All Coupons' : status}
+              </div>
+            </button>
+          ))}
+        </div>
 
-              {/* Applicable Packages */}
-              {coupon.applicabilityInfo.applicablePackages.length > 0 && (
-                <div className="mb-3 sm:mb-4">
-                  <p className="text-xs sm:text-sm text-gray-600 mb-1.5 sm:mb-2">Applicable for:</p>
-                  <div className="flex flex-wrap gap-1 sm:gap-1.5">
-                    {coupon.applicabilityInfo.applicablePackages.slice(0, 3).map((pkg, index) => (
-                      <span
-                        key={index}
-                        className="px-1.5 py-0.5 sm:px-2 sm:py-1 bg-amber-50 text-amber-700 text-xs rounded border border-amber-200  max-w-[100px] sm:max-w-none"
+        {/* Coupons List */}
+        {filteredCoupons.length === 0 ? (
+          <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-gray-200 p-6 sm:p-8 md:p-12 text-center mb-6 sm:mb-8">
+            <div className="w-20 h-20 bg-gradient-to-r from-sky-50 to-teal-50 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+              <span className="text-3xl">🎫</span>
+            </div>
+            <h3 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-800 mb-2 sm:mb-3">
+              {filter === 'ALL' ? 'No Coupons Available' : `No ${filter} Coupons`}
+            </h3>
+            <p className="text-gray-600 text-sm sm:text-base mb-6 sm:mb-8 max-w-md mx-auto">
+              {filter === 'ALL' 
+                ? "You don't have any coupons yet. Start earning coupons by making bookings!" 
+                : `You don't have any ${filter.toLowerCase()} coupons.`
+              }
+            </p>
+            <button className="px-6 py-3 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:shadow-lg transition-all duration-300 text-sm sm:text-base font-semibold">
+              Explore Available Offers
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-4 sm:space-y-6">
+            {filteredCoupons.map((coupon) => (
+              <div
+                key={coupon.allocationId}
+                className={`bg-white rounded-xl sm:rounded-2xl shadow-lg border overflow-hidden transition-all duration-300 hover:shadow-xl ${
+                  coupon.active && !coupon.used && !coupon.expired
+                    ? 'border-sky-200 hover:border-sky-300'
+                    : 'border-gray-200'
+                }`}
+              >
+                {/* Coupon Header */}
+                <div className={`p-4 sm:p-6 ${
+                  coupon.active && !coupon.used && !coupon.expired
+                    ? 'bg-gradient-to-r from-sky-600 to-teal-600 text-white'
+                    : 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-600'
+                }`}>
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-2">{coupon.couponDetails.couponName}</h3>
+                      <p className="text-sm sm:text-base opacity-90 line-clamp-2">{coupon.couponDetails.couponDescription}</p>
+                    </div>
+                    <span className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-sm font-semibold self-start ${
+                      coupon.active && !coupon.used && !coupon.expired
+                        ? 'bg-white text-sky-600'
+                        : 'bg-gray-200 text-gray-700'
+                    }`}>
+                      {coupon.couponDetails.couponType}
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <code className="text-lg sm:text-xl font-mono font-bold bg-black/20 px-3 sm:px-4 py-2 rounded-lg truncate min-w-0 flex-1">
+                        {coupon.couponDetails.couponCode}
+                      </code>
+                      <button
+                        onClick={() => copyToClipboard(coupon.couponDetails.couponCode)}
+                        className="p-2 hover:bg-white/20 rounded-lg transition-colors flex-shrink-0"
+                        title="Copy code"
                       >
-                        {pkg}
-                      </span>
-                    ))}
-                    {coupon.applicabilityInfo.applicablePackages.length > 3 && (
-                      <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 bg-gray-50 text-gray-600 text-xs rounded border border-gray-200">
-                        +{coupon.applicabilityInfo.applicablePackages.length - 3} more
-                      </span>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                      </button>
+                    </div>
+                    <div className="text-2xl sm:text-3xl md:text-4xl font-bold">
+                      {coupon.discountInfo.discountDisplay}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Coupon Details */}
+                <div className="p-4 sm:p-6">
+                  {/* Discount Limits */}
+                  <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
+                    <div className="bg-gray-50 p-3 sm:p-4 rounded-lg border border-gray-200">
+                      <p className="text-xs sm:text-sm text-gray-600 mb-2">Minimum Cart</p>
+                      <p className="font-semibold text-gray-800 text-sm sm:text-base">
+                        {formatCurrency(coupon.discountInfo.minimumCartValue)}
+                      </p>
+                    </div>
+                    <div className="bg-gray-50 p-3 sm:p-4 rounded-lg border border-gray-200">
+                      <p className="text-xs sm:text-sm text-gray-600 mb-2">Max Discount</p>
+                      <p className="font-semibold text-gray-800 text-sm sm:text-base">
+                        {formatCurrency(coupon.discountInfo.maximumDiscount)}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Applicable Packages */}
+                  {coupon.applicabilityInfo.applicablePackages.length > 0 && (
+                    <div className="mb-4 sm:mb-6">
+                      <p className="text-sm font-medium text-gray-700 mb-2 sm:mb-3">Applicable Packages:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {coupon.applicabilityInfo.applicablePackages.slice(0, 4).map((pkg, index) => (
+                          <span
+                            key={index}
+                            className="px-2 py-1 sm:px-3 sm:py-1.5 bg-sky-50 text-sky-700 text-xs sm:text-sm rounded-lg border border-sky-200"
+                          >
+                            {pkg}
+                          </span>
+                        ))}
+                        {coupon.applicabilityInfo.applicablePackages.length > 4 && (
+                          <span className="px-2 py-1 sm:px-3 sm:py-1.5 bg-gray-50 text-gray-600 text-xs sm:text-sm rounded-lg border border-gray-300">
+                            +{coupon.applicabilityInfo.applicablePackages.length - 4} more
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Validity & Status */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      <svg className="w-5 h-5 text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <div>
+                        <p className="text-xs text-gray-600">Valid until</p>
+                        <p className="font-semibold text-gray-800">
+                          {formatDate(coupon.timingInfo.couponValidUntil)}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      <div className={`w-3 h-3 rounded-full ${
+                        coupon.active && !coupon.used && !coupon.expired ? 'bg-emerald-500' :
+                        coupon.used ? 'bg-sky-500' :
+                        coupon.expired ? 'bg-gray-500' : 'bg-gray-500'
+                      }`}></div>
+                      <div>
+                        <p className="text-xs text-gray-600">Status</p>
+                        <p className="font-semibold text-gray-800">{coupon.calculatedStatus.effectiveStatus}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="mt-6 pt-6 border-t border-gray-200">
+                    {coupon.active && !coupon.used && !coupon.expired ? (
+                      <div className="flex flex-col sm:flex-row gap-3">
+                        <button className="flex-1 px-6 py-3 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:shadow-lg transition-all duration-300 font-semibold">
+                          Use Coupon Now
+                        </button>
+                        <button className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-300 font-medium">
+                          View Details
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="text-center p-4 bg-gray-50 rounded-lg">
+                        <p className="text-gray-600 text-sm">
+                          {coupon.used ? 'This coupon has been used.' : 
+                           coupon.expired ? 'This coupon has expired.' : 
+                           'This coupon is no longer available.'}
+                        </p>
+                      </div>
                     )}
                   </div>
                 </div>
-              )}
-
-              {/* Validity */}
-              <div className="mb-3 sm:mb-4">
-                <p className="text-xs sm:text-sm text-gray-600 mb-1">Valid until</p>
-                <div className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  <p className="font-semibold text-gray-800 text-sm sm:text-base">
-                    {formatDate(coupon.timingInfo.couponValidUntil)}
-                  </p>
-                </div>
               </div>
+            ))}
+          </div>
+        )}
 
-              {/* Status and Actions */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 pt-3 sm:pt-4 border-t border-gray-100">
-                <div className="flex items-center gap-2">
-                  <div className={`w-2 h-2 rounded-full ${
-                    coupon.active && !coupon.used && !coupon.expired ? 'bg-green-500' :
-                    coupon.used ? 'bg-blue-500' :
-                    coupon.expired ? 'bg-red-500' : 'bg-gray-500'
-                  }`}></div>
-                  <span className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-semibold border ${getStatusColor(coupon.calculatedStatus.effectiveStatus)}`}>
-                    {coupon.calculatedStatus.effectiveStatus}
-                  </span>
-                </div>
-                
-                {coupon.active && !coupon.used && !coupon.expired && (
-                  <div className="flex gap-2">
-                    <button className="flex-1 sm:flex-none px-4 py-2 bg-gradient-to-r from-amber-500 to-purple-600 text-white rounded-lg hover:shadow-md transition-all duration-200 text-sm font-semibold">
-                      Use Coupon
-                    </button>
-                    <button className="flex-1 sm:flex-none px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200 text-sm font-medium">
-                      Details
-                    </button>
-                  </div>
-                )}
+        {/* Statistics Summary */}
+        {couponsData.length > 0 && (
+          <div className="mt-8 sm:mt-12 bg-white rounded-xl sm:rounded-2xl shadow-lg border border-gray-200 p-6 sm:p-8">
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 sm:mb-6">Coupon Overview</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
+              <div className="text-center p-4 sm:p-5 bg-gradient-to-br from-sky-50 to-sky-100 rounded-xl border border-sky-200">
+                <div className="text-2xl sm:text-3xl font-bold text-sky-700">{stats.ALL}</div>
+                <div className="text-sm text-gray-600 mt-1">Total Coupons</div>
+              </div>
+              <div className="text-center p-4 sm:p-5 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl border border-emerald-200">
+                <div className="text-2xl sm:text-3xl font-bold text-emerald-700">{stats.ACTIVE}</div>
+                <div className="text-sm text-gray-600 mt-1">Available</div>
+              </div>
+              <div className="text-center p-4 sm:p-5 bg-gradient-to-br from-sky-50 to-sky-100 rounded-xl border border-sky-200">
+                <div className="text-2xl sm:text-3xl font-bold text-sky-700">{stats.USED}</div>
+                <div className="text-sm text-gray-600 mt-1">Redeemed</div>
+              </div>
+              <div className="text-center p-4 sm:p-5 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl border border-gray-300">
+                <div className="text-2xl sm:text-3xl font-bold text-gray-700">{stats.EXPIRED}</div>
+                <div className="text-sm text-gray-600 mt-1">Expired</div>
               </div>
             </div>
           </div>
-        ))}
-      </div>
-    )}
+        )}
 
-    {/* Quick Stats - Only show if there are coupons */}
-    {couponsData.length > 0 && (
-      <div className="mt-6 sm:mt-8 bg-white rounded-xl sm:rounded-2xl shadow-md sm:shadow-lg border border-amber-200 p-4 sm:p-6">
-        <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">Coupon Statistics</h3>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-          <div className="text-center p-3 sm:p-4 bg-amber-50 rounded-lg border border-amber-200">
-            <div className="text-xl sm:text-2xl font-bold text-amber-600">{stats.ALL}</div>
-            <div className="text-xs sm:text-sm text-gray-600">Total Coupons</div>
+        {/* Mobile Action Button */}
+        {couponsData.length > 0 && (
+          <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 p-4 shadow-2xl sm:hidden z-50">
+            <button className="w-full py-3 bg-gradient-to-r from-sky-600 to-teal-600 text-white font-bold rounded-lg hover:opacity-90 transition-all duration-300">
+              Get More Coupons
+            </button>
           </div>
-          <div className="text-center p-3 sm:p-4 bg-green-50 rounded-lg border border-green-200">
-            <div className="text-xl sm:text-2xl font-bold text-green-600">{stats.ACTIVE}</div>
-            <div className="text-xs sm:text-sm text-gray-600">Active</div>
-          </div>
-          <div className="text-center p-3 sm:p-4 bg-purple-50 rounded-lg border border-purple-200">
-            <div className="text-xl sm:text-2xl font-bold text-purple-600">{stats.USED}</div>
-            <div className="text-xs sm:text-sm text-gray-600">Used</div>
-          </div>
-          <div className="text-center p-3 sm:p-4 bg-red-50 rounded-lg border border-red-200">
-            <div className="text-xl sm:text-2xl font-bold text-red-600">{stats.EXPIRED}</div>
-            <div className="text-xs sm:text-sm text-gray-600">Expired</div>
-          </div>
-        </div>
+        )}
       </div>
-    )}
-
-    {/* Mobile Action Button */}
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-2xl sm:hidden z-50">
-      <button className="w-full py-3 bg-gradient-to-r from-amber-500 to-purple-600 text-white font-bold rounded-lg hover:opacity-90 transition-opacity duration-200">
-        Get More Coupons
-      </button>
     </div>
-  </div>
-</div>
   );
 }

@@ -1,11 +1,14 @@
 // app/profile/account-security/page.tsx
 "use client";
+import { useAuth } from "@/context/AuthContext";
 import { UserProfileAPIService } from "@/services/userProfileAPIService";
 import {
   AccountSecurityData,
   EmailVerification,
   MobileVerification,
 } from "@/types/account-security";
+import { USER_PROFILE_ACCOUNT_SECURITY_VIEW_PRIVILEGE } from "@/utils/privileges";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
 export default function AccountSecurityPage() {
@@ -30,6 +33,17 @@ export default function AccountSecurityPage() {
   } | null>(null);
 
   const apiService = new UserProfileAPIService();
+  const router = useRouter();
+  const { user } = useAuth();
+  
+  useEffect(() => {
+    if (
+      user &&
+      !user.privileges.includes(USER_PROFILE_ACCOUNT_SECURITY_VIEW_PRIVILEGE)
+    ) {
+      router.push("/profile");
+    }
+  }, [user, router]);
 
   useEffect(() => {
     loadAccountSecurityDetails();
@@ -56,7 +70,6 @@ export default function AccountSecurityPage() {
 
   const maskMobileNumber = (number: string): string => {
     if (!number) return "Not set";
-    // Show only last 4 digits for security
     return `••••••${number.slice(-4)}`;
   };
 
@@ -89,11 +102,36 @@ export default function AccountSecurityPage() {
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
       case "verified":
-        return "bg-green-100 text-green-800 border-green-200";
+        return "bg-emerald-100 text-emerald-700 border-emerald-200";
       case "pending":
-        return "bg-amber-100 text-amber-800 border-amber-200";
+        return "bg-sky-100 text-sky-700 border-sky-200";
+      case "not verified":
+        return "bg-gray-100 text-gray-700 border-gray-200";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return "bg-gray-100 text-gray-700 border-gray-200";
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case "verified":
+        return (
+          <svg className="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+          </svg>
+        );
+      case "pending":
+        return (
+          <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        );
+      default:
+        return (
+          <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.998-.833-2.732 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          </svg>
+        );
     }
   };
 
@@ -118,7 +156,7 @@ export default function AccountSecurityPage() {
         step: "verify",
       });
       showMessage("success", "OTP sent to your mobile number");
-      setMobileNumber(""); // Clear input after successful request
+      setMobileNumber("");
     } catch (err) {
       console.error("Failed to send mobile OTP:", err);
       showMessage("error", "Failed to send OTP. Please try again.");
@@ -143,7 +181,6 @@ export default function AccountSecurityPage() {
       showMessage("success", "Mobile number verified successfully!");
       setActiveVerification(null);
       setOtpCode("");
-      // Reload data to get updated verification status
       await loadAccountSecurityDetails();
     } catch (err) {
       console.error("Failed to verify mobile OTP:", err);
@@ -175,7 +212,7 @@ export default function AccountSecurityPage() {
         step: "verify",
       });
       showMessage("success", "Verification email sent!");
-      setEmail(""); // Clear input after successful request
+      setEmail("");
     } catch (err) {
       console.error("Failed to send email verification:", err);
       showMessage(
@@ -202,7 +239,6 @@ export default function AccountSecurityPage() {
       showMessage("success", "Email verified successfully!");
       setActiveVerification(null);
       setOtpCode("");
-      // Reload data to get updated verification status
       await loadAccountSecurityDetails();
     } catch (err) {
       console.error("Failed to verify email:", err);
@@ -221,16 +257,19 @@ export default function AccountSecurityPage() {
 
   if (loading) {
     return (
-      <div className="flex-1 p-4 md:p-6 lg:p-8 bg-gradient-to-br from-amber-25 to-purple-25 min-h-screen">
+      <div className="flex-1 p-4 md:p-6 lg:p-8 bg-gradient-to-br from-gray-50 to-white min-h-screen">
         <div className="max-w-4xl mx-auto">
-          <div className="animate-pulse">
-            <div className="h-8 bg-gradient-to-r from-amber-200 to-purple-200 rounded w-1/4 mb-6"></div>
+          <div className="animate-pulse space-y-8">
+            <div>
+              <div className="h-8 w-64 bg-gradient-to-r from-gray-200 to-gray-300 rounded-lg mb-3"></div>
+              <div className="h-4 w-48 bg-gray-200 rounded"></div>
+            </div>
             <div className="space-y-6">
-              {[...Array(4)].map((_, i) => (
-                <div
-                  key={i}
-                  className="h-32 bg-gradient-to-r from-amber-100 to-purple-100 rounded-xl"
-                ></div>
+              {[...Array(2)].map((_, i) => (
+                <div key={i} className="space-y-4">
+                  <div className="h-6 w-32 bg-gray-200 rounded"></div>
+                  <div className="h-24 bg-gray-100 rounded-xl"></div>
+                </div>
               ))}
             </div>
           </div>
@@ -241,17 +280,21 @@ export default function AccountSecurityPage() {
 
   if (error) {
     return (
-      <div className="flex-1 p-4 md:p-6 lg:p-8 bg-gradient-to-br from-amber-25 to-purple-25 min-h-screen">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-lg border border-amber-200 p-8 text-center">
-            <div className="text-red-500 text-6xl mb-4">🔒</div>
+      <div className="flex-1 p-4 md:p-6 lg:p-8 flex items-center justify-center min-h-[60vh]">
+        <div className="max-w-md w-full mx-auto">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 text-center">
+            <div className="w-16 h-16 bg-gradient-to-r from-red-50 to-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">
-              Unable to Load Security Settings
+              Security Settings Unavailable
             </h3>
             <p className="text-gray-600 mb-6">{error}</p>
             <button
               onClick={loadAccountSecurityDetails}
-              className="px-6 py-3 bg-gradient-to-r from-amber-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all duration-300"
+              className="px-6 py-3 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:shadow-lg transition-all duration-300 w-full md:w-auto"
             >
               Try Again
             </button>
@@ -263,14 +306,18 @@ export default function AccountSecurityPage() {
 
   if (!securityData) {
     return (
-      <div className="flex-1 p-4 md:p-6 lg:p-8 bg-gradient-to-br from-amber-25 to-purple-25 min-h-screen">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-lg border border-amber-200 p-8 text-center">
-            <div className="text-amber-400 text-6xl mb-4">🔒</div>
+      <div className="flex-1 p-4 md:p-6 lg:p-8 flex items-center justify-center min-h-[60vh]">
+        <div className="max-w-md w-full mx-auto">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 text-center">
+            <div className="w-16 h-16 bg-gradient-to-r from-sky-50 to-sky-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg className="w-8 h-8 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">
               No Security Data Found
             </h3>
-            <p className="text-gray-600">
+            <p className="text-gray-600 mb-6">
               Unable to load your account security information.
             </p>
           </div>
@@ -297,16 +344,25 @@ export default function AccountSecurityPage() {
   );
 
   return (
-    <div className="flex-1 p-4 md:p-6 lg:p-8 bg-gradient-to-br from-amber-25 to-purple-25 min-h-screen">
+    <div className="flex-1 p-4 md:p-6 lg:p-8 bg-gradient-to-br from-gray-50 to-white min-h-screen">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-amber-600 to-purple-600 bg-clip-text text-transparent">
-            Account Security
-          </h1>
-          <p className="text-gray-600 mt-2">
-            Manage your contact information and verification status
-          </p>
+        <div className="mb-8 md:mb-10">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+                Account Security
+              </h1>
+              <p className="text-gray-600 text-sm md:text-base">
+                Secure your account with verified contact information
+              </p>
+            </div>
+            <div className="flex items-center space-x-2">
+              <span className="px-3 py-1.5 bg-sky-50 text-sky-700 rounded-lg text-sm font-medium border border-sky-200">
+                Last updated: {new Date().toLocaleDateString()}
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* Message Display */}
@@ -314,7 +370,7 @@ export default function AccountSecurityPage() {
           <div
             className={`mb-6 p-4 rounded-lg border ${
               message.type === "success"
-                ? "bg-green-50 border-green-200 text-green-800"
+                ? "bg-emerald-50 border-emerald-200 text-emerald-800"
                 : "bg-red-50 border-red-200 text-red-800"
             }`}
           >
@@ -339,16 +395,26 @@ export default function AccountSecurityPage() {
         {activeVerification && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
-              <h3 className="text-xl font-bold text-gray-800 mb-4">
-                Verify{" "}
-                {activeVerification.type === "mobile"
-                  ? "Mobile Number"
-                  : "Email Address"}
-              </h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-bold text-gray-800">
+                  Verify{" "}
+                  {activeVerification.type === "mobile"
+                    ? "Mobile Number"
+                    : "Email Address"}
+                </h3>
+                <button
+                  onClick={cancelVerification}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
 
               {activeVerification.step === "request" ? (
                 <div className="space-y-4">
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 text-sm">
                     Enter your {activeVerification.type} to receive a
                     verification code:
                   </p>
@@ -371,12 +437,12 @@ export default function AccountSecurityPage() {
                         ? "Enter mobile number"
                         : "Enter email address"
                     }
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent text-sm"
                   />
                   <div className="flex space-x-3">
                     <button
                       onClick={cancelVerification}
-                      className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                      className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-200 text-sm font-medium"
                     >
                       Cancel
                     </button>
@@ -395,7 +461,7 @@ export default function AccountSecurityPage() {
                             )
                       }
                       disabled={sendingOtp}
-                      className="flex-1 px-4 py-2 bg-gradient-to-r from-amber-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all duration-300 disabled:opacity-50"
+                      className="flex-1 px-4 py-2 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:shadow-lg transition-all duration-300 disabled:opacity-50 text-sm font-medium"
                     >
                       {sendingOtp ? "Sending..." : "Send Code"}
                     </button>
@@ -403,7 +469,7 @@ export default function AccountSecurityPage() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 text-sm">
                     Enter the verification code sent to your{" "}
                     {activeVerification.type}:
                   </p>
@@ -412,13 +478,13 @@ export default function AccountSecurityPage() {
                     value={otpCode}
                     onChange={(e) => setOtpCode(e.target.value)}
                     placeholder="Enter verification code"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-center text-lg font-mono"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent text-center text-lg font-mono tracking-wider"
                     maxLength={6}
                   />
                   <div className="flex space-x-3">
                     <button
                       onClick={cancelVerification}
-                      className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                      className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-200 text-sm font-medium"
                     >
                       Cancel
                     </button>
@@ -429,7 +495,7 @@ export default function AccountSecurityPage() {
                           : handleVerifyEmailOtp
                       }
                       disabled={verifying || !otpCode.trim()}
-                      className="flex-1 px-4 py-2 bg-gradient-to-r from-amber-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all duration-300 disabled:opacity-50"
+                      className="flex-1 px-4 py-2 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:shadow-lg transition-all duration-300 disabled:opacity-50 text-sm font-medium"
                     >
                       {verifying ? "Verifying..." : "Verify"}
                     </button>
@@ -440,113 +506,20 @@ export default function AccountSecurityPage() {
           </div>
         )}
 
-        {/* Mobile Numbers Section */}
-        {/* <div className="bg-white rounded-2xl shadow-lg border border-amber-200 overflow-hidden mb-6">
-          <div className="bg-gradient-to-r from-amber-500 to-purple-600 p-6 text-white">
-            <h2 className="text-xl font-bold flex items-center">
-              <span className="mr-3">📱</span>
-              Mobile Numbers
-            </h2>
-            <p className="text-amber-100 text-sm mt-1">
-              Secure your account with verified mobile numbers
-            </p>
-          </div>
-
-          <div className="divide-y divide-gray-100">
-            <div className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <h3 className="font-semibold text-gray-800 text-lg">
-                    Primary Mobile Number
-                  </h3>
-                  <p className="text-gray-600 text-sm mt-1">
-                    {maskMobileNumber(securityData.mobileNumber1)}
-                  </p>
-                  <div className="flex items-center space-x-2 mt-2">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-semibold border ${getStatusColor(
-                        primaryMobileVerification.statusName
-                      )}`}
-                    >
-                      {primaryMobileVerification.statusName}
-                    </span>
-                    <span className="text-gray-500 text-xs">
-                      {primaryMobileVerification.statusDescription}
-                    </span>
-                  </div>
-                </div>
-                <button
-                  onClick={() =>
-                    setActiveVerification({
-                      type: "mobile",
-                      which: "primary",
-                      step: "request",
-                    })
-                  }
-                  className="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors duration-200 text-sm font-semibold"
-                >
-                  {primaryMobileVerification.statusName === "Verified"
-                    ? "Re-verify"
-                    : "Verify"}
-                </button>
-              </div>
-            </div>
-
-            <div className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <h3 className="font-semibold text-gray-800 text-lg">
-                    Secondary Mobile Number
-                  </h3>
-                  <p className="text-gray-600 text-sm mt-1">
-                    {securityData.mobileNumber2
-                      ? maskMobileNumber(securityData.mobileNumber2)
-                      : "Not set"}
-                  </p>
-                  {securityData.mobileNumber2 && (
-                    <div className="flex items-center space-x-2 mt-2">
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-semibold border ${getStatusColor(
-                          secondaryMobileVerification.statusName
-                        )}`}
-                      >
-                        {secondaryMobileVerification.statusName}
-                      </span>
-                      <span className="text-gray-500 text-xs">
-                        {secondaryMobileVerification.statusDescription}
-                      </span>
-                    </div>
-                  )}
-                </div>
-                <button
-                  onClick={() =>
-                    setActiveVerification({
-                      type: "mobile",
-                      which: "secondory",
-                      step: "request",
-                    })
-                  }
-                  className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors duration-200 text-sm font-semibold"
-                >
-                  {securityData.mobileNumber2 ? "Verify" : "Add Number"}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div> */}
-
         {/* Email Addresses Section */}
-        <div className="bg-white rounded-lg sm:rounded-xl md:rounded-2xl shadow-md sm:shadow-lg border border-purple-200 overflow-hidden">
+        <div className="bg-white rounded-xl md:rounded-2xl shadow-lg border border-gray-200 overflow-hidden mb-8">
           {/* Header */}
-          <div className="bg-gradient-to-r from-purple-500 to-amber-600 p-4 sm:p-5 md:p-6 text-white">
-            <div className="flex items-center gap-2 sm:gap-3">
-              <div className="text-lg sm:text-xl">📧</div>
+          <div className="bg-gradient-to-r from-sky-600 to-teal-600 p-5 md:p-6 text-white">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
               <div>
-                <h2 className="text-lg sm:text-xl font-bold">
-                  Email Addresses
-                </h2>
-                <p className="text-purple-100 text-xs sm:text-sm mt-0.5 sm:mt-1">
-                  Keep your email addresses verified for important updates
+                <h2 className="text-xl font-bold">Email Verification</h2>
+                <p className="text-sky-100 text-sm mt-0.5">
+                  Secure your account with verified email addresses
                 </p>
               </div>
             </div>
@@ -554,27 +527,33 @@ export default function AccountSecurityPage() {
 
           <div className="divide-y divide-gray-100">
             {/* Primary Email */}
-            <div className="p-4 sm:p-5 md:p-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+            <div className="p-5 md:p-6">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-gray-800 text-base sm:text-lg">
-                    Primary Email Address
-                  </h3>
-                  <p className="text-gray-600 text-sm mt-1 truncate">
-                    {securityData.email}
-                  </p>
-                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-2">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-semibold border ${getStatusColor(
-                        primaryEmailVerification.statusName,
-                      )}`}
-                    >
-                      {primaryEmailVerification.statusName}
-                    </span>
-                    <span className="text-gray-500 text-xs truncate">
-                      {primaryEmailVerification.statusDescription}
+                  <div className="flex items-center gap-3 mb-2">
+                    <h3 className="font-semibold text-gray-800 text-base md:text-lg">
+                      Primary Email
+                    </h3>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-sky-50 text-sky-700 border border-sky-200">
+                      Primary
                     </span>
                   </div>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                    <p className="text-gray-600 text-sm font-medium truncate">
+                      {securityData.email}
+                    </p>
+                    <div className="flex items-center">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(
+                        primaryEmailVerification.statusName,
+                      )}`}>
+                        {getStatusIcon(primaryEmailVerification.statusName)}
+                        {primaryEmailVerification.statusName}
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-gray-500 text-xs mt-2">
+                    {primaryEmailVerification.statusDescription}
+                  </p>
                 </div>
                 <button
                   onClick={() =>
@@ -584,7 +563,7 @@ export default function AccountSecurityPage() {
                       step: "request",
                     })
                   }
-                  className="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors duration-200 text-sm font-semibold whitespace-nowrap w-full sm:w-auto"
+                  className="px-4 py-2.5 bg-gradient-to-r from-sky-600 to-sky-700 text-white rounded-lg hover:shadow-lg transition-all duration-200 text-sm font-semibold whitespace-nowrap w-full md:w-auto mt-3 md:mt-0"
                 >
                   {primaryEmailVerification.statusName === "Verified"
                     ? "Re-verify"
@@ -594,25 +573,29 @@ export default function AccountSecurityPage() {
             </div>
 
             {/* Secondary Email */}
-            <div className="p-4 sm:p-5 md:p-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+            <div className="p-5 md:p-6">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-gray-800 text-base sm:text-lg">
-                    Secondary Email Address
-                  </h3>
-                  <p className="text-gray-600 text-sm mt-1">
-                    Add a secondary email for backup and recovery
+                  <div className="flex items-center gap-3 mb-2">
+                    <h3 className="font-semibold text-gray-800 text-base md:text-lg">
+                      Secondary Email
+                    </h3>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-50 text-gray-700 border border-gray-200">
+                      Backup
+                    </span>
+                  </div>
+                  <p className="text-gray-600 text-sm">
+                    Add a secondary email for account recovery
                   </p>
                   {secondaryEmailVerification.statusName !== "Not Verified" && (
-                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-2">
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-semibold border ${getStatusColor(
-                          secondaryEmailVerification.statusName,
-                        )}`}
-                      >
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(
+                        secondaryEmailVerification.statusName,
+                      )}`}>
+                        {getStatusIcon(secondaryEmailVerification.statusName)}
                         {secondaryEmailVerification.statusName}
                       </span>
-                      <span className="text-gray-500 text-xs truncate">
+                      <span className="text-gray-500 text-xs">
                         {secondaryEmailVerification.statusDescription}
                       </span>
                     </div>
@@ -626,7 +609,7 @@ export default function AccountSecurityPage() {
                       step: "request",
                     })
                   }
-                  className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors duration-200 text-sm font-semibold whitespace-nowrap w-full sm:w-auto"
+                  className="px-4 py-2.5 bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-lg hover:shadow-lg transition-all duration-200 text-sm font-semibold whitespace-nowrap w-full md:w-auto mt-3 md:mt-0"
                 >
                   {secondaryEmailVerification.statusName === "Not Verified"
                     ? "Add & Verify"
@@ -637,17 +620,73 @@ export default function AccountSecurityPage() {
           </div>
         </div>
 
-        {/* Security Tips */}
-        <div className="mt-8 bg-amber-50 rounded-2xl border border-amber-200 p-6">
-          <h3 className="font-semibold text-gray-800 mb-3 flex items-center">
-            <span className="text-amber-600 text-lg mr-2">🔐</span>
-            Security Tips
-          </h3>
-          <div className="text-sm text-gray-600 space-y-2">
-            <p>• Keep your email addresses updated</p>
-            <p>• Verify all contact methods for account recovery</p>
-            <p>• Use a secondary email for backup</p>
-            <p>• Never share your verification codes with anyone</p>
+        {/* Security Tips & Information */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+          {/* Security Tips */}
+          <div className="bg-gradient-to-br from-sky-50 to-white rounded-xl md:rounded-2xl border border-sky-200 p-5 md:p-6">
+            <h3 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <svg className="w-5 h-5 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              Security Best Practices
+            </h3>
+            <div className="space-y-3 text-sm text-gray-600">
+              <div className="flex items-start gap-2">
+                <div className="w-5 h-5 rounded-full bg-sky-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-sky-600 text-xs">✓</span>
+                </div>
+                <p>Keep email addresses updated and verified</p>
+              </div>
+              <div className="flex items-start gap-2">
+                <div className="w-5 h-5 rounded-full bg-sky-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-sky-600 text-xs">✓</span>
+                </div>
+                <p>Use a secondary email for account recovery</p>
+              </div>
+              <div className="flex items-start gap-2">
+                <div className="w-5 h-5 rounded-full bg-sky-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-sky-600 text-xs">✓</span>
+                </div>
+                <p>Never share verification codes with anyone</p>
+              </div>
+              <div className="flex items-start gap-2">
+                <div className="w-5 h-5 rounded-full bg-sky-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-sky-600 text-xs">✓</span>
+                </div>
+                <p>Regularly update your contact information</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Account Status */}
+          <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-200 p-5 md:p-6">
+            <h3 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <svg className="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Account Status
+            </h3>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                <span className="text-sm font-medium text-gray-600">Overall Security</span>
+                <span className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold border border-emerald-200">
+                  Secure
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="text-center p-3 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="text-sm font-medium text-gray-600 mb-1">Verified</div>
+                  <div className="text-lg font-bold text-emerald-600">1</div>
+                </div>
+                <div className="text-center p-3 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="text-sm font-medium text-gray-600 mb-1">Pending</div>
+                  <div className="text-lg font-bold text-sky-600">1</div>
+                </div>
+              </div>
+              <button className="w-full px-4 py-2.5 bg-gradient-to-r from-sky-50 to-teal-50 text-sky-700 rounded-lg border border-sky-200 hover:border-sky-300 hover:shadow-sm transition-all duration-200 text-sm font-medium">
+                View Security Log
+              </button>
+            </div>
           </div>
         </div>
       </div>

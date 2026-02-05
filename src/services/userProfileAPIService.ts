@@ -9,7 +9,7 @@ import { UpcomingToursResponse } from "@/types/upcoming-tours";
 import { CompletedToursResponse } from "@/types/completed-tours";
 import { WishListResponse } from "@/types/wishlist";
 import { CouponsResponse } from "@/types/coupon";
-import { ActivityReviewAPIResponse, DestinationReviewAPIResponse, HistoryResponse, PackageReviewAPIResponse, TourReviewAPIResponse, UserProfileReviewAPIResponse, WalletResponse } from "@/types/user-profile";
+import { ActivityReviewAPIResponse, BrowsingHistoryRequest, DestinationReviewAPIResponse, HistoryResponse, PackageReviewAPIResponse, TourReviewAPIResponse, UserProfileReviewAPIResponse, WalletResponse } from "@/types/user-profile";
 
 const API_BASE_URL = "http://localhost:8080/felicita/api/v0/user-profile";
 
@@ -202,21 +202,40 @@ export class UserProfileAPIService {
   }
 
   // services/userProfileAPIService.ts
-// Add this method to the existing class
-
-async getBrowsingHistory(): Promise<HistoryResponse> {
+async getBrowsingHistory(request?: BrowsingHistoryRequest): Promise<HistoryResponse> {
   try {
-    const response = await fetch('http://localhost:8080/felicita/api/v0/history-management/history-data', {
-      method: 'GET',
-      headers: this.getAuthHeaders(),
-      credentials: 'include',
-    });
+    // Use null if a value is undefined
+    const body = {
+      historyType: request?.historyType ?? null,
+      from: request?.from ?? null,
+      to: request?.to ?? null,
+      noOfLastDays: request?.noOfLastDays ?? null,
+      pageSize: request?.pageSize ?? 10,
+      pageNumber: request?.pageNumber ?? 0,
+    };
+
+    const response = await fetch(
+      'http://localhost:8080/felicita/api/v0/history-management/history-data',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...this.getAuthHeaders(),
+        },
+        credentials: 'include',
+        body: JSON.stringify(body),
+      }
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return await response.json();
+    const data: HistoryResponse = await response.json();
+    console.log('Total records:', data.data.totalCount);
+    console.log('History:', data.data.history);
+
+    return data;
   } catch (error) {
     console.error('Error fetching browsing history:', error);
     throw error;

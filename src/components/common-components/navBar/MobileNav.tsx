@@ -58,17 +58,39 @@ const MobileNav: React.FC<MobileNavProps> = ({
           >
             {user ? (
               <>
-                <div className="flex items-center space-x-3 px-4 py-3 mb-2">
-                  <UserAvatar user={user} size="large" />
-                  <div>
-                    <div style={{ color: "#075985" }} className="font-medium">
-                      {`${user.firstName} ${user.lastName}`}
-                    </div>
-                    <div style={{ color: "#0369a1" }} className="text-sm">
-                      {user.email}
-                    </div>
-                  </div>
-                </div>
+<div className="flex items-center space-x-3 px-4 py-3 mb-2">
+  {/* Replace UserAvatar with custom implementation */}
+  <div
+    className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden"
+    style={{
+      background: user?.imageUrl ? "none" : "linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%)",
+      border: "2px solid rgba(14, 165, 233, 0.3)",
+    }}
+  >
+    {user?.imageUrl ? (
+      <Image
+        alt="profile pic"
+        src={user.imageUrl}
+        width={400}
+        height={400}
+        className="w-full h-full object-cover"
+      />
+    ) : (
+      <span className="font-bold text-lg text-white">
+        {user.firstName.charAt(0).toUpperCase()}
+        {user.lastName.charAt(0).toUpperCase()}
+      </span>
+    )}
+  </div>
+  <div>
+    <div style={{ color: "#075985" }} className="font-medium">
+      {`${user.firstName} ${user.lastName}`}
+    </div>
+    <div style={{ color: "#0369a1" }} className="text-sm">
+      {user.email}
+    </div>
+  </div>
+</div>
                 <Link
                   href="/profile"
                   className="block px-4 py-3 rounded-lg font-medium transition-all duration-300 border border-transparent backdrop-blur-sm"

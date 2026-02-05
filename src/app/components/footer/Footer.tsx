@@ -1,13 +1,13 @@
 "use client";
 import React, { JSX, useEffect, useState } from "react";
 import { COMPANY_NAME } from "@/utils/constant";
-import { FooterService } from "@/services/footerService"; // Import service
+import { FooterService } from "@/services/footerService";
 import { 
   FooterData, 
   FooterSection, 
   FooterSocialMedia, 
   FooterOtherLink 
-} from "@/types/footer-types"; // Import types
+} from "@/types/footer-types";
 
 const Footer = () => {
   const [footerData, setFooterData] = useState<FooterData | null>(null);
@@ -38,7 +38,6 @@ const Footer = () => {
     fetchFooterData();
   }, []);
 
-  // Group sections by title to avoid duplicates
   const groupedSections = footerData?.sections.reduce((acc, section) => {
     if (!acc[section.title]) {
       acc[section.title] = {
@@ -52,17 +51,14 @@ const Footer = () => {
 
   const uniqueSections = groupedSections ? Object.values(groupedSections) : [];
 
-  // Get copyright text
   const copyrightText = footerData?.others.find(
     (item) => item.name.toLowerCase() === "copyright"
   );
 
-  // Get other footer links (excluding copyright)
   const otherLinks = footerData?.others.filter(
     (item) => item.name.toLowerCase() !== "copyright"
   ) || [];
 
-  // Social media icon mapping
   const getSocialIcon = (name: string) => {
     const iconMap: Record<string, JSX.Element> = {
       Facebook: (
@@ -96,26 +92,15 @@ const Footer = () => {
 
   if (loading) {
     return (
-      <footer 
-        className="relative bg-gray-900 text-white"
-        style={{
-          backgroundImage: "url('/images/common-images/footer-bg.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      >
-        {/* Dark overlay for better readability */}
-        <div className="absolute inset-0 bg-gray-900/80"></div>
-        
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+      <footer className="bg-gradient-to-b from-slate-900 to-gray-900 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12">
             {[...Array(4)].map((_, i) => (
               <div key={i} className="space-y-4">
-                <div className="h-6 bg-gray-800 rounded w-32 animate-pulse"></div>
+                <div className="h-6 bg-slate-800 rounded w-32 animate-pulse"></div>
                 <div className="space-y-2">
                   {[...Array(5)].map((_, j) => (
-                    <div key={j} className="h-4 bg-gray-800 rounded w-full animate-pulse"></div>
+                    <div key={j} className="h-4 bg-slate-800 rounded w-full animate-pulse"></div>
                   ))}
                 </div>
               </div>
@@ -128,19 +113,8 @@ const Footer = () => {
 
   if (error || !footerData) {
     return (
-      <footer 
-        className="relative bg-gray-900 text-white"
-        style={{
-          backgroundImage: "url('/images/common-images/footer-bg.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      >
-        {/* Dark overlay for better readability */}
-        <div className="absolute inset-0 bg-gray-900/80"></div>
-        
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
+      <footer className="bg-gradient-to-b from-slate-900 to-gray-900 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
           <p className="text-red-400">Failed to load footer data</p>
         </div>
       </footer>
@@ -148,51 +122,55 @@ const Footer = () => {
   }
 
   return (
-    <footer 
-      className="relative bg-gray-900 text-white"
-      style={{
-        backgroundImage: "url('/images/common-images/footer-bg.png')",
-        backgroundSize: "cover",
-        // backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      {/* Dark overlay for better readability */}
-      <div className="absolute inset-0 bg-gray-900/80"></div>
-      
+    <footer className="bg-gradient-to-b from-slate-900 to-gray-900 text-white">
       {/* Main Footer Content */}
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Company Info - Left Column */}
-          <div className="lg:col-span-1">
-            {/* Logo */}
-            <div className="flex items-center mb-6">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center hover:bg-gradient-to-r hover:from-amber-600 hover:to-purple-600">
-                  <svg
-                    className="w-8 h-8 text-gray-900"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                  </svg>
-                </div>
-                <div>
-                  <div className="text-lg font-bold">{COMPANY_NAME}</div>
-                  <div className="text-xs text-gray-400 uppercase tracking-wider">
-                    TRAVELS
-                  </div>
-                </div>
+          <div className="lg:col-span-1 space-y-6">
+            {/* Logo & Company Name */}
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-sky-600 to-teal-500 rounded-xl flex items-center justify-center shadow-lg">
+                <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-white">{COMPANY_NAME}</h2>
+                <p className="text-xs text-sky-300 uppercase tracking-wider font-medium">TRAVEL EXPERTS</p>
               </div>
             </div>
 
             {/* Company Description */}
-            <p className="text-gray-300 text-sm leading-relaxed mb-6">
-              {COMPANY_NAME} a leading travel agents in Sri Lanka offering Sri Lanka Tour Packages.
+            <p className="text-gray-300 text-sm leading-relaxed">
+              Discover Sri Lanka with our expertly curated tours. We offer unforgettable travel experiences with personalized service and attention to detail.
             </p>
 
+            {/* Contact Info */}
+            <div className="space-y-3">
+              <div className="flex items-center space-x-3 text-sm text-gray-300">
+                <svg className="w-5 h-5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+                <span>+94 77 123 4567</span>
+              </div>
+              <div className="flex items-center space-x-3 text-sm text-gray-300">
+                <svg className="w-5 h-5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                <span>info@felicitatrips.com</span>
+              </div>
+              <div className="flex items-center space-x-3 text-sm text-gray-300">
+                <svg className="w-5 h-5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span>Colombo, Sri Lanka</span>
+              </div>
+            </div>
+
             {/* Social Media Links */}
-            {/* <div className="flex space-x-4">
+            {/* <div className="flex space-x-3 pt-4">
               {footerData.socialMedia
                 .filter((social) => social.status === "ACTIVE")
                 .map((social) => (
@@ -201,7 +179,7 @@ const Footer = () => {
                     href={social.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-gradient-to-r hover:from-amber-600 hover:to-purple-600 transition-all duration-300 group"
+                    className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-gradient-to-r hover:from-sky-600 hover:to-teal-500 transition-all duration-300 group shadow-md"
                     title={social.description}
                   >
                     {getSocialIcon(social.name)}
@@ -215,18 +193,21 @@ const Footer = () => {
             .filter((section) => section.status === "ACTIVE")
             .map((section) => (
               <div key={section.id} className="lg:col-span-1">
-                <h3 className="text-lg font-semibold text-white mb-6">
+                <h3 className="text-lg font-semibold text-white mb-6 pb-3 border-b border-slate-700">
                   {section.title}
                 </h3>
-                <ul className="space-y-3">
+                <ul className="space-y-4">
                   {section.subItems
                     .filter((item) => item.status === "ACTIVE")
                     .map((item) => (
                       <li key={item.id}>
                         <a
                           href={item.linkUrl}
-                          className="text-gray-300 hover:text-white hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-blue-400 hover:to-purple-500 transition-all duration-200 text-sm"
+                          className="text-gray-300 hover:text-sky-300 transition-all duration-200 text-sm flex items-center group"
                         >
+                          <svg className="w-4 h-4 mr-2 text-sky-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                          </svg>
                           {item.name}
                         </a>
                       </li>
@@ -238,28 +219,39 @@ const Footer = () => {
       </div>
 
       {/* Copyright Section */}
-      <div className="relative border-t border-gray-700">
+      <div className="border-t border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             {/* Copyright Text */}
-            <div className="text-gray-400 text-sm text-center sm:text-left">
+            <div className="text-gray-400 text-sm text-center md:text-left">
               {copyrightText?.description || `© ${currentYear} ${COMPANY_NAME}. All rights reserved.`}
             </div>
 
             {/* Additional Links */}
-            <div className="flex space-x-6 text-sm">
+            <div className="flex flex-wrap justify-center gap-4 text-sm">
               {otherLinks
                 .filter((link) => link.status === "ACTIVE")
                 .map((link) => (
                   <a
                     key={link.id}
                     href={link.linkUrl}
-                    className="text-gray-400 hover:text-white hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-amber-400 hover:to-purple-500 transition-all duration-200"
+                    className="text-gray-400 hover:text-sky-300 transition-colors duration-200 hover:underline"
                   >
                     {link.name}
                   </a>
                 ))}
             </div>
+
+            {/* Back to Top */}
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className="text-gray-400 hover:text-sky-300 transition-colors duration-200 text-sm flex items-center"
+            >
+              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+              </svg>
+              Back to Top
+            </button>
           </div>
         </div>
       </div>

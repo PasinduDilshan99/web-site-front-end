@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import PackageCard from "./PackageCard";
-import { ActivePackagesType } from "@/types/packages-types";
+import { ActivePackagesForFilters } from "@/types/packages-types";
 
 interface PackageGridProps {
-  packages: ActivePackagesType[];
+  packages: ActivePackagesForFilters[];
   displayCount: number;
   showViewDetails?: boolean;
 }

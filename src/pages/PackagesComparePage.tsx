@@ -8,9 +8,7 @@ import PackageSelection from "@/components/package-comparison-components/Package
 import PackageSummaryCard from "@/components/package-comparison-components/PackageSummaryCard";
 import DayComparisonTable from "@/components/package-comparison-components/DayComparisonTable";
 import ExtraDetailsComparison from "@/components/package-comparison-components/ExtraDetailsComparison";
-import {
-  PackageComparison as ComparisonPackage,
-} from "@/types/package-comparison-types";
+import { PackageComparison as ComparisonPackage } from "@/types/package-comparison-types";
 import { Tour } from "@/types/tour-types";
 import { PackageService } from "@/services/packageService";
 import { TourService } from "@/services/tourService";
@@ -18,7 +16,9 @@ import { TourService } from "@/services/tourService";
 const PackagesComparePage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [tourName, setTourName] = useState(searchParams?.get("tour-name") || "");
+  const [tourName, setTourName] = useState(
+    searchParams?.get("tour-name") || "",
+  );
   const [tourId, setTourId] = useState(searchParams?.get("tour-id") || "");
 
   // States for API data
@@ -31,12 +31,10 @@ const PackagesComparePage = () => {
   const [showTourDropdown, setShowTourDropdown] = useState(false);
 
   // States for comparison
-  const [selectedPackage1, setSelectedPackage1] = useState<ComparisonPackage | null>(
-    null
-  );
-  const [selectedPackage2, setSelectedPackage2] = useState<ComparisonPackage | null>(
-    null
-  );
+  const [selectedPackage1, setSelectedPackage1] =
+    useState<ComparisonPackage | null>(null);
+  const [selectedPackage2, setSelectedPackage2] =
+    useState<ComparisonPackage | null>(null);
   const [package1Id, setPackage1Id] = useState<string>("");
   const [package2Id, setPackage2Id] = useState<string>("");
 
@@ -50,10 +48,11 @@ const PackagesComparePage = () => {
     const fetchTours = async () => {
       try {
         setLoading(true);
-        
+
         // USING THE SERVICE INSTEAD OF DIRECT FETCH
-        const { tours: fetchedTours, error } = await TourService.fetchAllToursBasicDetails();
-        
+        const { tours: fetchedTours, error } =
+          await TourService.fetchAllToursBasicDetails();
+
         if (error) {
           console.error("Error fetching tours:", error);
         } else {
@@ -64,7 +63,7 @@ const PackagesComparePage = () => {
         // If tourId is in URL params, find and select that tour
         if (tourId) {
           const foundTour = fetchedTours.find(
-            (t) => t.tourDetails.tourId.toString() === tourId
+            (t) => t.tourDetails.tourId.toString() === tourId,
           );
           if (foundTour) {
             setSelectedTour(foundTour);
@@ -87,10 +86,11 @@ const PackagesComparePage = () => {
   const fetchPackagesForTour = async (id: number) => {
     try {
       setLoading(true);
-      
+
       // USING THE SERVICE INSTEAD OF DIRECT FETCH
-      const { packages: fetchedPackages, error } = await PackageService.fetchPackagesForComparison(id);
-      
+      const { packages: fetchedPackages, error } =
+        await PackageService.fetchPackagesForComparison(id);
+
       if (error) {
         console.error("Error fetching packages:", error);
       } else {
@@ -121,7 +121,7 @@ const PackagesComparePage = () => {
             .includes(searchQuery.toLowerCase()) ||
           tour.tourDetails.tourTypeName
             ?.toLowerCase()
-            .includes(searchQuery.toLowerCase())
+            .includes(searchQuery.toLowerCase()),
       );
       setFilteredTours(filtered);
     }
@@ -147,7 +147,7 @@ const PackagesComparePage = () => {
   // Handle package selection for comparison
   const handlePackageSelect = (packageId: string, isFirstPackage: boolean) => {
     const selectedPkg = packages.find(
-      (p) => p.packageId.toString() === packageId
+      (p) => p.packageId.toString() === packageId,
     );
 
     if (isFirstPackage) {
@@ -187,8 +187,18 @@ const PackagesComparePage = () => {
                 className="w-full h-32 object-cover rounded-lg"
               />
               <div className="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg
+                  className="w-6 h-6 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
               </div>
             </div>
@@ -209,52 +219,58 @@ const PackagesComparePage = () => {
         </h2>
 
         {/* Summary Cards */}
-<div className="mb-6 sm:mb-8">
-  <div className="flex flex-col sm:grid sm:grid-cols-2 gap-4 sm:gap-6">
-    {/* Mobile Header */}
-    <div className="sm:hidden">
-      <h3 className="text-lg font-bold text-gray-900 mb-2">Compare Packages</h3>
-    </div>
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col sm:grid sm:grid-cols-2 gap-4 sm:gap-6">
+            {/* Mobile Header */}
+            <div className="sm:hidden">
+              <h3 className="text-lg font-bold text-gray-900 mb-2">
+                Compare Packages
+              </h3>
+            </div>
 
-    {/* Mobile Horizontal Scroll */}
-    <div className="sm:hidden">
-      <div className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide -mx-4 px-4">
-        <div className="flex-shrink-0 w-[80vw]">
-          <div className="mb-2 text-xs font-medium text-blue-600">Package 1</div>
-          <PackageSummaryCard
-            package={selectedPackage1}
-            formatCurrency={formatCurrency}
-            renderPackageImages={renderPackageImages}
-          />
-        </div>
-        <div className="flex-shrink-0 w-[80vw]">
-          <div className="mb-2 text-xs font-medium text-green-600">Package 2</div>
-          <PackageSummaryCard
-            package={selectedPackage2}
-            formatCurrency={formatCurrency}
-            renderPackageImages={renderPackageImages}
-          />
-        </div>
-      </div>
-    </div>
+            {/* Mobile Horizontal Scroll */}
+            <div className="sm:hidden">
+              <div className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide -mx-4 px-4">
+                <div className="flex-shrink-0 w-[80vw]">
+                  <div className="mb-2 text-xs font-medium text-blue-600">
+                    Package 1
+                  </div>
+                  <PackageSummaryCard
+                    package={selectedPackage1}
+                    formatCurrency={formatCurrency}
+                    renderPackageImages={renderPackageImages}
+                  />
+                </div>
+                <div className="flex-shrink-0 w-[80vw]">
+                  <div className="mb-2 text-xs font-medium text-green-600">
+                    Package 2
+                  </div>
+                  <PackageSummaryCard
+                    package={selectedPackage2}
+                    formatCurrency={formatCurrency}
+                    renderPackageImages={renderPackageImages}
+                  />
+                </div>
+              </div>
+            </div>
 
-    {/* Desktop Layout */}
-    <div className="hidden sm:block">
-      <PackageSummaryCard
-        package={selectedPackage1}
-        formatCurrency={formatCurrency}
-        renderPackageImages={renderPackageImages}
-      />
-    </div>
-    <div className="hidden sm:block">
-      <PackageSummaryCard
-        package={selectedPackage2}
-        formatCurrency={formatCurrency}
-        renderPackageImages={renderPackageImages}
-      />
-    </div>
-  </div>
-</div>
+            {/* Desktop Layout */}
+            <div className="hidden sm:block">
+              <PackageSummaryCard
+                package={selectedPackage1}
+                formatCurrency={formatCurrency}
+                renderPackageImages={renderPackageImages}
+              />
+            </div>
+            <div className="hidden sm:block">
+              <PackageSummaryCard
+                package={selectedPackage2}
+                formatCurrency={formatCurrency}
+                renderPackageImages={renderPackageImages}
+              />
+            </div>
+          </div>
+        </div>
 
         {/* Day-by-Day Comparison Table */}
         <DayComparisonTable
@@ -319,8 +335,8 @@ const PackagesComparePage = () => {
         {selectedTour && !loading && packages.length === 0 && (
           <div className="text-center py-12">
             <div className="bg-white rounded-2xl shadow-lg p-8 max-w-md mx-auto">
-              <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <DollarSign className="w-8 h-8 text-yellow-600" />
+              <div className="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <DollarSign className="w-8 h-8 text-sky-600" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">
                 No Packages Available

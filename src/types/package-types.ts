@@ -128,6 +128,38 @@ export interface Feature {
   color: string;
   specialNote: string;
 }
+export interface ActivePackagesForFilters {
+  packageId: number;
+  packageName: string;
+  packageDescription: string;
+  totalPrice: number;
+  discountPercentage: number;
+  startDate: string;
+  endDate: string;
+  color: string;
+  hoverColor: string;
+  minPersonCount: number;
+  maxPersonCount: number;
+  pricePerPerson: number;
+  packageStatus: string;
+  createdAt: string;
+  createdBy: number;
+  packageTypeName: string;
+  packageTypeDescription: string;
+  packageTypeStatus: string;
+  tourId: number;
+  tourName: string;
+  tourDescription: string;
+  duration: number;
+  latitude: number;
+  longitude: number;
+  startLocation: string;
+  endLocation: string;
+  tourStatus: string;
+  schedules: Schedule[];
+  features: Feature[];
+  images: PackageImage[];
+}
 
 export interface ActivePackagesType {
   packageId: number;
@@ -194,7 +226,7 @@ export interface ApiResponse<T> {
 
 export interface PackageListResponse {
   packageCount: number;
-  packageResponseDtos: ActivePackagesType[];
+  packageResponseDtos: ActivePackagesForFilters[];
 }
 
 export interface PaginatedPackageResponse {

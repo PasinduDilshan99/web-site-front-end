@@ -35,7 +35,7 @@ export default function ProfileLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-100 via-white to-purple-100">
+    <div className="min-h-screen bg-gradient-to-br from-sky-100 via-white to-cyan-100">
       <div className="flex relative">
         <Sidebar />
         <main className="flex-1">{children}</main>
