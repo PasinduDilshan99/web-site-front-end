@@ -262,7 +262,7 @@ export default function Page() {
             {/* Forgot Password */}
             <div className="flex justify-end">
               <Link
-                href="/forgot-password"
+                href="/password-reset"
                 className="text-sm text-gray-500 hover:text-blue-500 transition-colors"
               >
                 Forgot your password?

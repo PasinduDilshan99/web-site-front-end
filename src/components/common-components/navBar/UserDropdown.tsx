@@ -59,14 +59,14 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
               border: "2px solid rgba(14, 165, 233, 0.3)",
             }}
           >
-            {user && (
+            {(user && (
               <Image
                 alt="profile pic"
                 src={user?.imageUrl}
                 width={400}
                 height={400}
               />
-            ) || (
+            )) || (
               <span className="font-bold text-sm text-white">
                 {user?.firstName.charAt(0).toUpperCase()}
                 {user?.lastName.charAt(0).toUpperCase()}
@@ -145,6 +145,28 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
                 }}
               >
                 Settings
+              </Link>
+              <Link
+                href="/password-change"
+                className="block px-3 py-2 rounded-md transition-colors duration-300"
+                style={{
+                  color: "#075985",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "#0ea5e9";
+                  e.currentTarget.style.backgroundColor =
+                    "rgba(14, 165, 233, 0.08)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "#075985";
+                  e.currentTarget.style.backgroundColor = "transparent";
+                }}
+                onClick={() => {
+                  setIsDropdownOpen(false);
+                  onCloseAll();
+                }}
+              >
+                Password Change
               </Link>
               <button
                 onClick={handleLogout}

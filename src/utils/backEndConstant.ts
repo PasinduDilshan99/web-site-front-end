@@ -34,8 +34,22 @@ const INQUIRY = "/inquiry"
 const OUR_STORY = "/our-story"
 const CONTACT_US = "/contact-us"
 const WISH_LIST = "/wish-list"
+const AUTH = "/auth"
+const USER_PROFILE = "/user-profile"
 
 export const BASE_PATH = `${PROTOCOL}://${DOMAIN}:${PORT}/${CONTEXT_ROOT}`;
+
+// Auth
+export const UPDATE_PASSWORD_DATA = `${BASE_PATH}${API}${VERSION}${AUTH}/change-password`;
+export const RESET_PASSWORD_DATA = `${BASE_PATH}${API}${VERSION}${AUTH}/reset-password`;
+export const UPDATE_SECRET_QUESTIONS_DATA = `${BASE_PATH}${API}${VERSION}${AUTH}/update-secret-questions`;
+export const USERNAME_PASSWORD_VALIDATION_DATA = `${BASE_PATH}${API}${VERSION}${AUTH}/username-password-validation`;
+export const GET_ACTIVE_SECRET_QUESTIONS_DATA = `${BASE_PATH}${API}${VERSION}${AUTH}/secret-questions`;
+
+// User Profile
+export const UPDATE_USER_PROFILE_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${USER_PROFILE}/update-account`;
+
+
 
 // Link Bar
 export const GET_ALL_LINK_BAR_DATA = `${BASE_PATH}${API}${VERSION}${LINK_BAR}/all`;
