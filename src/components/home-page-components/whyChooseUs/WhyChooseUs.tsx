@@ -108,7 +108,7 @@ const WhyChooseUs = () => {
   }
 
   return (
-    <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-r from-purple-100 to-amber-100">
+    <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-white ">
       <div className="mx-auto px-3 sm:px-4 md:px-6 lg:px-8 ">
         {/* Section Header - Fully Responsive */}
         <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
@@ -188,13 +188,13 @@ const WhyChooseUs = () => {
                   )}
 
                   {/* Title - Responsive Typography */}
-                  <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold mb-1 sm:mb-2 text-gray-800 group-hover:text-purple-600 transition-colors duration-300 leading-tight line-clamp-2 flex-grow">
+                  <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold mb-1 sm:mb-2 text-gray-800 group-hover:text-cyan-600 transition-colors duration-300 leading-tight line-clamp-2 flex-grow">
                     {card.cardTitle}
                   </h3>
 
                   {/* Subtitle - Responsive */}
                   {card.cardSubTitle && (
-                    <p className="text-xs sm:text-sm md:text-base font-medium mb-2 sm:mb-3 text-purple-600 line-clamp-2">
+                    <p className="text-xs sm:text-sm md:text-base font-medium mb-2 sm:mb-3 text-cyan-600 line-clamp-2">
                       {card.cardSubTitle}
                     </p>
                   )}
@@ -218,7 +218,7 @@ const WhyChooseUs = () => {
         </div>
 
         {/* Call to Action - Fully Responsive */}
-        <div className="text-center mt-8">
+        <div className="text-center mt-8 lg:mt-16">
           <AnimatedButton onClick={handleLearnMoreClick}>
             Learn More About Us
           </AnimatedButton>

@@ -10,13 +10,18 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     console.log("Activities API - Request body:", body);
 
+    // Get cookies from the incoming request
+    const cookieHeader = request.headers.get("cookie") || "";
+
     const response = await fetch(GET_ACTIVITIES_DETAILS_BY_REQUEST_DATA, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        // Forward cookies
+        "Cookie": cookieHeader,
       },
-      credentials: "include",
       body: JSON.stringify(body),
+      // credentials is ignored in server-side fetch, headers already include cookies
     });
 
     if (!response.ok) {

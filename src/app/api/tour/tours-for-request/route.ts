@@ -10,12 +10,15 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     console.log("Popular Tours API - Request body:", body);
 
+    // Forward cookies from the incoming request
+    const cookieHeader = request.headers.get("cookie") || "";
+
     const response = await fetch(GET_TOURS_DETAILS_BY_REQUEST_DATA, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Cookie": cookieHeader, // send cookies to backend
       },
-      credentials: "include",
       body: JSON.stringify(body),
       cache: "no-store",
     });

@@ -43,7 +43,7 @@ export interface PackageImage {
   color: string;
 }
 
-export interface ActivePackagesType {
+export interface ActivePackagesForFilters {
   packageId: number;
   packageName: string;
   packageDescription: string;
@@ -74,6 +74,7 @@ export interface ActivePackagesType {
   schedules: Schedule[];
   features: Feature[];
   images: PackageImage[];
+  wish: boolean;
 }
 
 export interface ApiResponse<T> {
@@ -249,7 +250,7 @@ export interface PackageHistory {
 }
 
 export interface PackageHistoryImage {
-imageId: number;
+  imageId: number;
   imageName: string;
   imageDescription: string;
   imageUrl: string;

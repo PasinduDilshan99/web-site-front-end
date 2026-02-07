@@ -33,8 +33,23 @@ const EMPLOYEE = "/employee"
 const INQUIRY = "/inquiry"
 const OUR_STORY = "/our-story"
 const CONTACT_US = "/contact-us"
+const WISH_LIST = "/wish-list"
+const AUTH = "/auth"
+const USER_PROFILE = "/user-profile"
 
 export const BASE_PATH = `${PROTOCOL}://${DOMAIN}:${PORT}/${CONTEXT_ROOT}`;
+
+// Auth
+export const UPDATE_PASSWORD_DATA = `${BASE_PATH}${API}${VERSION}${AUTH}/change-password`;
+export const RESET_PASSWORD_DATA = `${BASE_PATH}${API}${VERSION}${AUTH}/reset-password`;
+export const UPDATE_SECRET_QUESTIONS_DATA = `${BASE_PATH}${API}${VERSION}${AUTH}/update-secret-questions`;
+export const USERNAME_PASSWORD_VALIDATION_DATA = `${BASE_PATH}${API}${VERSION}${AUTH}/username-password-validation`;
+export const GET_ACTIVE_SECRET_QUESTIONS_DATA = `${BASE_PATH}${API}${VERSION}${AUTH}/secret-questions`;
+
+// User Profile
+export const UPDATE_USER_PROFILE_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${USER_PROFILE}/update-account`;
+
+
 
 // Link Bar
 export const GET_ALL_LINK_BAR_DATA = `${BASE_PATH}${API}${VERSION}${LINK_BAR}/all`;
@@ -156,6 +171,12 @@ export const ADD_FAQ_REQUEST_DATA = `${BASE_PATH}${API}${VERSION}${FAQ}/insert-f
 
 // Employees
 export const GET_EMPLOYEE_DETAILS_BY_TOUR_ID_DATA = `${BASE_PATH}${API}${VERSION}${EMPLOYEE}/employee-details`;
+
+// Wish List
+export const ADD_ACTIVITY_WISH_LIST_DATA= `${BASE_PATH}${API}${VERSION}${WISH_LIST}/add-activity-wish-list`;
+export const ADD_DESTINATION_WISH_LIST_DATA= `${BASE_PATH}${API}${VERSION}${WISH_LIST}/add-destination-wish-list`;
+export const ADD_TOUR_WISH_LIST_DATA= `${BASE_PATH}${API}${VERSION}${WISH_LIST}/add-tour-wish-list`;
+export const ADD_PACKAGE_WISH_LIST_DATA= `${BASE_PATH}${API}${VERSION}${WISH_LIST}/add-package-wish-list`;
 
 
 export const GET_TOUR_DETAILS_BY_ID_BE = `${BASE_PATH}${VERSION}${API}${TOUR}`;

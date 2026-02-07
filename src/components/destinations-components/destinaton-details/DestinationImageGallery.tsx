@@ -32,7 +32,7 @@ const DestinationImageGallery: React.FC<DestinationImageGalleryProps> = ({
             priority
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-amber-400 to-purple-600 flex items-center justify-center">
+          <div className="w-full h-full bg-gradient-to-br from-sky-400 to-teal-600 flex items-center justify-center">
             <span className="text-white font-semibold text-2xl">
               {destination.destinationName}
             </span>
@@ -42,15 +42,15 @@ const DestinationImageGallery: React.FC<DestinationImageGalleryProps> = ({
 
       {/* Thumbnail Images */}
       {destination.images.length > 1 && (
-        <div className="p-4 bg-gray-50">
+        <div className="p-4 bg-sky-50/50">
           <div className="flex space-x-3 overflow-x-auto">
             {destination.images.map((image, index) => (
               <button
                 key={image.imageId}
                 className={`flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 cursor-pointer transition-all duration-200 ${
                   activeImageIndex === index
-                    ? "border-amber-500 shadow-md"
-                    : "border-gray-300 hover:border-purple-300"
+                    ? "border-gradient-to-r border-2 from-sky-500 to-teal-500 shadow-lg shadow-sky-200/50"
+                    : "border-gray-300 hover:border-sky-300"
                 }`}
                 onClick={() => onImageChange(index)}
               >

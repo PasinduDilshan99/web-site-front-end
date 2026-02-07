@@ -331,7 +331,7 @@ const ActivityPage: React.FC = () => {
   return (
     <>
       <ActivityHeroSection />
-      <div className="mx-auto px-4 py-8 bg-gradient-to-br from-blue-50 via-purple-50 to-amber-50 min-h-screen">
+      <div className="mx-auto px-4 py-8 bg-gradient-to-br from-blue-50 via-sky-50 to-cyan-50 min-h-screen">
         {/* Page Header */}
         <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
           <SectionHeader
@@ -359,16 +359,16 @@ const ActivityPage: React.FC = () => {
         {/* Results Section */}
         <div id="results-section" className="mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <h3 className="text-lg lg:text-2xl font-semibold text-gray-900">
+            <h3 className="text-lg lg:text-2xl font-semibold text-sky-900">
               {totalActivities} Activity
               {totalActivities !== 1 ? "s" : ""} Found
             </h3>
 
             {/* Items Per Page Selector */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 bg-sky-50 rounded-lg px-4 py-2 border border-sky-200">
               <label
                 htmlFor="itemsPerPage"
-                className="text-sm font-medium text-gray-700 whitespace-nowrap"
+                className="text-sm font-medium text-sky-800 whitespace-nowrap"
               >
                 Show:
               </label>
@@ -378,7 +378,7 @@ const ActivityPage: React.FC = () => {
                 onChange={(e) =>
                   handleItemsPerPageChange(Number(e.target.value))
                 }
-                className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-600"
+                className="border border-sky-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-sky-700 transition-all duration-200 hover:border-sky-400"
               >
                 <option value={6}>6</option>
                 <option value={8}>8</option>
@@ -387,7 +387,7 @@ const ActivityPage: React.FC = () => {
                 <option value={24}>24</option>
                 <option value={32}>32</option>
               </select>
-              <span className="text-sm text-gray-500 whitespace-nowrap">
+              <span className="text-sm text-sky-600 whitespace-nowrap font-medium">
                 per page
               </span>
             </div>
@@ -448,13 +448,13 @@ export default ActivityPage;
 const NoResults: React.FC<{ onResetFilters: () => void }> = ({
   onResetFilters,
 }) => (
-  <div className="text-center py-12">
-    <div className="text-gray-500 text-lg mb-4">
+<div className="text-center py-12">
+    <div className="text-sky-600 text-lg mb-4">
       No activities found matching your filters.
     </div>
     <button
       onClick={onResetFilters}
-      className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors"
+      className="px-6 py-2 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:from-sky-700 hover:to-teal-700 transition-all duration-300 shadow-md hover:shadow-lg"
     >
       Reset Filters
     </button>
@@ -502,9 +502,9 @@ const Pagination: React.FC<PaginationProps> = ({
   };
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 pt-6 border-t border-gray-200">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 pt-6 border-t border-sky-200">
       {/* Results info */}
-      <div className="text-sm text-gray-600">
+      <div className="text-sm text-sky-600 font-medium">
         Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of{" "}
         {totalItems} results
       </div>
@@ -515,8 +515,11 @@ const Pagination: React.FC<PaginationProps> = ({
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
         >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
           Previous
         </button>
 
@@ -526,10 +529,10 @@ const Pagination: React.FC<PaginationProps> = ({
             <button
               key={page}
               onClick={() => onPageChange(page)}
-              className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
                 currentPage === page
-                  ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
-                  : "text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700"
+                  ? "bg-gradient-to-r from-sky-600 to-teal-600 text-white shadow-lg transform scale-105"
+                  : "text-sky-700 bg-white border-2 border-sky-300 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 hover:shadow-md"
               }`}
             >
               {page}
@@ -541,9 +544,12 @@ const Pagination: React.FC<PaginationProps> = ({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
         >
           Next
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
         </button>
       </div>
     </div>

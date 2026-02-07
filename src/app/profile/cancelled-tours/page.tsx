@@ -1,7 +1,10 @@
 // app/profile/cancelled-tours/page.tsx
 "use client"
+import { useAuth } from '@/context/AuthContext';
 import { UserProfileAPIService } from '@/services/userProfileAPIService';
 import { CancelledTour } from '@/types/cancelled-tours';
+import { USER_PROFILE_CANCELLED_TOURS_VIEW_PRIVILEGE } from '@/utils/privileges';
+import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 export default function CancelledToursPage() {
@@ -11,6 +14,17 @@ export default function CancelledToursPage() {
   const [expandedBooking, setExpandedBooking] = useState<number | null>(null);
   const [filterStatus, setFilterStatus] = useState<string>('ALL');
   const apiService = new UserProfileAPIService();
+  const { user } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (
+      user &&
+      !user.privileges.includes(USER_PROFILE_CANCELLED_TOURS_VIEW_PRIVILEGE)
+    ) {
+      router.push("/profile");
+    }
+  }, [user, router]);
 
   useEffect(() => {
     loadCancelledTours();
@@ -42,7 +56,7 @@ export default function CancelledToursPage() {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
-      month: 'long',
+      month: 'short',
       day: 'numeric'
     });
   };
@@ -51,7 +65,7 @@ export default function CancelledToursPage() {
     if (!dateTimeString) return 'N/A';
     return new Date(dateTimeString).toLocaleDateString('en-US', {
       year: 'numeric',
-      month: 'long',
+      month: 'short',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
@@ -69,32 +83,32 @@ export default function CancelledToursPage() {
   const getRefundStatusColor = (status: string) => {
     switch (status) {
       case 'COMPLETED':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-emerald-100 text-emerald-800 border border-emerald-200';
       case 'PROCESSING':
-        return 'bg-amber-100 text-amber-800 border-amber-200';
+        return 'bg-sky-100 text-sky-800 border border-sky-200';
       case 'PENDING':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-cyan-100 text-cyan-800 border border-cyan-200';
       case 'FAILED':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'bg-red-100 text-red-800 border border-red-200';
       case 'PARTIAL':
-        return 'bg-purple-100 text-purple-800 border-purple-200';
+        return 'bg-purple-100 text-purple-800 border border-purple-200';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-gray-100 text-gray-800 border border-gray-200';
     }
   };
 
   const getCancellationStageColor = (stage: string) => {
     switch (stage) {
       case 'ADVANCED_CANCELLATION':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-emerald-100 text-emerald-800 border border-emerald-200';
       case 'STANDARD_CANCELLATION':
-        return 'bg-amber-100 text-amber-800 border-amber-200';
+        return 'bg-amber-100 text-amber-800 border border-amber-200';
       case 'LATE_CANCELLATION':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'bg-red-100 text-red-800 border border-red-200';
       case 'NO_SHOW':
-        return 'bg-red-200 text-red-900 border-red-300';
+        return 'bg-red-200 text-red-900 border border-red-300';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-gray-100 text-gray-800 border border-gray-200';
     }
   };
 
@@ -104,17 +118,17 @@ export default function CancelledToursPage() {
   };
 
   const getDaysBeforeTravelColor = (days: number) => {
-    if (days > 30) return 'text-green-600';
-    if (days > 14) return 'text-amber-600';
-    if (days > 0) return 'text-orange-600';
-    return 'text-red-600';
+    if (days > 30) return 'text-emerald-600 font-semibold';
+    if (days > 14) return 'text-amber-600 font-semibold';
+    if (days > 0) return 'text-orange-600 font-semibold';
+    return 'text-red-600 font-semibold';
   };
 
   const getPenaltyPercentageColor = (percentage: number) => {
-    if (percentage === 0) return 'text-green-600';
-    if (percentage <= 25) return 'text-amber-600';
-    if (percentage <= 50) return 'text-orange-600';
-    return 'text-red-600';
+    if (percentage === 0) return 'text-emerald-600 font-semibold';
+    if (percentage <= 25) return 'text-amber-600 font-semibold';
+    if (percentage <= 50) return 'text-orange-600 font-semibold';
+    return 'text-red-600 font-semibold';
   };
 
   const toggleBookingExpansion = (bookingId: number) => {
@@ -146,13 +160,18 @@ export default function CancelledToursPage() {
 
   if (loading) {
     return (
-      <div className="flex-1 p-4 md:p-6 lg:p-8 bg-gradient-to-br from-amber-25 to-purple-25 min-h-screen">
-        <div className="max-w-6xl mx-auto">
+      <div className="flex-1 p-4 md:p-6 lg:p-8 bg-gradient-to-br from-slate-50 to-sky-50 min-h-screen">
+        <div className="max-w-7xl mx-auto">
           <div className="animate-pulse">
-            <div className="h-8 bg-gradient-to-r from-amber-200 to-purple-200 rounded w-1/4 mb-6"></div>
-            <div className="space-y-6">
+            <div className="h-10 bg-gradient-to-r from-slate-200 to-sky-200 rounded-lg w-64 mb-8"></div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="h-24 bg-gradient-to-r from-slate-100 to-sky-100 rounded-xl"></div>
+              ))}
+            </div>
+            <div className="space-y-4">
               {[...Array(2)].map((_, i) => (
-                <div key={i} className="h-64 bg-gradient-to-r from-amber-100 to-purple-100 rounded-2xl"></div>
+                <div key={i} className="h-40 bg-gradient-to-r from-slate-100 to-sky-100 rounded-xl"></div>
               ))}
             </div>
           </div>
@@ -163,15 +182,15 @@ export default function CancelledToursPage() {
 
   if (error) {
     return (
-      <div className="flex-1 p-4 md:p-6 lg:p-8 bg-gradient-to-br from-amber-25 to-purple-25 min-h-screen">
+      <div className="flex-1 p-4 md:p-6 lg:p-8 bg-gradient-to-br from-slate-50 to-sky-50 min-h-screen">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-lg border border-amber-200 p-8 text-center">
-            <div className="text-red-500 text-6xl mb-4">🚫</div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">Unable to Load Cancelled Tours</h3>
-            <p className="text-gray-600 mb-6">{error}</p>
+          <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 md:p-8 text-center">
+            <div className="text-red-500 text-5xl mb-4">🚫</div>
+            <h3 className="text-xl md:text-2xl font-semibold text-slate-800 mb-2">Unable to Load Cancelled Tours</h3>
+            <p className="text-slate-600 mb-6">{error}</p>
             <button
               onClick={loadCancelledTours}
-              className="px-6 py-3 bg-gradient-to-r from-amber-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all duration-300"
+              className="px-6 py-3 bg-gradient-to-r from-sky-500 to-teal-600 text-white rounded-lg hover:shadow-lg transition-all duration-300 shadow-md hover:shadow-lg"
             >
               Try Again
             </button>
@@ -183,13 +202,13 @@ export default function CancelledToursPage() {
 
   if (cancelledTours.length === 0) {
     return (
-      <div className="flex-1 p-4 md:p-6 lg:p-8 bg-gradient-to-br from-amber-25 to-purple-25 min-h-screen">
+      <div className="flex-1 p-4 md:p-6 lg:p-8 bg-gradient-to-br from-slate-50 to-sky-50 min-h-screen">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-lg border border-amber-200 p-8 text-center">
-            <div className="text-gray-400 text-6xl mb-4">📝</div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">No Cancelled Tours</h3>
-            <p className="text-gray-600 mb-6">You haven&apos;t cancelled any tours yet.</p>
-            <button className="px-6 py-3 bg-gradient-to-r from-amber-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all duration-300">
+          <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 md:p-8 text-center">
+            <div className="text-slate-400 text-5xl mb-4">📝</div>
+            <h3 className="text-xl md:text-2xl font-semibold text-slate-800 mb-2">No Cancelled Tours</h3>
+            <p className="text-slate-600 mb-6">You haven&apos;t cancelled any tours yet.</p>
+            <button className="px-6 py-3 bg-gradient-to-r from-sky-500 to-teal-600 text-white rounded-lg hover:shadow-lg transition-all duration-300 shadow-md hover:shadow-lg">
               View Current Bookings
             </button>
           </div>
@@ -199,113 +218,107 @@ export default function CancelledToursPage() {
   }
 
   return (
-    <div className="flex-1 p-4 md:p-6 lg:p-8 bg-gradient-to-br from-amber-25 to-purple-25 min-h-screen">
-      <div className="max-w-6xl mx-auto">
+    <div className="flex-1 p-4 md:p-6 lg:p-8 bg-gradient-to-br from-slate-50 to-sky-50 min-h-screen">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-amber-600 to-purple-600 bg-clip-text text-transparent">
+        <div className="mb-6 md:mb-8">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-sky-600 to-teal-600 bg-clip-text text-transparent">
             Cancelled Tours
           </h1>
-          <p className="text-gray-600 mt-2">Your cancelled bookings and refund status</p>
+          <p className="text-slate-600 mt-1 md:mt-2 text-sm md:text-base">Your cancelled bookings and refund status</p>
         </div>
 
-        {/* Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-4 text-center">
-            <div className="text-2xl font-bold text-gray-700">{refundStats.total}</div>
-            <div className="text-sm text-gray-600">Total Cancellations</div>
+        {/* Statistics Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
+          <div className="bg-white rounded-xl md:rounded-2xl shadow-md border border-slate-200 p-3 md:p-4 text-center">
+            <div className="text-lg md:text-xl lg:text-2xl font-bold text-slate-800">{refundStats.total}</div>
+            <div className="text-xs md:text-sm text-slate-600 mt-1">Total Cancellations</div>
           </div>
-          <div className="bg-white rounded-2xl shadow-lg border border-green-200 p-4 text-center">
-            <div className="text-2xl font-bold text-green-600">{formatCurrency(refundStats.totalRefunded)}</div>
-            <div className="text-sm text-gray-600">Total Refunded</div>
+          <div className="bg-white rounded-xl md:rounded-2xl shadow-md border border-emerald-200 p-3 md:p-4 text-center">
+            <div className="text-lg md:text-xl lg:text-2xl font-bold text-emerald-600">{formatCurrency(refundStats.totalRefunded)}</div>
+            <div className="text-xs md:text-sm text-slate-600 mt-1">Total Refunded</div>
           </div>
-          <div className="bg-white rounded-2xl shadow-lg border border-red-200 p-4 text-center">
-            <div className="text-2xl font-bold text-red-600">{formatCurrency(refundStats.totalCancellationFees)}</div>
-            <div className="text-sm text-gray-600">Cancellation Fees</div>
+          <div className="bg-white rounded-xl md:rounded-2xl shadow-md border border-red-200 p-3 md:p-4 text-center">
+            <div className="text-lg md:text-xl lg:text-2xl font-bold text-red-600">{formatCurrency(refundStats.totalCancellationFees)}</div>
+            <div className="text-xs md:text-sm text-slate-600 mt-1">Cancellation Fees</div>
           </div>
-          <div className="bg-white rounded-2xl shadow-lg border border-amber-200 p-4 text-center">
-            <div className="text-2xl font-bold text-amber-600">{refundStats.processing}</div>
-            <div className="text-sm text-gray-600">Processing Refunds</div>
+          <div className="bg-white rounded-xl md:rounded-2xl shadow-md border border-sky-200 p-3 md:p-4 text-center">
+            <div className="text-lg md:text-xl lg:text-2xl font-bold text-sky-600">{refundStats.processing}</div>
+            <div className="text-xs md:text-sm text-slate-600 mt-1">Processing Refunds</div>
           </div>
         </div>
 
-        {/* Refund Status Filter */}
+        {/* Filter Tabs */}
         <div className="mb-6">
           <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => setFilterStatus('ALL')}
-              className={`px-4 py-2 rounded-lg ${filterStatus === 'ALL' ? 'bg-amber-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-            >
-              All ({refundStats.total})
-            </button>
-            <button
-              onClick={() => setFilterStatus('PROCESSING')}
-              className={`px-4 py-2 rounded-lg ${filterStatus === 'PROCESSING' ? 'bg-amber-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-            >
-              Processing ({refundStats.processing})
-            </button>
-            <button
-              onClick={() => setFilterStatus('COMPLETED')}
-              className={`px-4 py-2 rounded-lg ${filterStatus === 'COMPLETED' ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-            >
-              Completed ({refundStats.completed})
-            </button>
-            <button
-              onClick={() => setFilterStatus('PENDING')}
-              className={`px-4 py-2 rounded-lg ${filterStatus === 'PENDING' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-            >
-              Pending ({refundStats.pending})
-            </button>
+            {[
+              { status: 'ALL', label: `All (${refundStats.total})`, color: 'bg-slate-200' },
+              { status: 'PROCESSING', label: `Processing (${refundStats.processing})`, color: 'bg-sky-100' },
+              { status: 'COMPLETED', label: `Completed (${refundStats.completed})`, color: 'bg-emerald-100' },
+              { status: 'PENDING', label: `Pending (${refundStats.pending})`, color: 'bg-cyan-100' }
+            ].map(({ status, label, color }) => (
+              <button
+                key={status}
+                onClick={() => setFilterStatus(status)}
+                className={`px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-medium transition-all duration-200 ${filterStatus === status
+                    ? 'bg-gradient-to-r from-sky-500 to-teal-500 text-white shadow-md'
+                    : `${color} text-slate-700 hover:bg-slate-300`
+                  }`}
+              >
+                {label}
+              </button>
+            ))}
           </div>
         </div>
 
         {/* Cancelled Tours List */}
-        <div className="space-y-6">
+        <div className="space-y-4 md:space-y-6">
           {filteredTours.map((tour) => (
-            <div key={tour.bookingId} className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+            <div key={tour.bookingId} className="bg-white rounded-xl md:rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
               {/* Tour Header */}
-              <div className="bg-gradient-to-r from-gray-500 to-gray-700 p-6 text-white">
-                <div className="flex justify-between items-start">
+              <div className="bg-gradient-to-r from-slate-700 to-slate-800 p-4 md:p-6 text-white">
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3 md:gap-4">
                   <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <h2 className="text-xl font-bold line-through">{tour.tourName}</h2>
-                      <span className={`px-3 py-1 rounded-full text-sm font-semibold border ${getCancellationStageColor(tour.cancellationStage)}`}>
-                        {tour.cancellationStage.replace('_', ' ')}
-                      </span>
-                      <span className={`px-3 py-1 rounded-full text-sm font-semibold border ${getRefundStatusColor(tour.refundStatus)}`}>
-                        {tour.refundStatus}
-                      </span>
-                    </div>
-                    <p className="text-gray-200 mb-2">{tour.tourDescription}</p>
-                    <div className="flex flex-wrap gap-4 text-sm">
-                      <div className="flex items-center space-x-1">
-                        <span>📅</span>
-                        <span>Was scheduled: {formatDate(tour.travelStartDate)} - {formatDate(tour.travelEndDate)}</span>
+                    <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3 mb-2">
+                      <h2 className="text-lg md:text-xl font-bold line-through truncate">{tour.tourName}</h2>
+                      <div className="flex flex-wrap gap-2">
+                        <span className={`px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-semibold border ${getCancellationStageColor(tour.cancellationStage)}`}>
+                          {tour.cancellationStage.replace('_', ' ')}
+                        </span>
+                        <span className={`px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-semibold border ${getRefundStatusColor(tour.refundStatus)}`}>
+                          {tour.refundStatus}
+                        </span>
                       </div>
-                      <div className="flex items-center space-x-1">
-                        <span>👥</span>
+                    </div>
+                    <p className="text-slate-300 text-sm mb-3 line-clamp-2">{tour.tourDescription}</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs md:text-sm">
+                      <div className="flex items-center gap-1">
+                        <span className="text-slate-400">📅</span>
+                        <span>Scheduled: {formatDate(tour.travelStartDate)}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="text-slate-400">👥</span>
                         <span>{tour.totalPersons} travelers</span>
                       </div>
-                      <div className="flex items-center space-x-1">
-                        <span>💰</span>
+                      <div className="flex items-center gap-1">
+                        <span className="text-slate-400">💰</span>
                         <span>Original: {formatCurrency(tour.finalAmount)}</span>
                       </div>
-                      <div className="flex items-center space-x-1">
-                        <span>💸</span>
-                        <span>Refund: {formatCurrency(tour.refundedAmount)}</span>
+                      <div className="flex items-center gap-1">
+                        <span className="text-slate-400">💸</span>
+                        <span className="text-emerald-300">Refund: {formatCurrency(tour.refundedAmount)}</span>
                       </div>
                     </div>
                   </div>
                   <button
                     onClick={() => toggleBookingExpansion(tour.bookingId)}
-                    className="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition-colors"
+                    className="self-start bg-white/10 hover:bg-white/20 p-2 rounded-lg transition-colors"
                   >
-                    <svg 
-                      className={`w-6 h-6 transform transition-transform ${
-                        expandedBooking === tour.bookingId ? 'rotate-180' : ''
-                      }`}
-                      fill="none" 
-                      stroke="currentColor" 
+                    <svg
+                      className={`w-5 h-5 md:w-6 md:h-6 transform transition-transform ${expandedBooking === tour.bookingId ? 'rotate-180' : ''
+                        }`}
+                      fill="none"
+                      stroke="currentColor"
                       viewBox="0 0 24 24"
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -316,86 +329,82 @@ export default function CancelledToursPage() {
 
               {/* Expanded Details */}
               {expandedBooking === tour.bookingId && (
-                <div className="p-6 space-y-6">
-                  {/* Cancellation Details */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-red-50 rounded-xl p-4 border border-red-200">
-                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center">
-                        <span className="text-red-600 mr-2">❌</span>
+                <div className="p-4 md:p-6 space-y-6">
+                  {/* Two Column Grid for Desktop, Stacked for Mobile */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+                    {/* Cancellation Details */}
+                    <div className="bg-red-50/50 rounded-xl p-4 border border-red-200">
+                      <h3 className="font-semibold text-slate-800 mb-3 flex items-center text-sm md:text-base">
+                        <span className="text-red-500 mr-2">❌</span>
                         Cancellation Details
                       </h3>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Cancellation Date:</span>
-                          <span className="font-semibold">{formatDateTime(tour.cancellationDate || '')}</span>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3 text-sm">
+                        <div>
+                          <div className="text-xs text-slate-600">Cancellation Date</div>
+                          <div className="font-medium">{formatDateTime(tour.cancellationDate || '')}</div>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Reason:</span>
-                          <span className="font-semibold">{getCancellationReasonText(tour.cancellationReason)}</span>
+                        <div>
+                          <div className="text-xs text-slate-600">Reason</div>
+                          <div className="font-medium">{getCancellationReasonText(tour.cancellationReason)}</div>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Days Before Travel:</span>
-                          <span className={`font-semibold ${getDaysBeforeTravelColor(tour.daysBeforeTravel)}`}>
+                        <div>
+                          <div className="text-xs text-slate-600">Days Before Travel</div>
+                          <div className={`font-medium ${getDaysBeforeTravelColor(tour.daysBeforeTravel)}`}>
                             {tour.daysBeforeTravel} days
-                          </span>
+                          </div>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Cancellation Fee:</span>
-                          <span className="font-semibold text-red-600">{formatCurrency(tour.cancellationFee)}</span>
+                        <div>
+                          <div className="text-xs text-slate-600">Cancellation Fee</div>
+                          <div className="font-medium text-red-600">{formatCurrency(tour.cancellationFee)}</div>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Penalty Percentage:</span>
-                          <span className={`font-semibold ${getPenaltyPercentageColor(tour.cancellationPenaltyPercentage)}`}>
+                        <div>
+                          <div className="text-xs text-slate-600">Penalty Percentage</div>
+                          <div className={`font-medium ${getPenaltyPercentageColor(tour.cancellationPenaltyPercentage)}`}>
                             {tour.cancellationPenaltyPercentage}%
-                          </span>
+                          </div>
                         </div>
                         {tour.cancellationNotes && (
-                          <div className="mt-2 pt-2 border-t border-red-200">
-                            <span className="text-gray-600">Notes:</span>
-                            <p className="text-gray-800 text-sm mt-1">{tour.cancellationNotes}</p>
+                          <div className="sm:col-span-2 mt-2 pt-3 border-t border-red-200">
+                            <div className="text-xs text-slate-600 mb-1">Notes</div>
+                            <p className="text-slate-800 text-sm">{tour.cancellationNotes}</p>
                           </div>
                         )}
                       </div>
                     </div>
 
-                    <div className="bg-green-50 rounded-xl p-4 border border-green-200">
-                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center">
-                        <span className="text-green-600 mr-2">💸</span>
+                    {/* Refund Details */}
+                    <div className="bg-emerald-50/50 rounded-xl p-4 border border-emerald-200">
+                      <h3 className="font-semibold text-slate-800 mb-3 flex items-center text-sm md:text-base">
+                        <span className="text-emerald-500 mr-2">💸</span>
                         Refund Details
                       </h3>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Refund Status:</span>
-                          <span className={`px-2 py-1 rounded-full border ${getRefundStatusColor(tour.refundStatus)}`}>
+                      <div className="space-y-3 text-sm">
+                        <div className="flex justify-between items-center">
+                          <span className="text-slate-600">Refund Status</span>
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getRefundStatusColor(tour.refundStatus)}`}>
                             {tour.refundStatus}
                           </span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Original Amount:</span>
-                          <span className="font-semibold">{formatCurrency(tour.finalAmount)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Cancellation Fee:</span>
-                          <span className="font-semibold text-red-600">-{formatCurrency(tour.cancellationFee)}</span>
-                        </div>
-                        <div className="flex justify-between border-t border-gray-200 pt-2">
-                          <span className="text-gray-800 font-semibold">Refund Amount:</span>
-                          <span className="font-bold text-green-600">{formatCurrency(tour.refundAmount)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Refunded Amount:</span>
-                          <span className="font-semibold text-green-600">{formatCurrency(tour.refundedAmount)}</span>
-                        </div>
-                        {tour.refundProcessedDate && (
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Processed Date:</span>
-                            <span className="font-semibold">{formatDateTime(tour.refundProcessedDate)}</span>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <div className="text-xs text-slate-600">Original Amount</div>
+                            <div className="font-medium">{formatCurrency(tour.finalAmount)}</div>
                           </div>
-                        )}
+                          <div>
+                            <div className="text-xs text-slate-600">Cancellation Fee</div>
+                            <div className="font-medium text-red-600">-{formatCurrency(tour.cancellationFee)}</div>
+                          </div>
+                        </div>
+                        <div className="border-t border-emerald-200 pt-3">
+                          <div className="flex justify-between items-center">
+                            <span className="text-slate-800 font-semibold">Refund Amount</span>
+                            <span className="font-bold text-emerald-600 text-lg">{formatCurrency(tour.refundAmount)}</span>
+                          </div>
+                        </div>
                         {tour.refundStatus === 'COMPLETED' && (
                           <button
                             onClick={() => downloadCancellationReceipt(tour)}
-                            className="w-full mt-3 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center space-x-2"
+                            className="w-full px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2 text-sm"
                           >
                             <span>📄</span>
                             <span>Download Refund Receipt</span>
@@ -406,53 +415,53 @@ export default function CancelledToursPage() {
                   </div>
 
                   {/* Tour & Package Info */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
-                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center">
-                        <span className="text-amber-600 mr-2">🏔️</span>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+                    <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
+                      <h3 className="font-semibold text-slate-800 mb-3 flex items-center text-sm md:text-base">
+                        <span className="text-slate-600 mr-2">🏔️</span>
                         Tour Details
                       </h3>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Tour:</span>
-                          <span className="font-semibold">{tour.tourName}</span>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                        <div>
+                          <div className="text-xs text-slate-600">Tour Name</div>
+                          <div className="font-medium truncate">{tour.tourName}</div>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Duration:</span>
-                          <span className="font-semibold">{tour.tourDuration} days</span>
+                        <div>
+                          <div className="text-xs text-slate-600">Duration</div>
+                          <div className="font-medium">{tour.tourDuration} days</div>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Type:</span>
-                          <span className="font-semibold">{tour.tourType}</span>
+                        <div>
+                          <div className="text-xs text-slate-600">Type</div>
+                          <div className="font-medium">{tour.tourType}</div>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Category:</span>
-                          <span className="font-semibold">{tour.tourCategory}</span>
+                        <div>
+                          <div className="text-xs text-slate-600">Category</div>
+                          <div className="font-medium">{tour.tourCategory}</div>
                         </div>
                       </div>
                     </div>
 
-                    <div className="bg-purple-50 rounded-xl p-4 border border-purple-200">
-                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center">
-                        <span className="text-purple-600 mr-2">📦</span>
+                    <div className="bg-cyan-50/50 rounded-xl p-4 border border-cyan-200">
+                      <h3 className="font-semibold text-slate-800 mb-3 flex items-center text-sm md:text-base">
+                        <span className="text-cyan-600 mr-2">📦</span>
                         Package Details
                       </h3>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Package:</span>
-                          <span className="font-semibold">{tour.packageName}</span>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                        <div>
+                          <div className="text-xs text-slate-600">Package Name</div>
+                          <div className="font-medium truncate">{tour.packageName}</div>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Schedule:</span>
-                          <span className="font-semibold">{tour.packageScheduleName}</span>
+                        <div>
+                          <div className="text-xs text-slate-600">Schedule</div>
+                          <div className="font-medium">{tour.packageScheduleName}</div>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Price per person:</span>
-                          <span className="font-semibold">{formatCurrency(tour.packagePricePerPerson)}</span>
+                        <div>
+                          <div className="text-xs text-slate-600">Price per person</div>
+                          <div className="font-medium">{formatCurrency(tour.packagePricePerPerson)}</div>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Discount:</span>
-                          <span className="font-semibold text-green-600">{tour.discountPercentage}%</span>
+                        <div>
+                          <div className="text-xs text-slate-600">Discount</div>
+                          <div className="font-medium text-emerald-600">{tour.discountPercentage}%</div>
                         </div>
                       </div>
                     </div>
@@ -461,29 +470,33 @@ export default function CancelledToursPage() {
                   {/* Participants */}
                   {tour.participants.length > 0 && (
                     <div>
-                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center">
-                        <span className="text-blue-600 mr-2">👥</span>
+                      <h3 className="font-semibold text-slate-800 mb-3 flex items-center text-sm md:text-base">
+                        <span className="text-blue-500 mr-2">👥</span>
                         Participants ({tour.participants.length})
                       </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         {tour.participants.map((participant, index) => (
-                          <div key={index} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                          <div key={index} className="bg-slate-50 rounded-lg p-3 border border-slate-200">
                             <div className="flex justify-between items-start mb-2">
-                              <h4 className="font-semibold text-gray-800">
+                              <h4 className="font-medium text-slate-800 truncate">
                                 {participant.firstName} {participant.lastName}
                               </h4>
                               {participant.refundIssued && (
-                                <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                                <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-xs">
                                   Refund Issued
                                 </span>
                               )}
                             </div>
-                            <div className="space-y-1 text-sm text-gray-600">
-                              <div>Age: {participant.age} • {participant.gender}</div>
-                              <div>Passport: {participant.passportNumber}</div>
+                            <div className="space-y-1 text-xs text-slate-600">
+                              <div className="flex items-center gap-2">
+                                <span>Age: {participant.age}</span>
+                                <span>•</span>
+                                <span>{participant.gender}</span>
+                              </div>
+                              <div className="truncate">Passport: {participant.passportNumber || 'N/A'}</div>
                               <div>Nationality: {participant.nationality}</div>
                               {participant.participantRefundAmount > 0 && (
-                                <div className="text-green-600 font-medium">
+                                <div className="text-emerald-600 font-medium text-sm">
                                   Refund: {formatCurrency(participant.participantRefundAmount)}
                                 </div>
                               )}
@@ -494,100 +507,54 @@ export default function CancelledToursPage() {
                     </div>
                   )}
 
-                  {/* Cancelled Activities */}
-                  {tour.activities.length > 0 && (
-                    <div>
-                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center">
-                        <span className="text-red-600 mr-2">❌</span>
-                        Cancelled Activities ({tour.activities.length})
-                      </h3>
-                      <div className="space-y-3">
-                        {tour.activities.map((activity, index) => (
-                          <div key={index} className="bg-red-50 rounded-lg p-4 border border-red-200">
-                            <div className="flex justify-between items-start mb-2">
-                              <div>
-                                <h4 className="font-semibold text-gray-800">{activity.activityName}</h4>
-                                <p className="text-gray-600 text-sm mb-1">{activity.activityDescription}</p>
-                              </div>
-                              <div className="text-right">
-                                <div className="font-bold text-gray-700 line-through">{formatCurrency(activity.totalPrice)}</div>
-                                <div className="flex items-center space-x-2 mt-1">
-                                  {activity.activityRefundable ? (
-                                    <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
-                                      Refundable
-                                    </span>
-                                  ) : (
-                                    <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs">
-                                      Non-refundable
-                                    </span>
-                                  )}
-                                  {activity.activityRefundAmount > 0 && (
-                                    <span className="text-green-600 text-sm">
-                                      +{formatCurrency(activity.activityRefundAmount)}
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                            <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                              <div>📅 Was scheduled: {formatDate(activity.activityDate)}</div>
-                              <div>⏰ Time: {formatTime(activity.startTime)} - {formatTime(activity.endTime)}</div>
-                              <div>🕒 Duration: {activity.durationHours}h</div>
-                              <div>📍 Destination: {activity.destinationName}</div>
-                              <div>👥 Participants: {activity.numberOfParticipants}</div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
                   {/* Payment History */}
                   {tour.payments.length > 0 && (
                     <div>
-                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center">
-                        <span className="text-purple-600 mr-2">💳</span>
-                        Payment History
+                      <h3 className="font-semibold text-slate-800 mb-3 flex items-center text-sm md:text-base">
+                        <span className="text-sky-600 mr-2">💳</span>
+                        Payment History ({tour.payments.length})
                       </h3>
                       <div className="space-y-3">
                         {tour.payments.map((payment, index) => (
-                          <div key={index} className="bg-purple-50 rounded-lg p-4 border border-purple-200">
-                            <div className="flex justify-between items-start mb-2">
-                              <div>
-                                <h4 className="font-semibold text-gray-800">{payment.paymentReference}</h4>
-                                <p className="text-gray-600 text-sm">
-                                  {payment.paymentMethod.replace('_', ' ')} • 
+                          <div key={index} className="bg-slate-50 rounded-lg p-3 border border-slate-200">
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-2">
+                              <div className="flex-1">
+                                <h4 className="font-medium text-slate-800">{payment.paymentReference}</h4>
+                                <p className="text-slate-600 text-xs">
+                                  {payment.paymentMethod.replace('_', ' ')} •
                                   Installment {payment.installmentNumber}/{payment.totalInstallments}
                                 </p>
                               </div>
                               <div className="text-right">
-                                <div className="font-bold text-purple-600">{formatCurrency(payment.amount)}</div>
-                                <span className={`px-2 py-1 rounded-full text-xs border ${getRefundStatusColor(payment.paymentStatus)}`}>
+                                <div className="font-bold text-sky-600">{formatCurrency(payment.amount)}</div>
+                                <span className={`px-2 py-0.5 rounded-full text-xs border ${getRefundStatusColor(payment.paymentStatus)}`}>
                                   {payment.paymentStatus}
                                 </span>
                               </div>
                             </div>
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs text-slate-600">
                               {payment.paymentDate && (
                                 <div>
-                                  <span className="text-gray-500">Paid:</span>
+                                  <div className="text-slate-500">Paid</div>
                                   <div className="font-medium">{formatDateTime(payment.paymentDate)}</div>
                                 </div>
                               )}
-                              <div>
-                                <span className="text-gray-500">Invoice:</span>
-                                <div className="font-medium">{payment.invoiceNumber}</div>
-                              </div>
+                              {payment.invoiceNumber && (
+                                <div>
+                                  <div className="text-slate-500">Invoice</div>
+                                  <div className="font-medium">{payment.invoiceNumber}</div>
+                                </div>
+                              )}
                               {payment.refundReference && (
                                 <div>
-                                  <span className="text-gray-500">Refund Ref:</span>
+                                  <div className="text-slate-500">Refund Ref</div>
                                   <div className="font-medium">{payment.refundReference}</div>
                                 </div>
                               )}
                               {payment.refundAmount && payment.refundAmount > 0 && (
                                 <div>
-                                  <span className="text-gray-500">Refund:</span>
-                                  <div className="font-medium text-green-600">{formatCurrency(payment.refundAmount)}</div>
+                                  <div className="text-slate-500">Refund Amount</div>
+                                  <div className="font-medium text-emerald-600">{formatCurrency(payment.refundAmount)}</div>
                                 </div>
                               )}
                             </div>
@@ -597,59 +564,24 @@ export default function CancelledToursPage() {
                     </div>
                   )}
 
-                  {/* Documents */}
-                  {tour.documents.length > 0 && (
-                    <div>
-                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center">
-                        <span className="text-gray-600 mr-2">📄</span>
-                        Archived Documents ({tour.documents.length})
-                      </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                        {tour.documents.map((document, index) => (
-                          <div 
-                            key={index} 
-                            className="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:bg-gray-100 transition-colors cursor-pointer"
-                            onClick={() => downloadDocument(document.documentUrl, document.documentName)}
-                          >
-                            <div className="flex justify-between items-start mb-2">
-                              <div className="flex-1">
-                                <h4 className="font-semibold text-gray-800 truncate">{document.documentName}</h4>
-                                <p className="text-gray-600 text-sm">{document.documentType}</p>
-                              </div>
-                              <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs">
-                                ARCHIVED
-                              </span>
-                            </div>
-                            <div className="flex justify-between items-center text-sm text-gray-500">
-                              <span>{(document.fileSize / 1024).toFixed(1)} KB</span>
-                              {document.cancellationRelated && (
-                                <span className="text-red-600 font-medium">Cancellation Related</span>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Summary */}
-                  <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
-                    <h3 className="font-semibold text-gray-800 mb-3 flex items-center">
-                      <span className="text-blue-600 mr-2">📊</span>
+                  {/* Summary Cards */}
+                  <div className="bg-gradient-to-r from-sky-50 to-teal-50 rounded-xl p-4 border border-sky-200">
+                    <h3 className="font-semibold text-slate-800 mb-3 flex items-center text-sm md:text-base">
+                      <span className="text-slate-600 mr-2">📊</span>
                       Cancellation Summary
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="text-center p-3 bg-white rounded-lg border">
-                        <div className="text-2xl font-bold text-red-600">{formatCurrency(tour.cancellationFee)}</div>
-                        <div className="text-sm text-gray-600">Cancellation Fee</div>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div className="text-center p-3 bg-white rounded-lg border border-red-200 shadow-sm">
+                        <div className="text-lg md:text-xl font-bold text-red-600">{formatCurrency(tour.cancellationFee)}</div>
+                        <div className="text-xs text-slate-600 mt-1">Cancellation Fee</div>
                       </div>
-                      <div className="text-center p-3 bg-white rounded-lg border">
-                        <div className="text-2xl font-bold text-green-600">{formatCurrency(tour.refundAmount)}</div>
-                        <div className="text-sm text-gray-600">Eligible Refund</div>
+                      <div className="text-center p-3 bg-white rounded-lg border border-emerald-200 shadow-sm">
+                        <div className="text-lg md:text-xl font-bold text-emerald-600">{formatCurrency(tour.refundAmount)}</div>
+                        <div className="text-xs text-slate-600 mt-1">Eligible Refund</div>
                       </div>
-                      <div className="text-center p-3 bg-white rounded-lg border">
-                        <div className="text-2xl font-bold text-purple-600">{formatCurrency(tour.refundedAmount)}</div>
-                        <div className="text-sm text-gray-600">Actual Refund</div>
+                      <div className="text-center p-3 bg-white rounded-lg border border-sky-200 shadow-sm">
+                        <div className="text-lg md:text-xl font-bold text-sky-600">{formatCurrency(tour.refundedAmount)}</div>
+                        <div className="text-xs text-slate-600 mt-1">Actual Refund</div>
                       </div>
                     </div>
                   </div>

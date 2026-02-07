@@ -1,10 +1,10 @@
 import React from "react";
 import PackageImageSection from "./PackageImageSection";
 import PackageContent from "./PackageContent";
-import { ActivePackagesType } from "@/types/packages-types";
+import { ActivePackagesForFilters } from "@/types/packages-types";
 
 interface PackageCardProps {
-  package: ActivePackagesType;
+  package: ActivePackagesForFilters;
   currentImageIndex: number;
   isHovered: boolean;
   onHoverChange: (packageId: number | null) => void;

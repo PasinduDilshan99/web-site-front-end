@@ -35,27 +35,27 @@ export const FaqItemComponent = ({
   const displayAnswer = getDisplayAnswer(item);
 
   return (
-    <div className="group bg-white/80 backdrop-blur-sm rounded-lg sm:rounded-xl md:rounded-2xl shadow-lg hover:shadow-xl border border-purple-100 overflow-hidden transition-all duration-300 hover:border-purple-200">
+    <div className="group bg-white/90 backdrop-blur-sm rounded-lg sm:rounded-xl md:rounded-2xl shadow-lg hover:shadow-xl border border-sky-100 overflow-hidden transition-all duration-300 hover:border-sky-200">
       {/* Question Header */}
       <button
         onClick={() => onToggle(item.faqId)}
-        className="w-full px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4 md:py-5 lg:py-6 text-left flex items-start justify-between hover:bg-gradient-to-r hover:from-purple-50 hover:to-amber-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-300 focus:ring-opacity-50"
+        className="w-full px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4 md:py-5 lg:py-6 text-left flex items-start justify-between hover:bg-gradient-to-r hover:from-sky-50 hover:to-teal-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:ring-opacity-50"
       >
         <div className="flex items-start space-x-2 sm:space-x-3 md:space-x-4 flex-1 min-w-0">
           {/* Question Number */}
-          <div className="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 bg-gradient-to-r from-purple-500 to-amber-500 text-white rounded-full flex items-center justify-center text-xs sm:text-sm md:text-base font-semibold shadow-lg">
+          <div className="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 bg-gradient-to-r from-sky-500 to-teal-500 text-white rounded-full flex items-center justify-center text-xs sm:text-sm md:text-base font-semibold shadow-lg">
             {String(index + 1).padStart(2, "0")}
           </div>
 
           {/* Question Text */}
-          <h3 className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-medium sm:font-semibold text-gray-900 group-hover:bg-gradient-to-r group-hover:from-purple-600 group-hover:to-amber-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-200 pr-1 sm:pr-2 leading-tight sm:leading-relaxed flex-1">
+          <h3 className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-medium sm:font-semibold text-gray-900 group-hover:bg-gradient-to-r group-hover:from-sky-600 group-hover:to-teal-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-200 pr-1 sm:pr-2 leading-tight sm:leading-relaxed flex-1">
             {item.faqQuestion}
           </h3>
         </div>
 
         {/* Toggle Icon */}
         <div
-          className={`flex-shrink-0 text-gray-400 group-hover:text-purple-500 transition-all duration-200 ml-2 ${
+          className={`flex-shrink-0 text-gray-400 group-hover:text-sky-500 transition-all duration-200 ml-2 ${
             isOpen ? "transform rotate-180" : ""
           }`}
         >
@@ -78,14 +78,14 @@ export const FaqItemComponent = ({
           }`}
         >
           <div className="pl-7 sm:pl-9 md:pl-11 lg:pl-12">
-            <div className="border-l-2 sm:border-l-3 md:border-l-4 border-gradient-to-b from-purple-400 to-amber-400 pl-2 sm:pl-3 md:pl-4 lg:pl-5">
+            <div className="border-l-2 sm:border-l-3 md:border-l-4 border-gradient-to-b from-sky-400 to-teal-400 pl-2 sm:pl-3 md:pl-4 lg:pl-5">
               <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-700 leading-relaxed sm:leading-loose">
                 {displayAnswer}
               </p>
 
               {/* View Count */}
               {item.faqViewCount > 0 && (
-                <div className="mt-2 sm:mt-3 md:mt-4 flex items-center text-xs sm:text-sm text-purple-600">
+                <div className="mt-2 sm:mt-3 md:mt-4 flex items-center text-xs sm:text-sm text-sky-600">
                   <svg
                     className="w-3 h-3 sm:w-4 sm:h-4 mr-1"
                     fill="none"
@@ -117,7 +117,7 @@ export const FaqItemComponent = ({
 
       {/* Bottom Border Animation */}
       <div
-        className={`h-0.5 sm:h-1 bg-gradient-to-r from-purple-500 to-amber-500 transition-all duration-300 ${
+        className={`h-0.5 sm:h-1 bg-gradient-to-r from-sky-500 to-teal-500 transition-all duration-300 ${
           isOpen ? "w-full" : "w-0"
         }`}
       ></div>

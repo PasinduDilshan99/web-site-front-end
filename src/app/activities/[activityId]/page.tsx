@@ -300,7 +300,7 @@ const ActivityDetailsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-sky-50">
       <ActivityDetailsHeroSection activity={activity} />
 
       <div className="container mx-auto px-4 py-8">

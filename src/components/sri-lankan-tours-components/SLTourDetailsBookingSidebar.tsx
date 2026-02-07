@@ -11,6 +11,9 @@ import {
   Shield,
 } from "lucide-react";
 import { TourAssignedEmployeeResponse } from "@/types/employee-types";
+import { useAuth } from "@/context/AuthContext";
+import BookingModal, { BookingFormData } from "../booking-components/BookingModal";
+import BookingSuccessMessage from "../booking-components/BookingSuccessMessage";
 
 interface SLTourDetailsBookingSidebarProps {
   tour: TourDetails;
@@ -30,10 +33,57 @@ const SLTourDetailsBookingSidebar: React.FC<
   assignUserError,
 }) => {
   const [expandedTourDetails, setExpandedTourDetails] = useState(false);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const { user } = useAuth();
+  
   const price = selectedPackage?.pricePerPerson || 50;
   const originalPrice = selectedPackage?.totalPrice;
   const discount = selectedPackage?.discount || 0;
   const hasDiscount = discount > 0;
+
+  const handleBookNow = () => {
+    setIsBookingModalOpen(true);
+  };
+
+  const handleSubmitBooking = async (formData: BookingFormData) => {
+    setIsSubmitting(true);
+    try {
+      const response = await fetch("/api/booking-requests", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: formData.userId,
+          tourId: formData.tourId,
+          tourName: formData.tourName,
+          packageId: formData.packageId,
+          packageName: formData.packageName,
+          name: formData.name,
+          email: formData.email,
+          contactNumber: formData.contactNumber,
+          country: formData.country,
+          status: "pending",
+          createdAt: new Date().toISOString(),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit booking request");
+      }
+
+      setIsBookingModalOpen(false);
+      setShowSuccessMessage(true);
+    } catch (error) {
+      console.error("Booking submission error:", error);
+      alert("Failed to submit booking request. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <>
@@ -45,13 +95,13 @@ const SLTourDetailsBookingSidebar: React.FC<
 
         {/* Package Info if selected */}
         {selectedPackage && (
-          <div className="mb-3 sm:mb-4 p-2.5 sm:p-3 bg-gradient-to-r from-purple-50 to-amber-50 rounded-lg border border-purple-100">
+          <div className="mb-3 sm:mb-4 p-2.5 sm:p-3 bg-gradient-to-r from-sky-50 to-teal-50 rounded-lg border border-sky-100">
             <div className="flex items-start sm:items-center justify-between gap-2 mb-1.5 sm:mb-2">
               <div className="flex-1 min-w-0">
                 <span className="text-xs sm:text-sm font-medium text-gray-600">
                   Selected Package:
                 </span>
-                <h4 className="text-base sm:text-lg font-bold text-purple-700 truncate">
+                <h4 className="text-base sm:text-lg font-bold text-sky-700 truncate">
                   {selectedPackage.packageName}
                 </h4>
               </div>
@@ -83,11 +133,11 @@ const SLTourDetailsBookingSidebar: React.FC<
             </div>
             <div className="text-right">
               <div className="flex items-baseline justify-end gap-1 sm:gap-2">
-                <span className="text-2xl sm:text-3xl font-bold text-amber-600">
+                <span className="text-2xl sm:text-3xl font-bold text-sky-600">
                   ${(price - (price * discount) / 100).toLocaleString()}
                 </span>
                 {hasDiscount && (
-                  <div className="text-xs text-green-600 font-medium bg-green-100 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full">
+                  <div className="text-xs text-emerald-600 font-medium bg-emerald-100 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full">
                     Save {discount}%
                   </div>
                 )}
@@ -97,7 +147,10 @@ const SLTourDetailsBookingSidebar: React.FC<
           </div>
 
           {/* Book Now Button */}
-          <button className="w-full bg-gradient-to-r from-amber-600 to-purple-600 hover:from-purple-700 hover:to-amber-700 text-white py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold text-base sm:text-lg transition-all duration-200 transform hover:scale-[1.02] sm:hover:scale-105 shadow-md hover:shadow-lg active:scale-95">
+          <button 
+            onClick={handleBookNow}
+            className="w-full bg-gradient-to-r from-sky-600 to-teal-600 hover:from-sky-700 hover:to-teal-700 text-white py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold text-base sm:text-lg transition-all duration-200 transform hover:scale-[1.02] sm:hover:scale-105 shadow-md hover:shadow-lg active:scale-95"
+          >
             {selectedPackage ? "Book This Package" : "Book Now"}
           </button>
 
@@ -123,20 +176,16 @@ const SLTourDetailsBookingSidebar: React.FC<
         {/* Additional Info for larger screens */}
         <div className="hidden sm:block mt-4 pt-4 border-t border-gray-200">
           <div className="grid grid-cols-2 gap-3 text-xs text-gray-600">
-            {/* <div className="flex items-center gap-1.5">
-        <CheckCircle className="w-3 h-3 text-green-500" />
-        <span>Free cancellation</span>
-      </div> */}
             <div className="flex items-center gap-1.5">
-              <Shield className="w-3 h-3 text-blue-500" />
+              <Shield className="w-3 h-3 text-sky-500" />
               <span>Secure payment</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <Phone className="w-3 h-3 text-purple-500" />
+              <Phone className="w-3 h-3 text-teal-500" />
               <span>24/7 support</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <Calendar className="w-3 h-3 text-amber-500" />
+              <Calendar className="w-3 h-3 text-cyan-500" />
               <span>Flexible dates</span>
             </div>
           </div>
@@ -144,67 +193,28 @@ const SLTourDetailsBookingSidebar: React.FC<
       </div>
 
       {/* Tour Details Card */}
-      <div className="bg-white rounded-2xl shadow-lg p-6 mt-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl font-bold text-gray-800">Tour Details</h3>
-          <button
-            onClick={() => setExpandedTourDetails(!expandedTourDetails)}
-            className="text-sm font-medium text-purple-600 hover:text-purple-700 flex items-center gap-1 transition-colors"
-          >
-            {expandedTourDetails ? (
-              <>
-                Show Less
-                <ChevronUp className="w-4 h-4" />
-              </>
-            ) : (
-              <>
-                Show More
-                <ChevronDown className="w-4 h-4" />
-              </>
-            )}
-          </button>
-        </div>
-
-        <div className="space-y-3">
-          <SLTourDetailsDetailItem
-            label="Tour Type"
-            value={tour.tourTypeName}
-            description={tour.tourTypeDescription}
-          />
-          <SLTourDetailsDetailItem
-            label="Category"
-            value={tour.tourCategoryName}
-            description={tour.tourCategoryDescription}
-          />
-          <SLTourDetailsDetailItem
-            label="Best Season"
-            value={tour.seasonName}
-            description={tour.seasonDescription}
-          />
-
-          {/* Additional details shown when expanded */}
-          {expandedTourDetails && (
-            <>
-              <SLTourDetailsDetailItem
-                label="Duration"
-                value={`${tour.duration} days`}
-                description="Complete tour duration"
-              />
-              {selectedPackage && (
-                <div className="pt-3 border-t border-gray-100">
-                  <SLTourDetailsDetailItem
-                    label="Package Details"
-                    value={selectedPackage.packageName}
-                    description={`Includes accommodation, transport, and meals for ${selectedPackage.packageDayByDayDtoList.length} days`}
-                  />
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      </div>
+      {/* <div className="bg-white rounded-2xl shadow-lg p-6 mt-6">
+      </div> */}
 
       <TourAssignedUser assignUser={assignUser} />
+
+      {/* Booking Modal */}
+      <BookingModal
+        isOpen={isBookingModalOpen}
+        onClose={() => setIsBookingModalOpen(false)}
+        tourName={tour.tourName}
+        packageName={selectedPackage?.packageName}
+        packageId={selectedPackage?.packageId}
+        tourId={tour.tourId}
+        user={user || null}
+        onSubmit={handleSubmitBooking}
+        loading={isSubmitting}
+      />
+
+      {/* Success Message */}
+      {showSuccessMessage && (
+        <BookingSuccessMessage onClose={() => setShowSuccessMessage(false)} />
+      )}
     </>
   );
 };

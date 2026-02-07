@@ -27,7 +27,7 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
         <SLTourDetailsInfoItem
           icon={
             <svg
-              className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600"
+              className="w-4 h-4 sm:w-5 sm:h-5 text-sky-600"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -40,13 +40,13 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
           }
           label="Duration"
           value={formatDuration(tour.duration)}
-          bgColor="bg-amber-100"
+          bgColor="bg-sky-100"
         />
 
         <SLTourDetailsInfoItem
           icon={
             <svg
-              className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600"
+              className="w-4 h-4 sm:w-5 sm:h-5 text-teal-600"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -59,32 +59,13 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
           }
           label="Route"
           value={`${tour.startLocation} → ${tour.endLocation}`}
-          bgColor="bg-purple-100"
+          bgColor="bg-teal-100"
         />
-
-        {/* <SLTourDetailsInfoItem
-          icon={
-            <svg
-              className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fillRule="evenodd"
-                d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                clipRule="evenodd"
-              />
-            </svg>
-          }
-          label="Category"
-          value={tour.tourCategoryName}
-          bgColor="bg-amber-100"
-        /> */}
 
         <SLTourDetailsInfoItem
           icon={
             <svg
-              className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600"
+              className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-600"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -97,19 +78,19 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
           }
           label="Season"
           value={tour.seasonName}
-          bgColor="bg-purple-100"
+          bgColor="bg-cyan-100"
         />
       </div>
 
       {/* Responsive badge container */}
       <div className="flex flex-wrap gap-2 sm:gap-3 mb-4 sm:mb-6">
-        <span className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium bg-amber-100 text-amber-800 border border-amber-200">
+        <span className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium bg-sky-100 text-sky-800 border border-sky-200">
           {tour.tourTypeName}
         </span>
-        <span className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium bg-purple-100 text-purple-800 border border-purple-200">
+        <span className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium bg-teal-100 text-teal-800 border border-teal-200">
           {tour.tourCategoryName}
         </span>
-        <span className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium bg-green-100 text-green-800 border border-green-200">
+        <span className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
           {tour.statusName}
         </span>
       </div>

@@ -269,6 +269,10 @@ export class ActivityService {
 
       const result: PaginatedActivityResponse = await response.json();
 
+      console.log('====================================');
+      console.log(result);
+      console.log('====================================');
+
       if (result.code === 200) {
         if (result.data) {
           return {

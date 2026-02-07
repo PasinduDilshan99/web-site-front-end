@@ -5,6 +5,7 @@ import { NavBarItem } from "@/types/nav-bar-types";
 import { User } from "@/context/AuthContext";
 import { useAuth } from "@/context/AuthContext";
 import MobileMenuItem from "./MobileMenuItem";
+import Image from "next/image";
 
 interface ScrolledMobileNavProps {
   visibleNavBarItems: NavBarItem[];
@@ -33,9 +34,7 @@ const ScrolledMobileNav: React.FC<ScrolledMobileNavProps> = ({
   return (
     <div
       className={`lg:hidden fixed left-0 right-0 top-14 z-40 overflow-hidden transition-all duration-300 ease-in-out ${
-        isScrolledMenuOpen
-          ? "max-h-screen opacity-100"
-          : "max-h-0 opacity-0"
+        isScrolledMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
       }`}
     >
       <div
@@ -43,8 +42,8 @@ const ScrolledMobileNav: React.FC<ScrolledMobileNavProps> = ({
           isScrolledMenuOpen ? "translate-y-0" : "-translate-y-full"
         }`}
         style={{
-          backgroundColor: "rgba(255, 251, 250, 0.98)",
-          borderColor: "rgba(139, 95, 191, 0.3)",
+          backgroundColor: "rgba(248, 250, 252, 0.98)",
+          borderColor: "rgba(14, 165, 233, 0.3)",
         }}
       >
         <div className="px-4 pt-3 pb-4 space-y-1">
@@ -60,44 +59,56 @@ const ScrolledMobileNav: React.FC<ScrolledMobileNavProps> = ({
           {/* Compact Mobile Auth Links */}
           <div
             className="border-t pt-3 mt-3"
-            style={{ borderColor: "rgba(139, 95, 191, 0.2)" }}
+            style={{ borderColor: "rgba(14, 165, 233, 0.2)" }}
           >
             {user ? (
               <>
-                <div className="flex items-center space-x-2 px-3 py-2 mb-2">
+                <div className="flex items-center space-x-3 px-4 py-3 mb-2">
+                  {/* Replace UserAvatar with custom implementation */}
                   <div
-                    className="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden border-2"
+                    className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden"
                     style={{
-                      background:
-                        "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
-                      borderColor: "rgba(255, 255, 255, 0.3)",
+                      background: user?.imageUrl
+                        ? "none"
+                        : "linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%)",
+                      border: "2px solid rgba(14, 165, 233, 0.3)",
                     }}
                   >
-                    <span className="text-white font-bold text-sm">
-                      {user.firstName.charAt(0).toUpperCase()}
-                      {user.lastName.charAt(0).toUpperCase()}
-                    </span>
+                    {user?.imageUrl ? (
+                      <Image
+                        alt="profile pic"
+                        src={user.imageUrl}
+                        width={400}
+                        height={400}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="font-bold text-lg text-white">
+                        {user.firstName.charAt(0).toUpperCase()}
+                        {user.lastName.charAt(0).toUpperCase()}
+                      </span>
+                    )}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div
-                      style={{ color: "#5A4D75" }}
-                      className="font-medium text-sm truncate"
-                    >
+                  <div>
+                    <div style={{ color: "#075985" }} className="font-medium">
                       {`${user.firstName} ${user.lastName}`}
+                    </div>
+                    <div style={{ color: "#0369a1" }} className="text-sm">
+                      {user.email}
                     </div>
                   </div>
                 </div>
                 <button
                   onClick={handleLogout}
                   className="block w-full text-left px-3 py-2 rounded-md font-medium transition-all duration-300 border border-transparent backdrop-blur-sm text-sm"
-                  style={{ color: "#D14D72" }}
+                  style={{ color: "#dc2626" }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.color = "#E97777";
+                    e.currentTarget.style.color = "#ef4444";
                     e.currentTarget.style.backgroundColor =
-                      "rgba(209, 77, 114, 0.08)";
+                      "rgba(220, 38, 38, 0.08)";
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.color = "#D14D72";
+                    e.currentTarget.style.color = "#dc2626";
                     e.currentTarget.style.backgroundColor = "transparent";
                   }}
                 >
@@ -110,15 +121,15 @@ const ScrolledMobileNav: React.FC<ScrolledMobileNavProps> = ({
                   href="/login"
                   className="block px-3 py-2 rounded-md font-medium transition-all duration-300 border border-transparent backdrop-blur-sm text-center mb-1 text-sm"
                   style={{
-                    color: "#8B5FBF",
-                    borderColor: "rgba(139, 95, 191, 0.3)",
+                    color: "#0ea5e9",
+                    borderColor: "rgba(14, 165, 233, 0.3)",
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.color = "#FFFFFF";
-                    e.currentTarget.style.backgroundColor = "#8B5FBF";
+                    e.currentTarget.style.backgroundColor = "#0ea5e9";
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.color = "#8B5FBF";
+                    e.currentTarget.style.color = "#0ea5e9";
                     e.currentTarget.style.backgroundColor = "transparent";
                   }}
                   onClick={handleClose}
@@ -130,7 +141,7 @@ const ScrolledMobileNav: React.FC<ScrolledMobileNavProps> = ({
                   className="block px-3 py-2 rounded-md font-medium transition-all duration-300 border border-transparent backdrop-blur-sm text-center text-sm"
                   style={{
                     background:
-                      "linear-gradient(135deg, #8B5FBF 0%, #E9B949 100%)",
+                      "linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%)",
                     color: "#FFFFFF",
                   }}
                   onClick={handleClose}

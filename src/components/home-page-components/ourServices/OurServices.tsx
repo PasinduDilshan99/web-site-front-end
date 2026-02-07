@@ -76,7 +76,7 @@ const OurServices = () => {
   }
 
   return (
-    <section className="py-6 xs:py-8 sm:py-10 lg:py-12 xl:py-16 bg-gray-50">
+    <section className="py-6 xs:py-8 sm:py-10 lg:py-12 xl:py-16 bg-white">
       <div className="mx-auto px-4 xs:px-5 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
@@ -90,7 +90,7 @@ const OurServices = () => {
         </div>
 
         {/* Services Grid */}
-        <div className="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 xs:gap-5 sm:gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 xs:gap-5 sm:gap-6 lg:gap-8">
           {ourServices.map((service) => (
             <div
               key={service.serviceId}
@@ -101,7 +101,7 @@ const OurServices = () => {
             >
               {/* Background Image on Hover */}
               <div
-                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"
+                className="absolute inset-0 opacity-0 group-hover:opacity-50 transition-opacity duration-500 z-0"
                 style={{
                   backgroundImage: `url(${service.serviceImageUrl})`,
                   backgroundSize: "cover",
@@ -119,7 +119,7 @@ const OurServices = () => {
                   src={service.serviceIconUrl}
                   alt={`${service.serviceTitle} icon`}
                   fill
-                  className="object-contain transition-all duration-500"
+                  className="object-contain transition-all duration-500 text-cyan-400"
                   sizes="(max-width: 480px) 64px, (max-width: 640px) 72px, (max-width: 768px) 80px, (max-width: 1024px) 96px, 112px"
                 />
               </div>
@@ -129,11 +129,11 @@ const OurServices = () => {
                 <h3 className="text-base xs:text-lg sm:text-xl md:text-2xl font-semibold mb-1 xs:mb-2 text-gray-900 group-hover:text-gray-900 transition-colors duration-500 leading-tight xs:leading-snug">
                   {service.serviceTitle}
                 </h3>
-                {service.serviceSubTitle && (
-                  <p className="text-xs xs:text-sm sm:text-base font-medium bg-gradient-to-r from-[#A855F7] to-[#F59E0B] bg-clip-text text-transparent mb-1 xs:mb-2 group-hover:text-opacity-100 transition-all duration-500 leading-tight">
-                    {service.serviceSubTitle}
-                  </p>
-                )}
+{service.serviceSubTitle && (
+  <p className="text-xs xs:text-sm sm:text-base font-medium bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent mb-1 xs:mb-2 group-hover:text-opacity-100 transition-all duration-500 leading-tight">
+    {service.serviceSubTitle}
+  </p>
+)}
                 <p className="text-gray-600 text-xs xs:text-sm sm:text-base group-hover:text-gray-800 transition-colors duration-500 leading-relaxed xs:leading-normal">
                   {service.serviceDescription}
                 </p>

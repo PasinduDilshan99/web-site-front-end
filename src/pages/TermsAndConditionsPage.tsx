@@ -921,7 +921,7 @@ const TermsAndConditionsPage = () => {
         </div>
 
         {/* Contact Section */}
-        <div className="mt-8 sm:mt-12 lg:mt-16 bg-gradient-to-r from-purple-600 via-purple-500 to-amber-500 rounded-xl sm:rounded-2xl p-6 sm:p-8 lg:p-10 text-white shadow-2xl">
+        {/* <div className="mt-8 sm:mt-12 lg:mt-16 bg-gradient-to-r from-purple-600 via-purple-500 to-amber-500 rounded-xl sm:rounded-2xl p-6 sm:p-8 lg:p-10 text-white shadow-2xl">
           <div className="text-center">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6">
               Questions About Our Terms?
@@ -1002,7 +1002,7 @@ const TermsAndConditionsPage = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Footer Note */}
         <div className="mt-6 sm:mt-8 text-center text-xs sm:text-sm text-gray-600 bg-white rounded-lg p-4 sm:p-6">

@@ -51,9 +51,9 @@ const LocationDetails = () => {
         {/* Phone Number */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
+            <div className="w-8 h-8  bg-teal-100  rounded-full flex items-center justify-center">
               <svg
-                className="w-4 h-4 text-white"
+                className="w-4 h-4 text-green-700"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -74,9 +74,9 @@ const LocationDetails = () => {
         {/* Email Address */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center">
               <svg
-                className="w-4 h-4 text-white"
+                className="w-4 h-4 text-green-700"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -97,9 +97,9 @@ const LocationDetails = () => {
         {/* Location */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center">
               <svg
-                className="w-4 h-4 text-white"
+                className="w-4 h-4 text-green-700"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"

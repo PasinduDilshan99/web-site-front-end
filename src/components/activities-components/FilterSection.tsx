@@ -1,7 +1,6 @@
 import { ActivityFilters } from "@/types/activity-types";
 import React, { useState } from "react";
 
-// Define a type for all possible filter values
 type FilterValue = 
   | string 
   | number 
@@ -46,7 +45,6 @@ const FilterSection: React.FC<FilterSectionProps> = ({
     setShowAdvancedFilters(!showAdvancedFilters);
   };
 
-  // Handle price range change
   const handlePriceChange = (minMax: 'min' | 'max', value: number) => {
     if (minMax === 'min') {
       onFilterChange("priceRange", [value, filters.priceRange[1]]);
@@ -60,21 +58,21 @@ const FilterSection: React.FC<FilterSectionProps> = ({
   };
 
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6 md:p-8 mb-8 border-2 border-blue-200 shadow-lg">
+    <div className="bg-gradient-to-r from-sky-50 to-teal-50 rounded-2xl p-6 md:p-8 mb-8 border-2 border-sky-200 shadow-lg">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-        <h2 className="text-xl lg:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+        <h2 className="text-xl lg:text-3xl font-bold bg-gradient-to-r from-sky-600 to-teal-600 bg-clip-text text-transparent">
           Filter Activities
         </h2>
         <div className="flex gap-3">
           <button
             onClick={onResetFilters}
-            className="px-4 lg:px-6 py-1 lg:py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg"
+            className="px-4 lg:px-6 py-1 lg:py-2 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:from-sky-700 hover:to-teal-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg"
           >
             Reset Filters
           </button>
           <button
             onClick={handleSearchClick}
-            className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg flex items-center gap-2"
+            className="px-6 py-2 bg-gradient-to-r from-teal-600 to-sky-600 text-white rounded-lg hover:from-teal-700 hover:to-sky-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg flex items-center gap-2"
           >
             <svg 
               className="w-4 h-4" 
@@ -98,7 +96,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         {/* Search */}
         <div className="space-y-2">
-          <label className="block text-sm font-semibold text-gray-800">
+          <label className="block text-sm font-semibold text-sky-800">
             Search
           </label>
           <input
@@ -106,19 +104,15 @@ const FilterSection: React.FC<FilterSectionProps> = ({
             placeholder="Search activities..."
             value={filters.search}
             onChange={(e) => onFilterChange("search", e.target.value)}
-            className="text-sm lg:text-md w-full px-4 py-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500 transition-all"
+            className="text-sm lg:text-md w-full px-4 py-2 border-2 border-sky-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500 transition-all"
           />
         </div>
 
         {/* Price Range */}
-        <div className="space-y-2 text-gray-800">
-          <label className="block text-sm font-semibold ">
+        <div className="space-y-2">
+          <label className="block text-sm font-semibold text-sky-800">
             Price Range ($)
           </label>
-          <div className="flex justify-between text-sm font-medium text-blue-700 mb-2">
-            {/* <span>{formatPrice(filters.priceRange[0])}</span> */}
-            {/* <span>{formatPrice(filters.priceRange[1])}</span> */}
-          </div>
           <div className="flex gap-4">
             <input
               type="number"
@@ -126,7 +120,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
               max="10000"
               value={filters.priceRange[0]}
               onChange={(e) => handlePriceChange('min', parseInt(e.target.value) || 0)}
-              className="w-1/2 px-3 py-1 border border-blue-300 rounded-md text-sm lg:text-md"
+              className="w-1/2 px-3 py-1 border border-sky-300 rounded-md text-sm lg:text-md focus:outline-none focus:ring-1 focus:ring-sky-400"
               placeholder="Min"
             />
             <input
@@ -135,7 +129,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
               max="10000"
               value={filters.priceRange[1]}
               onChange={(e) => handlePriceChange('max', parseInt(e.target.value) || 10000)}
-              className="w-1/2 px-3 py-1 border border-blue-300 rounded-md text-sm lg:text-md"
+              className="w-1/2 px-3 py-1 border border-sky-300 rounded-md text-sm lg:text-md focus:outline-none focus:ring-1 focus:ring-sky-400"
               placeholder="Max"
             />
           </div>
@@ -143,15 +137,15 @@ const FilterSection: React.FC<FilterSectionProps> = ({
 
         {/* Duration */}
         <div className="space-y-2">
-          <label className="block text-sm font-semibold text-gray-800">
+          <label className="block text-sm font-semibold text-sky-800">
             Duration (Hours)
           </label>
           <select
             value={filters.duration}
             onChange={(e) => onFilterChange("duration", e.target.value)}
-            className="text-sm lg:text-md w-full px-4 py-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
+            className="text-sm lg:text-md w-full px-4 py-2 border-2 border-sky-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
             style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%232563eb' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23038bfc' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
               backgroundRepeat: "no-repeat",
               backgroundPosition: "right 0.7rem center",
               paddingRight: "2rem",
@@ -168,15 +162,15 @@ const FilterSection: React.FC<FilterSectionProps> = ({
 
         {/* Category */}
         <div className="space-y-2">
-          <label className="block text-sm font-semibold text-gray-800">
+          <label className="block text-sm font-semibold text-sky-800">
             Category
           </label>
           <select
             value={filters.category}
             onChange={(e) => onFilterChange("category", e.target.value)}
-            className="text-sm lg:text-md w-full px-4 py-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
+            className="text-sm lg:text-md w-full px-4 py-2 border-2 border-sky-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
             style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%232563eb' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23038bfc' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
               backgroundRepeat: "no-repeat",
               backgroundPosition: "right 0.7rem center",
               paddingRight: "2rem",
@@ -203,15 +197,15 @@ const FilterSection: React.FC<FilterSectionProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Season */}
           <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-800">
+            <label className="block text-sm font-semibold text-teal-800">
               Season
             </label>
             <select
               value={filters.season}
               onChange={(e) => onFilterChange("season", e.target.value)}
-              className="text-sm lg:text-md w-full px-4 py-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
+              className="text-sm lg:text-md w-full px-4 py-2 border-2 border-teal-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
               style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%232563eb' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%230d9488' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
                 backgroundRepeat: "no-repeat",
                 backgroundPosition: "right 0.7rem center",
                 paddingRight: "2rem",
@@ -228,15 +222,15 @@ const FilterSection: React.FC<FilterSectionProps> = ({
 
           {/* Participants */}
           <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-800">
+            <label className="block text-sm font-semibold text-teal-800">
               Max Participants
             </label>
             <select
               value={filters.participants}
               onChange={(e) => onFilterChange("participants", e.target.value)}
-              className="text-sm lg:text-md w-full px-4 py-2 border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
+              className="text-sm lg:text-md w-full px-4 py-2 border-2 border-teal-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
               style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239333ea' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%230d9488' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
                 backgroundRepeat: "no-repeat",
                 backgroundPosition: "right 0.7rem center",
                 paddingRight: "2rem",
@@ -253,15 +247,15 @@ const FilterSection: React.FC<FilterSectionProps> = ({
 
           {/* Status */}
           <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-800">
+            <label className="block text-sm font-semibold text-teal-800">
               Status
             </label>
             <select
               value={filters.status}
               onChange={(e) => onFilterChange("status", e.target.value)}
-              className="text-sm lg:text-md w-full px-4 py-2 border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
+              className="text-sm lg:text-md w-full px-4 py-2 border-2 border-teal-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
               style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239333ea' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%230d9488' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
                 backgroundRepeat: "no-repeat",
                 backgroundPosition: "right 0.7rem center",
                 paddingRight: "2rem",
@@ -281,12 +275,12 @@ const FilterSection: React.FC<FilterSectionProps> = ({
       {/* Separator Line with Advanced Filters Button */}
       <div className={`relative ${showAdvancedFilters ? "mt-6" : "mb-6"}`}>
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t-2 border-blue-200"></div>
+          <div className="w-full border-t-2 border-sky-300"></div>
         </div>
         <div className="relative flex justify-center">
           <button
             onClick={toggleAdvancedFilters}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-sky-500 to-teal-500 text-white rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
           >
             {showAdvancedFilters ? (
               <>
@@ -356,7 +350,6 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
     value: FilterValue;
   }
 
-  // Build active filters array with proper typing
   const activeFilters: ActiveFilter[] = [];
   
   if (filters.search) {
@@ -432,18 +425,18 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
   };
 
   return (
-    <div className="border-t-2 border-blue-200 pt-4 mt-4">
+    <div className="border-t-2 border-sky-300 pt-4 mt-4">
       <div className="flex items-center gap-2 mb-2">
-        <span className="text-sm font-semibold text-gray-800">
+        <span className="text-sm font-semibold text-sky-800">
           Active Filters:
         </span>
-        <span className="text-sm text-gray-600">({activeFilters.length})</span>
+        <span className="text-sm text-sky-600">({activeFilters.length})</span>
       </div>
       <div className="flex flex-wrap gap-2">
         {activeFilters.map((filter) => (
           <span
             key={filter.name}
-            className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800 rounded-full text-xs font-medium border border-blue-200 transition-all duration-200 hover:shadow-md"
+            className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-sky-100 to-teal-100 text-sky-800 rounded-full text-xs font-medium border border-sky-200 transition-all duration-200 hover:shadow-md"
           >
             {filter.label}
             <button

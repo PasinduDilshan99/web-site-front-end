@@ -89,7 +89,7 @@ export default function TourMapContainer({ tourId }: TourMapContainerProps) {
   }
 
   return (
-    <div className="bg-gray-50">
+    <div className="bg-blue-50">
       <div className="p-3 sm:p-4 md:p-5 lg:p-6 mx-auto">
         <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
           <SectionHeader

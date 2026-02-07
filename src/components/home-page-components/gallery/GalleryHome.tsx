@@ -223,7 +223,7 @@ const GalleryHome = () => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-gray-50 to-gray-100 py-4 sm:py-6 md:py-8 lg:py-12">
+    <div className="bg-gradient-to-br from-blue-50 to-cyan-50 py-4 sm:py-6 md:py-8 lg:py-12">
       <style jsx global>{`
         @keyframes scroll-left {
           0% {
@@ -466,31 +466,6 @@ const GalleryHome = () => {
                             </p>
                           </div>
                         )}
-
-                        {/* Uploaded Date */}
-                        <div className="p-3 sm:p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
-                          <p className="text-xs uppercase tracking-wider text-gray-500 font-medium mb-2">
-                            <span className="inline-flex items-center gap-2">
-                              <svg
-                                className="w-4 h-4 text-gray-600"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                />
-                              </svg>
-                              Uploaded
-                            </span>
-                          </p>
-                          <p className="text-sm sm:text-base font-semibold text-gray-800">
-                            {formatDate(selectedImage.createdAt)}
-                          </p>
-                        </div>
                       </div>
 
                       {/* Right Column */}
@@ -522,56 +497,30 @@ const GalleryHome = () => {
                           </div>
                         )}
 
-                        {/* Source */}
-                        {selectedImage.imageSource && (
-                          <div className="p-3 sm:p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
-                            <p className="text-xs uppercase tracking-wider text-gray-500 font-medium mb-2">
-                              <span className="inline-flex items-center gap-2">
-                                <svg
-                                  className="w-4 h-4 text-green-600"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-                                  />
-                                </svg>
-                                Source
-                              </span>
-                            </p>
-                            {selectedImage.imageSourceLink ? (
-                              <a
-                                href={selectedImage.imageSourceLink}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 text-sm sm:text-base text-blue-600 hover:text-blue-800 hover:underline font-medium"
+                        {/* Uploaded Date */}
+                        <div className="p-3 sm:p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
+                          <p className="text-xs uppercase tracking-wider text-gray-500 font-medium mb-2">
+                            <span className="inline-flex items-center gap-2">
+                              <svg
+                                className="w-4 h-4 text-gray-600"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
                               >
-                                {selectedImage.imageSource}
-                                <svg
-                                  className="w-4 h-4"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                                  />
-                                </svg>
-                              </a>
-                            ) : (
-                              <p className="text-sm sm:text-base text-gray-700">
-                                {selectedImage.imageSource}
-                              </p>
-                            )}
-                          </div>
-                        )}
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                />
+                              </svg>
+                              Uploaded
+                            </span>
+                          </p>
+                          <p className="text-sm sm:text-base font-semibold text-gray-800">
+                            {formatDate(selectedImage.createdAt)}
+                          </p>
+                        </div>
                       </div>
                     </div>
 

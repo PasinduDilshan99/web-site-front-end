@@ -1,11 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
-import { FaqService } from "@/services/faqService"; // Import service
+import { FaqService } from "@/services/faqService";
 import { 
   ContactSupportModalProps, 
   ContactSupportFormData, 
   ValidationError 
-} from "@/types/faq-types"; // Import types
+} from "@/types/faq-types";
 
 export const ContactSupportModal = ({
   isOpen,
@@ -38,18 +38,15 @@ export const ContactSupportModal = ({
 
       setIsLoadingCategories(true);
       try {
-        // USING THE SERVICE INSTEAD OF DIRECT FETCH
         const { categories: fetchedCategories, responseTime: fetchedResponseTime, error } = 
           await FaqService.fetchContactOptions();
 
         if (error) {
           console.error("Error fetching categories:", error);
-          // Fallback to default categories if API fails
           setCategories(["general", "technical", "billing", "feature", "bug"]);
         } else {
           setCategories(fetchedCategories);
           setResponseTime(fetchedResponseTime);
-          // Set default category to first available category
           setFormData((prev) => ({
             ...prev,
             category: fetchedCategories[0] || "general",
@@ -57,7 +54,6 @@ export const ContactSupportModal = ({
         }
       } catch (error) {
         console.error("Error fetching categories:", error);
-        // Fallback to default categories if API fails
         setCategories(["general", "technical", "billing", "feature", "bug"]);
       } finally {
         setIsLoadingCategories(false);
@@ -72,7 +68,6 @@ export const ContactSupportModal = ({
     if (isOpen) {
       setShowModal(true);
       document.body.style.overflow = "hidden";
-      // Reset errors and success message when modal opens
       setErrors([]);
       setSuccessMessage("");
     } else {
@@ -105,7 +100,6 @@ export const ContactSupportModal = ({
     setSuccessMessage("");
 
     try {
-      // Prepare form data for API
       const requestData = {
         ticketNumber: "",
         name: formData.name,
@@ -113,17 +107,15 @@ export const ContactSupportModal = ({
         category: formData.category,
         subject: formData.subject,
         message: formData.message,
-        ipAddress: "192.168.0.1", // You might want to get the actual IP address
-        userId: 1, // You might want to get the actual user ID from your auth system
+        ipAddress: "192.168.0.1",
+        userId: 1,
       };
 
-      // USING THE SERVICE INSTEAD OF DIRECT FETCH
       const result = await FaqService.submitContactRequest(requestData);
 
       if (result.success) {
         setSuccessMessage(result.message || "Message sent successfully!");
 
-        // Reset form
         setFormData({
           name: "",
           email: "",
@@ -132,7 +124,6 @@ export const ContactSupportModal = ({
           category: categories[0] || "general",
         });
 
-        // Close modal after success
         setTimeout(() => {
           onClose();
         }, 2000);
@@ -172,7 +163,6 @@ export const ContactSupportModal = ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
-    // Clear errors for this field when user starts typing
     if (errors.length > 0) {
       setErrors(errors.filter((error) => error.field !== e.target.name));
     }
@@ -184,7 +174,6 @@ export const ContactSupportModal = ({
     }
   };
 
-  // Helper function to get error message for a specific field
   const getFieldError = (fieldName: string): string | null => {
     const error = errors.find((error) => error.field === fieldName);
     return error ? error.value : null;
@@ -214,8 +203,8 @@ export const ContactSupportModal = ({
             : "translate-y-8 scale-95 opacity-0"
         }`}
       >
-        {/* Header with Gradient */}
-        <div className="bg-gradient-to-r from-purple-500 to-amber-500 p-4 sm:p-6 md:p-8 relative overflow-hidden">
+        {/* Header with Sea Gradient */}
+        <div className="bg-gradient-to-r from-sky-500 to-teal-500 p-4 sm:p-6 md:p-8 relative overflow-hidden">
           {/* Animated background elements */}
           <div className="absolute inset-0 opacity-10">
             <div className="absolute -top-4 -right-4 w-8 h-8 bg-white rounded-full"></div>
@@ -228,8 +217,8 @@ export const ContactSupportModal = ({
               <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white leading-tight">
                 Contact Support
               </h3>
-              <p className="text-purple-100 text-xs sm:text-sm md:text-base mt-1 sm:mt-2 leading-relaxed">
-                Well get back to you within {responseTime} hours
+              <p className="text-sky-100 text-xs sm:text-sm md:text-base mt-1 sm:mt-2 leading-relaxed">
+                We'll get back to you within {responseTime} hours
               </p>
             </div>
             <button
@@ -315,7 +304,7 @@ export const ContactSupportModal = ({
                 required
                 value={formData.name}
                 onChange={handleChange}
-                className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-900 border rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm placeholder-gray-500 hover:border-gray-400 focus:shadow-lg ${
+                className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-900 border rounded-lg sm:rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm placeholder-gray-500 hover:border-gray-400 focus:shadow-lg ${
                   getFieldError("name") ? "border-red-300" : "border-gray-300"
                 }`}
                 placeholder="Enter your full name"
@@ -349,7 +338,7 @@ export const ContactSupportModal = ({
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-900 border rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm placeholder-gray-500 hover:border-gray-400 focus:shadow-lg ${
+                className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-900 border rounded-lg sm:rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm placeholder-gray-500 hover:border-gray-400 focus:shadow-lg ${
                   getFieldError("email") ? "border-red-300" : "border-gray-300"
                 }`}
                 placeholder="your@email.com"
@@ -387,7 +376,7 @@ export const ContactSupportModal = ({
                     name="category"
                     value={formData.category}
                     onChange={handleChange}
-                    className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-900 border rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm hover:border-gray-400 focus:shadow-lg appearance-none cursor-pointer ${
+                    className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-900 border rounded-lg sm:rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm hover:border-gray-400 focus:shadow-lg appearance-none cursor-pointer ${
                       getFieldError("category")
                         ? "border-red-300"
                         : "border-gray-300"
@@ -450,7 +439,7 @@ export const ContactSupportModal = ({
                 required
                 value={formData.subject}
                 onChange={handleChange}
-                className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-900 border rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm placeholder-gray-500 hover:border-gray-400 focus:shadow-lg ${
+                className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-900 border rounded-lg sm:rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm placeholder-gray-500 hover:border-gray-400 focus:shadow-lg ${
                   getFieldError("subject")
                     ? "border-red-300"
                     : "border-gray-300"
@@ -486,7 +475,7 @@ export const ContactSupportModal = ({
                 rows={4}
                 value={formData.message}
                 onChange={handleChange}
-                className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-900 border rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm placeholder-gray-500 hover:border-gray-400 focus:shadow-lg resize-vertical ${
+                className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-900 border rounded-lg sm:rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm placeholder-gray-500 hover:border-gray-400 focus:shadow-lg resize-vertical ${
                   getFieldError("message")
                     ? "border-red-300"
                     : "border-gray-300"
@@ -524,10 +513,10 @@ export const ContactSupportModal = ({
               <button
                 type="submit"
                 disabled={isSubmitting || isLoadingCategories}
-                className="flex-1 px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-gradient-to-r from-purple-500 to-amber-500 text-white font-semibold rounded-lg sm:rounded-xl hover:from-purple-600 hover:to-amber-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl relative overflow-hidden group"
+                className="flex-1 px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-gradient-to-r from-sky-500 to-teal-500 text-white font-semibold rounded-lg sm:rounded-xl hover:from-sky-600 hover:to-teal-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl relative overflow-hidden group"
               >
                 {/* Animated background on hover */}
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-amber-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-sky-600 to-teal-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
                 <span className="relative flex items-center justify-center">
                   {isSubmitting ? (
@@ -563,9 +552,12 @@ export const ContactSupportModal = ({
         </div>
 
         {/* Footer Note */}
-        <div className="border-t border-gray-200/50 bg-gray-50/50 backdrop-blur-sm px-4 sm:px-6 md:px-8 py-3 sm:py-4">
-          <p className="text-xs sm:text-sm text-gray-700 text-center flex items-center justify-center space-x-1">
-            <span>💬</span>
+        <div className="border-t border-gray-200/50 bg-sky-50/50 backdrop-blur-sm px-4 sm:px-6 md:px-8 py-3 sm:py-4">
+          <p className="text-xs sm:text-sm text-sky-800 text-center flex items-center justify-center space-x-1">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
+                d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
             <span>
               We typically respond within {responseTime} hours during business
               days

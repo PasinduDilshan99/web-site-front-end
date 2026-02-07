@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import ActivityCard from "./ActivityCard";
-import { ActiveActivitiesType } from "@/types/activities-types";
+import { ActiveActivitiesType } from "@/types/activity-types";
 
 interface ActivitiesGridProps {
   activities: ActiveActivitiesType[];

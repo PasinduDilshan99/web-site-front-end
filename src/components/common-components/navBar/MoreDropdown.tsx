@@ -25,15 +25,10 @@ const MoreDropdown: React.FC<MoreDropdownProps> = ({
   currentPath,
   isScrolled = false,
 }) => {
-  // Helper function to check if a nav item is active
   const isItemActive = (item: NavBarItem) => {
-    // Exact match for main nav items
     if (currentPath === item.linkUrl) return true;
-    
-    // Check if current path starts with nav item link (for nested routes)
     if (currentPath?.startsWith(item.linkUrl) && item.linkUrl !== '/') return true;
     
-    // Check if any submenu item matches current path
     if (item.submenus && item.submenus.length > 0) {
       return item.submenus.some(submenu => {
         if (currentPath === submenu.linkUrl) return true;
@@ -45,7 +40,6 @@ const MoreDropdown: React.FC<MoreDropdownProps> = ({
     return false;
   };
 
-  // Helper function to check if submenu item is active
   const isSubmenuItemActive = (linkUrl: string) => {
     if (currentPath === linkUrl) return true;
     if (currentPath?.startsWith(linkUrl) && linkUrl !== '/') return true;
@@ -75,18 +69,18 @@ const MoreDropdown: React.FC<MoreDropdownProps> = ({
         onClick={onToggle}
         className={dropdownButtonClasses}
         style={{
-          color: isOpen ? "#8B5FBF" : "#5A4D75",
-          backgroundColor: isOpen ? "rgba(139, 95, 191, 0.08)" : "transparent",
+          color: isOpen ? "#0ea5e9" : "#075985",
+          backgroundColor: isOpen ? "rgba(14, 165, 233, 0.08)" : "transparent",
         }}
         onMouseEnter={(e) => {
           if (!isOpen) {
-            e.currentTarget.style.color = "#8B5FBF";
-            e.currentTarget.style.backgroundColor = "rgba(139, 95, 191, 0.08)";
+            e.currentTarget.style.color = "#0ea5e9";
+            e.currentTarget.style.backgroundColor = "rgba(14, 165, 233, 0.08)";
           }
         }}
         onMouseLeave={(e) => {
           if (!isOpen) {
-            e.currentTarget.style.color = "#5A4D75";
+            e.currentTarget.style.color = "#075985";
             e.currentTarget.style.backgroundColor = "transparent";
           }
         }}
@@ -111,7 +105,7 @@ const MoreDropdown: React.FC<MoreDropdownProps> = ({
           <span
             className="absolute left-0 -bottom-1 w-0 h-0.5 transition-all duration-300 group-hover:w-full rounded-full"
             style={{
-              background: "linear-gradient(90deg, #8B5FBF 0%, #E9B949 100%)",
+              background: "linear-gradient(90deg, #0ea5e9 0%, #0d9488 100%)",
             }}
           ></span>
         )}
@@ -122,8 +116,8 @@ const MoreDropdown: React.FC<MoreDropdownProps> = ({
         <div
           className={dropdownMenuClasses}
           style={{
-            backgroundColor: "rgba(255, 251, 250, 0.98)",
-            borderColor: "rgba(139, 95, 191, 0.3)",
+            backgroundColor: "rgba(248, 250, 252, 0.98)",
+            borderColor: "rgba(14, 165, 233, 0.3)",
           }}
         >
           <div className={isScrolled ? "py-1" : "py-2"}>
@@ -138,22 +132,22 @@ const MoreDropdown: React.FC<MoreDropdownProps> = ({
                       onClick={() => handleNestedToggle(item.id)}
                       className="flex items-center justify-between w-full px-4 py-2 transition-colors duration-300 group"
                       style={{
-                        color: activeDropdown === item.id || isActive ? "#8B5FBF" : "#5A4D75",
+                        color: activeDropdown === item.id || isActive ? "#0ea5e9" : "#075985",
                         backgroundColor:
                           activeDropdown === item.id || isActive
-                            ? "rgba(139, 95, 191, 0.08)"
+                            ? "rgba(14, 165, 233, 0.08)"
                             : "transparent",
                       }}
                       onMouseEnter={(e) => {
                         if (activeDropdown !== item.id && !isActive) {
-                          e.currentTarget.style.color = "#8B5FBF";
+                          e.currentTarget.style.color = "#0ea5e9";
                           e.currentTarget.style.backgroundColor =
-                            "rgba(139, 95, 191, 0.08)";
+                            "rgba(14, 165, 233, 0.08)";
                         }
                       }}
                       onMouseLeave={(e) => {
                         if (activeDropdown !== item.id && !isActive) {
-                          e.currentTarget.style.color = "#5A4D75";
+                          e.currentTarget.style.color = "#075985";
                           e.currentTarget.style.backgroundColor = "transparent";
                         }
                       }}
@@ -161,7 +155,7 @@ const MoreDropdown: React.FC<MoreDropdownProps> = ({
                       <span className={`${isScrolled ? "text-sm" : ""} flex items-center gap-2`}>
                         {item.name}
                         {isActive && (
-                          <div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div>
+                          <div className="w-1.5 h-1.5 rounded-full bg-sky-500"></div>
                         )}
                       </span>
                       <svg
@@ -184,8 +178,8 @@ const MoreDropdown: React.FC<MoreDropdownProps> = ({
                       <div
                         className={nestedDropdownClasses}
                         style={{
-                          backgroundColor: "rgba(255, 251, 250, 0.98)",
-                          borderColor: "rgba(139, 95, 191, 0.3)",
+                          backgroundColor: "rgba(248, 250, 252, 0.98)",
+                          borderColor: "rgba(14, 165, 233, 0.3)",
                         }}
                       >
                         <div className={isScrolled ? "py-1" : "py-2"}>
@@ -198,19 +192,19 @@ const MoreDropdown: React.FC<MoreDropdownProps> = ({
                                 href={submenu.linkUrl}
                                 className="flex items-center space-x-2 px-4 py-2 transition-colors duration-300"
                                 style={{
-                                  color: isSubActive ? "#8B5FBF" : "#5A4D75",
-                                  backgroundColor: isSubActive ? "rgba(139, 95, 191, 0.08)" : "transparent",
+                                  color: isSubActive ? "#0ea5e9" : "#075985",
+                                  backgroundColor: isSubActive ? "rgba(14, 165, 233, 0.08)" : "transparent",
                                 }}
                                 onMouseEnter={(e) => {
                                   if (!isSubActive) {
-                                    e.currentTarget.style.color = "#8B5FBF";
+                                    e.currentTarget.style.color = "#0ea5e9";
                                     e.currentTarget.style.backgroundColor =
-                                      "rgba(139, 95, 191, 0.08)";
+                                      "rgba(14, 165, 233, 0.08)";
                                   }
                                 }}
                                 onMouseLeave={(e) => {
                                   if (!isSubActive) {
-                                    e.currentTarget.style.color = "#5A4D75";
+                                    e.currentTarget.style.color = "#075985";
                                     e.currentTarget.style.backgroundColor =
                                       "transparent";
                                   }
@@ -225,7 +219,7 @@ const MoreDropdown: React.FC<MoreDropdownProps> = ({
                                 <span className={`${isScrolled ? "text-sm" : ""} flex items-center gap-2`}>
                                   {submenu.name}
                                   {isSubActive && (
-                                    <div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div>
+                                    <div className="w-1.5 h-1.5 rounded-full bg-sky-500"></div>
                                   )}
                                 </span>
                               </Link>
@@ -244,19 +238,19 @@ const MoreDropdown: React.FC<MoreDropdownProps> = ({
                   href={item.linkUrl}
                   className="block px-4 py-2 transition-colors duration-300"
                   style={{
-                    color: isActive ? "#8B5FBF" : "#5A4D75",
-                    backgroundColor: isActive ? "rgba(139, 95, 191, 0.08)" : "transparent",
+                    color: isActive ? "#0ea5e9" : "#075985",
+                    backgroundColor: isActive ? "rgba(14, 165, 233, 0.08)" : "transparent",
                   }}
                   onMouseEnter={(e) => {
                     if (!isActive) {
-                      e.currentTarget.style.color = "#8B5FBF";
+                      e.currentTarget.style.color = "#0ea5e9";
                       e.currentTarget.style.backgroundColor =
-                        "rgba(139, 95, 191, 0.08)";
+                        "rgba(14, 165, 233, 0.08)";
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (!isActive) {
-                      e.currentTarget.style.color = "#5A4D75";
+                      e.currentTarget.style.color = "#075985";
                       e.currentTarget.style.backgroundColor = "transparent";
                     }
                   }}
@@ -265,7 +259,7 @@ const MoreDropdown: React.FC<MoreDropdownProps> = ({
                   <span className={`${isScrolled ? "text-sm" : ""} flex items-center gap-2`}>
                     {item.name}
                     {isActive && (
-                      <div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div>
+                      <div className="w-1.5 h-1.5 rounded-full bg-sky-500"></div>
                     )}
                   </span>
                 </Link>

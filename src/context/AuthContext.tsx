@@ -10,6 +10,7 @@ export type User = {
   lastName: string;
   email: string;
   mobileNumber1: string;
+  imageUrl: string;
 };
 
 // Signup types
@@ -74,13 +75,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // SIGNUP
   // -----------------------
   const signup = async (signupData: SignupData): Promise<string> => {
-    const res = await fetch("http://localhost:8080/felicita/api/v0/auth/signup", {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json",
+    const res = await fetch(
+      "http://localhost:8080/felicita/api/v0/auth/signup",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(signupData),
       },
-      body: JSON.stringify(signupData),
-    });
+    );
 
     if (!res.ok) {
       const err = await res.json();
@@ -94,7 +98,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // -----------------------
   // LOGIN
   // -----------------------
-  const login = async (username: string, password: string): Promise<LoginResponseData> => {
+  const login = async (
+    username: string,
+    password: string,
+  ): Promise<LoginResponseData> => {
     const res = await fetch("/api/login", {
       method: "POST",
       credentials: "include",
@@ -150,8 +157,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           lastName: data.lastName,
           email: data.email,
           mobileNumber1: data.mobileNumber1,
+          imageUrl: data.imageUrl,
         });
-
       } else {
         setUser(null);
         sessionStorage.removeItem("uniqueCode");
@@ -189,11 +196,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const hasRole = (role: string) => user?.roles?.includes(role) ?? false;
-  const hasPrivilege = (priv: string) => user?.privileges?.includes(priv) ?? false;
+  const hasPrivilege = (priv: string) =>
+    user?.privileges?.includes(priv) ?? false;
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, login, signup, logout, hasRole, hasPrivilege, fetchMe }}
+      value={{
+        user,
+        loading,
+        login,
+        signup,
+        logout,
+        hasRole,
+        hasPrivilege,
+        fetchMe,
+      }}
     >
       {children}
     </AuthContext.Provider>

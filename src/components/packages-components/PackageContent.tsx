@@ -1,9 +1,9 @@
-import { ActivePackagesType } from "@/types/packages-types";
+import { ActivePackagesForFilters } from "@/types/packages-types";
 import { useRouter } from "next/navigation";
 import React from "react";
 
 interface PackageContentProps {
-  package: ActivePackagesType;
+  package: ActivePackagesForFilters;
   showViewDetails?: boolean;
 }
 
@@ -43,23 +43,23 @@ const PackageContent: React.FC<PackageContentProps> = ({
       {/* Package Meta Information */}
       <div className="space-y-2 mb-4">
         <div className="flex justify-between text-sm">
-          <span className="font-medium text-gray-700">Tour:</span>
+          <span className="font-medium text-sky-700">Tour:</span>
           <span className="text-gray-900">{pkg.tourName}</span>
         </div>
         <div className="flex justify-between text-sm">
-          <span className="font-medium text-gray-700">Duration:</span>
+          <span className="font-medium text-sky-700">Duration:</span>
           <span className="text-gray-900">
             {pkg.duration} Day{pkg.duration > 1 ? "s" : ""}
           </span>
         </div>
         <div className="flex justify-between text-sm">
-          <span className="font-medium text-gray-700">Route:</span>
+          <span className="font-medium text-sky-700">Route:</span>
           <span className="text-gray-900">
             {pkg.startLocation} → {pkg.endLocation}
           </span>
         </div>
         <div className="flex justify-between text-sm">
-          <span className="font-medium text-gray-700">Group Size:</span>
+          <span className="font-medium text-sky-700">Group Size:</span>
           <span className="text-gray-900">
             {pkg.minPersonCount}-{pkg.maxPersonCount} people
           </span>
@@ -76,7 +76,7 @@ const PackageContent: React.FC<PackageContentProps> = ({
             {pkg.features.map((feature) => (
               <span
                 key={feature.featureId}
-                className="inline-block bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs"
+                className="inline-block bg-gradient-to-r from-sky-50 to-teal-50 text-sky-800 border border-sky-200 px-2 py-1 rounded text-xs hover:from-sky-100 hover:to-teal-100 transition-all duration-200"
               >
                 {feature.featureName}: {feature.featureValue}
               </span>
@@ -85,74 +85,49 @@ const PackageContent: React.FC<PackageContentProps> = ({
         </div>
       )}
 
-      {/* Schedules */}
-      {/* {pkg.schedules && pkg.schedules.length > 0 && (
-        <div className="mb-4">
-          <h4 className="text-sm font-semibold text-gray-900 mb-2">
-            Available Schedules:
-          </h4>
-          <div className="space-y-2">
-            {pkg.schedules.slice(0, 2).map((schedule) => (
-              <div
-                key={schedule.scheduleId}
-                className="flex justify-between items-center bg-gray-50 px-3 py-2 rounded text-xs"
-              >
-                <span className="font-medium text-gray-900">
-                  {schedule.scheduleName}
-                </span>
-                <span className="text-gray-600">
-                  {new Date(schedule.assumeStartDate).toLocaleDateString()}
-                </span>
-              </div>
-            ))}
-            {pkg.schedules.length > 2 && (
-              <div className="text-xs text-gray-500 text-center">
-                +{pkg.schedules.length - 2} more schedules
-              </div>
-            )}
-          </div>
-        </div>
-      )} */}
-
       {/* Pricing */}
-      <div className="mb-4 pt-4 border-t border-gray-200 text-gray-500 text-sm">
+      <div className="mb-4 pt-4 border-t border-sky-200 text-gray-500 text-sm">
         <div className="flex items-center gap-2 mb-1">
-          <span className="text-2xl font-bold text-green-600">
+          <span className="text-2xl font-bold bg-gradient-to-r from-sky-600 to-teal-600 bg-clip-text text-transparent">
             {formatPrice(calculateDiscountedPrice())}
           </span>
           {pkg.discountPercentage > 0 && (
             <span className="text-lg text-gray-500 line-through">
               {formatPrice(pkg.pricePerPerson)}
             </span>
-          )}per person
+          )}
+          <span className="text-sm text-sky-600 ml-1">per person</span>
         </div>
-        {/* <div className="text-sm text-gray-600">
-          {pkg.pricePerPerson
-            ? formatPrice(pkg.pricePerPerson) + " per person"
-            : "Contact for pricing"}
-        </div> */}
       </div>
 
       {/* Action Button */}
       {showViewDetails ? (
         <button
           onClick={handleButtonClick}
-          className="w-full py-3 px-4 bg-gradient-to-r from-amber-600 to-purple-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-amber-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+          className="w-full py-3 px-4 bg-gradient-to-r from-sky-600 to-teal-600 text-white font-semibold rounded-lg hover:from-sky-700 hover:to-teal-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
         >
           See Details
         </button>
       ) : (
         <button
           onClick={handleButtonClick}
-          className="w-full py-3 px-4 rounded-lg font-semibold text-white transition-colors duration-200"
+          className="w-full py-3 px-4 rounded-lg font-semibold text-white transition-all duration-300"
           style={{
-            backgroundColor: pkg.color,
+            background: pkg.color ? pkg.color : "linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%)",
           }}
           onMouseOver={(e) => {
-            e.currentTarget.style.backgroundColor = pkg.hoverColor;
+            if (pkg.hoverColor) {
+              e.currentTarget.style.background = pkg.hoverColor;
+            } else {
+              e.currentTarget.style.background = "linear-gradient(135deg, #0284c7 0%, #0f766e 100%)";
+            }
           }}
           onMouseOut={(e) => {
-            e.currentTarget.style.backgroundColor = pkg.color;
+            if (pkg.color) {
+              e.currentTarget.style.background = pkg.color;
+            } else {
+              e.currentTarget.style.background = "linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%)";
+            }
           }}
         >
           More Details

@@ -44,9 +44,9 @@ const LocationTab: React.FC<LocationTabProps> = ({ destination }) => {
         </div>
         <div>
           <h4 className="font-semibold text-gray-900 mb-2">Region</h4>
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-            <p className="text-amber-800 font-medium">{destination.location}</p>
-            <p className="text-amber-600 text-sm mt-1">Sri Lanka</p>
+          <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4">
+            <p className="text-cyan-800 font-medium">{destination.location}</p>
+            <p className="text-cyan-600 text-sm mt-1">Sri Lanka</p>
           </div>
         </div>
       </div>

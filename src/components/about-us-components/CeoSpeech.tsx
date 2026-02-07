@@ -13,11 +13,10 @@ const CeoSpeech: React.FC = () => {
   const [typingText, setTypingText] = useState<string>('');
   const [isTyping, setIsTyping] = useState<boolean>(true);
 
-  // Sample CEO data - replace with your API data
   const ceoData: CeoData = {
     name: "Pasindu Dilshan",
     title: "Chief Executive Officer",
-    imageUrl: "/images/users/user-1.jpg", // Replace with actual image URL from your API
+    imageUrl: "/images/users/user-1.jpg",
     speech: [
       "Welcome to our journey of innovation and excellence. Since our founding, we have been committed to delivering exceptional experiences to our clients and creating meaningful opportunities for our team.",
       "Our vision extends beyond business success—we aim to make a lasting positive impact on the communities we serve. Through dedication, creativity, and unwavering integrity, we continue to push boundaries and set new standards in our industry.",
@@ -40,7 +39,7 @@ const CeoSpeech: React.FC = () => {
         setIsTyping(false);
         clearInterval(typingInterval);
       }
-    }, 50); // Adjust speed here (lower = faster)
+    }, 50);
 
     return () => clearInterval(typingInterval);
   }, [fullText, isTyping]);
@@ -50,14 +49,14 @@ const CeoSpeech: React.FC = () => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-amber-50 via-purple-50 to-amber-50 py-4 sm:py-4 md:py-8 lg:py-12 px-4 sm:px-6 lg:px-8">
+    <div className="bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 py-4 sm:py-4 md:py-8 lg:py-12 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-1 gap-8 lg:gap-12 xl:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-center">
           
           {/* Left Side - CEO Image */}
-          {/* <div className="order-2 lg:order-1 flex justify-center lg:justify-end">
+          <div className="order-2 lg:order-1 flex justify-center lg:justify-end">
             <div className="relative group">
-              <div className="absolute -inset-4 bg-gradient-to-br from-purple-400 to-amber-400 rounded-full opacity-20 blur-2xl group-hover:opacity-30 transition-opacity duration-500"></div>
+              <div className="absolute -inset-4 bg-gradient-to-br from-blue-400 to-teal-400 rounded-full opacity-20 blur-2xl group-hover:opacity-30 transition-opacity duration-500"></div>
               
               <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[400px] lg:h-[400px] xl:w-[480px] xl:h-[480px]">
                 {ceoData.imageUrl ? (
@@ -67,34 +66,34 @@ const CeoSpeech: React.FC = () => {
                     className="w-full h-full rounded-3xl object-cover shadow-2xl transition-transform duration-500 group-hover:scale-105"
                   />
                 ) : (
-                  <div className="w-full h-full rounded-3xl bg-gradient-to-br from-amber-400 via-purple-500 to-purple-600 flex items-center justify-center text-white text-7xl sm:text-8xl md:text-9xl font-bold shadow-2xl transition-transform duration-500 group-hover:scale-105">
+                  <div className="w-full h-full rounded-3xl bg-gradient-to-br from-blue-500 via-teal-400 to-emerald-500 flex items-center justify-center text-white text-7xl sm:text-8xl md:text-9xl font-bold shadow-2xl transition-transform duration-500 group-hover:scale-105">
                     {getInitials(ceoData.name)}
                   </div>
                 )}
                 
-                <div className="absolute -bottom-6 -right-6 w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-purple-600 to-amber-500 rounded-2xl opacity-80 -z-10 group-hover:scale-110 transition-transform duration-500"></div>
-                <div className="absolute -top-6 -left-6 w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-amber-400 to-purple-400 rounded-2xl opacity-60 -z-10 group-hover:scale-110 transition-transform duration-500"></div>
+                <div className="absolute -bottom-6 -right-6 w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-blue-600 to-teal-500 rounded-2xl opacity-80 -z-10 group-hover:scale-110 transition-transform duration-500"></div>
+                <div className="absolute -top-6 -left-6 w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-cyan-300 to-blue-400 rounded-2xl opacity-60 -z-10 group-hover:scale-110 transition-transform duration-500"></div>
               </div>
 
-              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-white rounded-2xl shadow-xl px-6 py-4 text-center min-w-[280px] sm:min-w-[320px]">
+              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-white rounded-2xl shadow-xl px-6 py-4 text-center min-w-[280px] sm:min-w-[320px] border-2 border-blue-100">
                 <h3 className="text-xl sm:text-2xl font-bold text-slate-800 mb-1">{ceoData.name}</h3>
-                <p className="text-amber-600 font-semibold text-sm sm:text-base">{ceoData.title}</p>
+                <p className="text-blue-600 font-semibold text-sm sm:text-base">{ceoData.title}</p>
               </div>
             </div>
-          </div> */}
+          </div>
 
           {/* Right Side - Speech */}
           <div className="order-1 lg:order-2 space-y-6">
             {/* Quote icon */}
-            <div className="inline-block p-4 bg-gradient-to-br from-purple-100 to-amber-100 rounded-2xl shadow-lg">
-              <Quote className="w-8 h-8 sm:w-10 sm:h-10 text-purple-600" />
+            <div className="inline-block p-4 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-2xl shadow-lg border border-blue-200">
+              <Quote className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" />
             </div>
 
             <div>
               <h2 className="text-xl sm:text-2xl md:text-4xl font-bold text-slate-800 mb-2">
                 A Message from Our CEO
               </h2>
-              <div className="w-24 h-1.5 bg-gradient-to-r from-purple-600 to-amber-500 rounded-full"></div>
+              <div className="w-24 h-1.5 bg-gradient-to-r from-blue-600 to-teal-500 rounded-full"></div>
             </div>
 
             <div className="space-y-5 text-gray-700 text-base sm:text-md md:text-lg lg:text-xl leading-relaxed">
@@ -108,17 +107,17 @@ const CeoSpeech: React.FC = () => {
                 </p>
               ))}
               
-              <p className="font-semibold text-purple-800">
+              <p className="font-semibold text-blue-800">
                 {typingText}
                 {isTyping && (
-                  <span className="inline-block w-0.5 h-5 sm:h-6 bg-purple-600 ml-1 animate-blink"></span>
+                  <span className="inline-block w-0.5 h-5 sm:h-6 bg-blue-600 ml-1 animate-blink"></span>
                 )}
               </p>
             </div>
 
             <div className="pt-6">
               <div className="inline-block">
-                <p className="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-amber-600 mb-1">
+                <p className="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-teal-600 mb-1">
                   {ceoData.name}
                 </p>
                 <p className="text-sm sm:text-base text-gray-500 italic">{ceoData.title}</p>

@@ -176,11 +176,11 @@ const TrendingDestinations = () => {
   }
 
   return (
-    <section className="py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20 bg-white">
+    <section className="py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20 bg-gradient-to-br from-blue-50 to-cyan-50">
       <div className=" mx-auto px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10 2xl:px-12">
         <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8">
           <SectionHeader
-            subtitle="Trending destinations"
+            subtitle=""
             title="Trending Destinations"
             description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore."
             fromColor="#A855F7"

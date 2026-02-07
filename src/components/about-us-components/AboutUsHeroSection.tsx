@@ -155,8 +155,7 @@ const AboutUsHeroSection = () => {
               <h2 className="text-2xl md:text-3xl font-semibold mb-3">
                 {currentSlideData.subtitle}
               </h2>
-              <div className="w-24 h-1 bg-amber-400 mx-auto rounded-full"></div>
-            </div>
+<div className="w-24 h-1 bg-cyan-500 mx-auto rounded-full"></div>            </div>
           )}
 
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 md:p-8 max-w-3xl mx-auto">
@@ -168,20 +167,20 @@ const AboutUsHeroSection = () => {
             {(currentSlideData.primaryButtonText || currentSlideData.secondaryButtonText) && (
               <div className="flex flex-wrap justify-center gap-4 mt-6">
                 {currentSlideData.primaryButtonText && (
-                  <button
-                    onClick={() => handleButtonClick(currentSlideData.primaryButtonLink)}
-                    className="text-sm md:text-lg px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold rounded-full hover:from-amber-600 hover:to-orange-600 transform hover:scale-105 transition-all duration-300 shadow-lg"
-                  >
-                    {currentSlideData.primaryButtonText}
-                  </button>
+  <button
+  onClick={() => handleButtonClick(currentSlideData.primaryButtonLink)}
+  className="text-sm md:text-lg px-6 py-3 bg-gradient-to-r from-blue-500 to-teal-400 text-white font-semibold rounded-full hover:from-blue-600 hover:to-teal-500 transform hover:scale-105 transition-all duration-300 shadow-lg"
+>
+  {currentSlideData.primaryButtonText}
+</button>
                 )}
                 {currentSlideData.secondaryButtonText && (
-                  <button
-                    onClick={() => handleButtonClick(currentSlideData.secondaryButtonLink)}
-                    className="text-sm md:text-lg px-6 py-3 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-gray-900 transition-all duration-300"
-                  >
-                    {currentSlideData.secondaryButtonText}
-                  </button>
+            <button
+  onClick={() => handleButtonClick(currentSlideData.secondaryButtonLink)}
+  className="text-sm md:text-lg px-6 py-3 border-2 border-cyan-300 text-white font-semibold rounded-full hover:bg-cyan-500 hover:border-cyan-500 hover:text-white transition-all duration-300"
+>
+  {currentSlideData.secondaryButtonText}
+</button>
                 )}
               </div>
             )}
@@ -248,34 +247,34 @@ const AboutUsHeroSection = () => {
       )}
 
       {/* Slide Indicators */}
-      {heroData.length > 1 && (
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3">
-          {heroData.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => goToSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === currentSlide
-                  ? "bg-amber-400 scale-125"
-                  : "bg-white/50 hover:bg-white/75"
-              }`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
-        </div>
-      )}
+     {heroData.length > 1 && (
+  <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3">
+    {heroData.map((_, index) => (
+      <button
+        key={index}
+        onClick={() => goToSlide(index)}
+        className={`w-3 h-3 rounded-full transition-all duration-300 ${
+          index === currentSlide
+            ? "bg-cyan-500 scale-125"
+            : "bg-white/50 hover:bg-white/75"
+        }`}
+        aria-label={`Go to slide ${index + 1}`}
+      />
+    ))}
+  </div>
+)}
 
       {/* Progress Bar */}
-      {heroData.length > 1 && (
-        <div className="absolute bottom-0 left-0 w-full h-1 bg-white/10">
-          <div
-            className="h-full bg-gradient-to-r from-amber-400 to-teal-400 transition-all duration-300"
-            style={{
-              width: `${((currentSlide + 1) / heroData.length) * 100}%`,
-            }}
-          />
-        </div>
-      )}
+     {heroData.length > 1 && (
+  <div className="absolute bottom-0 left-0 w-full h-1 bg-white/10">
+    <div
+      className="h-full bg-gradient-to-r from-cyan-400 to-emerald-500 transition-all duration-300"
+      style={{
+        width: `${((currentSlide + 1) / heroData.length) * 100}%`,
+      }}
+    />
+  </div>
+)}
 
       {/* Slide Counter (Left Corner) */}
       {heroData.length > 1 && (

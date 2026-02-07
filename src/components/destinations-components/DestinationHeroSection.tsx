@@ -20,7 +20,6 @@ const DestinationHeroSection = () => {
         setLoading(true);
         setError(null);
 
-        // USING THE SERVICE INSTEAD OF DIRECT FETCH
         const { data: items, error } = await HeroSectionService.fetchDestinationHeroData();
 
         if (error) {
@@ -70,24 +69,24 @@ const DestinationHeroSection = () => {
 
   const getFallbackImage = (index: number) => {
     const fallbackImages = [
-      "photo-1585506936724-fa0c19c7b7c4", // Colombo
-      "photo-1558272729-5e0165e4fde6", // Kandy
-      "photo-1528181304800-259b08848526", // Galle
-      "photo-1548013146-72479768bada", // Sigiriya
-      "photo-1592210454359-9043f067919b", // Ella
-      "photo-1552465011-b4e30bf7349d", // Mirissa
-      "photo-1579444741990-6e31c9b09d52", // Yala
-      "photo-1523348837708-15d4a09cfac2", // Nuwara Eliya
-      "photo-1536152471326-642d4aa9cba5", // Anuradhapura
-      "photo-1579444741963-5bce5eb9d1d2", // Polonnaruwa
-      "photo-1506929562872-bb421503ef21", // Arugam Bay
-      "photo-1544551763-46a013bb70d5", // Bentota
-      "photo-1585506936724-fa0c19c7b7c4", // Dambulla
-      "photo-1566073771259-6a8506099945", // Trincomalee
-      "photo-1551632811-561732d1e306", // Hatton
-      "photo-1520250497591-112f2f40a3f4", // Negombo
-      "photo-1579444741963-5bce5eb9d1d2", // Udawalawe
-      "photo-1544367567-0f2fcb009e0b", // Jaffna
+      "photo-1507525428034-b723cf961d3e", // Beach sunset
+      "photo-1518837695005-2083093ee35b", // Ocean waves
+      "photo-1505142468610-359e7d316be0", // Mountain lake
+      "photo-1439066615861-d1af74d74000", // Underwater sea
+      "photo-1493246507139-91e8fad9978e", // Coastal view
+      "photo-1506929562872-bb421503ef21", // Ocean activity
+      "photo-1551632811-561732d1e306", // Adventure
+      "photo-1528181304800-259b08848526", // Coastal town
+      "photo-1566073771259-6a8506099945", // Wildlife
+      "photo-1520250497591-112f2f40a3f4", // Water sports
+      "photo-1536152471326-642d4aa9cba5", // Heritage
+      "photo-1544551763-46a013bb70d5", // Leisure
+      "photo-1523348837708-15d4a09cfac2", // Culture
+      "photo-1585506936724-fa0c19c7b7c4", // Nature
+      "photo-1579444741963-5bce5eb9d1d2", // Exploration
+      "photo-1551632811-561732d1e306", // Mountains
+      "photo-1520250497591-112f2f40a3f4", // Tropical
+      "photo-1469474968028-56623f02e42e", // Panorama
     ];
     return `https://images.unsplash.com/${fallbackImages[index % fallbackImages.length]}?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80`;
   };
@@ -152,9 +151,9 @@ const DestinationHeroSection = () => {
 
   if (loading) {
     return (
-      <div className="relative w-full h-[650px] md:h-[750px] overflow-hidden bg-gradient-to-br from-teal-900 via-emerald-800 to-cyan-800 flex items-center justify-center">
+      <div className="relative w-full h-[650px] md:h-[750px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900 flex items-center justify-center">
         <div className="text-center text-white">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-400 mx-auto mb-4"></div>
           <p className="text-lg">Loading Amazing Destinations...</p>
         </div>
       </div>
@@ -163,27 +162,27 @@ const DestinationHeroSection = () => {
 
   if (error || heroData.length === 0) {
     return (
-      <div className="relative w-full h-[650px] lg:h-[750px] overflow-hidden bg-gradient-to-br from-teal-900 via-emerald-800 to-cyan-800 flex items-center justify-center">
+      <div className="relative w-full h-[650px] lg:h-[750px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900 flex items-center justify-center">
         <div className="text-center text-white px-4">
           <div className="mb-6">
             <h1 className="text-4xl md:text-5xl font-bold mb-3">
               Sri Lanka Destinations
             </h1>
-            <div className="w-32 h-1 bg-teal-400 mx-auto rounded-full"></div>
+            <div className="w-32 h-1 bg-gradient-to-r from-sky-400 to-teal-400 mx-auto rounded-full"></div>
           </div>
-          <p className="text-xl text-red-400 mb-6">
+          <p className="text-xl text-red-300 mb-6">
             {error || "No destinations content available"}
           </p>
           <div className="space-y-4">
             <button
               onClick={() => window.location.reload()}
-              className="px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors mr-4"
+              className="px-6 py-3 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:from-sky-700 hover:to-teal-700 transition-all duration-300 mr-4 shadow-md"
             >
               Retry
             </button>
             <Link
               href="/destinations/all"
-              className="px-6 py-3 border-2 border-white text-white rounded-lg hover:bg-white hover:text-gray-900 transition-all duration-300"
+              className="px-6 py-3 border-2 border-sky-300 text-white rounded-lg hover:bg-sky-50 hover:text-slate-900 transition-all duration-300"
             >
               View All Destinations
             </Link>
@@ -198,7 +197,7 @@ const DestinationHeroSection = () => {
   const currentType = getDestinationType(currentSlideData);
 
   return (
-    <div className="relative w-full h-[650px] lg:h-[850px] overflow-hidden bg-gradient-to-br from-teal-900 via-emerald-800 to-cyan-800">
+    <div className="relative w-full h-[650px] lg:h-[850px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
       {/* Image Slider */}
       <div className="relative w-full h-full">
         {heroData.map((item, index) => (
@@ -211,13 +210,13 @@ const DestinationHeroSection = () => {
             <div
               className="w-full h-full bg-cover bg-center bg-no-repeat"
               style={{
-                backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('${
+                backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.6), rgba(8, 145, 178, 0.5)), url('${
                   item.imageUrl || getFallbackImage(index)
                 }')`,
               }}
               onError={(e) => {
                 const target = e.target as HTMLDivElement;
-                target.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('${getFallbackImage(
+                target.style.backgroundImage = `linear-gradient(rgba(15, 23, 42, 0.7), rgba(8, 145, 178, 0.6)), url('${getFallbackImage(
                   index
                 )}')`;
               }}
@@ -226,34 +225,22 @@ const DestinationHeroSection = () => {
         ))}
       </div>
 
-
-      {/* Destination Badge */}
-      {/* <div className="absolute top-20 left-6">
-        <div className="flex items-center gap-2 px-4 py-2 bg-teal-500/20 backdrop-blur-sm rounded-full border border-teal-400/30">
-          <div className="w-2 h-2 bg-teal-400 rounded-full animate-pulse"></div>
-          <span className="text-sm font-medium text-white">
-            <span className="text-teal-200 font-bold">{heroData.length}</span> Destinations
-          </span>
-        </div>
-      </div> */}
-
-
       {/* Slide Counter */}
       {filteredDestinations.length > 1 && (
-        <div className="absolute top-12 lg:top-24 right-6 text-white/70 text-sm backdrop-blur-sm bg-black/20 px-3 py-1 rounded-full">
+        <div className="absolute top-12 lg:top-24 right-6 text-white/80 text-sm backdrop-blur-sm bg-black/30 px-3 py-1.5 rounded-full border border-white/20">
           {currentSlide + 1} / {filteredDestinations.length}
         </div>
       )}
 
-      {/* Content Overlay */}
-      <div className="absolute inset-0 flex items-center pt-16 lg:pt-20">
+      {/* Content Overlay - CENTERED */}
+      <div className="absolute inset-0 flex items-center justify-center pt-16 lg:pt-20">
         <div className="container mx-auto px-4 md:px-6 lg:px-8">
-          <div className="max-w-5xl text-white mx-auto">
-            {/* Destination Info Badge */}
-            <div className="flex gap-3 mb-6 flex-wrap">
+          <div className="max-w-5xl text-white mx-auto text-center">
+            {/* Destination Info Badge - CENTERED */}
+            <div className="flex gap-3 mb-6 flex-wrap justify-center">
               <div className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 flex items-center gap-2">
                 <svg
-                  className="w-4 h-4 text-teal-300"
+                  className="w-4 h-4 text-sky-300"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -325,29 +312,29 @@ const DestinationHeroSection = () => {
 
               {currentSlideData.subtitle && (
                 <div className="mb-6">
-                  <h2 className="text-2xl md:text-3xl font-semibold mb-3 text-teal-200">
+                  <h2 className="text-2xl md:text-3xl font-semibold mb-3 text-sky-100">
                     {currentSlideData.subtitle}
                   </h2>
-                  <div className="w-20 h-1 bg-teal-400 rounded-full"></div>
+                  <div className="w-20 h-1 bg-gradient-to-r from-sky-400 to-teal-400 rounded-full mx-auto shadow-lg"></div>
                 </div>
               )}
             </div>
 
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 md:p-8 max-w-3xl mb-8 border border-white/20 shadow-2xl">
-              <p className="text-md md:text-lg lg:text-xl mb-6 text-gray-100 leading-relaxed">
+            <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-6 md:p-8 max-w-3xl mb-8 border border-white/10 shadow-2xl mx-auto">
+              <p className="text-md md:text-lg lg:text-xl mb-6 text-slate-100 leading-relaxed">
                 {currentSlideData.description ||
                   "Explore diverse destinations across Sri Lanka, from ancient cities to tropical beaches, hill stations to wildlife parks."}
               </p>
 
               {(currentSlideData.primaryButtonText ||
                 currentSlideData.secondaryButtonText) && (
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-wrap gap-4 justify-center">
                   {currentSlideData.primaryButtonText && (
                     <button
                       onClick={() =>
                         handleButtonClick(currentSlideData.primaryButtonLink)
                       }
-                      className="px-6 lg:px-8 py-2 lg:py-4 text-sm lg:text-lg bg-gradient-to-r   from-teal-500 to-emerald-600 text-white font-semibold rounded-xl hover:from-teal-600 hover:to-emerald-700 transform hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-3 group"
+                      className="px-6 lg:px-8 py-2 lg:py-4 text-sm lg:text-lg bg-gradient-to-r from-sky-500 to-teal-500 text-white font-semibold rounded-xl hover:from-sky-600 hover:to-teal-600 transform hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-3 group"
                     >
                       <svg
                         className="w-4 h-4 lg:w-6 lg:h-6 group-hover:rotate-12 transition-transform duration-300"
@@ -376,7 +363,7 @@ const DestinationHeroSection = () => {
                       onClick={() =>
                         handleButtonClick(currentSlideData.secondaryButtonLink)
                       }
-                      className="px-6 lg:px-8 py-2 lg:py-4 text-sm lg:text-lg border-2 border-white/50 text-white font-semibold rounded-xl hover:bg-white hover:text-teal-900 transition-all duration-300 flex items-center gap-3 group"
+                      className="px-6 lg:px-8 py-2 lg:py-4 text-sm lg:text-lg border-2 border-sky-300/50 text-white font-semibold rounded-xl hover:bg-sky-50/20 hover:border-sky-200 backdrop-blur-sm transition-all duration-300 flex items-center gap-3 group"
                     >
                       <svg
                         className="w-4 h-4 lg:w-6 lg:h-6 group-hover:scale-110 transition-transform duration-300"
@@ -398,12 +385,12 @@ const DestinationHeroSection = () => {
               )}
             </div>
 
-            {/* Destination Highlights */}
-            <div className="hidden lg:grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="flex items-center gap-3 px-5 py-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 hover:bg-white/15 transition-all duration-300">
-                <div className="w-12 h-12 rounded-full bg-teal-500/20 flex items-center justify-center">
+            {/* Destination Highlights - CENTERED */}
+            <div className="hidden lg:grid grid-cols-1 md:grid-cols-3 gap-4 mx-auto max-w-4xl">
+              <div className="flex items-center gap-3 px-5 py-4 bg-white/5 backdrop-blur-sm rounded-xl border border-sky-500/20 hover:border-sky-400/40 hover:bg-white/10 transition-all duration-300">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-sky-500/20 to-sky-600/20 flex items-center justify-center">
                   <svg
-                    className="w-6 h-6 text-teal-300"
+                    className="w-6 h-6 text-sky-300"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -416,15 +403,15 @@ const DestinationHeroSection = () => {
                     />
                   </svg>
                 </div>
-                <div>
-                  <p className="text-sm text-teal-200">UNESCO Sites</p>
-                  <p className="text-base font-bold">8 Locations</p>
+                <div className="text-left">
+                  <p className="text-sm text-sky-200/90">UNESCO Sites</p>
+                  <p className="text-base font-bold text-white">8 Locations</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 px-5 py-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 hover:bg-white/15 transition-all duration-300">
-                <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center">
+              <div className="flex items-center gap-3 px-5 py-4 bg-white/5 backdrop-blur-sm rounded-xl border border-teal-500/20 hover:border-teal-400/40 hover:bg-white/10 transition-all duration-300">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-teal-500/20 to-teal-600/20 flex items-center justify-center">
                   <svg
-                    className="w-6 h-6 text-emerald-300"
+                    className="w-6 h-6 text-teal-300"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -437,13 +424,13 @@ const DestinationHeroSection = () => {
                     />
                   </svg>
                 </div>
-                <div>
-                  <p className="text-sm text-emerald-200">Best Time</p>
-                  <p className="text-base font-bold">Nov-Apr</p>
+                <div className="text-left">
+                  <p className="text-sm text-teal-200/90">Best Time</p>
+                  <p className="text-base font-bold text-white">Nov-Apr</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 px-5 py-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 hover:bg-white/15 transition-all duration-300">
-                <div className="w-12 h-12 rounded-full bg-cyan-500/20 flex items-center justify-center">
+              <div className="flex items-center gap-3 px-5 py-4 bg-white/5 backdrop-blur-sm rounded-xl border border-cyan-500/20 hover:border-cyan-400/40 hover:bg-white/10 transition-all duration-300">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500/20 to-cyan-600/20 flex items-center justify-center">
                   <svg
                     className="w-6 h-6 text-cyan-300"
                     fill="none"
@@ -458,9 +445,9 @@ const DestinationHeroSection = () => {
                     />
                   </svg>
                 </div>
-                <div>
-                  <p className="text-sm text-cyan-200">Cultural Mix</p>
-                  <p className="text-base font-bold">Diverse Heritage</p>
+                <div className="text-left">
+                  <p className="text-sm text-cyan-200/90">Cultural Mix</p>
+                  <p className="text-base font-bold text-white">Diverse Heritage</p>
                 </div>
               </div>
             </div>
@@ -473,7 +460,7 @@ const DestinationHeroSection = () => {
         <>
           <button
             onClick={prevSlide}
-            className="hidden lg:flex absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group md:left-6"
+            className="hidden lg:flex absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group md:left-6 border border-white/20 shadow-lg"
             aria-label="Previous slide"
           >
             <svg
@@ -493,7 +480,7 @@ const DestinationHeroSection = () => {
 
           <button
             onClick={nextSlide}
-            className="hidden lg:flex absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group md:right-6"
+            className="hidden lg:flex absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group md:right-6 border border-white/20 shadow-lg"
             aria-label="Next slide"
           >
             <svg
@@ -520,10 +507,10 @@ const DestinationHeroSection = () => {
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
                 index === currentSlide
-                  ? "bg-teal-400 scale-125"
-                  : "bg-white/50 hover:bg-white/75"
+                  ? "bg-gradient-to-r from-sky-400 to-teal-400 scale-125 shadow-lg"
+                  : "bg-white/40 hover:bg-white/60"
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />
@@ -533,85 +520,15 @@ const DestinationHeroSection = () => {
 
       {/* Progress Bar */}
       {filteredDestinations.length > 1 && (
-        <div className="absolute bottom-0 left-0 w-full h-1 bg-white/10">
+        <div className="absolute bottom-0 left-0 w-full h-1.5 bg-white/10">
           <div
-            className="h-full bg-gradient-to-r from-teal-400 to-emerald-400 transition-all duration-300"
+            className="h-full bg-gradient-to-r from-sky-400 via-teal-400 to-cyan-400 transition-all duration-500"
             style={{
               width: `${((currentSlide + 1) / filteredDestinations.length) * 100}%`,
             }}
           />
         </div>
       )}
-
-      {/* Quick Actions */}
-      {/* <div className="absolute bottom-40 right-6 hidden md:block">
-        <div className="flex flex-col gap-2">
-          <button
-            onClick={() => window.location.href = "/destinations/map"}
-            className="px-4 py-2 bg-gradient-to-r from-teal-600 to-emerald-700 text-white font-semibold rounded-lg hover:from-teal-700 hover:to-emerald-800 transform hover:scale-105 transition-all duration-300 shadow-lg flex items-center gap-2 text-sm"
-          >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
-              />
-            </svg>
-            Interactive Map
-          </button>
-          <button
-            onClick={() => window.location.href = "/destinations/itinerary-planner"}
-            className="px-4 py-2 border border-white/30 text-white font-semibold rounded-lg hover:bg-white/10 transition-all duration-300 flex items-center gap-2 text-sm"
-          >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
-              />
-            </svg>
-            Plan Itinerary
-          </button>
-        </div>
-      </div> */}
-
-      {/* Weather & Climate */}
-      {/* <div className="absolute bottom-40 left-6 hidden md:block">
-        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-          <div className="flex items-center gap-3 mb-2">
-            <svg
-              className="w-5 h-5 text-yellow-300"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-              />
-            </svg>
-            <div>
-              <p className="text-sm text-white/80">Current Climate</p>
-              <p className="text-lg font-bold text-teal-300">27°C / 81°F</p>
-            </div>
-          </div>
-          <p className="text-xs text-white/60">Tropical • Year-round</p>
-        </div>
-      </div> */}
     </div>
   );
 };

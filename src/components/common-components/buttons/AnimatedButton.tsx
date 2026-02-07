@@ -19,8 +19,8 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   onClick,
   className = "",
   size = "md",
-  gradientFrom = "from-amber-600",
-  gradientTo = "to-purple-600",
+  gradientFrom = "from-teal-300",
+  gradientTo = "to-cyan-600",
   hoverFrom = "hover:from-purple-700",
   hoverTo = "hover:to-amber-700",
   type = "button",
@@ -50,7 +50,7 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
       px-6 py-3.5 text-lg
       sm:px-7 sm:py-4 sm:text-xl
       md:px-8 md:py-4.5 md:text-2xl
-      lg:px-10 lg:py-5 lg:text-3xl
+      lg:px-10 lg:py-8 lg:text-3xl
       xl:text-4xl
     `,
     xl: `
@@ -58,14 +58,14 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
       sm:px-8 sm:py-5 sm:text-2xl
       md:px-10 md:py-5 md:text-3xl
       lg:px-12 lg:py-6 lg:text-4xl
-      xl:px-14 xl:py-7 xl:text-5xl
+      xl:px-14 xl:py-12 xl:text-5xl
     `,
     "2xl": `
       px-8 py-5 text-2xl
       sm:px-10 sm:py-6 sm:text-3xl
       md:px-12 md:py-7 md:text-4xl
       lg:px-16 lg:py-8 lg:text-5xl
-      xl:px-20 xl:py-10 xl:text-6xl
+      xl:px-20 xl:py-16 xl:text-6xl
     `,
   };
 

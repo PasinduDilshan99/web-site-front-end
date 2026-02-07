@@ -261,10 +261,24 @@ export interface HistoryItem {
   statusName: string;
 }
 
+export interface HistoryData {
+  totalCount: number;
+  history: HistoryItem[];
+}
+
 export interface HistoryResponse {
   code: number;
   status: string;
   message: string;
-  data: HistoryItem[];
+  data: HistoryData;
   timestamp: string;
+}
+
+export interface BrowsingHistoryRequest {
+  historyType?: 'ACTIVITIES' | 'DESTINATIONS' | 'PACKAGE' | 'TOUR';
+  from?: string; // ISO date string
+  to?: string;   // ISO date string
+  noOfLastDays?: number;
+  pageSize?: number;
+  pageNumber?: number;
 }

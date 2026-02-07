@@ -122,7 +122,7 @@ const OurStory = () => {
 
   if (loading) {
     return (
-      <section className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-blue-50">
+      <section className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto text-center">
           <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-b-2 border-blue-600 mx-auto"></div>
           <p className="mt-3 sm:mt-4 text-sm sm:text-base text-gray-600">Loading our story...</p>
@@ -160,7 +160,7 @@ const OurStory = () => {
   }
 
   return (
-    <section className="py-8 sm:py-12 md:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-blue-50">
+    <section className="py-8 sm:py-12 md:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-white">
       <div className="max-w-7xl mx-auto">
         
         {/* Header Section */}

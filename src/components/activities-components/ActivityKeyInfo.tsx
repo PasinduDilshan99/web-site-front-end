@@ -21,14 +21,14 @@ const ActivityKeyInfo: React.FC<ActivityKeyInfoProps> = ({ activity }) => {
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6">
       <h2 className="text-lg lg:text-xl font-bold text-gray-900 mb-4 flex items-center">
-        <span className="w-2 h-2 bg-amber-500 rounded-full mr-2"></span>
+        <span className="w-2 h-2 bg-gradient-to-r from-sky-500 to-teal-500 rounded-full mr-2"></span>
         Key Information
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div className="flex items-center space-x-3 p-3 bg-amber-50 rounded-lg">
-          <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-            <span className="text-amber-600 font-bold">⏱️</span>
+        <div className="flex items-center space-x-3 p-3 bg-sky-50 rounded-lg border border-sky-100">
+          <div className="w-10 h-10 bg-gradient-to-br from-sky-100 to-sky-200 rounded-lg flex items-center justify-center">
+            <span className="text-sky-600 font-bold">⏱️</span>
           </div>
           <div>
             <p className="text-sm text-gray-600">Duration</p>
@@ -38,9 +38,9 @@ const ActivityKeyInfo: React.FC<ActivityKeyInfoProps> = ({ activity }) => {
           </div>
         </div>
 
-        <div className="flex items-center space-x-3 p-3 bg-purple-50 rounded-lg">
-          <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-            <span className="text-purple-600 font-bold">👥</span>
+        <div className="flex items-center space-x-3 p-3 bg-teal-50 rounded-lg border border-teal-100">
+          <div className="w-10 h-10 bg-gradient-to-br from-teal-100 to-teal-200 rounded-lg flex items-center justify-center">
+            <span className="text-teal-600 font-bold">👥</span>
           </div>
           <div>
             <p className="text-sm text-gray-600">Group Size</p>
@@ -50,9 +50,9 @@ const ActivityKeyInfo: React.FC<ActivityKeyInfoProps> = ({ activity }) => {
           </div>
         </div>
 
-        <div className="flex items-center space-x-3 p-3 bg-amber-50 rounded-lg">
-          <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-            <span className="text-amber-600 font-bold">🕒</span>
+        <div className="flex items-center space-x-3 p-3 bg-cyan-50 rounded-lg border border-cyan-100">
+          <div className="w-10 h-10 bg-gradient-to-br from-cyan-100 to-cyan-200 rounded-lg flex items-center justify-center">
+            <span className="text-cyan-600 font-bold">🕒</span>
           </div>
           <div>
             <p className="text-sm text-gray-600">Available</p>
