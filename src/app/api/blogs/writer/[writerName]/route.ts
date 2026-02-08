@@ -1,18 +1,16 @@
 import { GET_BLOGS_DERAILS_BY_WRITER_NAME_DATA } from "@/utils/backEndConstant";
 import { NextRequest, NextResponse } from "next/server";
 
-type RouteParams = {
-  params: {
-    writerName: string;
-  };
-};
+interface BlogParams {
+  writerName: string;
+}
 
 export async function GET(
   request: NextRequest,
-  { params }: RouteParams
+  context: { params: BlogParams | Promise<BlogParams> }
 ) {
   try {
-    const { writerName } = params;
+  const { writerName } = await context.params;
 
     console.log("blog tags API - writerName:", writerName);
 

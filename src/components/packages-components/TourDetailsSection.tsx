@@ -1,4 +1,4 @@
-import { TourDetails } from "@/types/packages-types";
+import { TourDetails } from "@/types/package-types";
 import React from "react";
 
 interface TourDetailsSectionProps {

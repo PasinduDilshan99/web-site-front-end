@@ -129,14 +129,14 @@ export class PackageService {
   }
 
   static async fetchActivePackages(): Promise<{
-    data: ActivePackagesType[];
+    data: ActivePackagesForFilters[];
     error: string | null;
     code?: number;
     message?: string;
   }> {
     try {
       const response = await fetch(GET_ACTIVE_PACKAGE_DETAILS_DATA_FE);
-      const data: ApiResponse<ActivePackagesType[]> = await response.json();
+      const data: ApiResponse<ActivePackagesForFilters[]> = await response.json();
 
       if (response.ok && data.code === 200) {
         return {

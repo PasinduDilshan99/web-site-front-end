@@ -1,18 +1,17 @@
 import { GET_PACKAGE_REVIEWS_DETAILS_DATA } from "@/utils/backEndConstant";
 import { NextRequest, NextResponse } from "next/server";
 
-type RouteParams = {
-  params: {
-    packageId: string;
-  };
-};
+interface PackageParams {
+  packageId: string;
+}
+
 
 export async function GET(
   request: NextRequest,
-  { params }: RouteParams
+  context: { params: PackageParams | Promise<PackageParams> }
 ) {
   try {
-    const { packageId } = params;
+  const { packageId } = await context.params; 
 
     console.log("package  API - packageId:", packageId);
 
