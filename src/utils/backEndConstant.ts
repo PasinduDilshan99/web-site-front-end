@@ -9,7 +9,7 @@
 
 
 // Staging
-const PROTOCOL = "https";
+const PROTOCOL = "http";
 const DOMAIN = "staging-api.felicitatrips.com"; // staging backend domain
 const PORT = "443"; // HTTPS
 const CONTEXT_ROOT = "felicita";
