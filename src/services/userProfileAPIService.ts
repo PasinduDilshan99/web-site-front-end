@@ -48,15 +48,13 @@ export class UserProfileAPIService {
 
   async getSidebarData(): Promise<SidebarResponse> {
     try {
-      console.log('====================================');
-      console.log(API_BASE_URL);
-      console.log('====================================');
       const response = await fetch(`${API_BASE_URL}/side-bar`, {
         method: "GET",
-        headers: this.getAuthHeaders(),
+        headers: {
+          "Content-Type": "application/json",
+        },
         credentials: "include",
       });
-
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -274,14 +272,11 @@ export class UserProfileAPIService {
 
   async getUserCoupons(): Promise<CouponsResponse> {
     try {
-      const response = await fetch(
-        `${BASE_PATH}/coupon/user-details`,
-        {
-          method: "GET",
-          headers: this.getAuthHeaders(),
-          credentials: "include",
-        },
-      );
+      const response = await fetch(`${BASE_PATH}/coupon/user-details`, {
+        method: "GET",
+        headers: this.getAuthHeaders(),
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -352,14 +347,11 @@ export class UserProfileAPIService {
 
   async getAccountSecurityDetails(): Promise<AccountSecurityResponse> {
     try {
-      const response = await fetch(
-        `${BASE_PATH}/account-security/details`,
-        {
-          method: "GET",
-          headers: this.getAuthHeaders(),
-          credentials: "include",
-        },
-      );
+      const response = await fetch(`${BASE_PATH}/account-security/details`, {
+        method: "GET",
+        headers: this.getAuthHeaders(),
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -485,14 +477,11 @@ export class UserProfileAPIService {
 
   async getWishListDetails(): Promise<WishListResponse> {
     try {
-      const response = await fetch(
-        `${BASE_PATH}/wish-list/details`,
-        {
-          method: "GET",
-          headers: this.getAuthHeaders(),
-          credentials: "include",
-        },
-      );
+      const response = await fetch(`${BASE_PATH}/wish-list/details`, {
+        method: "GET",
+        headers: this.getAuthHeaders(),
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -510,14 +499,11 @@ export class UserProfileAPIService {
 
   async getCompletedTours(): Promise<CompletedToursResponse> {
     try {
-      const response = await fetch(
-        `${BASE_PATH}/booking/completed`,
-        {
-          method: "GET",
-          headers: this.getAuthHeaders(),
-          credentials: "include",
-        },
-      );
+      const response = await fetch(`${BASE_PATH}/booking/completed`, {
+        method: "GET",
+        headers: this.getAuthHeaders(),
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -534,14 +520,11 @@ export class UserProfileAPIService {
 
   async getUpcomingTours(): Promise<UpcomingToursResponse> {
     try {
-      const response = await fetch(
-        `${BASE_PATH}/booking/upcoming`,
-        {
-          method: "GET",
-          headers: this.getAuthHeaders(),
-          credentials: "include",
-        },
-      );
+      const response = await fetch(`${BASE_PATH}/booking/upcoming`, {
+        method: "GET",
+        headers: this.getAuthHeaders(),
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -559,14 +542,11 @@ export class UserProfileAPIService {
 
   async getUserBenefits(): Promise<UserBenefitsResponse> {
     try {
-      const response = await fetch(
-        `${BASE_PATH}/user-benefits/user-profile`,
-        {
-          method: "GET",
-          headers: this.getAuthHeaders(),
-          credentials: "include",
-        },
-      );
+      const response = await fetch(`${BASE_PATH}/user-benefits/user-profile`, {
+        method: "GET",
+        headers: this.getAuthHeaders(),
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -583,14 +563,11 @@ export class UserProfileAPIService {
   // Add this method to your existing class
   async getRequestedTours(): Promise<RequestedToursResponse> {
     try {
-      const response = await fetch(
-        `${BASE_PATH}/booking/requested`,
-        {
-          method: "GET",
-          headers: this.getAuthHeaders(),
-          credentials: "include",
-        },
-      );
+      const response = await fetch(`${BASE_PATH}/booking/requested`, {
+        method: "GET",
+        headers: this.getAuthHeaders(),
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -607,14 +584,11 @@ export class UserProfileAPIService {
   // Add this method to your existing class
   async getCancelledTours(): Promise<CancelledToursResponse> {
     try {
-      const response = await fetch(
-        `${BASE_PATH}/booking/cancelled`,
-        {
-          method: "GET",
-          headers: this.getAuthHeaders(),
-          credentials: "include",
-        },
-      );
+      const response = await fetch(`${BASE_PATH}/booking/cancelled`, {
+        method: "GET",
+        headers: this.getAuthHeaders(),
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -632,7 +606,7 @@ export class UserProfileAPIService {
   ): Promise<UpdateAccountResponseData> {
     try {
       const response = await fetch(`${API_BASE_URL}/update-account`, {
-        method: "POST", 
+        method: "POST",
         headers: this.getAuthHeaders(),
         credentials: "include",
         body: JSON.stringify(request),
