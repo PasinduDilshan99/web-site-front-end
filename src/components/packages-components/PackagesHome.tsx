@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import SectionHeader from "../common-components/section-header/SectionHeader";
 import AnimatedButton from "../common-components/buttons/AnimatedButton";
-import { ActivePackagesType } from "@/types/packages-types";
+import { ActivePackagesForFilters, ActivePackagesType } from "@/types/package-types";
 import Loading from "@/components/common-components/loading/Loading";
 import { EmptyState } from "@/components/common-components/empty-state/EmptyState";
 import PackageGrid from "@/components/packages-components/PackageGrid";
@@ -21,7 +21,7 @@ import { PackageService } from "@/services/packageService";
 const PackagesHome = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activePackages, setActivePackages] = useState<ActivePackagesType[]>(
+  const [activePackages, setActivePackages] = useState<ActivePackagesForFilters[]>(
     []
   );
   const [displayCount, setDisplayCount] = useState(
@@ -118,7 +118,7 @@ const PackageContent = ({
   activePackages,
   displayCount,
 }: {
-  activePackages: ActivePackagesType[];
+  activePackages: ActivePackagesForFilters[];
   displayCount: number;
 }) => {
   if (activePackages.length === 0) {
@@ -146,7 +146,7 @@ const PackageActions = ({
   activePackages,
   displayCount,
 }: {
-  activePackages: ActivePackagesType[];
+  activePackages: ActivePackagesForFilters[];
   displayCount: number;
 }) => {
   const router = useRouter();

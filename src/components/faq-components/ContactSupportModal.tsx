@@ -218,7 +218,7 @@ export const ContactSupportModal = ({
                 Contact Support
               </h3>
               <p className="text-sky-100 text-xs sm:text-sm md:text-base mt-1 sm:mt-2 leading-relaxed">
-                We'll get back to you within {responseTime} hours
+                We&apos;ll get back to you within {responseTime} hours
               </p>
             </div>
             <button

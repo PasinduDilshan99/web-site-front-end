@@ -1,18 +1,17 @@
 import { GET_DESTINATIONS_DETAILS_BY_TOUR_ID_DATA } from "@/utils/backEndConstant";
 import { NextRequest, NextResponse } from "next/server";
 
-type RouteParams = {
-  params: {
-    tourId: string;
-  };
-};
+interface DestinationParams {
+  tourId: string;
+}
+
 
 export async function GET(
   request: NextRequest,
-  { params }: RouteParams
+  context: { params: DestinationParams | Promise<DestinationParams> }
 ) {
   try {
-    const { tourId } = params;
+  const { tourId } = await context.params;
 
     console.log("Destinations API Route - tourId:", tourId);
 

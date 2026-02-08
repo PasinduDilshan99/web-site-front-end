@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PackageCard from "./PackageCard";
-import { ActivePackagesForFilters } from "@/types/packages-types";
+import { ActivePackagesForFilters } from "@/types/package-types";
 
 interface PackageGridProps {
   packages: ActivePackagesForFilters[];

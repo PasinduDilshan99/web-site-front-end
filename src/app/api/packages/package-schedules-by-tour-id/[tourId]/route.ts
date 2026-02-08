@@ -1,18 +1,17 @@
 import { GET_PACKAGE_SCHEDULES_BY_TOUR_ID_DATA } from "@/utils/backEndConstant";
 import { NextRequest, NextResponse } from "next/server";
 
-type RouteParams = {
-  params: {
-    tourId: string;
-  };
-};
+interface TourParams {
+  tourId: string;
+}
+
 
 export async function GET(
   request: NextRequest,
-  { params }: RouteParams
+  context: { params: TourParams | Promise<TourParams> }
 ) {
   try {
-    const { tourId } = params;
+  const { tourId } = await context.params;
 
     console.log("tour History API - tourId:", tourId);
 
