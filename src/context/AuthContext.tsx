@@ -1,4 +1,5 @@
 "use client";
+import { BASE_PATH } from "@/utils/backEndConstant";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 export type User = {
@@ -76,7 +77,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // -----------------------
   const signup = async (signupData: SignupData): Promise<string> => {
     const res = await fetch(
-      "http://localhost:8080/felicita/api/v0/auth/signup",
+      `${BASE_PATH}/auth/signup`,
       {
         method: "POST",
         headers: {
@@ -178,7 +179,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // -----------------------
   const logout = async (): Promise<void> => {
     try {
-      await fetch("http://localhost:8080/felicita/api/v0/auth/logout", {
+      await fetch(`${BASE_PATH}/auth/logout`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },

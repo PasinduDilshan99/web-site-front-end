@@ -62,6 +62,8 @@ const USER_PROFILE = "/user-profile"
 
 
 // Auth
+export const LOGIN_DATA = `${BASE_PATH}${API}${VERSION}${AUTH}/login`;
+export const USER_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${AUTH}/me`;
 export const UPDATE_PASSWORD_DATA = `${BASE_PATH}${API}${VERSION}${AUTH}/change-password`;
 export const RESET_PASSWORD_DATA = `${BASE_PATH}${API}${VERSION}${AUTH}/reset-password`;
 export const UPDATE_SECRET_QUESTIONS_DATA = `${BASE_PATH}${API}${VERSION}${AUTH}/update-secret-questions`;

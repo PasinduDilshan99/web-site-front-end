@@ -1,9 +1,10 @@
+import { USER_DETAILS_DATA } from "@/utils/backEndConstant";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
     const response = await fetch(
-      "http://localhost:8080/felicita/api/v0/auth/me",
+      USER_DETAILS_DATA,
       {
         method: "GET",
         headers: {

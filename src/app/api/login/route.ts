@@ -1,10 +1,11 @@
+import { LOGIN_DATA } from "@/utils/backEndConstant";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   try {
     const { username, password } = await request.json();
 
-    const backendResponse = await fetch("http://localhost:8080/felicita/api/v0/auth/login", {
+    const backendResponse = await fetch(LOGIN_DATA, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -33,8 +33,9 @@ import {
   UpdateAccountResponseData,
   UserUpdateRequest,
 } from "@/types/user-profile-types";
+import { BASE_PATH } from "@/utils/backEndConstant";
 
-const API_BASE_URL = "http://localhost:8080/felicita/api/v0/user-profile";
+const API_BASE_URL = `${BASE_PATH}/api/v0/user-profile`;
 
 export class UserProfileAPIService {
   private getAuthHeaders(): HeadersInit {
@@ -47,11 +48,15 @@ export class UserProfileAPIService {
 
   async getSidebarData(): Promise<SidebarResponse> {
     try {
+      console.log('====================================');
+      console.log(API_BASE_URL);
+      console.log('====================================');
       const response = await fetch(`${API_BASE_URL}/side-bar`, {
         method: "GET",
         headers: this.getAuthHeaders(),
         credentials: "include",
       });
+
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -240,7 +245,7 @@ export class UserProfileAPIService {
       };
 
       const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/history-management/history-data",
+        `${BASE_PATH}/history-management/history-data`,
         {
           method: "POST",
           headers: {
@@ -270,7 +275,7 @@ export class UserProfileAPIService {
   async getUserCoupons(): Promise<CouponsResponse> {
     try {
       const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/coupon/user-details",
+        `${BASE_PATH}/coupon/user-details`,
         {
           method: "GET",
           headers: this.getAuthHeaders(),
@@ -295,7 +300,7 @@ export class UserProfileAPIService {
   async getNotificationPermissions(): Promise<NotificationResponse> {
     try {
       const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/user-notification-permissions/details",
+        `${BASE_PATH}/user-notification-permissions/details`,
         {
           method: "GET",
           headers: this.getAuthHeaders(),
@@ -319,7 +324,7 @@ export class UserProfileAPIService {
   ): Promise<unknown> {
     try {
       const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/user-notification-permissions/update",
+        `${BASE_PATH}/user-notification-permissions/update`,
         {
           method: "POST",
           headers: {
@@ -348,7 +353,7 @@ export class UserProfileAPIService {
   async getAccountSecurityDetails(): Promise<AccountSecurityResponse> {
     try {
       const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/account-security/details",
+        `${BASE_PATH}/account-security/details`,
         {
           method: "GET",
           headers: this.getAuthHeaders(),
@@ -372,7 +377,7 @@ export class UserProfileAPIService {
   ): Promise<unknown> {
     try {
       const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/account-security/mobile-verify",
+        `${BASE_PATH}/account-security/mobile-verify`,
         {
           method: "POST",
           headers: {
@@ -398,7 +403,7 @@ export class UserProfileAPIService {
   async verifyMobileCode(request: MobileUpdateRequest): Promise<unknown> {
     try {
       const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/account-security/mobile-update",
+        `${BASE_PATH}/account-security/mobile-update`,
         {
           method: "POST",
           headers: {
@@ -426,7 +431,7 @@ export class UserProfileAPIService {
   ): Promise<unknown> {
     try {
       const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/account-security/email-verify",
+        `${BASE_PATH}/account-security/email-verify`,
         {
           method: "POST",
           headers: {
@@ -452,7 +457,7 @@ export class UserProfileAPIService {
   async verifyEmailCode(request: EmailUpdateRequest): Promise<unknown> {
     try {
       const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/account-security/email-update",
+        `${BASE_PATH}/account-security/email-update`,
         {
           method: "POST",
           headers: {
@@ -481,7 +486,7 @@ export class UserProfileAPIService {
   async getWishListDetails(): Promise<WishListResponse> {
     try {
       const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/wish-list/details",
+        `${BASE_PATH}/wish-list/details`,
         {
           method: "GET",
           headers: this.getAuthHeaders(),
@@ -506,7 +511,7 @@ export class UserProfileAPIService {
   async getCompletedTours(): Promise<CompletedToursResponse> {
     try {
       const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/booking/completed",
+        `${BASE_PATH}/booking/completed`,
         {
           method: "GET",
           headers: this.getAuthHeaders(),
@@ -530,7 +535,7 @@ export class UserProfileAPIService {
   async getUpcomingTours(): Promise<UpcomingToursResponse> {
     try {
       const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/booking/upcoming",
+        `${BASE_PATH}/booking/upcoming`,
         {
           method: "GET",
           headers: this.getAuthHeaders(),
@@ -555,7 +560,7 @@ export class UserProfileAPIService {
   async getUserBenefits(): Promise<UserBenefitsResponse> {
     try {
       const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/user-benefits/user-profile",
+        `${BASE_PATH}/user-benefits/user-profile`,
         {
           method: "GET",
           headers: this.getAuthHeaders(),
@@ -579,7 +584,7 @@ export class UserProfileAPIService {
   async getRequestedTours(): Promise<RequestedToursResponse> {
     try {
       const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/booking/requested",
+        `${BASE_PATH}/booking/requested`,
         {
           method: "GET",
           headers: this.getAuthHeaders(),
@@ -603,7 +608,7 @@ export class UserProfileAPIService {
   async getCancelledTours(): Promise<CancelledToursResponse> {
     try {
       const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/booking/cancelled",
+        `${BASE_PATH}/booking/cancelled`,
         {
           method: "GET",
           headers: this.getAuthHeaders(),
