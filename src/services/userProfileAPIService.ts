@@ -52,6 +52,7 @@ export class UserProfileAPIService {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Accept: "application/json",
         },
         credentials: "include",
       });
