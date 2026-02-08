@@ -1,18 +1,16 @@
 import { GET_DESTINATIONS_DETAILS_BY_ID_DATA } from "@/utils/backEndConstant";
 import { NextRequest, NextResponse } from "next/server";
 
-type RouteParams = {
-  params: {
-    destinationId: string;
-  };
-};
+interface DestinationParams {
+  destinationId: string;
+}
 
 export async function GET(
   request: NextRequest,
-  { params }: RouteParams
+  context: { params: DestinationParams | Promise<DestinationParams> }
 ) {
   try {
-    const { destinationId } = params;
+  const { destinationId } = await context.params;
 
     console.log("Destination History API - destinationId:", destinationId);
 

@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { ActivityHistory } from "./ActivityHistorySection";
 import {
   ChevronLeft,
   ChevronRight,
@@ -13,6 +12,7 @@ import {
   MapPin,
   Activity,
 } from "lucide-react";
+import { ActivityHistory } from "@/types/activity-types";
 
 interface ActivityHistoryCarouselProps {
   histories: ActivityHistory[];

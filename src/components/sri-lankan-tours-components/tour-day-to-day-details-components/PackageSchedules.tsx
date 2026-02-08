@@ -1,5 +1,5 @@
 "use client";
-import { PackageSchedule } from "@/app/sri-lankan-tours/[sriLankanTourId]/page";
+import { PackageSchedule } from "@/types/package-types";
 import { useRouter } from "next/navigation";
 
 interface PackageSchedulesComponentProps {

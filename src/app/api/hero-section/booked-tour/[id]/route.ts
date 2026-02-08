@@ -1,12 +1,16 @@
 import { GET_ACTIVE_BOOKED_TOUR_HERO_SECTION_DATA } from "@/utils/backEndConstant";
 import { NextResponse } from "next/server";
 
+interface TourParams {
+  id: string; // or activityId if your folder is [activityId]
+}
+
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: TourParams | Promise<TourParams> }
 ) {
   try {
-    const { id } = params;
+  const { id } = await context.params;
 
     const response = await fetch(
       `${GET_ACTIVE_BOOKED_TOUR_HERO_SECTION_DATA}/${id}`,

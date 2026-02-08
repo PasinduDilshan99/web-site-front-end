@@ -1,18 +1,17 @@
 import { GET_BLOGS_TAG_BY_BLOG_ID_DATA } from "@/utils/backEndConstant";
 import { NextRequest, NextResponse } from "next/server";
 
-type RouteParams = {
-  params: {
-    blogId: string;
-  };
-};
+interface BlogParams {
+  blogId: string;
+}
+
 
 export async function GET(
   request: NextRequest,
-  { params }: RouteParams
+  context: { params: BlogParams | Promise<BlogParams> }
 ) {
   try {
-    const { blogId } = params;
+  const { blogId } = await context.params;
 
     console.log("blog tags API - blogId:", blogId);
 

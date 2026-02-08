@@ -1,11 +1,34 @@
-// http://159.198.43.146:8080/felicita
+// DEV
 const PROTOCOL = "http";
-// const DOMAIN = "159.198.43.146";
 const DOMAIN = "localhost";
 const PORT = "8080";
 const CONTEXT_ROOT = "felicita";
 const VERSION = "/v0";
 const API = "/api";
+export const BASE_PATH = `${PROTOCOL}://${DOMAIN}:${PORT}/${CONTEXT_ROOT}`;
+
+
+// Staging
+// const PROTOCOL = "https";
+// const DOMAIN = "staging-api.felicitatrips.com"; // staging backend domain
+// const PORT = "443"; // HTTPS
+// const CONTEXT_ROOT = "felicita";
+// const VERSION = "/v0";
+// const API = "/api";
+// export const BASE_PATH = `${PROTOCOL}://${DOMAIN}/${CONTEXT_ROOT}`;
+
+
+// Production
+// const PROTOCOL = "https";
+// const DOMAIN = "api.felicitatrips.com"; // production backend domain
+// const PORT = "443"; // if using HTTPS (omit port in URL)
+// const CONTEXT_ROOT = "felicita";
+// const VERSION = "/v0";
+// const API = "/api";
+// export const BASE_PATH = `${PROTOCOL}://${DOMAIN}/${CONTEXT_ROOT}`;
+
+
+// http://159.198.43.146:8080/felicita
 const LINK_BAR = "/link-bar";
 const NAV_BAR = "/nav-bar";
 const HERO_SECTION = "/hero-section";
@@ -37,7 +60,6 @@ const WISH_LIST = "/wish-list"
 const AUTH = "/auth"
 const USER_PROFILE = "/user-profile"
 
-export const BASE_PATH = `${PROTOCOL}://${DOMAIN}:${PORT}/${CONTEXT_ROOT}`;
 
 // Auth
 export const UPDATE_PASSWORD_DATA = `${BASE_PATH}${API}${VERSION}${AUTH}/change-password`;

@@ -1,12 +1,16 @@
 import { GET_DESTINATIONS_HISTORY_IMAGES_DETAILS_DATA } from "@/utils/backEndConstant";
 import { NextResponse } from "next/server";
 
+interface DestinationParams {
+  destinationId: string;
+}
+
 export async function GET(
   request: Request,
-  { params }: { params: { destinationId: string } }
+  context: { params: DestinationParams | Promise<DestinationParams> },
 ) {
   try {
-    const { destinationId } = params;
+    const { destinationId } = await context.params;
 
     const response = await fetch(
       `${GET_DESTINATIONS_HISTORY_IMAGES_DETAILS_DATA}/${destinationId}`,
@@ -15,7 +19,7 @@ export async function GET(
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     if (!response.ok) {
@@ -24,19 +28,18 @@ export async function GET(
 
       return NextResponse.json(
         { error: "Failed to fetch data from backend" },
-        { status: response.status }
+        { status: response.status },
       );
     }
 
     const data = await response.json();
     return NextResponse.json(data, { status: 200 });
-
   } catch (error) {
     console.error("Error fetching backend data:", error);
 
     return NextResponse.json(
       { error: "Something went wrong" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

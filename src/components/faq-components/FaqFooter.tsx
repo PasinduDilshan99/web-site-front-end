@@ -69,7 +69,7 @@ export const FaqFooter = ({
                 Still have questions?
               </h3>
               <p className="text-sm md:text-md lg:text-lg text-gray-800 mb-4 sm:mb-6 leading-relaxed">
-                Can't find what you're looking for? Our support team is here to help you with any questions.
+                Can&apos;t find what you&apos;re looking for? Our support team is here to help you with any questions.
               </p>
             </div>
             

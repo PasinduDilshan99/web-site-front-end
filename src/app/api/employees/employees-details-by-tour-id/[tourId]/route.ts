@@ -1,25 +1,22 @@
 import { GET_EMPLOYEE_DETAILS_BY_TOUR_ID_DATA } from "@/utils/backEndConstant";
 import { NextRequest, NextResponse } from "next/server";
 
-type RouteParams = {
-  params: {
-    tourId: string;
-  };
-};
-
+interface EmployeeParams {
+  tourId: string;
+}
 export async function GET(
   request: NextRequest,
-  { params }: RouteParams
+  context: { params: EmployeeParams | Promise<EmployeeParams> },
 ) {
   try {
-    const { tourId } = params;
+    const { tourId } = await context.params;
 
     console.log("tour History API - tourId:", tourId);
 
     if (!tourId) {
       return NextResponse.json(
         { error: "tour ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -43,7 +40,7 @@ export async function GET(
       console.error("Backend returned error:", text);
       return NextResponse.json(
         { error: "Failed to fetch tour details" },
-        { status: response.status }
+        { status: response.status },
       );
     }
 
@@ -53,7 +50,7 @@ export async function GET(
     console.error("Error fetching tour details:", error);
     return NextResponse.json(
       { error: "Something went wrong" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

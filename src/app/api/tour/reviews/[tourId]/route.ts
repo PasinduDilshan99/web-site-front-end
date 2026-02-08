@@ -1,12 +1,17 @@
 import { GET_TOURS_REVIEWS_DETAILS_DATA } from "@/utils/backEndConstant";
 import { NextResponse } from "next/server";
 
+interface TourParams {
+  tourId: string;
+}
+
+
 export async function GET(
   request: Request,
-  { params }: { params: { tourId: string } }
+  context: { params: TourParams | Promise<TourParams> }
 ) {
   try {
-    const { tourId } = params;
+  const { tourId } = await context.params;
 
     const response = await fetch(
       `${GET_TOURS_REVIEWS_DETAILS_DATA}/${tourId}`,
