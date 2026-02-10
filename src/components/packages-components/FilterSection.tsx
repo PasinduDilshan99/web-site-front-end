@@ -99,12 +99,12 @@ const FilterSection: React.FC<FilterSectionProps> = ({
         {/* Price Range */}
         <div className="space-y-2">
           <label className="block text-sm font-semibold text-sky-800">
-            Price Range
+            Price Range ($)
           </label>
-          <div className="flex justify-between text-sm font-medium text-sky-700 mb-2">
+          {/* <div className="flex justify-between text-sm font-medium text-sky-700 mb-2">
             <span>{formatPrice(filters.priceRange[0])}</span>
             <span>{formatPrice(filters.priceRange[1])}</span>
-          </div>
+          </div> */}
           <div className="flex gap-4">
             <input
               type="number"
@@ -112,7 +112,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
               max="100000"
               value={filters.priceRange[0]}
               onChange={(e) => handlePriceChange('min', parseInt(e.target.value, 10) || 0)}
-              className="w-1/2 px-3 py-1 border border-sky-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-sky-400"
+              className="w-1/2 px-3 py-1 border border-sky-300 rounded-md md:text-md text-lg text-gray-600 focus:outline-none focus:ring-1 focus:ring-sky-400"
               placeholder="Min"
             />
             <input
@@ -121,7 +121,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
               max="100000"
               value={filters.priceRange[1]}
               onChange={(e) => handlePriceChange('max', parseInt(e.target.value, 10) || 100000)}
-              className="w-1/2 px-3 py-1 border border-sky-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-sky-400"
+              className="w-1/2 px-3 py-1 border border-sky-300 rounded-md md:text-md text-lg text-gray-600 focus:outline-none focus:ring-1 focus:ring-sky-400"
               placeholder="Max"
             />
           </div>

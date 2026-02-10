@@ -60,7 +60,7 @@ export default function WalletPage() {
   };
 
   const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
+    switch (status?.toLowerCase()) {
       case "open":
         return "bg-emerald-50 text-emerald-700 border-emerald-200";
       case "closed":

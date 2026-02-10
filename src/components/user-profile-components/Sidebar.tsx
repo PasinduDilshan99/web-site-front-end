@@ -145,35 +145,6 @@ export default function Sidebar() {
   const [windowWidth, setWindowWidth] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Custom hook to manage body scroll lock
-  const useBodyScrollLock = (isLocked: boolean) => {
-    useEffect(() => {
-      if (isLocked && isMobile) {
-        // Store current scroll position
-        const scrollY = window.scrollY;
-        const body = document.body;
-        
-        // Lock body scroll
-        body.style.position = 'fixed';
-        body.style.top = `-${scrollY}px`;
-        body.style.width = '100%';
-        body.style.overflow = 'hidden';
-        
-        return () => {
-          // Restore scroll position
-          body.style.position = '';
-          body.style.top = '';
-          body.style.width = '';
-          body.style.overflow = '';
-          window.scrollTo(0, scrollY);
-        };
-      }
-    }, [isLocked, isMobile]);
-  };
-
-  // Use the scroll lock hook
-  useBodyScrollLock(isMobileOpen);
-
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
@@ -648,33 +619,30 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Mobile Overlay with Backdrop Blur - Fixed scrolling issue */}
+      {/* Mobile menu button (outside sidebar) */}
+      {isMobile && !isMobileOpen && (
+        <button
+          onClick={() => setIsMobileOpen(true)}
+          className="fixed top-4 left-4 z-30 p-2 bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-lg shadow-lg md:hidden"
+          aria-label="Open sidebar"
+        >
+          <Menu size={20} />
+        </button>
+      )}
+
+      {/* Mobile Overlay */}
       {isMobileOpen && isMobile && (
         <div
           className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-all duration-300 md:hidden"
           onClick={() => setIsMobileOpen(false)}
-          style={{
-            touchAction: 'none',
-            overscrollBehavior: 'contain',
-            position: 'fixed',
-          }}
         />
       )}
 
-      {/* Swipe indicator for mobile (only visible when sidebar is closed) */}
-      {!isMobileOpen && isMobile && (
-        <div className="fixed left-0 top-1/2 transform -translate-y-1/2 z-30 w-2 h-20 bg-gradient-to-b from-blue-500/50 to-green-500/50 rounded-r-lg animate-pulse md:hidden pointer-events-none">
-          <div className="absolute -right-1 top-1/2 transform -translate-y-1/2">
-            <ChevronRight className="text-blue-500" size={16} />
-          </div>
-        </div>
-      )}
-
-      {/* Sidebar Container - Fixed scrolling */}
+      {/* Sidebar Container */}
       <aside
         ref={sidebarRef}
         className={`
-          fixed md:relative z-50 min-h-screen bg-white border-r border-blue-200 overflow-hidden
+          fixed md:relative z-50 h-screen bg-white border-r border-blue-200
           transition-all duration-300 ease-out
           ${isMobile ? (isMobileOpen ? "translate-x-0" : "-translate-x-full") : ""}
           ${isMobile ? "w-72" : isCollapsed ? "w-20" : "w-64"}
@@ -686,16 +654,15 @@ export default function Sidebar() {
             ? `translateX(${isMobileOpen ? "0" : "-100%"})`
             : "translateX(0)",
           height: '100vh',
-          maxHeight: '100vh',
         }}
         onMouseEnter={() => !isMobile && setIsHovered(true)}
         onMouseLeave={() => !isMobile && setIsHovered(false)}
       >
-        {/* Sidebar Header with Close Button for Mobile */}
+        {/* Sidebar Header */}
         <div className="p-4 border-b border-blue-200 bg-gradient-to-r from-blue-50 to-green-50 flex-shrink-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-500 to-green-500 flex items-center justify-center flex-shrink-0 transition-transform duration-300 hover:scale-110">
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-500 to-green-500 flex items-center justify-center flex-shrink-0">
                 <Image
                   alt="profile pic"
                   src={user?.imageUrl || "/images/users/user-1.jpg"}
@@ -706,7 +673,7 @@ export default function Sidebar() {
               </div>
 
               {(!isCollapsed || isMobile) && (
-                <div className="flex-1 min-w-0 transition-all duration-300">
+                <div className="flex-1 min-w-0">
                   <h1 className="text-lg font-bold text-gray-800 truncate">
                     {user?.firstName} {user?.lastName}
                   </h1>
@@ -743,65 +710,31 @@ export default function Sidebar() {
           </div>
         </div>
 
-        {/* Scrollable Content with proper mobile scrolling */}
+        {/* Scrollable Content - FIXED SCROLLING ISSUE */}
         <div 
-          className="flex-1 overflow-y-auto overflow-x-hidden py-4 scroll-smooth"
+          className="flex-1 overflow-y-auto overflow-x-hidden py-4"
           style={{
             WebkitOverflowScrolling: 'touch',
-            overscrollBehavior: 'contain',
+            scrollbarWidth: 'thin',
+            scrollbarColor: '#CBD5E0 transparent',
           }}
         >
+          <style jsx>{`
+            div::-webkit-scrollbar {
+              width: 6px;
+            }
+            div::-webkit-scrollbar-track {
+              background: transparent;
+            }
+            div::-webkit-scrollbar-thumb {
+              background-color: #CBD5E0;
+              border-radius: 3px;
+            }
+          `}</style>
           <nav className="space-y-1">
             {filteredSidebarData.map((item) => renderSidebarItem(item))}
           </nav>
         </div>
-
-        {/* Sidebar Footer */}
-        {/* <div className="border-t border-blue-200 p-4 flex-shrink-0">
-          {(!isCollapsed || isMobile) ? (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between text-xs text-gray-500">
-                <span>Accessible Modules</span>
-                <div className="flex items-center space-x-2">
-                  <span className="font-medium text-blue-600">{filteredSidebarData.length}</span>
-                  <span className="text-gray-400">/</span>
-                  <span className="text-gray-400">{sidebarData.length}</span>
-                </div>
-              </div>
-              {!isMobile && (
-                <div className="flex items-center space-x-2 text-xs text-gray-500">
-                  <div className="h-2 w-2 rounded-full bg-blue-500"></div>
-                  <span>Parent items</span>
-                  <div className="h-2 w-2 rounded-full bg-green-500 ml-2"></div>
-                  <span>Child items</span>
-                </div>
-              )}
-              <button
-                className="w-full flex items-center justify-center space-x-2 px-3 py-2 rounded-lg bg-gradient-to-r from-blue-50 to-green-50 text-blue-700 hover:shadow-md transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
-                onClick={() => router.push('/logout')}
-              >
-                <LogOut size={16} />
-                <span className="text-sm font-medium">Sign Out</span>
-              </button>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center space-y-3">
-              <div className="text-center">
-                <div className="text-xs font-medium text-blue-600 bg-blue-100 h-6 w-6 rounded-full flex items-center justify-center mx-auto">
-                  {filteredSidebarData.length}
-                </div>
-                <span className="text-xs text-gray-500 mt-1 block">Modules</span>
-              </div>
-              <button
-                className="p-2 rounded-lg bg-gradient-to-r from-blue-50 to-green-50 text-blue-700 hover:shadow-md transition-all duration-300 hover:scale-110 active:scale-95"
-                onClick={() => router.push('/logout')}
-                aria-label="Sign out"
-              >
-                <LogOut size={18} />
-              </button>
-            </div>
-          )}
-        </div> */}
 
         {/* Expand button for collapsed desktop state */}
         {!isMobile && isCollapsed && (
@@ -817,9 +750,20 @@ export default function Sidebar() {
           </button>
         )}
 
+        {/* Expand button for mobile collapsed state - FIXED: This button was missing */}
+        {isMobile && isCollapsed && (
+          <button
+            onClick={() => setIsMobileOpen(true)}
+            className="fixed md:hidden bottom-4 right-4 z-40 h-12 w-12 bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-full flex items-center justify-center shadow-lg animate-bounce"
+            aria-label="Expand sidebar"
+          >
+            <ChevronRight size={20} />
+          </button>
+        )}
+
         {/* Swipe hint for mobile */}
         {isMobile && isMobileOpen && (
-          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 animate-pulse">
+          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 animate-pulse pointer-events-none">
             <ChevronLeft size={20} />
           </div>
         )}

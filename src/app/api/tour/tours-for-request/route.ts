@@ -8,8 +8,6 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    console.log("Popular Tours API - Request body:", body);
-
     // Forward cookies from the incoming request
     const cookieHeader = request.headers.get("cookie") || "";
 
