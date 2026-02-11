@@ -33,11 +33,6 @@ import {
   UpdateAccountResponseData,
   UserUpdateRequest,
 } from "@/types/user-profile-types";
-<<<<<<< HEAD
-import { BASE_PATH } from "@/utils/backEndConstant";
-
-const API_BASE_URL = `${BASE_PATH}/api/v0/user-profile`;
-=======
 import {
   GET_ACCOUNT_SECURITY_DETAILS_FE,
   GET_CANCELLED_BOOKINGS_DETAILS_DATA_FE,
@@ -64,7 +59,6 @@ import {
   UPDATE_USER_NOTIFICATION_DETAILS_DATA_FE,
   UPDATE_USER_PROFILE_DETAILS_DATA_FE,
 } from "@/utils/frontEndConstant";
->>>>>>> origin/clean/v-4
 
 export class UserProfileAPIService {
   private getAuthHeaders(): HeadersInit {
@@ -76,22 +70,10 @@ export class UserProfileAPIService {
   }
 
   async getSidebarData(): Promise<SidebarResponse> {
-<<<<<<< HEAD
-    try {
-      const response = await fetch(`${API_BASE_URL}/side-bar`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        credentials: "include",
-      });
-=======
     const response = await fetch(GET_USER_PROFILE_SIDE_BAR_DATA_FE, {
       method: "GET",
       credentials: "include",
     });
->>>>>>> origin/clean/v-4
 
     if (!response.ok) {
       throw new Error("Failed to fetch sidebar");
@@ -290,24 +272,11 @@ export class UserProfileAPIService {
         pageNumber: request?.pageNumber ?? 0,
       };
 
-<<<<<<< HEAD
-      const response = await fetch(
-        `${BASE_PATH}/history-management/history-data`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...this.getAuthHeaders(),
-          },
-          credentials: "include",
-          body: JSON.stringify(body),
-=======
       const response = await fetch(GET_HISTORY_DETAILS_DATA_FE, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           ...this.getAuthHeaders(),
->>>>>>> origin/clean/v-4
         },
         credentials: "include",
         body: JSON.stringify(body),
@@ -330,11 +299,7 @@ export class UserProfileAPIService {
 
   async getUserCoupons(): Promise<CouponsResponse> {
     try {
-<<<<<<< HEAD
-      const response = await fetch(`${BASE_PATH}/coupon/user-details`, {
-=======
       const response = await fetch(GET_COUPON_DETAILS_DATA_FE, {
->>>>>>> origin/clean/v-4
         method: "GET",
         headers: this.getAuthHeaders(),
         credentials: "include",
@@ -356,22 +321,11 @@ export class UserProfileAPIService {
 
   async getNotificationPermissions(): Promise<NotificationResponse> {
     try {
-<<<<<<< HEAD
-      const response = await fetch(
-        `${BASE_PATH}/user-notification-permissions/details`,
-        {
-          method: "GET",
-          headers: this.getAuthHeaders(),
-          credentials: "include",
-        },
-      );
-=======
       const response = await fetch(GET_USER_NOTIFICATION_DETAILS_DATA_FE, {
         method: "GET",
         headers: this.getAuthHeaders(),
         credentials: "include",
       });
->>>>>>> origin/clean/v-4
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -388,24 +342,11 @@ export class UserProfileAPIService {
     request: UpdateNotificationRequest,
   ): Promise<unknown> {
     try {
-<<<<<<< HEAD
-      const response = await fetch(
-        `${BASE_PATH}/user-notification-permissions/update`,
-        {
-          method: "POST",
-          headers: {
-            ...this.getAuthHeaders(),
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(request),
-=======
       const response = await fetch(UPDATE_USER_NOTIFICATION_DETAILS_DATA_FE, {
         method: "POST",
         headers: {
           ...this.getAuthHeaders(),
           "Content-Type": "application/json",
->>>>>>> origin/clean/v-4
         },
         credentials: "include",
         body: JSON.stringify(request),
@@ -427,11 +368,7 @@ export class UserProfileAPIService {
 
   async getAccountSecurityDetails(): Promise<AccountSecurityResponse> {
     try {
-<<<<<<< HEAD
-      const response = await fetch(`${BASE_PATH}/account-security/details`, {
-=======
       const response = await fetch(GET_ACCOUNT_SECURITY_DETAILS_FE, {
->>>>>>> origin/clean/v-4
         method: "GET",
         headers: this.getAuthHeaders(),
         credentials: "include",
@@ -452,24 +389,11 @@ export class UserProfileAPIService {
     request: MobileVerifyRequest,
   ): Promise<unknown> {
     try {
-<<<<<<< HEAD
-      const response = await fetch(
-        `${BASE_PATH}/account-security/mobile-verify`,
-        {
-          method: "POST",
-          headers: {
-            ...this.getAuthHeaders(),
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(request),
-=======
       const response = await fetch(REQUEST_MOBILE_VERIFY_SECURITY_DETAILS_FE, {
         method: "POST",
         headers: {
           ...this.getAuthHeaders(),
           "Content-Type": "application/json",
->>>>>>> origin/clean/v-4
         },
         credentials: "include",
         body: JSON.stringify(request),
@@ -488,24 +412,11 @@ export class UserProfileAPIService {
 
   async verifyMobileCode(request: MobileUpdateRequest): Promise<unknown> {
     try {
-<<<<<<< HEAD
-      const response = await fetch(
-        `${BASE_PATH}/account-security/mobile-update`,
-        {
-          method: "POST",
-          headers: {
-            ...this.getAuthHeaders(),
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(request),
-=======
       const response = await fetch(UPDATE_MOBILE_VERIFY_SECURITY_DETAILS_FE, {
         method: "POST",
         headers: {
           ...this.getAuthHeaders(),
           "Content-Type": "application/json",
->>>>>>> origin/clean/v-4
         },
         credentials: "include",
         body: JSON.stringify(request),
@@ -526,24 +437,11 @@ export class UserProfileAPIService {
     request: EmailVerifyRequest,
   ): Promise<unknown> {
     try {
-<<<<<<< HEAD
-      const response = await fetch(
-        `${BASE_PATH}/account-security/email-verify`,
-        {
-          method: "POST",
-          headers: {
-            ...this.getAuthHeaders(),
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(request),
-=======
       const response = await fetch(REQUEST_EMAIL_VERIFY_SECURITY_DETAILS_FE, {
         method: "POST",
         headers: {
           ...this.getAuthHeaders(),
           "Content-Type": "application/json",
->>>>>>> origin/clean/v-4
         },
         credentials: "include",
         body: JSON.stringify(request),
@@ -562,24 +460,11 @@ export class UserProfileAPIService {
 
   async verifyEmailCode(request: EmailUpdateRequest): Promise<unknown> {
     try {
-<<<<<<< HEAD
-      const response = await fetch(
-        `${BASE_PATH}/account-security/email-update`,
-        {
-          method: "POST",
-          headers: {
-            ...this.getAuthHeaders(),
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(request),
-=======
       const response = await fetch(UPDATE_EMAIL_VERIFY_SECURITY_DETAILS_FE, {
         method: "POST",
         headers: {
           ...this.getAuthHeaders(),
           "Content-Type": "application/json",
->>>>>>> origin/clean/v-4
         },
         credentials: "include",
         body: JSON.stringify(request),
@@ -601,11 +486,7 @@ export class UserProfileAPIService {
 
   async getWishListDetails(): Promise<WishListResponse> {
     try {
-<<<<<<< HEAD
-      const response = await fetch(`${BASE_PATH}/wish-list/details`, {
-=======
       const response = await fetch(GET_WIS_LIST_DETAILS_DATA_FE, {
->>>>>>> origin/clean/v-4
         method: "GET",
         headers: this.getAuthHeaders(),
         credentials: "include",
@@ -627,11 +508,7 @@ export class UserProfileAPIService {
 
   async getCompletedTours(): Promise<CompletedToursResponse> {
     try {
-<<<<<<< HEAD
-      const response = await fetch(`${BASE_PATH}/booking/completed`, {
-=======
       const response = await fetch(GET_COMPLETED_BOOKINGS_DETAILS_DATA_FE, {
->>>>>>> origin/clean/v-4
         method: "GET",
         headers: this.getAuthHeaders(),
         credentials: "include",
@@ -652,11 +529,7 @@ export class UserProfileAPIService {
 
   async getUpcomingTours(): Promise<UpcomingToursResponse> {
     try {
-<<<<<<< HEAD
-      const response = await fetch(`${BASE_PATH}/booking/upcoming`, {
-=======
       const response = await fetch(GET_UPCOMING_BOOKINGS_DETAILS_DATA_FE, {
->>>>>>> origin/clean/v-4
         method: "GET",
         headers: this.getAuthHeaders(),
         credentials: "include",
@@ -678,11 +551,7 @@ export class UserProfileAPIService {
 
   async getUserBenefits(): Promise<UserBenefitsResponse> {
     try {
-<<<<<<< HEAD
-      const response = await fetch(`${BASE_PATH}/user-benefits/user-profile`, {
-=======
       const response = await fetch(GET_USER_PROFILE_USER_BENEFITS_DATA_FE, {
->>>>>>> origin/clean/v-4
         method: "GET",
         headers: this.getAuthHeaders(),
         credentials: "include",
@@ -703,11 +572,7 @@ export class UserProfileAPIService {
   // Add this method to your existing class
   async getRequestedTours(): Promise<RequestedToursResponse> {
     try {
-<<<<<<< HEAD
-      const response = await fetch(`${BASE_PATH}/booking/requested`, {
-=======
       const response = await fetch(GET_REQUESTED_BOOKINGS_DETAILS_DATA_FE, {
->>>>>>> origin/clean/v-4
         method: "GET",
         headers: this.getAuthHeaders(),
         credentials: "include",
@@ -728,11 +593,7 @@ export class UserProfileAPIService {
   // Add this method to your existing class
   async getCancelledTours(): Promise<CancelledToursResponse> {
     try {
-<<<<<<< HEAD
-      const response = await fetch(`${BASE_PATH}/booking/cancelled`, {
-=======
       const response = await fetch(GET_CANCELLED_BOOKINGS_DETAILS_DATA_FE, {
->>>>>>> origin/clean/v-4
         method: "GET",
         headers: this.getAuthHeaders(),
         credentials: "include",
@@ -753,11 +614,7 @@ export class UserProfileAPIService {
     request: UserUpdateRequest,
   ): Promise<UpdateAccountResponseData> {
     try {
-<<<<<<< HEAD
-      const response = await fetch(`${API_BASE_URL}/update-account`, {
-=======
       const response = await fetch(UPDATE_USER_PROFILE_DETAILS_DATA_FE, {
->>>>>>> origin/clean/v-4
         method: "POST",
         headers: this.getAuthHeaders(),
         credentials: "include",
