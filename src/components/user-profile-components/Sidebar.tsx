@@ -544,9 +544,10 @@ export default function Sidebar() {
   if (loading) {
     return (
       <div
-        className={`hidden md:block fixed md:relative z-40 bg-white border-r border-blue-200 h-screen transition-all duration-300 ${
+        className={`hidden md:block fixed md:sticky md:top-0 z-40 bg-white border-r border-blue-200 transition-all duration-300 ${
           isCollapsed ? "w-20" : "w-64"
         }`}
+        style={{ height: '100vh', maxHeight: '100vh' }}
       >
         <div className="p-4 border-b border-blue-200">
           <div className="animate-pulse flex items-center space-x-3">
@@ -575,7 +576,7 @@ export default function Sidebar() {
   // Error state
   if (error) {
     return (
-      <div className="hidden md:block w-64 bg-white border-r border-blue-200 h-screen p-4 fixed md:relative z-40">
+      <div className="hidden md:block w-64 bg-white border-r border-blue-200 p-4 fixed md:sticky md:top-0 z-40" style={{ height: '100vh', maxHeight: '100vh' }}>
         <div className="text-center p-4 space-y-3">
           <div className="h-12 w-12 mx-auto rounded-full bg-gradient-to-r from-red-100 to-pink-100 flex items-center justify-center">
             <X className="text-red-500" size={24} />
@@ -596,9 +597,10 @@ export default function Sidebar() {
   if (filteredSidebarData.length === 0) {
     return (
       <div
-        className={`hidden md:block fixed md:relative z-40 bg-white border-r border-blue-200 h-screen transition-all duration-300 ${
+        className={`hidden md:block fixed md:sticky md:top-0 z-40 bg-white border-r border-blue-200 transition-all duration-300 ${
           isCollapsed ? "w-20" : "w-64"
         }`}
+        style={{ height: '100vh', maxHeight: '100vh' }}
       >
         <div className="h-full flex flex-col items-center justify-center p-4">
           <div className="h-16 w-16 rounded-full bg-gradient-to-r from-gray-100 to-gray-200 flex items-center justify-center mb-4">
@@ -638,11 +640,11 @@ export default function Sidebar() {
         />
       )}
 
-      {/* Sidebar Container */}
+      {/* Sidebar Container - FIXED HEIGHT AND POSITIONING */}
       <aside
         ref={sidebarRef}
         className={`
-          fixed md:relative z-50 h-screen bg-white border-r border-blue-200
+          fixed md:sticky md:top-0 z-50 bg-white border-r border-blue-200
           transition-all duration-300 ease-out
           ${isMobile ? (isMobileOpen ? "translate-x-0" : "-translate-x-full") : ""}
           ${isMobile ? "w-72" : isCollapsed ? "w-20" : "w-64"}
@@ -654,6 +656,7 @@ export default function Sidebar() {
             ? `translateX(${isMobileOpen ? "0" : "-100%"})`
             : "translateX(0)",
           height: '100vh',
+          maxHeight: '100vh',
         }}
         onMouseEnter={() => !isMobile && setIsHovered(true)}
         onMouseLeave={() => !isMobile && setIsHovered(false)}
@@ -710,7 +713,7 @@ export default function Sidebar() {
           </div>
         </div>
 
-        {/* Scrollable Content - FIXED SCROLLING ISSUE */}
+        {/* Scrollable Content - PROPERLY CONFIGURED */}
         <div 
           className="flex-1 overflow-y-auto overflow-x-hidden py-4"
           style={{
@@ -730,6 +733,9 @@ export default function Sidebar() {
               background-color: #CBD5E0;
               border-radius: 3px;
             }
+            div::-webkit-scrollbar-thumb:hover {
+              background-color: #A0AEC0;
+            }
           `}</style>
           <nav className="space-y-1">
             {filteredSidebarData.map((item) => renderSidebarItem(item))}
@@ -747,17 +753,6 @@ export default function Sidebar() {
               size={16}
               className="group-hover:scale-110 transition-transform"
             />
-          </button>
-        )}
-
-        {/* Expand button for mobile collapsed state - FIXED: This button was missing */}
-        {isMobile && isCollapsed && (
-          <button
-            onClick={() => setIsMobileOpen(true)}
-            className="fixed md:hidden bottom-4 right-4 z-40 h-12 w-12 bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-full flex items-center justify-center shadow-lg animate-bounce"
-            aria-label="Expand sidebar"
-          >
-            <ChevronRight size={20} />
           </button>
         )}
 
