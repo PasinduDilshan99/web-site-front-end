@@ -4,6 +4,7 @@ import ActivityImageSlideshow from "./ActivityImageSlideshow";
 import { ActiveActivitiesType } from "@/types/activity-types";
 import { useRouter } from "next/navigation";
 import { WishListService } from "@/services/wishListService";
+import { useAuth } from "@/context/AuthContext";
 
 interface ActivityCardProps {
   activity: ActiveActivitiesType;
@@ -13,6 +14,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
   const router = useRouter();
   const [isWishlisted, setIsWishlisted] = useState(activity.wish);
   const [loadingWishlist, setLoadingWishlist] = useState(false);
+  const { user } = useAuth();
 
   // Format date
   const formatDate = (dateString: string) => {
@@ -51,7 +53,9 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
     if (loadingWishlist) return; // prevent double click
     setLoadingWishlist(true);
     try {
-      const response = await WishListService.addActivityWishList({ activityId: activity.id });
+      const response = await WishListService.addActivityWishList({
+        activityId: activity.id,
+      });
       console.log(response);
       setIsWishlisted((prev) => !prev);
     } catch (err) {
@@ -77,35 +81,37 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
         </div>
 
         {/* Wishlist Heart Icon */}
-        <button
-          onClick={handleWishlistToggle}
-          className="absolute top-2 sm:top-3 right-2 sm:right-3 p-1 rounded-full bg-white/80 hover:bg-white transition-all"
-          title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-        >
-          {isWishlisted ? (
-            <svg
-              className="w-5 h-5 text-red-500"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-            </svg>
-          ) : (
-            <svg
-              className="w-5 h-5 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 21.682 4.318 12.682a4.5 4.5 0 010-6.364z"
-              />
-            </svg>
-          )}
-        </button>
+        {user && (
+          <button
+            onClick={handleWishlistToggle}
+            className="absolute top-2 sm:top-3 right-2 sm:right-3 p-1 rounded-full bg-white/80 hover:bg-white transition-all"
+            title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+          >
+            {isWishlisted ? (
+              <svg
+                className="w-5 h-5 text-red-500"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+              </svg>
+            ) : (
+              <svg
+                className="w-5 h-5 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 21.682 4.318 12.682a4.5 4.5 0 010-6.364z"
+                />
+              </svg>
+            )}
+          </button>
+        )}
 
         {/* Status Badge */}
         {/* <div className="absolute top-2 sm:top-3 right-2 sm:right-3">
@@ -219,7 +225,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
             ))}
           </div>
         </div>
-{/* Requirements */}
+        {/* Requirements */}
         {/* {activity.requirements.length > 0 && (
           <div className="mb-3 sm:mb-4">
             <div className="flex items-center space-x-1 sm:space-x-2 mb-1 sm:mb-2">

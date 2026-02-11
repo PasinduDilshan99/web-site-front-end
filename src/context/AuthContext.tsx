@@ -122,6 +122,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Save uniqueCode in session
     sessionStorage.setItem("uniqueCode", data.uniqueCode);
+    document.cookie = `uniqueCode=${data.uniqueCode}; path=/; SameSite=Lax`;
 
     // Fetch user details
     await fetchMe();
@@ -164,7 +165,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         });
       } else {
         setUser(null);
-        sessionStorage.removeItem("uniqueCode");
+        // sessionStorage.removeItem("uniqueCode");
       }
     } catch (error) {
       console.error("Failed to fetch user:", error);
