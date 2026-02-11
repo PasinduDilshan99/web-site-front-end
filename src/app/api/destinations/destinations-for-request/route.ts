@@ -9,8 +9,6 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
-    console.log("Destinations API - Request body:", body);
-
     // Get cookies from incoming request
     const cookieHeader = request.headers.get("cookie") || "";
 

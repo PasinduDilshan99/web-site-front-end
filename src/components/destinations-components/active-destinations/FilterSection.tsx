@@ -109,7 +109,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
               max="10000"
               value={filters.priceRange[0]}
               onChange={(e) => handlePriceChange('min', parseInt(e.target.value, 10) || 0)}
-              className="w-1/2 px-3 py-1 border border-sky-300 rounded-md text-md focus:outline-none focus:ring-1 focus:ring-sky-400"
+              className="w-1/2 px-3 py-1 border border-sky-300 rounded-md md:text-md text-lg focus:outline-none focus:ring-1 focus:ring-sky-400 text-gray-600"
               placeholder="Min"
             />
             <input
@@ -118,7 +118,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
               max="10000"
               value={filters.priceRange[1]}
               onChange={(e) => handlePriceChange('max', parseInt(e.target.value, 10) || 10000)}
-              className="w-1/2 px-3 py-1 border border-sky-300 rounded-md text-md focus:outline-none focus:ring-1 focus:ring-sky-400"
+              className="w-1/2 px-3 py-1 border border-sky-300 rounded-md md:text-md text-lg focus:outline-none focus:ring-1 focus:ring-sky-400 text-gray-600"
               placeholder="Max"
             />
           </div>

@@ -1,12 +1,13 @@
 import { GET_ACTIVE_SECRET_QUESTIONS_DATA } from "@/utils/backEndConstant";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     const response = await fetch(GET_ACTIVE_SECRET_QUESTIONS_DATA, {
       method: "GET",
-      headers: {
+       headers: {
         "Content-Type": "application/json",
+        cookie: req.headers.get("cookie") || "",
       },
     });
 

@@ -1,5 +1,10 @@
 "use client";
-import { BASE_PATH } from "@/utils/backEndConstant";
+import {
+  GET_USER_DETAILS_FOR_LOGIN_DATA_FE,
+  LOGIN_FE,
+  LOGOUT_FE,
+  SIGNUP_FE,
+} from "@/utils/frontEndConstant";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 export type User = {
@@ -76,16 +81,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // SIGNUP
   // -----------------------
   const signup = async (signupData: SignupData): Promise<string> => {
-    const res = await fetch(
-      `${BASE_PATH}/auth/signup`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(signupData),
+    const res = await fetch(SIGNUP_FE, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+      body: JSON.stringify(signupData),
+    });
 
     if (!res.ok) {
       const err = await res.json();
@@ -103,7 +105,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     username: string,
     password: string,
   ): Promise<LoginResponseData> => {
-    const res = await fetch("/api/login", {
+    const res = await fetch(LOGIN_FE, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -120,6 +122,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Save uniqueCode in session
     sessionStorage.setItem("uniqueCode", data.uniqueCode);
+    document.cookie = `uniqueCode=${data.uniqueCode}; path=/; SameSite=Lax`;
 
     // Fetch user details
     await fetchMe();
@@ -139,7 +142,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     try {
-      const res = await fetch("/api/me", {
+      const res = await fetch(GET_USER_DETAILS_FOR_LOGIN_DATA_FE, {
         method: "GET",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -162,7 +165,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         });
       } else {
         setUser(null);
-        sessionStorage.removeItem("uniqueCode");
+        // sessionStorage.removeItem("uniqueCode");
       }
     } catch (error) {
       console.error("Failed to fetch user:", error);
@@ -179,7 +182,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // -----------------------
   const logout = async (): Promise<void> => {
     try {
-      await fetch(`${BASE_PATH}/auth/logout`, {
+      await fetch(LOGOUT_FE, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },

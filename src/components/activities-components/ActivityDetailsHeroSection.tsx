@@ -66,7 +66,7 @@ const ActivityDetailsHeroSection: React.FC<ActivityDetailsHeroSectionProps> = ({
   return (
     <>
       {/* Hero Section with Slider */}
-      <div className="relative h-[500px] md:h-[600px] overflow-hidden bg-gradient-to-r from-sky-600 to-teal-600">
+      <div className="relative h-[500px] md:h-[700px] overflow-hidden bg-gradient-to-r from-sky-600 to-teal-600">
         {/* Image Slider */}
         <div className="relative w-full h-full">
           {activity.images.map((image, index) => (

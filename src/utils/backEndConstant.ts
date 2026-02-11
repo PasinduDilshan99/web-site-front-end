@@ -59,20 +59,63 @@ const CONTACT_US = "/contact-us"
 const WISH_LIST = "/wish-list"
 const AUTH = "/auth"
 const USER_PROFILE = "/user-profile"
+const HISTORY_MANAGEMENT = "/history-management"
+const COUPON = "/coupon"
+const USER_NOTIFICATION_PERMISSIONS = "/user-notification-permissions"
+const ACCOUNT_SECURITY = "/account-security"
+const BOOKING = "/booking"
 
 
 // Auth
-export const LOGIN_DATA = `${BASE_PATH}${API}${VERSION}${AUTH}/login`;
+export const LOGIN = `${BASE_PATH}${API}${VERSION}${AUTH}/login`;
 export const USER_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${AUTH}/me`;
+export const LOGOUT = `${BASE_PATH}${API}${VERSION}${AUTH}/logout`;
+export const SIGNUP = `${BASE_PATH}${API}${VERSION}${AUTH}/signup`;
+export const GET_USER_DETAILS_FOR_LOGIN_DATA = `${BASE_PATH}${API}${VERSION}${AUTH}/me`;
 export const UPDATE_PASSWORD_DATA = `${BASE_PATH}${API}${VERSION}${AUTH}/change-password`;
 export const RESET_PASSWORD_DATA = `${BASE_PATH}${API}${VERSION}${AUTH}/reset-password`;
 export const UPDATE_SECRET_QUESTIONS_DATA = `${BASE_PATH}${API}${VERSION}${AUTH}/update-secret-questions`;
 export const USERNAME_PASSWORD_VALIDATION_DATA = `${BASE_PATH}${API}${VERSION}${AUTH}/username-password-validation`;
 export const GET_ACTIVE_SECRET_QUESTIONS_DATA = `${BASE_PATH}${API}${VERSION}${AUTH}/secret-questions`;
+export const GET_SECRET_QUESTIONS_BY_USER_DATA = `${BASE_PATH}${API}${VERSION}${AUTH}/secret-questions-by-user`;
 
 // User Profile
 export const UPDATE_USER_PROFILE_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${USER_PROFILE}/update-account`;
+export const GET_USER_PROFILE_SIDE_BAR_DATA = `${BASE_PATH}${API}${VERSION}${USER_PROFILE}/side-bar`;
+export const GET_USER_PROFILE_USER_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${USER_PROFILE}/user`;
+export const GET_USER_PROFILE_TOUR_REVIEWS_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${USER_PROFILE}/tour-reviews`;
+export const GET_USER_PROFILE_ACTIVITY_REVIEWS_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${USER_PROFILE}/activity-reviews`;
+export const GET_USER_PROFILE_DESTINATION_REVIEWS_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${USER_PROFILE}/destination-reviews`;
+export const GET_USER_PROFILE_PACKAGE_REVIEWS_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${USER_PROFILE}/package-reviews`;
+export const GET_USER_PROFILE_ALL_REVIEWS_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${USER_PROFILE}/reviews`;
+export const GET_USER_PROFILE_WALLET_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${USER_PROFILE}/wallet`;
 
+// History Management
+export const GET_HISTORY_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${HISTORY_MANAGEMENT}/history-data`;
+
+// Coupons
+export const GET_COUPON_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${COUPON}/user-details`;
+
+// User Notification Permissions
+export const GET_USER_NOTIFICATION_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${USER_NOTIFICATION_PERMISSIONS}/details`;
+export const UPDATE_USER_NOTIFICATION_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${USER_NOTIFICATION_PERMISSIONS}/update`;
+
+// Account Security
+export const GET_ACCOUNT_SECURITY_DETAILS = `${BASE_PATH}${API}${VERSION}${ACCOUNT_SECURITY}/details`;
+export const REQUEST_MOBILE_VERIFY_SECURITY_DETAILS = `${BASE_PATH}${API}${VERSION}${ACCOUNT_SECURITY}/mobile-verify`;
+export const UPDATE_MOBILE_VERIFY_SECURITY_DETAILS = `${BASE_PATH}${API}${VERSION}${ACCOUNT_SECURITY}/mobile-update`;
+export const REQUEST_EMAIL_VERIFY_SECURITY_DETAILS = `${BASE_PATH}${API}${VERSION}${ACCOUNT_SECURITY}/email-verify`;
+export const UPDATE_EMAIL_VERIFY_SECURITY_DETAILS = `${BASE_PATH}${API}${VERSION}${ACCOUNT_SECURITY}/email-update`;
+
+// Bookings
+export const GET_COMPLETED_BOOKINGS_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${BOOKING}/completed`;
+export const GET_UPCOMING_BOOKINGS_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${BOOKING}/upcoming`;
+export const GET_REQUESTED_BOOKINGS_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${BOOKING}/requested`;
+export const GET_CANCELLED_BOOKINGS_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${BOOKING}/cancelled`;
+
+// User Benefits
+export const GET_ALL_ACTIVE_USER_BENEFITS_BE = `${BASE_PATH}${API}${VERSION}${USER_BENEFITS}/active`;
+export const GET_USER_PROFILE_USER_BENEFITS_DATA = `${BASE_PATH}${API}${VERSION}${USER_BENEFITS}/user-profile`;
 
 
 // Link Bar
@@ -201,6 +244,7 @@ export const ADD_ACTIVITY_WISH_LIST_DATA= `${BASE_PATH}${API}${VERSION}${WISH_LI
 export const ADD_DESTINATION_WISH_LIST_DATA= `${BASE_PATH}${API}${VERSION}${WISH_LIST}/add-destination-wish-list`;
 export const ADD_TOUR_WISH_LIST_DATA= `${BASE_PATH}${API}${VERSION}${WISH_LIST}/add-tour-wish-list`;
 export const ADD_PACKAGE_WISH_LIST_DATA= `${BASE_PATH}${API}${VERSION}${WISH_LIST}/add-package-wish-list`;
+export const GET_WIS_LIST_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${WISH_LIST}/details`;
 
 
 export const GET_TOUR_DETAILS_BY_ID_BE = `${BASE_PATH}${VERSION}${API}${TOUR}`;
@@ -223,7 +267,6 @@ export const GET_ACTIVE_WORK_FLOW = `${BASE_PATH}${VERSION}${API}${WORK_FLOW}/ac
 export const GET_ALL_ACTIVE_REVIEW_BE = `${BASE_PATH}${VERSION}${API}${REVIEW}/active`;
 export const GET_ALL_ACTIVE_USER_LEVEL_BE = `${BASE_PATH}${API}${VERSION}${USER_LEVEL}/active`;
 export const GET_ALL_ACTIVE_USER_LEVEL_WITH_BENEFITS_BE = `${BASE_PATH}${API}${VERSION}${USER_LEVEL}/active-with-benefits`;
-export const GET_ALL_ACTIVE_USER_BENEFITS_BE = `${BASE_PATH}${API}${VERSION}${USER_BENEFITS}/active`;
 export const GET_ALL_ACTIVE_PROMOTIONS_BE = `${BASE_PATH}${API}${VERSION}${PROMOTIONS}/active`;
 
 export const GET_PLAN_YOUR_TRIP_ACTIVE_DESTINATIONS = `${BASE_PATH}${API}${VERSION}${PLAN_YOUR_TRIP}/active`;

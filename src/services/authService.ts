@@ -1,6 +1,12 @@
 import { ApiResponse } from "@/context/AuthContext";
-
-const BASE_URL = "http://localhost:8080/felicita/api/v0/auth";
+import {
+  GET_ACTIVE_SECRET_QUESTIONS_DATA_FE,
+  GET_SECRET_QUESTIONS_BY_USER_DATA_FE,
+  RESET_PASSWORD_DATA_FE,
+  UPDATE_PASSWORD_DATA_FE,
+  UPDATE_SECRET_QUESTIONS_DATA_FE,
+  USERNAME_PASSWORD_VALIDATION_DATA_FE,
+} from "@/utils/frontEndConstant";
 
 export type ResetPasswordRequest = {
   username: string;
@@ -41,7 +47,7 @@ export type UserSecretQuestion = {
 export class AuthService {
   // Reset password
   static async resetPassword(request: ResetPasswordRequest): Promise<string> {
-    const res = await fetch(`${BASE_URL}/reset-password`, {
+    const res = await fetch(RESET_PASSWORD_DATA_FE, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -61,7 +67,7 @@ export class AuthService {
 
   // Change password
   static async changePassword(request: ChangePasswordRequest): Promise<string> {
-    const res = await fetch(`${BASE_URL}/change-password`, {
+    const res = await fetch(UPDATE_PASSWORD_DATA_FE, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -81,7 +87,7 @@ export class AuthService {
 
   // Get secret questions
   static async getSecretQuestions(): Promise<SecretQuestion[]> {
-    const res = await fetch(`${BASE_URL}/secret-questions`, {
+    const res = await fetch(GET_ACTIVE_SECRET_QUESTIONS_DATA_FE, {
       method: "GET",
       credentials: "include",
     });
@@ -98,7 +104,7 @@ export class AuthService {
   static async updateSecretQuestions(
     request: UpdateSecretQuestionsRequest,
   ): Promise<string> {
-    const res = await fetch(`${BASE_URL}/update-secret-questions`, {
+    const res = await fetch(UPDATE_SECRET_QUESTIONS_DATA_FE, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -120,7 +126,7 @@ export class AuthService {
     username: string,
     password: string,
   ): Promise<boolean> {
-    const res = await fetch(`${BASE_URL}/username-password-validation`, {
+    const res = await fetch(USERNAME_PASSWORD_VALIDATION_DATA_FE, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -139,7 +145,7 @@ export class AuthService {
 
   // Get secret questions by logged-in user
   static async getSecretQuestionsByUser(): Promise<UserSecretQuestion[]> {
-    const res = await fetch(`${BASE_URL}/secret-questions-by-user`, {
+    const res = await fetch(GET_SECRET_QUESTIONS_BY_USER_DATA_FE, {
       method: "GET",
       credentials: "include",
       headers: {
