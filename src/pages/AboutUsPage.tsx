@@ -1,4 +1,4 @@
-import Footer from "@/app/components/footer/Footer";
+import Footer from "@/components/common-components/footer/Footer";
 import AboutUsHeroSection from "@/components/about-us-components/AboutUsHeroSection";
 import AboutUsStatistics from "@/components/about-us-components/AboutUsStatistics";
 import AchievementDetails from "@/components/about-us-components/AchievementDetails";
@@ -33,7 +33,7 @@ const AboutUsPage = () => {
         <AboutUsStatistics />
       </div> */}
       <div>
-        <WhyChooseUs />
+        <WhyChooseUs buttonRequired={false} />
       </div>
       {/* <div>
         <EmployeeDetailsWithSocialMedia />

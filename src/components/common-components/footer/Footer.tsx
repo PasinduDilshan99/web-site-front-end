@@ -2,12 +2,13 @@
 import React, { JSX, useEffect, useState } from "react";
 import { COMPANY_NAME } from "@/utils/constant";
 import { FooterService } from "@/services/footerService";
-import { 
-  FooterData, 
-  FooterSection, 
-  FooterSocialMedia, 
-  FooterOtherLink 
+import {
+  FooterData,
+  FooterSection,
+  FooterSocialMedia,
+  FooterOtherLink,
 } from "@/types/footer-types";
+import FooterLoading from "./FooterLoading";
 
 const Footer = () => {
   const [footerData, setFooterData] = useState<FooterData | null>(null);
@@ -19,7 +20,8 @@ const Footer = () => {
     const fetchFooterData = async () => {
       try {
         setLoading(true);
-        const { data: footerData, error } = await FooterService.fetchFooterData();
+        const { data: footerData, error } =
+          await FooterService.fetchFooterData();
 
         if (error) {
           setError(error);
@@ -38,26 +40,30 @@ const Footer = () => {
     fetchFooterData();
   }, []);
 
-  const groupedSections = footerData?.sections.reduce((acc, section) => {
-    if (!acc[section.title]) {
-      acc[section.title] = {
-        ...section,
-        subItems: [],
-      };
-    }
-    acc[section.title].subItems.push(...section.subItems);
-    return acc;
-  }, {} as Record<string, FooterSection>);
+  const groupedSections = footerData?.sections.reduce(
+    (acc, section) => {
+      if (!acc[section.title]) {
+        acc[section.title] = {
+          ...section,
+          subItems: [],
+        };
+      }
+      acc[section.title].subItems.push(...section.subItems);
+      return acc;
+    },
+    {} as Record<string, FooterSection>,
+  );
 
   const uniqueSections = groupedSections ? Object.values(groupedSections) : [];
 
   const copyrightText = footerData?.others.find(
-    (item) => item.name.toLowerCase() === "copyright"
+    (item) => item.name.toLowerCase() === "copyright",
   );
 
-  const otherLinks = footerData?.others.filter(
-    (item) => item.name.toLowerCase() !== "copyright"
-  ) || [];
+  const otherLinks =
+    footerData?.others.filter(
+      (item) => item.name.toLowerCase() !== "copyright",
+    ) || [];
 
   const getSocialIcon = (name: string) => {
     const iconMap: Record<string, JSX.Element> = {
@@ -91,24 +97,7 @@ const Footer = () => {
   };
 
   if (loading) {
-    return (
-      <footer className="bg-gradient-to-b from-slate-900 to-gray-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="space-y-4">
-                <div className="h-6 bg-slate-800 rounded w-32 animate-pulse"></div>
-                <div className="space-y-2">
-                  {[...Array(5)].map((_, j) => (
-                    <div key={j} className="h-4 bg-slate-800 rounded w-full animate-pulse"></div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </footer>
-    );
+    return <FooterLoading />;
   }
 
   if (error || !footerData) {
@@ -131,39 +120,88 @@ const Footer = () => {
             {/* Logo & Company Name */}
             <div className="flex items-center space-x-3">
               <div className="w-12 h-12 bg-gradient-to-br from-sky-600 to-teal-500 rounded-xl flex items-center justify-center shadow-lg">
-                <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                <svg
+                  className="w-7 h-7 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
                 </svg>
               </div>
               <div>
                 <h2 className="text-xl font-bold text-white">{COMPANY_NAME}</h2>
-                <p className="text-xs text-sky-300 uppercase tracking-wider font-medium">TRAVEL EXPERTS</p>
+                <p className="text-xs text-sky-300 uppercase tracking-wider font-medium">
+                  TRAVEL EXPERTS
+                </p>
               </div>
             </div>
 
             {/* Company Description */}
             <p className="text-gray-300 text-sm leading-relaxed">
-              Discover Sri Lanka with our expertly curated tours. We offer unforgettable travel experiences with personalized service and attention to detail.
+              Discover Sri Lanka with our expertly curated tours. We offer
+              unforgettable travel experiences with personalized service and
+              attention to detail.
             </p>
 
             {/* Contact Info */}
             <div className="space-y-3">
               <div className="flex items-center space-x-3 text-sm text-gray-300">
-                <svg className="w-5 h-5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                <svg
+                  className="w-5 h-5 text-sky-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                  />
                 </svg>
                 <span>+94 77 123 4567</span>
               </div>
               <div className="flex items-center space-x-3 text-sm text-gray-300">
-                <svg className="w-5 h-5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                <svg
+                  className="w-5 h-5 text-sky-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
                 </svg>
                 <span>info@felicitatrips.com</span>
               </div>
               <div className="flex items-center space-x-3 text-sm text-gray-300">
-                <svg className="w-5 h-5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                <svg
+                  className="w-5 h-5 text-sky-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
                 </svg>
                 <span>Colombo, Sri Lanka</span>
               </div>
@@ -205,8 +243,18 @@ const Footer = () => {
                           href={item.linkUrl}
                           className="text-gray-300 hover:text-sky-300 transition-all duration-200 text-sm flex items-center group"
                         >
-                          <svg className="w-4 h-4 mr-2 text-sky-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                          <svg
+                            className="w-4 h-4 mr-2 text-sky-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M9 5l7 7-7 7"
+                            />
                           </svg>
                           {item.name}
                         </a>
@@ -224,7 +272,8 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             {/* Copyright Text */}
             <div className="text-gray-400 text-sm text-center md:text-left">
-              {copyrightText?.description || `© ${currentYear} ${COMPANY_NAME}. All rights reserved.`}
+              {copyrightText?.description ||
+                `© ${currentYear} ${COMPANY_NAME}. All rights reserved.`}
             </div>
 
             {/* Additional Links */}
@@ -244,11 +293,21 @@ const Footer = () => {
 
             {/* Back to Top */}
             <button
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               className="text-gray-400 hover:text-sky-300 transition-colors duration-200 text-sm flex items-center"
             >
-              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+              <svg
+                className="w-4 h-4 mr-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M5 10l7-7m0 0l7 7m-7-7v18"
+                />
               </svg>
               Back to Top
             </button>

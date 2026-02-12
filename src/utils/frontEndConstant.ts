@@ -33,6 +33,8 @@ const COUPON = "/coupon"
 const USER_NOTIFICATION_PERMISSIONS = "/user-notification-permissions"
 const ACCOUNT_SECURITY = "/account-security"
 const BOOKING = "/booking"
+const BROWSER_HISTORY = "/browser-history"
+
 
 // Auth
 export const LOGIN_FE = `${API}${AUTH}/login`;
@@ -197,6 +199,8 @@ export const GET_CONTACT_US_CONTACT_METHODS_DATA_FE = `${API}${CONTACT_US}/conta
 
 // Employees
 export const GET_EMPLOYEE_DETAILS_BY_TOUR_ID_DATA_FE = `${API}${EMPLOYEES}/employees-details-by-tour-id`;
+export const GET_CEO_DETAILS_DATA_FE = `${API}${EMPLOYEES}/ceo-details`;
+
 
 // FAQ
 export const GET_ALL_FAQ_DATA_FE = `${API}${FAQ}`;
@@ -212,6 +216,9 @@ export const ADD_TOUR_WISH_LIST_DATA= `${API}${WISH_LIST}/insert-tour-wish-list`
 export const ADD_PACKAGE_WISH_LIST_DATA= `${API}${WISH_LIST}/insert-package-wish-list`;
 export const GET_WIS_LIST_DETAILS_DATA_FE = `${API}${WISH_LIST}/details`;
 
+
+// Browser History
+export const ADD_BROWSER_HISTORY_REQUEST_DATA_FE = `${API}${BROWSER_HISTORY}/add`;
 
 export const GET_TOUR_DETAILS_BY_ID_FE = `${API}${TOUR}/details-by-id`;
 

@@ -1,19 +1,100 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import Loading from "../../common-components/loading/Loading";
-import { ErrorState } from "../../common-components/error-state/ErrorState";
-import { EmptyState } from "../../common-components/empty-state/EmptyState";
 import SectionHeader from "../../common-components/section-header/SectionHeader";
 import AnimatedButton from "../../common-components/buttons/AnimatedButton";
 import { DestinationService } from "@/services/destinationService";
 import { TrendingDestinationType } from "@/types/destination-types";
-import { TRENDING_DESTINATIONS_IMAGES_CHANGE_TIME } from "@/utils/constant";
-import BasicCycleLoading from "@/components/common-components/basic-loading/BasicCycleLoading";
+import {
+  TRENDING_DESTINATIONS_IMAGES_CHANGE_TIME,
+  PLACE_HOLDER_IMAGE,
+} from "@/utils/constant";
+import { useRouter } from "next/navigation";
+// Destination Image Component with Error Handling
+const DestinationImage = React.memo(
+  ({
+    image,
+    alt,
+    isTransitioning,
+    priority,
+    sizes,
+  }: {
+    image: { imageUrl: string; imageDescription?: string } | null;
+    alt: string;
+    isTransitioning: boolean;
+    priority: boolean;
+    sizes: string;
+  }) => {
+    const [imgSrc, setImgSrc] = useState(image?.imageUrl || PLACE_HOLDER_IMAGE);
+    const [hasError, setHasError] = useState(false);
+
+    useEffect(() => {
+      if (image?.imageUrl) {
+        setImgSrc(image.imageUrl);
+        setHasError(false);
+      } else {
+        setImgSrc(PLACE_HOLDER_IMAGE);
+        setHasError(true);
+      }
+    }, [image?.imageUrl]);
+
+    const handleError = () => {
+      if (!hasError) {
+        console.log(
+          `Destination image failed to load for ${alt}, using placeholder`,
+        );
+        setImgSrc(PLACE_HOLDER_IMAGE);
+        setHasError(true);
+      }
+    };
+
+    return (
+      <div className="relative w-full h-full">
+        <Image
+          src={imgSrc}
+          alt={alt}
+          fill
+          className={`object-cover transition-all duration-500 ease-in-out ${
+            isTransitioning ? "opacity-0 scale-110" : "opacity-100 scale-100"
+          } group-hover:scale-105`}
+          onError={handleError}
+          sizes={sizes}
+          priority={priority}
+        />
+        {hasError && (
+          <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+            <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full">
+              <span className="flex items-center gap-1">
+                <svg
+                  className="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                Placeholder
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  },
+);
+
+DestinationImage.displayName = "DestinationImage";
 
 const TrendingDestinations = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+
   const [trendingDestinations, setTrendingDestinations] = useState<
     TrendingDestinationType[]
   >([]);
@@ -23,17 +104,18 @@ const TrendingDestinations = () => {
   const [isTransitioning, setIsTransitioning] = useState<{
     [key: number]: boolean;
   }>({});
+  const [failedImages, setFailedImages] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const fetchTrendingDestinations = async () => {
       try {
         setLoading(true);
-        
-        const { 
-          data: destinations, 
-          error, 
+
+        const {
+          data: destinations,
+          error,
           currentImageIndexes: initialIndexes,
-          isTransitioning: initialTransitions
+          isTransitioning: initialTransitions,
         } = await DestinationService.fetchTrendingDestinations();
 
         if (error) {
@@ -93,17 +175,17 @@ const TrendingDestinations = () => {
   // Handle destination click
   const handleDestinationClick = (
     destinationId: number,
-    destinationName: string
+    destinationName: string,
   ) => {
     window.location.href = `/destinations/${destinationId}?name=${encodeURIComponent(
-      destinationName
+      destinationName,
     )}`;
   };
 
   // Handle manual image change on hover
   const handleCardHover = (destinationId: number) => {
     const destination = trendingDestinations.find(
-      (t) => t.destinationId === destinationId
+      (t) => t.destinationId === destinationId,
     );
     if (destination && destination.images.length > 1) {
       const imageCount = destination.images.length;
@@ -134,49 +216,55 @@ const TrendingDestinations = () => {
 
   if (loading) {
     return (
-      <BasicCycleLoading
-        message="Loading trending destinations..."
-        variant="spinner"
-        size="md"
-      />
+      <div className="min-h-[350px] bg-gradient-to-br from-slate-900 via-gray-900 to-teal-950 flex items-center justify-center p-8">
+        <div className="w-full mx-auto">
+          {/* Simple loading header */}
+          <div className="flex justify-center mb-8">
+            <div className="flex items-center space-x-3 px-4 py-2 bg-gray-900/50 backdrop-blur-sm rounded-full border border-teal-500/30">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-teal-400"></div>
+              <span className="text-teal-300 text-sm">
+                Loading trending destinations...
+              </span>
+            </div>
+          </div>
+
+          {/* Trending Destinations Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[...Array(4)].map((_, index) => (
+              <div
+                key={index}
+                className="bg-gradient-to-br from-gray-800/80 to-teal-900/30 rounded-xl p-6 border border-teal-500/20 animate-pulse flex flex-col items-center text-center"
+                style={{ animationDelay: `${index * 120}ms` }}
+              >
+                {/* Circular Destination Image */}
+                <div className="w-24 h-24 bg-gradient-to-br from-gray-700 to-teal-800/50 rounded-full mb-4 ring-4 ring-teal-500/20 ring-offset-2 ring-offset-gray-900/50"></div>
+
+                {/* Destination Name */}
+                <div className="h-5 bg-gradient-to-r from-gray-700 to-teal-800/50 rounded w-28 mb-2"></div>
+
+                {/* Location */}
+                <div className="h-4 bg-gradient-to-r from-gray-700 to-cyan-800/40 rounded w-20 mb-3"></div>
+
+                {/* Price */}
+                <div className="h-6 bg-gradient-to-r from-cyan-600 to-teal-600 rounded-full w-20"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     );
   }
 
   if (error) {
-    return (
-      <section className="py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <ErrorState
-            title="Failed to Load Content"
-            message={error}
-            icon="alert"
-            variant="error"
-            size="md"
-            actionLabel="Try Again"
-            onAction={handleRetry}
-          />
-        </div>
-      </section>
-    );
+    return null;
   }
 
   if (trendingDestinations.length === 0) {
-    return (
-      <section className="py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <EmptyState
-            title="No Content Available"
-            message="We're preparing some amazing content for you. Please check back soon!"
-            icon="data"
-            size="md"
-          />
-        </div>
-      </section>
-    );
+    return null;
   }
 
   return (
-    <section className="py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20 bg-gradient-to-br from-blue-50 to-cyan-50">
+    <section className="bg-gradient-to-br from-blue-50 to-cyan-50 py-6 lg:py-8 xl:py-12">
       <div className=" mx-auto px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10 2xl:px-12">
         <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8">
           <SectionHeader
@@ -206,42 +294,21 @@ const TrendingDestinations = () => {
                 onClick={() =>
                   handleDestinationClick(
                     trending.destinationId,
-                    trending.destinationName
+                    trending.destinationName,
                   )
                 }
                 onMouseEnter={() => handleCardHover(trending.destinationId)}
                 className="relative group cursor-pointer overflow-hidden rounded-lg sm:rounded-xl md:rounded-2xl shadow-md hover:shadow-lg sm:hover:shadow-xl lg:hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 sm:hover:-translate-y-2 h-40 xs:h-44 sm:h-52 md:h-60 lg:h-64 xl:h-72 2xl:h-80"
               >
-                {/* Full Background Image with Smooth Transition */}
+                {/* Full Background Image with Error Handling */}
                 <div className="absolute inset-0">
-                  {currentImage ? (
-                    <div className="relative w-full h-full">
-                      <Image
-                        src={currentImage.imageUrl}
-                        alt={
-                          currentImage.imageDescription ||
-                          trending.destinationName
-                        }
-                        fill
-                        className={`object-cover transition-all duration-500 ease-in-out ${
-                          isCardTransitioning
-                            ? "opacity-0 scale-110"
-                            : "opacity-100 scale-100"
-                        } group-hover:scale-105`}
-                        onError={(e) => {
-                          e.currentTarget.src = "/api/placeholder/400/320";
-                        }}
-                        sizes="(max-width: 480px) 100vw, (max-width: 640px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 25vw"
-                        priority={currentImageIndex === 0}
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center">
-                      <span className="text-white font-semibold text-xs sm:text-sm md:text-base lg:text-lg text-center px-2 sm:px-3 md:px-4">
-                        {trending.destinationName}
-                      </span>
-                    </div>
-                  )}
+                  <DestinationImage
+                    image={currentImage}
+                    alt={trending.destinationName}
+                    isTransitioning={isCardTransitioning}
+                    priority={currentImageIndex === 0}
+                    sizes="(max-width: 480px) 100vw, (max-width: 640px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 25vw"
+                  />
                 </div>
 
                 {/* Gradient Overlay */}
@@ -363,8 +430,8 @@ const TrendingDestinations = () => {
         </div>
 
         {/* View All Button */}
-        <div className="text-center mt-4 xs:mt-5 sm:mt-6 md:mt-8 lg:mt-10">
-          <AnimatedButton onClick={() => console.log("Clicked!")}>
+        <div className="text-center">
+          <AnimatedButton onClick={() => router.push("/destinations")}>
             More Destinations
           </AnimatedButton>
         </div>

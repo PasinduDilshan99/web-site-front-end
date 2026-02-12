@@ -7,7 +7,7 @@ import DestinationsCategories from "../components/home-page-components/destinati
 import NewDestinations from "../components/home-page-components/destinations/NewDestinations";
 import PopularDestinations from "../components/home-page-components/destinations/popular-destinations/PopularDestinations";
 import TrendingDestinations from "../components/home-page-components/destinations/TrendingDestinations";
-import Footer from "./components/footer/Footer";
+import Footer from "../components/common-components/footer/Footer";
 import GalleryHome from "../components/home-page-components/gallery/GalleryHome";
 import HeroSection from "../components/home-page-components/heroSection/HeroSection";
 import Inquire from "./components/inquire/Inquire";
@@ -29,62 +29,73 @@ import ActiveToursHomeGrid from "@/components/home-page-components/tours/ActiveT
 import TourMap from "@/components/home-page-components/tours/TourMap";
 import PopularTours from "@/components/home-page-components/tours/PopularTours";
 import AirplaneScrollWrapper from "./test/AirplaneScrollWrapper";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Home | Felicita trips",
+};
 
 export default function Home() {
   return (
     <div>
-      {/* <AirplaneScrollWrapper> */}
-        <div>
-          <HeroSection />
-        </div>
-        {/* <div>
-        <Partners />
-      </div> */}
-        <div>
-          <WhyChooseUs />
-        </div>
-        <div>
-          <OurServices />
-        </div>
-        {/* <div>
-        <PopularDestinations />
-      </div> */}
-        <div>
+      <div>
+        <HeroSection />
+      </div>
+      <div>
+        <WhyChooseUs buttonRequired={true} />
+      </div>
+      <div>
+        <OurServices />
+      </div>
+      <div>
         <TrendingDestinations />
       </div>
+      <div>
+        <ActiveToursHomeGrid />
+      </div>
+      <div>
+        <TourMap />
+      </div>
+      <div>
+        <ActivityCategoriesHome />
+      </div>
+      <div>
+        <GalleryHome />
+      </div>
+      <div>
+        <ContactForm />
+      </div>
+      {/* <AirplaneScrollWrapper> */}
+      {/* <div>
+        <Partners />
+      </div> */}
+      {/* <div>
+        <PopularDestinations />
+      </div> */}
       {/* <div>
         <NewDestinations />
       </div> */}
-        {/* <div>
+      {/* <div>
         <PopularTours />
       </div> 
         <div>
         <ActiveToursHome />
       </div> */}
-         <div>
-        <ActiveToursHomeGrid />
-      </div>
-        <div>
-        <TourMap />
-      </div> 
-        {/* <div>
+      {/* <div>
         <ActivitiesHome />
       </div> */}
-        <div>
-        <ActivityCategoriesHome />
-      </div>
-        {/* <div>
+      {/* <div>
         <PackagesHome />
       </div> */}
-        {/* <div>
+      {/* <div>
         <Accommodations />
       </div> */}
-        {/* <div>
+      {/* <div>
         <DestinationsCategories />
       </div> */}
 
-        {/* User Benefits & Loyalty */}
-        {/* <div>
+      {/* User Benefits & Loyalty */}
+      {/* <div>
         <UserLevelsHome />
       </div>
       <div>
@@ -94,33 +105,27 @@ export default function Home() {
         <UserBenefitsHome />
       </div> */}
 
-        {/* Social Proof & Content */}
-        <div>
-          <GalleryHome />
-        </div>
-        {/* <div>
+      {/* Social Proof & Content */}
+      {/* <div>
         <ReviewsHome />
       </div> */}
-        {/* <div>
+      {/* <div>
         <ActiveBlogsSummery />
       </div> */}
 
-        {/* Process & Promotions */}
-        {/* <div>
+      {/* Process & Promotions */}
+      {/* <div>
         <WorkFlow />
       </div> */}
-        {/* <div>
+      {/* <div>
         <PromotionsHome />
       </div> */}
 
-        {/* Support & Information */}
-        {/* <div>
+      {/* Support & Information */}
+      {/* <div>
         <Faq />
       </div> */}
-        <div>
-          <ContactForm />
-        </div>
-        {/* <div>
+      {/* <div>
         <Inquire />
       </div> */}
       {/* </AirplaneScrollWrapper> */}

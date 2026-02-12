@@ -15,7 +15,7 @@ const PackageComparisonHeaderSection: React.FC<SLTourHeroSectionProps> = ({
 }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [imageLoaded, setImageLoaded] = useState(false);
+  const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
 
   // Auto-play functionality for image slider
   useEffect(() => {
@@ -42,19 +42,19 @@ const PackageComparisonHeaderSection: React.FC<SLTourHeroSectionProps> = ({
 
   const prevSlide = () => {
     setSelectedImageIndex(
-      (prev) => (prev - 1 + tour.images.length) % tour.images.length
+      (prev) => (prev - 1 + tour.images.length) % tour.images.length,
     );
     setIsAutoPlaying(false);
     setTimeout(() => setIsAutoPlaying(true), 10000);
   };
 
-  const getFallbackImage = () => {
-    return "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80";
+  const handleImageError = (index: number) => {
+    setFailedImages((prev) => new Set(prev).add(index));
   };
 
   if (!tour.images.length) {
     return (
-      <div className="relative h-96 bg-gradient-to-r from-sky-600 to-teal-600 flex items-center justify-center">
+      <div className="relative h-96 bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900 flex items-center justify-center">
         <div className="absolute bottom-0 left-0 right-0 p-6 text-white bg-gradient-to-t from-black/60 to-transparent">
           <div className="max-w-7xl mx-auto">
             <h1 className="text-4xl font-bold mb-2 text-center">
@@ -69,38 +69,46 @@ const PackageComparisonHeaderSection: React.FC<SLTourHeroSectionProps> = ({
     );
   }
 
-  const currentImage = tour.images[selectedImageIndex];
-
   return (
     <>
       {/* Hero Section with Slider */}
-      <div className="relative h-[500px] md:h-[600px] overflow-hidden bg-gradient-to-r from-sky-600 to-teal-600">
+      <div className="relative h-[500px] md:h-[600px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
         {/* Image Slider */}
         <div className="relative w-full h-full">
-          {tour.images.map((image, index) => (
-            <div
-              key={image.imageId}
-              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                index === selectedImageIndex ? "opacity-100" : "opacity-0"
-              }`}
-            >
-              <Image
-                src={image.imageUrl}
-                alt={image.imageName}
-                className="w-full h-full object-cover"
-                width={2000}
-                height={1200}
-                priority={index === 0}
-                onLoad={() => setImageLoaded(true)}
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = getFallbackImage();
-                }}
-              />
-              {/* Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-            </div>
-          ))}
+          {tour.images.map((image, index) => {
+            const hasImage = !failedImages.has(index);
+
+            return (
+              <div
+                key={image.imageId}
+                className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                  index === selectedImageIndex ? "opacity-100" : "opacity-0"
+                }`}
+              >
+                {hasImage ? (
+                  <>
+                    <Image
+                      src={image.imageUrl}
+                      alt={image.imageName || `Tour image ${index + 1}`}
+                      className="w-full h-full object-cover"
+                      width={2000}
+                      height={1200}
+                      priority={index === 0}
+                      onError={() => handleImageError(index)}
+                    />
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                  </>
+                ) : (
+                  // Pure gradient background when image failed
+                  <div className="w-full h-full bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
+                    {/* Gradient Overlay for consistency */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
 
         {/* Content Overlay - CENTERED */}
@@ -292,47 +300,52 @@ const PackageComparisonHeaderSection: React.FC<SLTourHeroSectionProps> = ({
       {tour.images.length > 1 && (
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex gap-4 overflow-x-auto pb-4 justify-center scrollbar-thin scrollbar-thumb-sky-500 scrollbar-track-gray-200">
-            {tour.images.map((image, index) => (
-              <button
-                key={image.imageId}
-                onClick={() => goToSlide(index)}
-                className={`relative flex-shrink-0 w-28 h-28 rounded-lg overflow-hidden border-2 transition-all duration-300 ${
-                  selectedImageIndex === index
-                    ? "border-sky-500 ring-4 ring-sky-200 scale-105 shadow-lg"
-                    : "border-gray-300 hover:border-teal-400 hover:scale-105"
-                }`}
-              >
-                <img
-                  src={image.imageUrl}
-                  alt={image.imageName}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = getFallbackImage();
-                  }}
-                />
-                {selectedImageIndex === index && (
-                  <div className="absolute inset-0 bg-sky-500/20 flex items-center justify-center">
-                    <svg
-                      className="w-8 h-8 text-white"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                )}
-                {image.imageName && (
-                  <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-1 text-center truncate">
-                    {image.imageName}
-                  </div>
-                )}
-              </button>
-            ))}
+            {tour.images.map((image, index) => {
+              const hasImage = !failedImages.has(index);
+
+              return (
+                <button
+                  key={image.imageId}
+                  onClick={() => goToSlide(index)}
+                  className={`relative flex-shrink-0 w-28 h-28 rounded-lg overflow-hidden border-2 transition-all duration-300 ${
+                    selectedImageIndex === index
+                      ? "border-sky-500 ring-4 ring-sky-200 scale-105 shadow-lg"
+                      : "border-gray-300 hover:border-teal-400 hover:scale-105"
+                  }`}
+                >
+                  {hasImage ? (
+                    <img
+                      src={image.imageUrl}
+                      alt={image.imageName || `Tour thumbnail ${index + 1}`}
+                      className="w-full h-full object-cover"
+                      onError={() => handleImageError(index)}
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900" />
+                  )}
+                  {selectedImageIndex === index && (
+                    <div className="absolute inset-0 bg-sky-500/20 flex items-center justify-center">
+                      <svg
+                        className="w-8 h-8 text-white"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  )}
+                  {image.imageName && (
+                    <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-1 text-center truncate">
+                      {image.imageName}
+                    </div>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
       )}

@@ -2,6 +2,7 @@
 import { HeroSectionService } from "@/services/heroSectionService";
 import { PackageHeroData } from "@/types/hero-section-types";
 import React, { useState, useEffect } from "react";
+import HeroSectionLoading from "../loading-components/HeroSectionLoading";
 
 const PackageHeroSection = () => {
   const [loading, setLoading] = useState(true);
@@ -10,6 +11,7 @@ const PackageHeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [selectedFilter, setSelectedFilter] = useState<string>("all");
+  const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     const fetchHeroData = async () => {
@@ -64,22 +66,8 @@ const PackageHeroSection = () => {
     setTimeout(() => setIsAutoPlaying(true), 10000);
   };
 
-  const getFallbackImage = (index: number) => {
-    const fallbackImages = [
-      "photo-1507525428034-b723cf961d3e", // Beach sunset
-      "photo-1518837695005-2083093ee35b", // Ocean waves
-      "photo-1505142468610-359e7d316be0", // Mountain lake
-      "photo-1493246507139-91e8fad9978e", // Coastal view
-      "photo-1439066615861-d1af74d74000", // Underwater sea
-      "photo-1506905925346-21bda4d32df4", // Blue sea
-      "photo-1501854140801-50d01698950b", // Forest lake
-      "photo-1500673922987-e212871fec22", // Tropical island
-      "photo-1469474968028-56623f02e42e", // Mountain panorama
-      "photo-1506929562872-bb421503ef21", // Ocean waves 2
-      "photo-1566073771259-6a8506099945", // Beach 2
-      "photo-1558272729-5e0165e4fde6", // Coastal 2
-    ];
-    return `https://images.unsplash.com/${fallbackImages[index % fallbackImages.length]}?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80`;
+  const handleImageError = (index: number) => {
+    setFailedImages((prev) => new Set(prev).add(index));
   };
 
   const handleButtonClick = (link?: string) => {
@@ -124,14 +112,7 @@ const PackageHeroSection = () => {
   const currentSlideData = filteredPackages[currentSlide] || heroData[currentSlide] || {};
 
   if (loading) {
-    return (
-      <div className="relative w-full h-[800px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900 flex items-center justify-center">
-        <div className="text-center text-white">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-400 mx-auto mb-4"></div>
-          <p className="text-lg">Loading Tour Packages...</p>
-        </div>
-      </div>
-    );
+    return <HeroSectionLoading text="Packages hero content loading..."/>
   }
 
   if (error || heroData.length === 0) {
@@ -175,31 +156,33 @@ const PackageHeroSection = () => {
 
   return (
     <div className="relative w-full h-[800px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
-      {/* Image Slider */}
+      {/* Image Slider - Only show image if available and not failed */}
       <div className="relative w-full h-full">
-        {heroData.map((item, index) => (
-          <div
-            key={item.id || index}
-            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-              index === currentSlide ? "opacity-100" : "opacity-0"
-            }`}
-          >
+        {heroData.map((item, index) => {
+          const hasImage = item.imageUrl && !failedImages.has(index);
+          
+          return (
             <div
-              className="w-full h-full bg-cover bg-center bg-no-repeat"
-              style={{
-                backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('${
-                  item.imageUrl || getFallbackImage(index)
-                }')`,
-              }}
-              onError={(e) => {
-                const target = e.target as HTMLDivElement;
-                target.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('${getFallbackImage(
-                  index
-                )}')`;
-              }}
-            />
-          </div>
-        ))}
+              key={item.id || index}
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                index === currentSlide ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              {hasImage ? (
+                <div
+                  className="w-full h-full bg-cover bg-center bg-no-repeat"
+                  style={{
+                    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('${item.imageUrl}')`,
+                  }}
+                  onError={() => handleImageError(index)}
+                />
+              ) : (
+                // Pure gradient background when no image or image failed
+                <div className="w-full h-full bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900" />
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* Package Badge */}
@@ -211,7 +194,6 @@ const PackageHeroSection = () => {
           </span>
         </div>
       </div>
-
 
       {/* Slide Counter */}
       {filteredPackages.length > 1 && (
@@ -371,14 +353,14 @@ const PackageHeroSection = () => {
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                  />
-                </svg>
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                    />
+                  </svg>
                 </div>
                 <div className="text-left">
                   <p className="text-sm text-cyan-200">Expert Guides</p>
@@ -464,50 +446,6 @@ const PackageHeroSection = () => {
           />
         </div>
       )}
-
-      {/* Quick Actions */}
-      {/* <div className="absolute bottom-28 right-6 hidden md:block">
-        <div className="flex flex-col gap-2">
-          <button
-            onClick={() => window.location.href = "/packages/compare"}
-            className="px-4 py-2 bg-gradient-to-r from-sky-600 to-teal-600 text-white font-semibold rounded-lg hover:from-sky-700 hover:to-teal-700 transform hover:scale-105 transition-all duration-300 shadow-lg flex items-center gap-2 text-sm"
-          >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
-              />
-            </svg>
-            Compare Packages
-          </button>
-          <button
-            onClick={() => window.location.href = "/packages/special-offers"}
-            className="px-4 py-2 border border-sky-300/30 text-white font-semibold rounded-lg hover:bg-sky-50/10 transition-all duration-300 flex items-center gap-2 text-sm backdrop-blur-sm"
-          >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-              />
-            </svg>
-            Special Offers
-          </button>
-        </div>
-      </div> */}
     </div>
   );
 };

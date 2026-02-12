@@ -27,7 +27,7 @@ import {
   Shield,
 } from "lucide-react";
 import NavBar from "@/components/common-components/navBar/NavBar";
-import Footer from "@/app/components/footer/Footer";
+import Footer from "@/components/common-components/footer/Footer";
 import LinkBar from "@/components/common-components/linkBar/LinkBar";
 import Loading from "@/components/common-components/loading/Loading";
 import { useAuth } from "@/context/AuthContext";

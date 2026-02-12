@@ -3,6 +3,7 @@ import { HeroSectionService } from "@/services/heroSectionService";
 import { ContactUsHeroData } from "@/types/hero-section-types";
 import { COMPANY_EMERGENCY_CONTACT_NUMBER } from "@/utils/constant";
 import React, { useState, useEffect } from "react";
+import HeroSectionLoading from "../loading-components/HeroSectionLoading";
 
 const ContactUsHeroSection = () => {
   const [loading, setLoading] = useState(true);
@@ -93,14 +94,7 @@ const ContactUsHeroSection = () => {
   };
 
   if (loading) {
-    return (
-      <div className="relative w-full h-[500px] md:h-[600px] overflow-hidden bg-gradient-to-br from-blue-900 to-teal-800 flex items-center justify-center">
-        <div className="text-center text-white">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-lg">Loading Contact Information...</p>
-        </div>
-      </div>
-    );
+    return <HeroSectionLoading  text = "Loading contact us hero content..."/>
   }
 
   if (error || heroData.length === 0) {
@@ -168,9 +162,9 @@ const ContactUsHeroSection = () => {
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="text-center text-white px-4 sm:px-6 md:px-8 max-w-5xl w-full">
           <div className="mb-8">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight tracking-tight">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 leading-tight tracking-tight">
               {currentSlideData.title || "Contact Us"}
-              <span className="block text-xl md:text-2xl lg:text-3xl font-semibold mt-3 text-blue-200">
+              <span className="block text-2xl md:text-3xl font-semibold mt-3 text-blue-200">
                 {currentSlideData.subtitle || "Your Journey Starts Here"}
               </span>
             </h1>
@@ -179,7 +173,7 @@ const ContactUsHeroSection = () => {
           </div>
 
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 md:p-8 max-w-3xl mx-auto mb-8">
-            <p className="text-lg md:text-xl mb-6 text-gray-100 leading-relaxed">
+            <p className="text-md md:text-lg lg:text-xl  mb-6 text-gray-100 leading-relaxed">
               {currentSlideData.description || 
                 "Get in touch with our travel experts to plan your perfect journey in Sri Lanka. We're just a message away."}
             </p>
@@ -189,7 +183,7 @@ const ContactUsHeroSection = () => {
                 {currentSlideData.primaryButtonText && (
                   <button
                     onClick={() => handleButtonClick(currentSlideData.primaryButtonLink)}
-                    className="px-8 py-4 bg-gradient-to-r from-blue-600 to-teal-500 text-white font-semibold rounded-full hover:from-blue-700 hover:to-teal-600 transform hover:scale-105 transition-all duration-300 shadow-lg flex items-center justify-center gap-2 text-lg"
+                    className="text-sm md:text-lg px-8 py-4 bg-gradient-to-r from-blue-600 to-teal-500 text-white font-semibold rounded-full hover:from-blue-700 hover:to-teal-600 transform hover:scale-105 transition-all duration-300 shadow-lg flex items-center justify-center gap-2"
                   >
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
@@ -201,7 +195,7 @@ const ContactUsHeroSection = () => {
                 {currentSlideData.secondaryButtonText && (
                   <button
                     onClick={() => handleButtonClick(currentSlideData.secondaryButtonLink)}
-                    className="px-8 py-4 border-2 border-blue-300 text-white font-semibold rounded-full hover:bg-blue-500 hover:border-blue-500 hover:text-white transition-all duration-300 flex items-center justify-center gap-2 text-lg"
+                    className="text-sm md:text-lg px-8 py-4 border-2 border-blue-300 text-white font-semibold rounded-full hover:bg-blue-500 hover:border-blue-500 hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
                   >
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
@@ -215,7 +209,7 @@ const ContactUsHeroSection = () => {
           </div>
 
           {/* Quick Contact Info - Centered */}
-          <div className="flex flex-wrap gap-4 justify-center">
+          <div className="hidden lg:flex flex-wrap gap-4 justify-center">
             <div className="flex items-center gap-2 px-5 py-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
               <svg className="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -316,7 +310,7 @@ const ContactUsHeroSection = () => {
       )}
 
       {/* Emergency Contact Badge */}
-      <div className="absolute top-6 right-6">
+      <div className="hidden lg:flex absolute top-6 right-6">
         <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600/30 to-cyan-600/30 backdrop-blur-sm rounded-full border border-blue-400/30">
           <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
           <span className="text-sm font-medium text-white">

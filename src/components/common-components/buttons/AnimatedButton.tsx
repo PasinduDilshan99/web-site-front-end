@@ -96,19 +96,21 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
     .trim();
 
   return (
-    <button
-      type={type}
-      onClick={onClick}
-      disabled={disabled}
-      className={smoothTransitionClasses}
-      style={{
-        backgroundImage: `linear-gradient(to right, var(--tw-gradient-from), var(--tw-gradient-to), var(--tw-gradient-from))`,
-      }}
-    >
-      <span className="relative z-10 transition-colors duration-700">
-        {children}
-      </span>
-    </button>
+    <div className="pt-8 md:pt-10 lg:pt-12 xl:pt-14">
+      <button
+        type={type}
+        onClick={onClick}
+        disabled={disabled}
+        className={smoothTransitionClasses}
+        style={{
+          backgroundImage: `linear-gradient(to right, var(--tw-gradient-from), var(--tw-gradient-to), var(--tw-gradient-from))`,
+        }}
+      >
+        <span className="relative z-10 transition-colors duration-700">
+          {children}
+        </span>
+      </button>
+    </div>
   );
 };
 

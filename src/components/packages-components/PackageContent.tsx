@@ -1,3 +1,5 @@
+import { useAuth } from "@/context/AuthContext";
+import { addBrowserHistory } from "@/services/browserHistoryService";
 import { ActivePackagesForFilters } from "@/types/packages-types";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -12,6 +14,7 @@ const PackageContent: React.FC<PackageContentProps> = ({
   showViewDetails = false,
 }) => {
   const router = useRouter();
+  const { user } = useAuth();
 
   const formatPrice = (price: number): string => {
     return new Intl.NumberFormat("en-LK", {
@@ -24,7 +27,18 @@ const PackageContent: React.FC<PackageContentProps> = ({
     return pkg.pricePerPerson * (1 - pkg.discountPercentage / 100);
   };
 
-  const handleButtonClick = () => {
+  const handleButtonClick = async () => {
+    if (user) {
+      try {
+        await addBrowserHistory({
+          type: "PACKAGE",
+          dataId: pkg.packageId,
+        });
+      } catch (err) {
+        console.error("Failed to record browser history:", err);
+      }
+    }
+
     router.push(`/packages/${pkg.packageId}`);
   };
 
@@ -113,20 +127,24 @@ const PackageContent: React.FC<PackageContentProps> = ({
           onClick={handleButtonClick}
           className="w-full py-3 px-4 rounded-lg font-semibold text-white transition-all duration-300"
           style={{
-            background: pkg.color ? pkg.color : "linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%)",
+            background: pkg.color
+              ? pkg.color
+              : "linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%)",
           }}
           onMouseOver={(e) => {
             if (pkg.hoverColor) {
               e.currentTarget.style.background = pkg.hoverColor;
             } else {
-              e.currentTarget.style.background = "linear-gradient(135deg, #0284c7 0%, #0f766e 100%)";
+              e.currentTarget.style.background =
+                "linear-gradient(135deg, #0284c7 0%, #0f766e 100%)";
             }
           }}
           onMouseOut={(e) => {
             if (pkg.color) {
               e.currentTarget.style.background = pkg.color;
             } else {
-              e.currentTarget.style.background = "linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%)";
+              e.currentTarget.style.background =
+                "linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%)";
             }
           }}
         >

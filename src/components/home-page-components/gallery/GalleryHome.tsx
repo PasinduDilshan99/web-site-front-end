@@ -4,6 +4,70 @@ import React, { useEffect, useState } from "react";
 import { GalleryService } from "@/services/galleryService";
 import { ActiveImagesType } from "@/types/gallery-types";
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";
+import { PLACE_HOLDER_IMAGE } from "@/utils/constant";
+
+// Gallery Image Component with Fallback
+const GalleryImage = React.memo(({ 
+  image, 
+  width, 
+  height, 
+  sizes, 
+  priority,
+  rowIndex,
+  index,
+  onClick 
+}: { 
+  image: ActiveImagesType;
+  width: number;
+  height: number;
+  sizes: string;
+  priority: boolean;
+  rowIndex: number;
+  index: number;
+  onClick: () => void;
+}) => {
+  const [imgSrc, setImgSrc] = useState(image.imageLink);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    setImgSrc(image.imageLink);
+    setHasError(false);
+  }, [image.imageLink]);
+
+  const handleError = () => {
+    if (!hasError) {
+      console.log(`Image failed to load for ${image.imageName}, using placeholder`);
+      setImgSrc(PLACE_HOLDER_IMAGE);
+      setHasError(true);
+    }
+  };
+
+  return (
+    <div
+      className="flex-shrink-0 rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-105 relative group"
+      style={{ width: `${width}px`, height: `${height}px` }}
+      onClick={onClick}
+    >
+      <div className="relative w-full h-full">
+        <Image
+          key={`${image.imageId}-${hasError}-${rowIndex}-${index}`}
+          src={imgSrc}
+          alt={image.imageName}
+          width={width}
+          height={height}
+          sizes={sizes}
+          className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
+          priority={priority}
+          onError={handleError}
+        />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300"></div>
+        
+      </div>
+    </div>
+  );
+});
+
+GalleryImage.displayName = 'GalleryImage';
 
 const GalleryHome = () => {
   const [loading, setLoading] = useState(true);
@@ -134,44 +198,71 @@ const GalleryHome = () => {
   if (loading) {
     const { width, height } = getImageDimensions();
     return (
-      <div className="min-h-screen bg-gray-50 py-4 sm:py-6 md:py-8 px-2 sm:px-4">
-        <div className="text-center mb-6 sm:mb-10 md:mb-12 lg:mb-16">
-          <div className="h-3 sm:h-4 bg-gray-300 rounded w-32 sm:w-48 mx-auto mb-3 sm:mb-4 animate-pulse"></div>
-          <div className="h-6 sm:h-8 md:h-10 bg-gray-300 rounded w-48 sm:w-64 md:w-80 mx-auto mb-3 sm:mb-4 animate-pulse"></div>
-          <div className="h-1 bg-gray-300 rounded w-12 sm:w-16 mx-auto animate-pulse"></div>
-        </div>
-
-        <div className="max-w-full mx-auto space-y-2 sm:space-y-3 md:space-y-4">
-          {[...Array(isMobile ? 2 : 3)].map((_, rowIndex) => (
-            <div
-              key={rowIndex}
-              className="flex gap-2 sm:gap-3 md:gap-4 overflow-hidden justify-center"
-            >
-              {[...Array(6)].map((_, i) => (
-                <div
-                  key={i}
-                  className="flex-shrink-0 bg-gray-300 rounded animate-pulse"
-                  style={{ width: `${width}px`, height: `${height}px` }}
-                ></div>
-              ))}
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-teal-950 py-4 sm:py-6 md:py-8 px-2 sm:px-4">
+        <div className="mx-auto">
+          {/* Simple loading header */}
+          <div className="flex justify-center mb-6 sm:mb-10 md:mb-12 lg:mb-16">
+            <div className="flex items-center space-x-3 px-4 py-2 bg-gray-900/50 backdrop-blur-sm rounded-full border border-teal-500/30">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-teal-400"></div>
+              <span className="text-teal-300 text-sm">Loading gallery...</span>
             </div>
-          ))}
+          </div>
+
+          {/* Gallery Header Placeholders */}
+          <div className="text-center mb-6 sm:mb-10 md:mb-12 lg:mb-16">
+            <div className="h-3 sm:h-4 bg-gradient-to-r from-gray-700 to-teal-800/50 rounded w-32 sm:w-48 mx-auto mb-3 sm:mb-4 animate-pulse"></div>
+            <div className="h-6 sm:h-8 md:h-10 bg-gradient-to-r from-gray-700 to-cyan-800/50 rounded w-48 sm:w-64 md:w-80 mx-auto mb-3 sm:mb-4 animate-pulse"></div>
+            <div className="h-1 bg-gradient-to-r from-teal-500 to-cyan-500 rounded w-12 sm:w-16 mx-auto animate-pulse"></div>
+          </div>
+
+          {/* Gallery Images Grid */}
+          <div className="max-w-full mx-auto space-y-2 sm:space-y-3 md:space-y-4">
+            {[...Array(isMobile ? 2 : 3)].map((_, rowIndex) => (
+              <div
+                key={rowIndex}
+                className="flex gap-2 sm:gap-3 md:gap-4 overflow-hidden justify-center"
+              >
+                {[...Array(6)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="flex-shrink-0 bg-gradient-to-br from-gray-700 to-teal-800/50 rounded-lg animate-pulse border border-teal-500/20 relative overflow-hidden group"
+                    style={{
+                      width: `${width}px`,
+                      height: `${height}px`,
+                      animationDelay: `${rowIndex * 100 + i * 50}ms`,
+                    }}
+                  >
+                    {/* Image overlay with icon */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-50">
+                      <svg
+                        className="w-8 h-8 text-teal-400/50"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                    </div>
+
+                    {/* Shimmer effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-teal-500/10 to-transparent animate-shimmer"></div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );
   }
 
   if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 py-8 px-4 flex items-center justify-center">
-        <div className="text-center px-4">
-          <div className="text-red-500 text-base sm:text-lg font-semibold mb-2">
-            Error Loading Gallery
-          </div>
-          <div className="text-gray-600 text-sm sm:text-base">{error}</div>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   const CarouselRow = ({
@@ -184,6 +275,7 @@ const GalleryHome = () => {
     rowIndex: number;
   }) => {
     const { width, height } = getImageDimensions();
+    const sizes = getImageSize();
     const duplicatedImages = [...images, ...images];
 
     return (
@@ -197,25 +289,17 @@ const GalleryHome = () => {
           style={{ width: "fit-content" }}
         >
           {duplicatedImages.map((image, index) => (
-            <div
+            <GalleryImage
               key={`${image.imageId}-${rowIndex}-${index}`}
-              className="flex-shrink-0 rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-105"
-              style={{ width: `${width}px`, height: `${height}px` }}
+              image={image}
+              width={width}
+              height={height}
+              sizes={sizes}
+              priority={rowIndex === 0 && index < 3}
+              rowIndex={rowIndex}
+              index={index}
               onClick={() => setSelectedImage(image)}
-            >
-              <div className="relative w-full h-full group">
-                <Image
-                  src={image.imageLink}
-                  alt={image.imageName}
-                  width={width}
-                  height={height}
-                  sizes={getImageSize()}
-                  className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
-                  priority={rowIndex === 0 && index < 3}
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300"></div>
-              </div>
-            </div>
+            />
           ))}
         </div>
       </div>
@@ -223,7 +307,7 @@ const GalleryHome = () => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-cyan-50 py-4 sm:py-6 md:py-8 lg:py-12">
+    <div className="bg-gradient-to-br from-blue-50 to-cyan-50 py-6 lg:py-8 xl:py-12">
       <style jsx global>{`
         @keyframes scroll-left {
           0% {
@@ -386,18 +470,15 @@ const GalleryHome = () => {
 
                 {/* Content Area */}
                 <div className="flex-1 overflow-y-auto">
-                  {/* Image Section - Larger */}
+                  {/* Image Section - Larger with fallback */}
                   <div
-                    className={`${getModalImageHeight()} relative flex-shrink-0 w-full`}
+                    className={`${getModalImageHeight()} relative flex-shrink-0 w-full bg-gradient-to-br from-gray-100 to-gray-200`}
                   >
                     <div className="relative w-full h-full">
-                      <Image
-                        src={selectedImage.imageLink}
-                        alt={selectedImage.imageName}
-                        fill
-                        sizes={isMobile ? "100vw" : isTablet ? "75vw" : "60vw"}
-                        className="object-contain"
-                        priority
+                      <ModalImage 
+                        image={selectedImage} 
+                        isMobile={isMobile} 
+                        isTablet={isTablet} 
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-white/5 to-transparent"></div>
                     </div>
@@ -593,5 +674,56 @@ const GalleryHome = () => {
     </div>
   );
 };
+
+// Modal Image Component with Fallback
+const ModalImage = React.memo(({ 
+  image, 
+  isMobile, 
+  isTablet 
+}: { 
+  image: ActiveImagesType;
+  isMobile: boolean;
+  isTablet: boolean;
+}) => {
+  const [imgSrc, setImgSrc] = useState(image.imageLink);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    setImgSrc(image.imageLink);
+    setHasError(false);
+  }, [image.imageLink]);
+
+  const handleError = () => {
+    if (!hasError) {
+      console.log(`Modal image failed to load for ${image.imageName}, using placeholder`);
+      setImgSrc(PLACE_HOLDER_IMAGE);
+      setHasError(true);
+    }
+  };
+
+  return (
+    <>
+      <Image
+        src={imgSrc}
+        alt={image.imageName}
+        fill
+        sizes={isMobile ? "100vw" : isTablet ? "75vw" : "60vw"}
+        className="object-contain"
+        priority
+        onError={handleError}
+      />
+      {/* {hasError && (
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/70 text-white text-xs px-3 py-1.5 rounded-full backdrop-blur-sm flex items-center gap-2">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>Using fallback image</span>
+        </div>
+      )} */}
+    </>
+  );
+});
+
+ModalImage.displayName = 'ModalImage';
 
 export default GalleryHome;

@@ -1,4 +1,4 @@
-import Footer from "@/app/components/footer/Footer";
+import Footer from "@/components/common-components/footer/Footer";
 import HostelsSection from "@/components/accommodation-components/HostelsSection";
 import HotelsSection from "@/components/accommodation-components/HotelsSection";
 import ResortsSection from "@/components/accommodation-components/ResortsSection";

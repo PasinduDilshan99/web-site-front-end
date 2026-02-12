@@ -25,7 +25,7 @@ const ActivityKeyInfo: React.FC<ActivityKeyInfoProps> = ({ activity }) => {
         Key Information
       </h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
         <div className="flex items-center space-x-3 p-3 bg-sky-50 rounded-lg border border-sky-100">
           <div className="w-10 h-10 bg-gradient-to-br from-sky-100 to-sky-200 rounded-lg flex items-center justify-center">
             <span className="text-sky-600 font-bold">⏱️</span>
@@ -42,15 +42,19 @@ const ActivityKeyInfo: React.FC<ActivityKeyInfoProps> = ({ activity }) => {
           <div className="w-10 h-10 bg-gradient-to-br from-teal-100 to-teal-200 rounded-lg flex items-center justify-center">
             <span className="text-teal-600 font-bold">👥</span>
           </div>
+
           <div>
             <p className="text-sm text-gray-600">Group Size</p>
+
             <p className="font-semibold text-gray-900">
-              {activity.min_participate}-{activity.max_participate} people
+              {activity.max_participate === 0
+                ? "Unlimited people"
+                : `${activity.min_participate}-${activity.max_participate} people`}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center space-x-3 p-3 bg-cyan-50 rounded-lg border border-cyan-100">
+        {/* <div className="flex items-center space-x-3 p-3 bg-cyan-50 rounded-lg border border-cyan-100">
           <div className="w-10 h-10 bg-gradient-to-br from-cyan-100 to-cyan-200 rounded-lg flex items-center justify-center">
             <span className="text-cyan-600 font-bold">🕒</span>
           </div>
@@ -61,7 +65,7 @@ const ActivityKeyInfo: React.FC<ActivityKeyInfoProps> = ({ activity }) => {
               {formatTime(activity.available_to)}
             </p>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

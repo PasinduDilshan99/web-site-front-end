@@ -3,6 +3,7 @@ import { HeroSectionService } from "@/services/heroSectionService";
 import { ActivityHeroData } from "@/types/hero-section-types";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
+import HeroSectionLoading from "../loading-components/HeroSectionLoading";
 
 const ActivityHeroSection = () => {
   const [loading, setLoading] = useState(true);
@@ -12,6 +13,7 @@ const ActivityHeroSection = () => {
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("all");
+  const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     const fetchHeroData = async () => {
@@ -19,7 +21,8 @@ const ActivityHeroSection = () => {
         setLoading(true);
         setError(null);
 
-        const { data: items, error } = await HeroSectionService.fetchActivityHeroData();
+        const { data: items, error } =
+          await HeroSectionService.fetchActivityHeroData();
 
         if (error) {
           setError(error);
@@ -66,25 +69,8 @@ const ActivityHeroSection = () => {
     setTimeout(() => setIsAutoPlaying(true), 10000);
   };
 
-  const getFallbackImage = (index: number) => {
-    const fallbackImages = [
-      "photo-1507525428034-b723cf961d3e", // Beach sunset
-      "photo-1518837695005-2083093ee35b", // Ocean waves
-      "photo-1505142468610-359e7d316be0", // Mountain lake
-      "photo-1439066615861-d1af74d74000", // Underwater sea
-      "photo-1493246507139-91e8fad9978e", // Coastal view
-      "photo-1506929562872-bb421503ef21", // Ocean activity
-      "photo-1551632811-561732d1e306", // Adventure
-      "photo-1528181304800-259b08848526", // Coastal town
-      "photo-1566073771259-6a8506099945", // Wildlife
-      "photo-1520250497591-112f2f40a3f4", // Water sports
-      "photo-1536152471326-642d4aa9cba5", // Heritage
-      "photo-1544551763-46a013bb70d5", // Leisure
-      "photo-1523348837708-15d4a09cfac2", // Culture
-      "photo-1585506936724-fa0c19c7b7c4", // Nature
-      "photo-1579444741963-5bce5eb9d1d2", // Exploration
-    ];
-    return `https://images.unsplash.com/${fallbackImages[index % fallbackImages.length]}?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80`;
+  const handleImageError = (index: number) => {
+    setFailedImages((prev) => new Set(prev).add(index));
   };
 
   const handleButtonClick = (link?: string) => {
@@ -104,42 +90,79 @@ const ActivityHeroSection = () => {
 
   // Activity categories based on data
   const getActivityCategory = (activity: ActivityHeroData) => {
-    const name = activity.name.toLowerCase();
-    if (name.includes('climb') || name.includes('hike') || name.includes('peak')) return 'adventure';
-    if (name.includes('safari') || name.includes('wildlife') || name.includes('elephant')) return 'wildlife';
-    if (name.includes('train') || name.includes('tour') || name.includes('walk')) return 'cultural';
-    if (name.includes('whale') || name.includes('surf') || name.includes('watersports') || name.includes('rafting')) return 'water';
-    if (name.includes('cultural') || name.includes('temple') || name.includes('cave') || name.includes('fort')) return 'heritage';
-    if (name.includes('tea') || name.includes('cycle') || name.includes('ride')) return 'leisure';
-    return 'other';
+    const name = activity.name?.toLowerCase() || "";
+    if (
+      name.includes("climb") ||
+      name.includes("hike") ||
+      name.includes("peak")
+    )
+      return "adventure";
+    if (
+      name.includes("safari") ||
+      name.includes("wildlife") ||
+      name.includes("elephant")
+    )
+      return "wildlife";
+    if (
+      name.includes("train") ||
+      name.includes("tour") ||
+      name.includes("walk")
+    )
+      return "cultural";
+    if (
+      name.includes("whale") ||
+      name.includes("surf") ||
+      name.includes("watersports") ||
+      name.includes("rafting")
+    )
+      return "water";
+    if (
+      name.includes("cultural") ||
+      name.includes("temple") ||
+      name.includes("cave") ||
+      name.includes("fort")
+    )
+      return "heritage";
+    if (name.includes("tea") || name.includes("cycle") || name.includes("ride"))
+      return "leisure";
+    return "other";
   };
 
   // Activity difficulty estimation
   const getActivityDifficulty = (activity: ActivityHeroData) => {
-    const name = activity.name.toLowerCase();
-    if (name.includes('climb') || name.includes('hike') || name.includes('rafting') || name.includes('surf')) return 'challenging';
-    if (name.includes('safari') || name.includes('cycle') || name.includes('walk')) return 'moderate';
-    return 'easy';
+    const name = activity.name?.toLowerCase() || "";
+    if (
+      name.includes("climb") ||
+      name.includes("hike") ||
+      name.includes("rafting") ||
+      name.includes("surf")
+    )
+      return "challenging";
+    if (
+      name.includes("safari") ||
+      name.includes("cycle") ||
+      name.includes("walk")
+    )
+      return "moderate";
+    return "easy";
   };
 
   // Filter activities
   const filteredActivities = heroData.filter((activity) => {
-    const categoryMatch = selectedCategory === "all" || getActivityCategory(activity) === selectedCategory;
-    const difficultyMatch = selectedDifficulty === "all" || getActivityDifficulty(activity) === selectedDifficulty;
+    const categoryMatch =
+      selectedCategory === "all" ||
+      getActivityCategory(activity) === selectedCategory;
+    const difficultyMatch =
+      selectedDifficulty === "all" ||
+      getActivityDifficulty(activity) === selectedDifficulty;
     return categoryMatch && difficultyMatch;
   });
 
-  const currentSlideData = filteredActivities[currentSlide] || heroData[currentSlide] || {};
+  const currentSlideData =
+    filteredActivities[currentSlide] || heroData[currentSlide] || {};
 
   if (loading) {
-    return (
-      <div className="relative w-full h-[600px] md:h-[700px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900 flex items-center justify-center">
-        <div className="text-center text-white">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-400 mx-auto mb-4"></div>
-          <p className="text-lg">Loading Amazing Activities...</p>
-        </div>
-      </div>
-    );
+    return <HeroSectionLoading text="Activity page hero content loading..." />;
   }
 
   if (error || heroData.length === 0) {
@@ -180,31 +203,33 @@ const ActivityHeroSection = () => {
 
   return (
     <div className="relative w-full h-[650px] lg:h-[800px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
-      {/* Image Slider */}
+      {/* Image Slider - Only show image if available and not failed */}
       <div className="relative w-full h-full">
-        {heroData.map((item, index) => (
-          <div
-            key={item.id || index}
-            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-              index === currentSlide ? "opacity-100" : "opacity-0"
-            }`}
-          >
+        {heroData.map((item, index) => {
+          const hasImage = item.imageUrl && !failedImages.has(index);
+
+          return (
             <div
-              className="w-full h-full bg-cover bg-center bg-no-repeat"
-              style={{
-                backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.6), rgba(8, 145, 178, 0.5)), url('${
-                  item.imageUrl || getFallbackImage(index)
-                }')`,
-              }}
-              onError={(e) => {
-                const target = e.target as HTMLDivElement;
-                target.style.backgroundImage = `linear-gradient(rgba(15, 23, 42, 0.7), rgba(8, 145, 178, 0.6)), url('${getFallbackImage(
-                  index
-                )}')`;
-              }}
-            />
-          </div>
-        ))}
+              key={item.id || index}
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                index === currentSlide ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              {hasImage ? (
+                <div
+                  className="w-full h-full bg-cover bg-center bg-no-repeat"
+                  style={{
+                    backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.6), rgba(8, 145, 178, 0.5)), url('${item.imageUrl}')`,
+                  }}
+                  onError={() => handleImageError(index)}
+                />
+              ) : (
+                // Pure gradient background when no image or image failed
+                <div className="w-full h-full bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900" />
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* Slide Counter */}
@@ -223,50 +248,93 @@ const ActivityHeroSection = () => {
               <div className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 flex items-center gap-2">
                 <svg
                   className={`w-4 h-4 ${
-                    currentCategory === "adventure" ? "text-red-300" :
-                    currentCategory === "wildlife" ? "text-green-300" :
-                    currentCategory === "cultural" ? "text-yellow-300" :
-                    currentCategory === "water" ? "text-blue-300" :
-                    currentCategory === "heritage" ? "text-amber-300" :
-                    "text-sky-300"
+                    currentCategory === "adventure"
+                      ? "text-red-300"
+                      : currentCategory === "wildlife"
+                        ? "text-green-300"
+                        : currentCategory === "cultural"
+                          ? "text-yellow-300"
+                          : currentCategory === "water"
+                            ? "text-blue-300"
+                            : currentCategory === "heritage"
+                              ? "text-amber-300"
+                              : "text-sky-300"
                   }`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
                   {currentCategory === "adventure" && (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M13 10V3L4 14h7v7l9-11h-7z"
+                    />
                   )}
                   {currentCategory === "wildlife" && (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                    />
                   )}
                   {currentCategory === "cultural" && (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
+                    />
                   )}
                   {currentCategory === "water" && (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4 4 0 003 15z" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4 4 0 003 15z"
+                    />
                   )}
                   {currentCategory === "heritage" && (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                    />
                   )}
                   {currentCategory === "leisure" && (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+                    />
                   )}
                 </svg>
                 <span className="font-semibold capitalize">
                   {currentCategory}
                 </span>
               </div>
-              <div className={`px-4 py-2 backdrop-blur-sm rounded-full border flex items-center gap-2 ${
-                currentDifficulty === "easy" ? "border-green-500/30 bg-green-500/20" :
-                currentDifficulty === "moderate" ? "border-yellow-500/30 bg-yellow-500/20" :
-                "border-red-500/30 bg-red-500/20"
-              }`}>
-                <div className={`w-2 h-2 rounded-full ${
-                  currentDifficulty === "easy" ? "bg-green-400" :
-                  currentDifficulty === "moderate" ? "bg-yellow-400" :
-                  "bg-red-400"
-                }`}></div>
+              <div
+                className={`px-4 py-2 backdrop-blur-sm rounded-full border flex items-center gap-2 ${
+                  currentDifficulty === "easy"
+                    ? "border-green-500/30 bg-green-500/20"
+                    : currentDifficulty === "moderate"
+                      ? "border-yellow-500/30 bg-yellow-500/20"
+                      : "border-red-500/30 bg-red-500/20"
+                }`}
+              >
+                <div
+                  className={`w-2 h-2 rounded-full ${
+                    currentDifficulty === "easy"
+                      ? "bg-green-400"
+                      : currentDifficulty === "moderate"
+                        ? "bg-yellow-400"
+                        : "bg-red-400"
+                  }`}
+                ></div>
                 <span className="font-semibold capitalize">
                   {currentDifficulty}
                 </span>
@@ -367,7 +435,9 @@ const ActivityHeroSection = () => {
                 </div>
                 <div className="text-left">
                   <p className="text-sm text-sky-200/90">Instant Booking</p>
-                  <p className="text-base font-bold text-white">Secure & Easy</p>
+                  <p className="text-base font-bold text-white">
+                    Secure & Easy
+                  </p>
                 </div>
               </div>
               <div className="flex items-center gap-3 px-5 py-4 bg-white/5 backdrop-blur-sm rounded-xl border border-teal-500/20 hover:border-teal-400/40 hover:bg-white/10 transition-all duration-300">
@@ -388,7 +458,9 @@ const ActivityHeroSection = () => {
                 </div>
                 <div className="text-left">
                   <p className="text-sm text-teal-200/90">Expert Guides</p>
-                  <p className="text-base font-bold text-white">Local Knowledge</p>
+                  <p className="text-base font-bold text-white">
+                    Local Knowledge
+                  </p>
                 </div>
               </div>
               <div className="flex items-center gap-3 px-5 py-4 bg-white/5 backdrop-blur-sm rounded-xl border border-cyan-500/20 hover:border-cyan-400/40 hover:bg-white/10 transition-all duration-300">
@@ -409,7 +481,9 @@ const ActivityHeroSection = () => {
                 </div>
                 <div className="text-left">
                   <p className="text-sm text-cyan-200/90">Safety First</p>
-                  <p className="text-base font-bold text-white">Certified Equipment</p>
+                  <p className="text-base font-bold text-white">
+                    Certified Equipment
+                  </p>
                 </div>
               </div>
             </div>

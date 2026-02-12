@@ -6,9 +6,12 @@ interface PackageHeaderProps {
   packageData: ActivePackagesType;
 }
 
-const PackageDetailsHeroSection: React.FC<PackageHeaderProps> = ({ packageData }) => {
+const PackageDetailsHeroSection: React.FC<PackageHeaderProps> = ({
+  packageData,
+}) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
 
   const formatPrice = (price: number): string => {
     return new Intl.NumberFormat("en-LK", {
@@ -31,15 +34,22 @@ const PackageDetailsHeroSection: React.FC<PackageHeaderProps> = ({ packageData }
     });
   };
 
+  const handleImageError = (index: number) => {
+    setFailedImages((prev) => new Set(prev).add(index));
+  };
+
   const packageImages = packageData.packageImages || [];
-  const allImages = packageImages.length > 0 
-    ? packageImages 
-    : [{ 
-        imageId: 1, 
-        imageUrl: "", 
-        imageName: "Package Image", 
-        imageDescription: "Package Image" 
-      }];
+  const allImages =
+    packageImages.length > 0
+      ? packageImages
+      : [
+          {
+            imageId: 1,
+            imageUrl: "",
+            imageName: "Package Image",
+            imageDescription: "Package Image",
+          },
+        ];
 
   // Auto-play functionality
   useEffect(() => {
@@ -70,49 +80,35 @@ const PackageDetailsHeroSection: React.FC<PackageHeaderProps> = ({ packageData }
     setTimeout(() => setIsAutoPlaying(true), 10000);
   };
 
-  const getFallbackImage = (index: number) => {
-    const fallbackImages = [
-      "photo-1507525428034-b723cf961d3e", // Beach sunset
-      "photo-1518837695005-2083093ee35b", // Ocean waves
-      "photo-1505142468610-359e7d316be0", // Mountain lake
-      "photo-1493246507139-91e8fad9978e", // Coastal view
-      "photo-1439066615861-d1af74d74000", // Underwater sea
-      "photo-1469474968028-56623f02e42e", // Mountain panorama
-      "photo-1506905925346-21bda4d32df4", // Blue sea
-      "photo-1501854140801-50d01698950b", // Forest lake
-      "photo-1500673922987-e212871fec22", // Tropical island
-      "photo-1493246507139-91e8fad9978e", // Mountains
-    ];
-    return `https://images.unsplash.com/${fallbackImages[index % fallbackImages.length]}?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80`;
-  };
-
   return (
     <div className="relative w-full h-[350px] sm:h-[400px] md:h-[450px] lg:h-[500px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
       {/* Image Slider */}
       <div className="relative w-full h-full">
-        {allImages.map((image, index) => (
-          <div
-            key={image.imageId || index}
-            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-              index === currentSlide ? "opacity-100" : "opacity-0"
-            }`}
-          >
+        {allImages.map((image, index) => {
+          const hasImage = image.imageUrl && !failedImages.has(index);
+
+          return (
             <div
-              className="w-full h-full bg-cover bg-center bg-no-repeat"
-              style={{
-                backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.7), rgba(8, 145, 178, 0.8)), url('${
-                  image.imageUrl || getFallbackImage(index)
-                }')`,
-              }}
-              onError={(e) => {
-                const target = e.target as HTMLDivElement;
-                target.style.backgroundImage = `linear-gradient(rgba(15, 23, 42, 0.7), rgba(8, 145, 178, 0.8)), url('${getFallbackImage(
-                  index
-                )}')`;
-              }}
-            />
-          </div>
-        ))}
+              key={image.imageId || index}
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                index === currentSlide ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              {hasImage ? (
+                <div
+                  className="w-full h-full bg-cover bg-center bg-no-repeat"
+                  style={{
+                    backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.7), rgba(8, 145, 178, 0.8)), url('${image.imageUrl}')`,
+                  }}
+                  onError={() => handleImageError(index)}
+                />
+              ) : (
+                // Pure gradient background when no image or image failed
+                <div className="w-full h-full bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900" />
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* Content Overlay - CENTERED */}
@@ -133,20 +129,39 @@ const PackageDetailsHeroSection: React.FC<PackageHeaderProps> = ({ packageData }
             <div className="flex flex-wrap justify-center gap-3 sm:gap-4 md:gap-6 text-white">
               {/* People */}
               <div className="flex items-center gap-1.5 sm:gap-2 bg-white/10 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-white/20">
-                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-sky-300" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                <svg
+                  className="w-4 h-4 sm:w-5 sm:h-5 text-sky-300"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                    clipRule="evenodd"
+                  />
                 </svg>
                 <span className="text-xs sm:text-sm md:text-base">
-                  {packageData.minPersonCount}-{packageData.maxPersonCount} People
+                  {packageData.minPersonCount}-{packageData.maxPersonCount}{" "}
+                  People
                 </span>
               </div>
 
               {/* Package Type */}
               <div className="flex items-center gap-1.5 sm:gap-2 bg-white/10 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-white/20">
-                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-teal-300" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                <svg
+                  className="w-4 h-4 sm:w-5 sm:h-5 text-teal-300"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                    clipRule="evenodd"
+                  />
                 </svg>
-                <span className="text-xs sm:text-sm md:text-base">{packageData.packageTypeName}</span>
+                <span className="text-xs sm:text-sm md:text-base">
+                  {packageData.packageTypeName}
+                </span>
               </div>
             </div>
           </div>

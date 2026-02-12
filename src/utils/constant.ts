@@ -35,4 +35,5 @@ export const TRENDING_DESTINATIONS_IMAGES_CHANGE_TIME = 5000;
 // Tours
 export const NUMBER_OF_TOUR_CATEGORIES = 5;
 
-
+export const PLACE_HOLDER_IMAGE =
+  "https://res.cloudinary.com/dtzrivqye/image/upload/v1770879098/vyfco5fuhatkl95w0l65.avif";

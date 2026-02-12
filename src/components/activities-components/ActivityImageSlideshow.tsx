@@ -142,7 +142,7 @@ const ActivityImageSlideshow: React.FC<ActivityImageSlideshowProps> = ({
 
       {/* Image Counter */}
       {validImages.length > 1 && (
-        <div className="absolute top-2 right-2 bg-black/70 text-white px-2 py-1 rounded-full text-xs font-medium backdrop-blur-sm">
+        <div className="absolute bottom-2 right-2 bg-black/70 text-white px-2 py-1 rounded-full text-xs font-medium backdrop-blur-sm">
           {currentImageIndex + 1} / {validImages.length}
         </div>
       )}

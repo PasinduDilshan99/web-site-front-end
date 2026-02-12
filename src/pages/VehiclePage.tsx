@@ -1,6 +1,6 @@
 "use client";
 
-import Footer from "@/app/components/footer/Footer";
+import Footer from "@/components/common-components/footer/Footer";
 import NavBar from "@/components/common-components/navBar/NavBar";
 import ImagesTab from "@/components/vehicle-components/ImagesTab";
 import OverviewTab from "@/components/vehicle-components/OverviewTab";

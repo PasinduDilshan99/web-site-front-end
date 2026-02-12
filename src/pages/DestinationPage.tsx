@@ -19,6 +19,7 @@ import DestinationHistory from "@/components/destinations-components/Destination
 import DestinationHistoryGallery from "@/components/destinations-components/DestinationHistoryGallery";
 import DestinationHeroSection from "@/components/destinations-components/DestinationHeroSection";
 import { DestinationService } from "@/services/destinationService";
+import DestinationsLoading from "@/components/destinations-components/DestinationsLoading";
 
 const DestinationPage: React.FC = () => {
   const [destinations, setDestinations] = useState<EnhancedDestination[]>([]);
@@ -136,66 +137,66 @@ const DestinationPage: React.FC = () => {
   }, [filters, currentPage, itemsPerPage]);
 
   // Fetch reviews
-  const fetchReviews = async (): Promise<void> => {
-    try {
-      setReviewsLoading(true);
-      const { data, error } = await destinationService.fetchReviews();
+  // const fetchReviews = async (): Promise<void> => {
+  //   try {
+  //     setReviewsLoading(true);
+  //     const { data, error } = await destinationService.fetchReviews();
 
-      if (error) {
-        throw new Error(error);
-      }
-      setReviews(data);
-      setReviewsError(null);
-    } catch (err) {
-      setReviewsError(
-        err instanceof Error ? err.message : "Failed to load reviews",
-      );
-    } finally {
-      setReviewsLoading(false);
-    }
-  };
+  //     if (error) {
+  //       throw new Error(error);
+  //     }
+  //     setReviews(data);
+  //     setReviewsError(null);
+  //   } catch (err) {
+  //     setReviewsError(
+  //       err instanceof Error ? err.message : "Failed to load reviews",
+  //     );
+  //   } finally {
+  //     setReviewsLoading(false);
+  //   }
+  // };
 
   // Fetch history
-  const fetchHistory = async (): Promise<void> => {
-    try {
-      setHistoryLoading(true);
-      const { data, error } = await destinationService.fetchHistory();
+  // const fetchHistory = async (): Promise<void> => {
+  //   try {
+  //     setHistoryLoading(true);
+  //     const { data, error } = await destinationService.fetchHistory();
 
-      if (error) {
-        throw new Error(error);
-      }
-      setHistory(data);
-      setHistoryError(null);
-    } catch (err) {
-      setHistoryError(
-        err instanceof Error
-          ? err.message
-          : "Failed to load destination history",
-      );
-    } finally {
-      setHistoryLoading(false);
-    }
-  };
+  //     if (error) {
+  //       throw new Error(error);
+  //     }
+  //     setHistory(data);
+  //     setHistoryError(null);
+  //   } catch (err) {
+  //     setHistoryError(
+  //       err instanceof Error
+  //         ? err.message
+  //         : "Failed to load destination history",
+  //     );
+  //   } finally {
+  //     setHistoryLoading(false);
+  //   }
+  // };
 
   // Fetch history images
-  const fetchHistoryImages = async (): Promise<void> => {
-    try {
-      setHistoryImagesLoading(true);
-      const { data, error } = await destinationService.fetchHistoryImages();
+  // const fetchHistoryImages = async (): Promise<void> => {
+  //   try {
+  //     setHistoryImagesLoading(true);
+  //     const { data, error } = await destinationService.fetchHistoryImages();
 
-      if (error) {
-        throw new Error(error);
-      }
-      setHistoryImages(data);
-      setHistoryImagesError(null);
-    } catch (err) {
-      setHistoryImagesError(
-        err instanceof Error ? err.message : "Failed to load history images",
-      );
-    } finally {
-      setHistoryImagesLoading(false);
-    }
-  };
+  //     if (error) {
+  //       throw new Error(error);
+  //     }
+  //     setHistoryImages(data);
+  //     setHistoryImagesError(null);
+  //   } catch (err) {
+  //     setHistoryImagesError(
+  //       err instanceof Error ? err.message : "Failed to load history images",
+  //     );
+  //   } finally {
+  //     setHistoryImagesLoading(false);
+  //   }
+  // };
 
   // Initial data fetch - runs only once on mount
   useEffect(() => {
@@ -204,9 +205,9 @@ const DestinationPage: React.FC = () => {
         setLoading(true);
         await fetchFilterOptions();
         await fetchDestinationsWithFilters();
-        await fetchReviews();
-        await fetchHistory();
-        await fetchHistoryImages();
+        // await fetchReviews();
+        // await fetchHistory();
+        // await fetchHistoryImages();
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       }
@@ -285,9 +286,9 @@ const DestinationPage: React.FC = () => {
     setIsInitialLoad(true);
     fetchFilterOptions();
     fetchDestinationsWithFilters();
-    fetchReviews();
-    fetchHistory();
-    fetchHistoryImages();
+    // fetchReviews();
+    // fetchHistory();
+    // fetchHistoryImages();
   };
 
   // Pagination functions
@@ -306,9 +307,7 @@ const DestinationPage: React.FC = () => {
   };
 
   if (loading) {
-    return (
-      <Loading message="Loading destinations..." variant="spinner" size="md" />
-    );
+    return <DestinationsLoading itemsPerPage={itemsPerPage} />;
   }
 
   if (error) {
@@ -334,8 +333,6 @@ const DestinationPage: React.FC = () => {
   const endItem = Math.min(currentPage * itemsPerPage, totalDestinations);
 
   return (
-    <>
-      <DestinationHeroSection />
       <div className="mx-auto px-4 py-8 bg-gradient-to-br from-white via-blue-50 to-cyan-50 min-h-screen">
         {/* Page Header */}
         <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
@@ -440,7 +437,6 @@ const DestinationPage: React.FC = () => {
           description="Browse through captivating photographs that capture the essence of our destinations' history"
         /> */}
       </div>
-    </>
   );
 };
 

@@ -19,6 +19,7 @@ import {
   FilterOptions,
 } from "@/types/tour-types"; // Import types
 import { TourService } from "@/services/tourService";
+import ToursLoading from "@/components/sri-lankan-tours-components/ToursLoading";
 
 const SriLankanTourPage: React.FC = () => {
   const [tours, setTours] = useState<ActiveToursType[]>([]);
@@ -37,7 +38,7 @@ const SriLankanTourPage: React.FC = () => {
 
   const [tourType, setTourType] = useState<string | null>(null);
   const [location, setLocation] = useState<string | null>(null);
-  
+
   useEffect(() => {
     if (searchParams) {
       setTourType(searchParams.get("tourType"));
@@ -70,14 +71,15 @@ const SriLankanTourPage: React.FC = () => {
   const [durations, setDurations] = useState<number[]>([]);
 
   // Debounce timer
-  const [pageSizeDebounceTimer, setPageSizeDebounceTimer] = useState<NodeJS.Timeout | null>(null);
+  const [pageSizeDebounceTimer, setPageSizeDebounceTimer] =
+    useState<NodeJS.Timeout | null>(null);
 
   // Fetch filter options
   const fetchFilterOptions = useCallback(async (): Promise<void> => {
     try {
       // USING THE SERVICE
       const options = await TourService.getFilterOptions();
-      
+
       setTourTypes(options.tourTypes);
       setTourCategories(options.tourCategories);
       setSeasons(options.seasons);
@@ -92,7 +94,7 @@ const SriLankanTourPage: React.FC = () => {
   const fetchToursWithFilters = useCallback(
     async (
       pageNum: number = currentPage,
-      pageSize: number = itemsPerPage
+      pageSize: number = itemsPerPage,
     ): Promise<void> => {
       try {
         setLoading(true);
@@ -135,7 +137,7 @@ const SriLankanTourPage: React.FC = () => {
         setLoading(false);
       }
     },
-    [filters, currentPage, itemsPerPage, tourType, location]
+    [filters, currentPage, itemsPerPage, tourType, location],
   );
 
   // Add this useEffect to sync URL params on component mount
@@ -165,9 +167,9 @@ const SriLankanTourPage: React.FC = () => {
 
         await fetchFilterOptions();
         await fetchToursWithFilters(1, itemsPerPage);
-        fetchReviews();
-        fetchTourHistory();
-        fetchTourHistoryImages();
+        // fetchReviews();
+        // fetchTourHistory();
+        // fetchTourHistoryImages();
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
@@ -236,72 +238,72 @@ const SriLankanTourPage: React.FC = () => {
     fetchToursWithFilters(1, itemsPerPage);
   }, [fetchToursWithFilters, itemsPerPage]);
 
-  const fetchTourHistory = async (): Promise<void> => {
-    try {
-      setHistoryLoading(true);
-      // USING THE SERVICE
-      const result = await TourService.getTourHistory();
+  // const fetchTourHistory = async (): Promise<void> => {
+  //   try {
+  //     setHistoryLoading(true);
+  //     // USING THE SERVICE
+  //     const result = await TourService.getTourHistory();
 
-      if (result.code === 200) {
-        setHistories(result.data);
-        setHistoryError(null);
-      } else {
-        throw new Error(result.message);
-      }
-    } catch (err) {
-      setHistoryError(
-        err instanceof Error ? err.message : "Failed to load tour history"
-      );
-    } finally {
-      setHistoryLoading(false);
-    }
-  };
+  //     if (result.code === 200) {
+  //       setHistories(result.data);
+  //       setHistoryError(null);
+  //     } else {
+  //       throw new Error(result.message);
+  //     }
+  //   } catch (err) {
+  //     setHistoryError(
+  //       err instanceof Error ? err.message : "Failed to load tour history",
+  //     );
+  //   } finally {
+  //     setHistoryLoading(false);
+  //   }
+  // };
 
-  const fetchTourHistoryImages = async (): Promise<void> => {
-    try {
-      setGalleryLoading(true);
-      // USING THE SERVICE
-      const result = await TourService.getTourHistoryImages();
+  // const fetchTourHistoryImages = async (): Promise<void> => {
+  //   try {
+  //     setGalleryLoading(true);
+  //     // USING THE SERVICE
+  //     const result = await TourService.getTourHistoryImages();
 
-      if (result.code === 200) {
-        setGalleryImages(result.data);
-        setGalleryError(null);
-      } else {
-        throw new Error(result.message);
-      }
-    } catch (err) {
-      setGalleryError(
-        err instanceof Error ? err.message : "Failed to load tour images"
-      );
-    } finally {
-      setGalleryLoading(false);
-    }
-  };
+  //     if (result.code === 200) {
+  //       setGalleryImages(result.data);
+  //       setGalleryError(null);
+  //     } else {
+  //       throw new Error(result.message);
+  //     }
+  //   } catch (err) {
+  //     setGalleryError(
+  //       err instanceof Error ? err.message : "Failed to load tour images",
+  //     );
+  //   } finally {
+  //     setGalleryLoading(false);
+  //   }
+  // };
 
-  const fetchReviews = async (): Promise<void> => {
-    try {
-      setReviewsLoading(true);
-      // USING THE SERVICE
-      const result = await TourService.getTourReviews();
+  // const fetchReviews = async (): Promise<void> => {
+  //   try {
+  //     setReviewsLoading(true);
+  //     // USING THE SERVICE
+  //     const result = await TourService.getTourReviews();
 
-      if (result.code === 200) {
-        setReviews(result.data);
-        setReviewsError(null);
-      } else {
-        throw new Error(result.message);
-      }
-    } catch (err) {
-      setReviewsError(
-        err instanceof Error ? err.message : "Failed to load reviews"
-      );
-    } finally {
-      setReviewsLoading(false);
-    }
-  };
+  //     if (result.code === 200) {
+  //       setReviews(result.data);
+  //       setReviewsError(null);
+  //     } else {
+  //       throw new Error(result.message);
+  //     }
+  //   } catch (err) {
+  //     setReviewsError(
+  //       err instanceof Error ? err.message : "Failed to load reviews",
+  //     );
+  //   } finally {
+  //     setReviewsLoading(false);
+  //   }
+  // };
 
   const handleFilterChange = (
     filterName: keyof TourFilters,
-    value: unknown
+    value: unknown,
   ): void => {
     setFilters((prev) => ({
       ...prev,
@@ -320,9 +322,9 @@ const SriLankanTourPage: React.FC = () => {
     setGalleryLoading(true);
     fetchFilterOptions();
     fetchToursWithFilters(1, itemsPerPage);
-    fetchReviews();
-    fetchTourHistory();
-    fetchTourHistoryImages();
+    // fetchReviews();
+    // fetchTourHistory();
+    // fetchTourHistoryImages();
   };
 
   const handlePageChange = (page: number) => {
@@ -334,15 +336,7 @@ const SriLankanTourPage: React.FC = () => {
   };
 
   if (loading) {
-    return (
-      <div className="py-8">
-        <Loading
-          message="Loading destination history..."
-          variant="spinner"
-          size="md"
-        />
-      </div>
-    );
+    return <ToursLoading itemsPerPage={itemsPerPage} />;
   }
 
   if (error) {
@@ -407,9 +401,7 @@ const SriLankanTourPage: React.FC = () => {
             <select
               id="itemsPerPage"
               value={itemsPerPage}
-              onChange={(e) =>
-                handleItemsPerPageChange(Number(e.target.value))
-              }
+              onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
               className="border text-sky-700 border-sky-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white transition-all duration-200 hover:border-sky-400"
             >
               <option value={6}>6</option>
@@ -546,8 +538,18 @@ const Pagination: React.FC<PaginationProps> = ({
           disabled={currentPage === 1}
           className="px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
           </svg>
           Previous
         </button>
@@ -576,8 +578,18 @@ const Pagination: React.FC<PaginationProps> = ({
           className="px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
         >
           Next
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
           </svg>
         </button>
       </div>

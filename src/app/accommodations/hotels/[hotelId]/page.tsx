@@ -1,5 +1,5 @@
 // app/accommodations/hotels/[hotelId]/page.tsx
-import Footer from "@/app/components/footer/Footer";
+import Footer from "@/components/common-components/footer/Footer";
 import HotelDetailsContent from "@/components/accommodation-components/hotels-components/hotel-details-components/HotelDetailsContent";
 import NavBar from "@/components/common-components/navBar/NavBar";
 import { ServiceProviderAPIResponse } from "@/types/accommodations-types/service-provider-types";
