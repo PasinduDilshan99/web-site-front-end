@@ -1,6 +1,6 @@
 // pages/details-pages/HostelDetailsPage.tsx
 import React from "react";
-import Footer from "@/app/components/footer/Footer";
+import Footer from "@/components/common-components/footer/Footer";
 import NavBar from "@/components/common-components/navBar/NavBar";
 import { ServiceProviderAPIResponse } from "@/types/accommodations-types/service-provider-types";
 import HostelDetailsContent from "@/components/accommodation-components/hostel-components/hostel-details-components/HostelDetailsContent";

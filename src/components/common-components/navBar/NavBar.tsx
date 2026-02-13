@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { NavBarItem } from "@/types/nav-bar-types";
-import { COMPANY_NAME} from "@/utils/constant";
+import { COMPANY_NAME } from "@/utils/constant";
 import NavBarContainer from "./NavBarContainer";
 import DesktopNav from "./DesktopNav";
 import MobileNav from "./MobileNav";
@@ -96,11 +96,16 @@ const NavBar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isScrolled]);
 
-  if (loading || authLoading) return <BasicLoading width="w-full" height="h-16" />;
+  if (loading || authLoading)
+    return (
+      <div className="bg-gradient-to-br from-slate-900 via-gray-900 to-teal-950  ">
+        <BasicLoading width="w-full" height="h-16" />
+      </div>
+    );
   if (error) return null;
 
   const visibleNavBarItems = navBarData.filter(
-    (item) => item.status === "VISIBLE"
+    (item) => item.status === "VISIBLE",
   );
 
   const maxVisibleItems = getMaxVisibleItems();
@@ -118,7 +123,7 @@ const NavBar = () => {
     onCloseAll: () => {
       setIsMenuOpen(false);
       setIsScrolledMenuOpen(false);
-    }
+    },
   };
 
   return (
@@ -150,18 +155,34 @@ const NavBar = () => {
                 style={{ color: "#075985" }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.color = "#0ea5e9";
-                  e.currentTarget.style.backgroundColor = "rgba(14, 165, 233, 0.08)";
+                  e.currentTarget.style.backgroundColor =
+                    "rgba(14, 165, 233, 0.08)";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.color = "#075985";
                   e.currentTarget.style.backgroundColor = "transparent";
                 }}
               >
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   {isMenuOpen ? (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   ) : (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
                   )}
                 </svg>
               </button>
@@ -180,7 +201,9 @@ const NavBar = () => {
       {/* Scrolled NavBar */}
       <nav
         className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-lg border-b shadow-xl transition-all duration-300 ${
-          isScrolled ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
+          isScrolled
+            ? "translate-y-0 opacity-100"
+            : "-translate-y-full opacity-0"
         }`}
         style={{
           backgroundColor: "rgba(248, 250, 252, 0.99)",
@@ -204,18 +227,34 @@ const NavBar = () => {
                 style={{ color: "#075985" }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.color = "#0ea5e9";
-                  e.currentTarget.style.backgroundColor = "rgba(14, 165, 233, 0.08)";
+                  e.currentTarget.style.backgroundColor =
+                    "rgba(14, 165, 233, 0.08)";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.color = "#075985";
                   e.currentTarget.style.backgroundColor = "transparent";
                 }}
               >
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   {isScrolledMenuOpen ? (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   ) : (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
                   )}
                 </svg>
               </button>

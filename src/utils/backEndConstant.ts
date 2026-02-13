@@ -64,6 +64,7 @@ const COUPON = "/coupon"
 const USER_NOTIFICATION_PERMISSIONS = "/user-notification-permissions"
 const ACCOUNT_SECURITY = "/account-security"
 const BOOKING = "/booking"
+const BROWSER_HISTORY = "/browser-history"
 
 
 // Auth
@@ -238,6 +239,7 @@ export const ADD_FAQ_REQUEST_DATA = `${BASE_PATH}${API}${VERSION}${FAQ}/insert-f
 
 // Employees
 export const GET_EMPLOYEE_DETAILS_BY_TOUR_ID_DATA = `${BASE_PATH}${API}${VERSION}${EMPLOYEE}/employee-details`;
+export const GET_CEO_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${EMPLOYEE}/ceo-details`;
 
 // Wish List
 export const ADD_ACTIVITY_WISH_LIST_DATA= `${BASE_PATH}${API}${VERSION}${WISH_LIST}/add-activity-wish-list`;
@@ -246,6 +248,8 @@ export const ADD_TOUR_WISH_LIST_DATA= `${BASE_PATH}${API}${VERSION}${WISH_LIST}/
 export const ADD_PACKAGE_WISH_LIST_DATA= `${BASE_PATH}${API}${VERSION}${WISH_LIST}/add-package-wish-list`;
 export const GET_WIS_LIST_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${WISH_LIST}/details`;
 
+// Browser History
+export const ADD_BROWSER_HISTORY_REQUEST_DATA = `${BASE_PATH}${API}${VERSION}${BROWSER_HISTORY}/add`;
 
 export const GET_TOUR_DETAILS_BY_ID_BE = `${BASE_PATH}${VERSION}${API}${TOUR}`;
 

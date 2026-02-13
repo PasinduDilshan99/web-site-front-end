@@ -1,5 +1,5 @@
 // app/accommodations/villas/[villaId]/page.tsx
-import Footer from "@/app/components/footer/Footer";
+import Footer from "@/components/common-components/footer/Footer";
 import VillaDetailsContent from "@/components/accommodation-components/villa-components/villa-details-components/VillaDetailsContent";
 import NavBar from "@/components/common-components/navBar/NavBar";
 import { ServiceProviderAPIResponse } from "@/types/accommodations-types/service-provider-types";

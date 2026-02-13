@@ -17,6 +17,7 @@ import {
 } from "@/types/activity-types";
 import { ActivityService } from "@/services/activityService";
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";
+import ActivitiesLoading from "@/components/activities-components/ActivitiesLoading";
 
 const ActivityPage: React.FC = () => {
   const [activities, setActivities] = useState<ActiveActivitiesType[]>([]);
@@ -133,9 +134,9 @@ const ActivityPage: React.FC = () => {
         setLoading(true);
         await fetchFilterOptions();
         await fetchActivitiesWithFilters();
-        fetchReviews();
-        fetchActivityHistory();
-        fetchActivityHistoryImages();
+        // fetchReviews();
+        // fetchActivityHistory();
+        // fetchActivityHistoryImages();
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       }
@@ -168,77 +169,77 @@ const ActivityPage: React.FC = () => {
     }
   }, [itemsPerPage]); // Only depends on itemsPerPage
 
-  const fetchActivityHistoryImages = async (): Promise<void> => {
-    try {
-      setHistoryImagesLoading(true);
-      setHistoryImagesError(null);
+  // const fetchActivityHistoryImages = async (): Promise<void> => {
+  //   try {
+  //     setHistoryImagesLoading(true);
+  //     setHistoryImagesError(null);
 
-      // USING THE SERVICE INSTEAD OF DIRECT FETCH
-      const { historyImages: fetchedImages, error } =
-        await ActivityService.fetchActivityHistoryImages();
+  //     // USING THE SERVICE INSTEAD OF DIRECT FETCH
+  //     const { historyImages: fetchedImages, error } =
+  //       await ActivityService.fetchActivityHistoryImages();
 
-      if (error) {
-        setHistoryImagesError(error);
-      } else {
-        setHistoryImages(fetchedImages);
-        setHistoryImagesError(null);
-      }
-    } catch (err) {
-      setHistoryImagesError(
-        err instanceof Error ? err.message : "Failed to load activity images",
-      );
-    } finally {
-      setHistoryImagesLoading(false);
-    }
-  };
+  //     if (error) {
+  //       setHistoryImagesError(error);
+  //     } else {
+  //       setHistoryImages(fetchedImages);
+  //       setHistoryImagesError(null);
+  //     }
+  //   } catch (err) {
+  //     setHistoryImagesError(
+  //       err instanceof Error ? err.message : "Failed to load activity images",
+  //     );
+  //   } finally {
+  //     setHistoryImagesLoading(false);
+  //   }
+  // };
 
-  const fetchReviews = async (): Promise<void> => {
-    try {
-      setReviewsLoading(true);
-      setReviewsError(null);
+  // const fetchReviews = async (): Promise<void> => {
+  //   try {
+  //     setReviewsLoading(true);
+  //     setReviewsError(null);
 
-      // USING THE SERVICE INSTEAD OF DIRECT FETCH
-      const { reviews: fetchedReviews, error } =
-        await ActivityService.fetchReviews();
+  //     // USING THE SERVICE INSTEAD OF DIRECT FETCH
+  //     const { reviews: fetchedReviews, error } =
+  //       await ActivityService.fetchReviews();
 
-      if (error) {
-        setReviewsError(error);
-      } else {
-        setReviews(fetchedReviews);
-        setReviewsError(null);
-      }
-    } catch (err) {
-      setReviewsError(
-        err instanceof Error ? err.message : "Failed to load reviews",
-      );
-    } finally {
-      setReviewsLoading(false);
-    }
-  };
+  //     if (error) {
+  //       setReviewsError(error);
+  //     } else {
+  //       setReviews(fetchedReviews);
+  //       setReviewsError(null);
+  //     }
+  //   } catch (err) {
+  //     setReviewsError(
+  //       err instanceof Error ? err.message : "Failed to load reviews",
+  //     );
+  //   } finally {
+  //     setReviewsLoading(false);
+  //   }
+  // };
 
-  const fetchActivityHistory = async (): Promise<void> => {
-    try {
-      setHistoryLoading(true);
-      setHistoryError(null);
+  // const fetchActivityHistory = async (): Promise<void> => {
+  //   try {
+  //     setHistoryLoading(true);
+  //     setHistoryError(null);
 
-      // USING THE SERVICE INSTEAD OF DIRECT FETCH
-      const { histories: fetchedHistories, error } =
-        await ActivityService.fetchActivityHistory();
+  //     // USING THE SERVICE INSTEAD OF DIRECT FETCH
+  //     const { histories: fetchedHistories, error } =
+  //       await ActivityService.fetchActivityHistory();
 
-      if (error) {
-        setHistoryError(error);
-      } else {
-        setHistories(fetchedHistories);
-        setHistoryError(null);
-      }
-    } catch (err) {
-      setHistoryError(
-        err instanceof Error ? err.message : "Failed to load activity history",
-      );
-    } finally {
-      setHistoryLoading(false);
-    }
-  };
+  //     if (error) {
+  //       setHistoryError(error);
+  //     } else {
+  //       setHistories(fetchedHistories);
+  //       setHistoryError(null);
+  //     }
+  //   } catch (err) {
+  //     setHistoryError(
+  //       err instanceof Error ? err.message : "Failed to load activity history",
+  //     );
+  //   } finally {
+  //     setHistoryLoading(false);
+  //   }
+  // };
 
   const handleFilterChange = (
     filterName: keyof ActivityFilters,
@@ -281,9 +282,9 @@ const ActivityPage: React.FC = () => {
     setIsInitialLoad(true);
     fetchFilterOptions();
     fetchActivitiesWithFilters();
-    fetchReviews();
-    fetchActivityHistory();
-    fetchActivityHistoryImages();
+    // fetchReviews();
+    // fetchActivityHistory();
+    // fetchActivityHistoryImages();
   };
 
   // Pagination calculations
@@ -305,9 +306,7 @@ const ActivityPage: React.FC = () => {
   };
 
   if (loading) {
-    return (
-      <Loading message="Loading activities..." variant="spinner" size="md" />
-    );
+    return <ActivitiesLoading itemsPerPage={itemsPerPage} />;
   }
 
   if (error) {
@@ -329,8 +328,6 @@ const ActivityPage: React.FC = () => {
   }
 
   return (
-    <>
-      <ActivityHeroSection />
       <div className="mx-auto px-4 py-8 bg-gradient-to-br from-blue-50 via-sky-50 to-cyan-50 min-h-screen">
         {/* Page Header */}
         <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
@@ -438,7 +435,6 @@ const ActivityPage: React.FC = () => {
           onRetry={fetchActivityHistoryImages}
         /> */}
       </div>
-    </>
   );
 };
 
@@ -448,7 +444,7 @@ export default ActivityPage;
 const NoResults: React.FC<{ onResetFilters: () => void }> = ({
   onResetFilters,
 }) => (
-<div className="text-center py-12">
+  <div className="text-center py-12">
     <div className="text-sky-600 text-lg mb-4">
       No activities found matching your filters.
     </div>
@@ -517,8 +513,18 @@ const Pagination: React.FC<PaginationProps> = ({
           disabled={currentPage === 1}
           className="px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
           </svg>
           Previous
         </button>
@@ -547,8 +553,18 @@ const Pagination: React.FC<PaginationProps> = ({
           className="px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
         >
           Next
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
           </svg>
         </button>
       </div>

@@ -11,8 +11,6 @@ export async function GET(
   try {
     const { tourId } = await context.params;
 
-    console.log("tour History API - tourId:", tourId);
-
     if (!tourId) {
       return NextResponse.json(
         { error: "tour ID is required" },

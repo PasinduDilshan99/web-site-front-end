@@ -11,7 +11,7 @@ import VehicleAssignments from "./VehicleAssignments";
 import ServiceHistory from "./ServiceHistory";
 import FuelRecords from "./FuelRecords";
 import NavBar from "@/components/common-components/navBar/NavBar";
-import Footer from "@/app/components/footer/Footer";
+import Footer from "@/components/common-components/footer/Footer";
 
 interface VehicleDetailsClientProps {
   vehicle: VehicleById;

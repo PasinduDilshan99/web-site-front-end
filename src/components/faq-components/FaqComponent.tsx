@@ -26,7 +26,7 @@ export const FaqComponent = ({ showAll = false, displayLimit }: FaqProps) => {
   };
 
   const [currentDisplayLimit, setCurrentDisplayLimit] = useState(
-    displayLimit || getDefaultDisplayLimit()
+    displayLimit || getDefaultDisplayLimit(),
   );
 
   // Update display limit on window resize
@@ -56,18 +56,21 @@ export const FaqComponent = ({ showAll = false, displayLimit }: FaqProps) => {
         setFaqData((prevData) =>
           prevData.map((item) =>
             item.faqId === faqId
-              ? { 
-                  ...item, 
-                  faqViewCount: (item.faqViewCount || 0) + 1 
+              ? {
+                  ...item,
+                  faqViewCount: (item.faqViewCount || 0) + 1,
                 }
-              : item
-          )
+              : item,
+          ),
         );
         return true;
       } else {
         // Show error only in development
-        if (process.env.NODE_ENV === 'development') {
-          console.warn("View count update failed:", result.error || "Unknown error");
+        if (process.env.NODE_ENV === "development") {
+          console.warn(
+            "View count update failed:",
+            result.error || "Unknown error",
+          );
         }
         return false;
       }
@@ -82,12 +85,12 @@ export const FaqComponent = ({ showAll = false, displayLimit }: FaqProps) => {
     setFaqData((prevData) =>
       prevData.map((item) =>
         item.faqId === faqId
-          ? { 
-              ...item, 
-              faqViewCount: (item.faqViewCount || 0) + 1 
+          ? {
+              ...item,
+              faqViewCount: (item.faqViewCount || 0) + 1,
             }
-          : item
-      )
+          : item,
+      ),
     );
   };
 
@@ -132,7 +135,7 @@ export const FaqComponent = ({ showAll = false, displayLimit }: FaqProps) => {
     if (!wasOpen) {
       // Optimistically update the view count locally first
       incrementLocalViewCount(faqId);
-      
+
       // Then try to update on the server (fire and forget)
       try {
         await FaqService.incrementViewCount(faqId);
@@ -159,7 +162,7 @@ export const FaqComponent = ({ showAll = false, displayLimit }: FaqProps) => {
   }
 
   return (
-<section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-br from-slate-50 via-sky-50 to-teal-50">
+    <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-br from-slate-50 via-sky-50 to-teal-50">
       <div className="max-w-sm sm:max-w-2xl md:max-w-4xl lg:max-w-6xl xl:max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
         <FaqHeader />
         <FaqList
@@ -174,6 +177,6 @@ export const FaqComponent = ({ showAll = false, displayLimit }: FaqProps) => {
           showAll={showAll}
         />
       </div>
-</section>
+    </section>
   );
 };

@@ -11,9 +11,9 @@ const PrivacyPolicyPage = () => {
   const lastUpdated = "February 1, 2026";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50 to-amber-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-emerald-50">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-purple-600 via-purple-500 to-amber-500 text-white py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
+      <div className="bg-gradient-to-r from-cyan-600 via-blue-500 to-emerald-500 text-white py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <div className="inline-block mb-4 sm:mb-6">
             <div className="flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-white/20 rounded-full backdrop-blur-sm">
@@ -77,7 +77,7 @@ const PrivacyPolicyPage = () => {
               className="w-full px-6 sm:px-8 py-4 sm:py-6 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-500 to-amber-600 rounded-lg flex items-center justify-center">
+                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-cyan-500 to-emerald-600 rounded-lg flex items-center justify-center">
                   <svg
                     className="w-5 h-5 sm:w-6 sm:h-6 text-white"
                     fill="none"
@@ -165,7 +165,7 @@ const PrivacyPolicyPage = () => {
               className="w-full px-6 sm:px-8 py-4 sm:py-6 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-amber-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-emerald-500 to-cyan-600 rounded-lg flex items-center justify-center">
                   <svg
                     className="w-5 h-5 sm:w-6 sm:h-6 text-white"
                     fill="none"
@@ -254,7 +254,7 @@ const PrivacyPolicyPage = () => {
               className="w-full px-6 sm:px-8 py-4 sm:py-6 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-600 to-amber-500 rounded-lg flex items-center justify-center">
+                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-cyan-600 to-emerald-500 rounded-lg flex items-center justify-center">
                   <svg
                     className="w-5 h-5 sm:w-6 sm:h-6 text-white"
                     fill="none"
@@ -299,7 +299,7 @@ const PrivacyPolicyPage = () => {
                   We may share your information with:
                 </p>
                 <div className="space-y-4">
-                  <div className="bg-purple-50 p-4 rounded-lg">
+                  <div className="bg-cyan-50 p-4 rounded-lg">
                     <h4 className="font-semibold text-gray-900 mb-2">
                       Service Providers
                     </h4>
@@ -308,7 +308,7 @@ const PrivacyPolicyPage = () => {
                       travel-related service providers in Sri Lanka and abroad
                     </p>
                   </div>
-                  <div className="bg-amber-50 p-4 rounded-lg">
+                  <div className="bg-emerald-50 p-4 rounded-lg">
                     <h4 className="font-semibold text-gray-900 mb-2">
                       Payment Processors
                     </h4>
@@ -316,7 +316,7 @@ const PrivacyPolicyPage = () => {
                       Secure payment gateways to process your transactions
                     </p>
                   </div>
-                  <div className="bg-purple-50 p-4 rounded-lg">
+                  <div className="bg-cyan-50 p-4 rounded-lg">
                     <h4 className="font-semibold text-gray-900 mb-2">
                       Legal Authorities
                     </h4>
@@ -325,7 +325,7 @@ const PrivacyPolicyPage = () => {
                       rights
                     </p>
                   </div>
-                  <div className="bg-amber-50 p-4 rounded-lg">
+                  <div className="bg-emerald-50 p-4 rounded-lg">
                     <h4 className="font-semibold text-gray-900 mb-2">
                       Business Transfers
                     </h4>
@@ -334,7 +334,7 @@ const PrivacyPolicyPage = () => {
                     </p>
                   </div>
                 </div>
-                <p className="text-sm sm:text-base mt-4 bg-amber-50 p-4 rounded-lg border-l-4 border-amber-400">
+                <p className="text-sm sm:text-base mt-4 bg-emerald-50 p-4 rounded-lg border-l-4 border-emerald-500">
                   <strong>Note:</strong> We do not sell your personal information
                   to third parties for marketing purposes.
                 </p>
@@ -349,7 +349,7 @@ const PrivacyPolicyPage = () => {
               className="w-full px-6 sm:px-8 py-4 sm:py-6 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-500 to-amber-500 rounded-lg flex items-center justify-center">
+                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-cyan-500 to-emerald-500 rounded-lg flex items-center justify-center">
                   <svg
                     className="w-5 h-5 sm:w-6 sm:h-6 text-white"
                     fill="none"
@@ -397,7 +397,7 @@ const PrivacyPolicyPage = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="flex items-start space-x-3">
                     <svg
-                      className="w-5 h-5 text-purple-600 mt-1 flex-shrink-0"
+                      className="w-5 h-5 text-cyan-600 mt-1 flex-shrink-0"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -411,7 +411,7 @@ const PrivacyPolicyPage = () => {
                   </div>
                   <div className="flex items-start space-x-3">
                     <svg
-                      className="w-5 h-5 text-purple-600 mt-1 flex-shrink-0"
+                      className="w-5 h-5 text-cyan-600 mt-1 flex-shrink-0"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -425,7 +425,7 @@ const PrivacyPolicyPage = () => {
                   </div>
                   <div className="flex items-start space-x-3">
                     <svg
-                      className="w-5 h-5 text-purple-600 mt-1 flex-shrink-0"
+                      className="w-5 h-5 text-cyan-600 mt-1 flex-shrink-0"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -439,7 +439,7 @@ const PrivacyPolicyPage = () => {
                   </div>
                   <div className="flex items-start space-x-3">
                     <svg
-                      className="w-5 h-5 text-purple-600 mt-1 flex-shrink-0"
+                      className="w-5 h-5 text-cyan-600 mt-1 flex-shrink-0"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -453,7 +453,7 @@ const PrivacyPolicyPage = () => {
                   </div>
                   <div className="flex items-start space-x-3">
                     <svg
-                      className="w-5 h-5 text-purple-600 mt-1 flex-shrink-0"
+                      className="w-5 h-5 text-cyan-600 mt-1 flex-shrink-0"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -467,7 +467,7 @@ const PrivacyPolicyPage = () => {
                   </div>
                   <div className="flex items-start space-x-3">
                     <svg
-                      className="w-5 h-5 text-purple-600 mt-1 flex-shrink-0"
+                      className="w-5 h-5 text-cyan-600 mt-1 flex-shrink-0"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -498,7 +498,7 @@ const PrivacyPolicyPage = () => {
               className="w-full px-6 sm:px-8 py-4 sm:py-6 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-amber-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-emerald-500 to-cyan-600 rounded-lg flex items-center justify-center">
                   <svg
                     className="w-5 h-5 sm:w-6 sm:h-6 text-white"
                     fill="none"
@@ -542,42 +542,42 @@ const PrivacyPolicyPage = () => {
                 <p>You have the following rights regarding your personal data:</p>
                 <div className="space-y-3">
                   <div className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
-                    <span className="font-bold text-purple-600 text-lg">→</span>
+                    <span className="font-bold text-cyan-600 text-lg">→</span>
                     <div>
                       <strong>Access:</strong> Request a copy of the personal
                       information we hold about you
                     </div>
                   </div>
                   <div className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
-                    <span className="font-bold text-purple-600 text-lg">→</span>
+                    <span className="font-bold text-cyan-600 text-lg">→</span>
                     <div>
                       <strong>Correction:</strong> Request correction of
                       inaccurate or incomplete information
                     </div>
                   </div>
                   <div className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
-                    <span className="font-bold text-purple-600 text-lg">→</span>
+                    <span className="font-bold text-cyan-600 text-lg">→</span>
                     <div>
                       <strong>Deletion:</strong> Request deletion of your personal
                       data (subject to legal obligations)
                     </div>
                   </div>
                   <div className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
-                    <span className="font-bold text-purple-600 text-lg">→</span>
+                    <span className="font-bold text-cyan-600 text-lg">→</span>
                     <div>
                       <strong>Objection:</strong> Object to processing of your
                       data for marketing purposes
                     </div>
                   </div>
                   <div className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
-                    <span className="font-bold text-purple-600 text-lg">→</span>
+                    <span className="font-bold text-cyan-600 text-lg">→</span>
                     <div>
                       <strong>Portability:</strong> Request transfer of your data
                       to another service provider
                     </div>
                   </div>
                   <div className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
-                    <span className="font-bold text-purple-600 text-lg">→</span>
+                    <span className="font-bold text-cyan-600 text-lg">→</span>
                     <div>
                       <strong>Withdrawal:</strong> Withdraw consent for data
                       processing at any time
@@ -595,7 +595,7 @@ const PrivacyPolicyPage = () => {
               className="w-full px-6 sm:px-8 py-4 sm:py-6 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-500 to-amber-600 rounded-lg flex items-center justify-center">
+                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-cyan-500 to-emerald-600 rounded-lg flex items-center justify-center">
                   <svg
                     className="w-5 h-5 sm:w-6 sm:h-6 text-white"
                     fill="none"
@@ -641,28 +641,28 @@ const PrivacyPolicyPage = () => {
                   experience:
                 </p>
                 <div className="space-y-3">
-                  <div className="border-l-4 border-purple-500 pl-4 py-2">
+                  <div className="border-l-4 border-cyan-500 pl-4 py-2">
                     <strong className="text-gray-900">Essential Cookies:</strong>{" "}
                     Required for website functionality and security
                   </div>
-                  <div className="border-l-4 border-amber-500 pl-4 py-2">
+                  <div className="border-l-4 border-emerald-500 pl-4 py-2">
                     <strong className="text-gray-900">
                       Performance Cookies:
                     </strong>{" "}
                     Help us analyze website performance and usage
                   </div>
-                  <div className="border-l-4 border-purple-500 pl-4 py-2">
+                  <div className="border-l-4 border-cyan-500 pl-4 py-2">
                     <strong className="text-gray-900">
                       Functionality Cookies:
                     </strong>{" "}
                     Remember your preferences and settings
                   </div>
-                  <div className="border-l-4 border-amber-500 pl-4 py-2">
+                  <div className="border-l-4 border-emerald-500 pl-4 py-2">
                     <strong className="text-gray-900">Marketing Cookies:</strong>{" "}
                     Used to deliver personalized advertisements
                   </div>
                 </div>
-                <p className="bg-purple-50 p-4 rounded-lg">
+                <p className="bg-cyan-50 p-4 rounded-lg">
                   You can control cookies through your browser settings. Note that
                   disabling cookies may affect website functionality.
                 </p>
@@ -677,7 +677,7 @@ const PrivacyPolicyPage = () => {
               className="w-full px-6 sm:px-8 py-4 sm:py-6 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-amber-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-emerald-500 to-cyan-600 rounded-lg flex items-center justify-center">
                   <svg
                     className="w-5 h-5 sm:w-6 sm:h-6 text-white"
                     fill="none"
@@ -727,7 +727,7 @@ const PrivacyPolicyPage = () => {
                   <li>Resolve disputes and enforce our agreements</li>
                   <li>Maintain business records and financial documentation</li>
                 </ul>
-                <div className="bg-gradient-to-r from-purple-50 to-amber-50 p-4 sm:p-6 rounded-lg mt-4">
+                <div className="bg-gradient-to-r from-cyan-50 to-emerald-50 p-4 sm:p-6 rounded-lg mt-4">
                   <h4 className="font-semibold text-gray-900 mb-3">
                     Typical Retention Periods:
                   </h4>
@@ -754,7 +754,7 @@ const PrivacyPolicyPage = () => {
         </div>
 
         {/* Contact Section */}
-        {/* <div className="mt-8 sm:mt-12 lg:mt-16 bg-gradient-to-r from-purple-600 via-purple-500 to-amber-500 rounded-xl sm:rounded-2xl p-6 sm:p-8 lg:p-10 text-white shadow-2xl">
+        {/* <div className="mt-8 sm:mt-12 lg:mt-16 bg-gradient-to-r from-cyan-600 via-blue-500 to-emerald-500 rounded-xl sm:rounded-2xl p-6 sm:p-8 lg:p-10 text-white shadow-2xl">
           <div className="text-center">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6">
               Questions About Your Privacy?

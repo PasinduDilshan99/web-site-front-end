@@ -2,6 +2,7 @@
 import { HeroSectionService } from "@/services/heroSectionService";
 import { AboutUsHeroData } from "@/types/hero-section-types";
 import React, { useState, useEffect } from "react";
+import HeroSectionLoading from "../loading-components/HeroSectionLoading";
 
 const AboutUsHeroSection = () => {
   const [loading, setLoading] = useState(true);
@@ -15,7 +16,8 @@ const AboutUsHeroSection = () => {
       try {
         setLoading(true);
         setError(null);
-        const { data: items, error } = await HeroSectionService.fetchAboutUsHeroData();
+        const { data: items, error } =
+          await HeroSectionService.fetchAboutUsHeroData();
 
         if (error) {
           setError(error);
@@ -75,8 +77,8 @@ const AboutUsHeroSection = () => {
 
   const handleButtonClick = (link?: string) => {
     if (link) {
-      if (link.startsWith('http')) {
-        window.open(link, '_blank');
+      if (link.startsWith("http")) {
+        window.open(link, "_blank");
       } else {
         window.location.href = link;
       }
@@ -84,14 +86,7 @@ const AboutUsHeroSection = () => {
   };
 
   if (loading) {
-    return (
-      <div className="relative w-full h-[600px] md:h-[700px] overflow-hidden bg-gradient-to-br from-blue-900 to-teal-800 flex items-center justify-center">
-        <div className="text-center text-white">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-lg">Loading About Us...</p>
-        </div>
-      </div>
-    );
+    return <HeroSectionLoading text="Loading about us hero section..." />;
   }
 
   if (error || heroData.length === 0) {
@@ -135,7 +130,7 @@ const AboutUsHeroSection = () => {
               onError={(e) => {
                 const target = e.target as HTMLDivElement;
                 target.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('${getFallbackImage(
-                  index
+                  index,
                 )}')`;
               }}
             />
@@ -149,38 +144,44 @@ const AboutUsHeroSection = () => {
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 leading-tight tracking-tight">
             {currentSlideData.title || "About Us"}
           </h1>
-          
+
           {currentSlideData.subtitle && (
             <div className="mb-8">
               <h2 className="text-2xl md:text-3xl font-semibold mb-3">
                 {currentSlideData.subtitle}
               </h2>
-<div className="w-24 h-1 bg-cyan-500 mx-auto rounded-full"></div>            </div>
+              <div className="w-24 h-1 bg-cyan-500 mx-auto rounded-full"></div>{" "}
+            </div>
           )}
 
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 md:p-8 max-w-3xl mx-auto">
             <p className="text-md md:text-lg lg:text-xl mb-4 text-gray-100 leading-relaxed">
-              {currentSlideData.description || 
+              {currentSlideData.description ||
                 "We are a Sri Lanka Tourism Development Authority & Sri Lanka Civil Aviation Authority approved travel agent based in Colombo, Sri Lanka."}
             </p>
-            
-            {(currentSlideData.primaryButtonText || currentSlideData.secondaryButtonText) && (
+
+            {(currentSlideData.primaryButtonText ||
+              currentSlideData.secondaryButtonText) && (
               <div className="flex flex-wrap justify-center gap-4 mt-6">
                 {currentSlideData.primaryButtonText && (
-  <button
-  onClick={() => handleButtonClick(currentSlideData.primaryButtonLink)}
-  className="text-sm md:text-lg px-6 py-3 bg-gradient-to-r from-blue-500 to-teal-400 text-white font-semibold rounded-full hover:from-blue-600 hover:to-teal-500 transform hover:scale-105 transition-all duration-300 shadow-lg"
->
-  {currentSlideData.primaryButtonText}
-</button>
+                  <button
+                    onClick={() =>
+                      handleButtonClick(currentSlideData.primaryButtonLink)
+                    }
+                    className="text-sm md:text-lg px-6 py-3 bg-gradient-to-r from-blue-500 to-teal-400 text-white font-semibold rounded-full hover:from-blue-600 hover:to-teal-500 transform hover:scale-105 transition-all duration-300 shadow-lg"
+                  >
+                    {currentSlideData.primaryButtonText}
+                  </button>
                 )}
                 {currentSlideData.secondaryButtonText && (
-            <button
-  onClick={() => handleButtonClick(currentSlideData.secondaryButtonLink)}
-  className="text-sm md:text-lg px-6 py-3 border-2 border-cyan-300 text-white font-semibold rounded-full hover:bg-cyan-500 hover:border-cyan-500 hover:text-white transition-all duration-300"
->
-  {currentSlideData.secondaryButtonText}
-</button>
+                  <button
+                    onClick={() =>
+                      handleButtonClick(currentSlideData.secondaryButtonLink)
+                    }
+                    className="text-sm md:text-lg px-6 py-3 border-2 border-cyan-300 text-white font-semibold rounded-full hover:bg-cyan-500 hover:border-cyan-500 hover:text-white transition-all duration-300"
+                  >
+                    {currentSlideData.secondaryButtonText}
+                  </button>
                 )}
               </div>
             )}
@@ -247,34 +248,34 @@ const AboutUsHeroSection = () => {
       )}
 
       {/* Slide Indicators */}
-     {heroData.length > 1 && (
-  <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3">
-    {heroData.map((_, index) => (
-      <button
-        key={index}
-        onClick={() => goToSlide(index)}
-        className={`w-3 h-3 rounded-full transition-all duration-300 ${
-          index === currentSlide
-            ? "bg-cyan-500 scale-125"
-            : "bg-white/50 hover:bg-white/75"
-        }`}
-        aria-label={`Go to slide ${index + 1}`}
-      />
-    ))}
-  </div>
-)}
+      {heroData.length > 1 && (
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3">
+          {heroData.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                index === currentSlide
+                  ? "bg-cyan-500 scale-125"
+                  : "bg-white/50 hover:bg-white/75"
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+      )}
 
       {/* Progress Bar */}
-     {heroData.length > 1 && (
-  <div className="absolute bottom-0 left-0 w-full h-1 bg-white/10">
-    <div
-      className="h-full bg-gradient-to-r from-cyan-400 to-emerald-500 transition-all duration-300"
-      style={{
-        width: `${((currentSlide + 1) / heroData.length) * 100}%`,
-      }}
-    />
-  </div>
-)}
+      {heroData.length > 1 && (
+        <div className="absolute bottom-0 left-0 w-full h-1 bg-white/10">
+          <div
+            className="h-full bg-gradient-to-r from-cyan-400 to-emerald-500 transition-all duration-300"
+            style={{
+              width: `${((currentSlide + 1) / heroData.length) * 100}%`,
+            }}
+          />
+        </div>
+      )}
 
       {/* Slide Counter (Left Corner) */}
       {heroData.length > 1 && (

@@ -1,27 +1,43 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import Image from "next/image";
 import SectionHeader from "../../../components/common-components/section-header/SectionHeader";
-import { 
-  TourMapDestination, 
-  TourMapCategory, 
+import {
+  TourMapDestination,
+  TourMapCategory,
   TourMapPlace,
   TourMapLeafletMap,
-  TourMapLeafletMarker 
+  TourMapLeafletMarker,
 } from "@/types/destination-types"; // Import types
 import { DestinationService } from "@/services/destinationService";
 
 // Define proper types for Leaflet
 declare global {
   interface Window {
-    L: {
-      map: (element: HTMLElement) => TourMapLeafletMap;
-      tileLayer: (url: string, options: unknown) => { addTo: (map: TourMapLeafletMap) => unknown };
-      marker: (coords: [number, number], options: unknown) => TourMapLeafletMarker;
-      divIcon: (options: unknown) => unknown;
-      featureGroup: (markers: TourMapLeafletMarker[]) => { getBounds: () => { pad: (padding: number) => unknown } };
-    } | undefined;
+    L:
+      | {
+          map: (element: HTMLElement) => TourMapLeafletMap;
+          tileLayer: (
+            url: string,
+            options: unknown,
+          ) => { addTo: (map: TourMapLeafletMap) => unknown };
+          marker: (
+            coords: [number, number],
+            options: unknown,
+          ) => TourMapLeafletMarker;
+          divIcon: (options: unknown) => unknown;
+          featureGroup: (markers: TourMapLeafletMarker[]) => {
+            getBounds: () => { pad: (padding: number) => unknown };
+          };
+        }
+      | undefined;
   }
 }
 
@@ -33,9 +49,15 @@ const AllPlacesIcon: React.FC = () => (
 );
 
 // Custom Image component with fallback
-const DestinationImageWithFallback = ({ src, alt }: { src: string; alt: string }) => {
+const DestinationImageWithFallback = ({
+  src,
+  alt,
+}: {
+  src: string;
+  alt: string;
+}) => {
   const [imgSrc, setImgSrc] = useState(src);
-  
+
   return (
     <Image
       src={imgSrc}
@@ -59,7 +81,8 @@ const TourMap: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [destinations, setDestinations] = useState<TourMapDestination[]>([]);
-  const [selectedDestination, setSelectedDestination] = useState<TourMapDestination | null>(null);
+  const [selectedDestination, setSelectedDestination] =
+    useState<TourMapDestination | null>(null);
 
   // Transform destinations to the format expected by the existing code
   const places = useMemo((): TourMapPlace[] => {
@@ -84,10 +107,10 @@ const TourMap: React.FC = () => {
   // Get unique categories from destinations for dynamic category display
   const allCategories = useMemo((): TourMapCategory[] => {
     const uniqueCategories = Array.from(
-      new Set(destinations.map((d) => d.destinationCategory))
+      new Set(destinations.map((d) => d.destinationCategory)),
     ).map((category) => {
       const categoryDestination = destinations.find(
-        (d) => d.destinationCategory === category
+        (d) => d.destinationCategory === category,
       );
       return {
         id: category,
@@ -118,9 +141,10 @@ const TourMap: React.FC = () => {
     const fetchDestinationsLocations = async () => {
       try {
         setLoading(true);
-        
+
         // USING THE SERVICE INSTEAD OF DIRECT FETCH
-        const { data: destinationsData, error } = await DestinationService.fetchActiveDestinationsLocations();
+        const { data: destinationsData, error } =
+          await DestinationService.fetchActiveDestinationsLocations();
 
         if (error) {
           setError(error);
@@ -249,8 +273,8 @@ const TourMap: React.FC = () => {
               ? `
           <p style="margin: 4px 0 0 0; font-size: 11px; color: #999;">
             ${place.images.length} image${
-                  place.images.length !== 1 ? "s" : ""
-                } available
+              place.images.length !== 1 ? "s" : ""
+            } available
           </p>
           `
               : ""
@@ -261,7 +285,7 @@ const TourMap: React.FC = () => {
       // Add click event
       marker.on("click", () => {
         const destination = destinations.find(
-          (d) => d.destinationId === place.id
+          (d) => d.destinationId === place.id,
         );
         if (destination) {
           setSelectedDestination(destination);
@@ -293,8 +317,44 @@ const TourMap: React.FC = () => {
     updateMarkers();
   }, [updateMarkers]);
 
+  //   if (loading) {
+  //   return (
+  //     <div className="bg-gradient-to-br from-slate-900 via-gray-900 to-teal-950 rounded-xl p-6">
+  //       {/* Simple loading header */}
+  //       <div className="flex justify-center mb-6">
+  //         <div className="flex items-center space-x-3 px-4 py-2 bg-gray-900/50 backdrop-blur-sm rounded-full border border-teal-500/30">
+  //           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-teal-400"></div>
+  //           <span className="text-teal-300 text-sm">
+  //             Loading destinations for map...
+  //           </span>
+  //         </div>
+  //       </div>
+
+  //       {/* Map Skeleton */}
+  //       <div className="w-full h-64 md:h-80 lg:h-96 bg-gradient-to-br from-gray-800/80 to-teal-900/30 rounded-lg border border-teal-500/20 animate-pulse relative overflow-hidden">
+  //         {/* Grid lines simulation */}
+  //         <div className="absolute inset-0 grid grid-cols-6 grid-rows-4 gap-0">
+  //           {[...Array(24)].map((_, i) => (
+  //             <div key={i} className="border border-teal-500/5"></div>
+  //           ))}
+  //         </div>
+  //         {/* Map pins placeholder */}
+  //         <div className="absolute top-1/4 left-1/3">
+  //           <div className="w-6 h-6 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-full animate-pulse"></div>
+  //         </div>
+  //         <div className="absolute top-2/3 left-2/3">
+  //           <div className="w-6 h-6 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-full animate-pulse [animation-delay:0.2s]"></div>
+  //         </div>
+  //         <div className="absolute top-1/2 left-1/2">
+  //           <div className="w-6 h-6 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-full animate-pulse [animation-delay:0.4s]"></div>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
+
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-3 sm:p-4 md:p-6 lg:p-8">
+    <div className="bg-gradient-to-br from-blue-50 to-cyan-50 py-6 lg:py-8 xl:py-12">
       <div className="max-w-7xl mx-auto">
         <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
           <SectionHeader
@@ -306,7 +366,7 @@ const TourMap: React.FC = () => {
           />
         </div>
 
-        {loading && (
+        {/* {loading && (
           <div className="text-center py-8">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             <p className="mt-2 text-gray-600">Loading destinations...</p>
@@ -317,7 +377,7 @@ const TourMap: React.FC = () => {
           <div className="text-center py-8 text-red-600 bg-red-50 rounded-lg mb-6">
             {error}
           </div>
-        )}
+        )} */}
 
         {/* Category Selection - Desktop/Laptop (hidden on mobile/tablet) */}
         <div className="hidden lg:grid grid-cols-6 gap-6 mb-8">
@@ -349,7 +409,10 @@ const TourMap: React.FC = () => {
                   }}
                 >
                   {cat.image ? (
-                    <DestinationImageWithFallback src={cat.image} alt={cat.name} />
+                    <DestinationImageWithFallback
+                      src={cat.image}
+                      alt={cat.name}
+                    />
                   ) : (
                     <div
                       className="w-full h-full flex items-center justify-center"
@@ -484,7 +547,7 @@ const TourMap: React.FC = () => {
                                 </p>
                               )}
                             </div>
-                          )
+                          ),
                         )}
                       </div>
                     )}
@@ -589,7 +652,7 @@ const TourMap: React.FC = () => {
                               </p>
                             )}
                           </div>
-                        )
+                        ),
                       )}
                     </div>
                   )}

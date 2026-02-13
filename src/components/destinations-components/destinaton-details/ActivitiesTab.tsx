@@ -1,12 +1,16 @@
 import { Activity } from "@/types/destination-types";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 
 interface ActivitiesTabProps {
   activities: Activity[];
 }
 
 const ActivitiesTab: React.FC<ActivitiesTabProps> = ({ activities }) => {
+  const [displayCount, setDisplayCount] = useState(6);
+  const initialLoadCount = 6;
+  const loadMoreCount = 6;
+
   const formatTime = (timeString: string) => {
     return timeString.substring(0, 5);
   };
@@ -30,13 +34,28 @@ const ActivitiesTab: React.FC<ActivitiesTabProps> = ({ activities }) => {
     });
   };
 
+  const handleLoadMore = () => {
+    setDisplayCount(prevCount => Math.min(prevCount + loadMoreCount, activities.length));
+  };
+
+  const displayedActivities = activities.slice(0, displayCount);
+  const hasMoreActivities = displayCount < activities.length;
+
   return (
     <div>
-      <h3 className="text-lg lg:text-xl font-bold text-sky-900 mb-4">
-        Activities ({activities.length})
-      </h3>
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg lg:text-xl font-bold text-sky-900">
+          Activities ({activities.length})
+        </h3>
+        {activities.length > initialLoadCount && (
+          <span className="text-sm text-gray-600">
+            Showing {displayedActivities.length} of {activities.length}
+          </span>
+        )}
+      </div>
+      
       <div className="space-y-4">
-        {activities.map((activity) => (
+        {displayedActivities.map((activity) => (
           <div
             key={activity.activityId}
             className="border border-sky-100 rounded-lg p-4 hover:shadow-md transition-shadow bg-gradient-to-br from-white to-sky-50"
@@ -52,7 +71,9 @@ const ActivitiesTab: React.FC<ActivitiesTabProps> = ({ activities }) => {
               </div>
             </div>
 
-            <p className="text-gray-600 mb-3 text-sm lg:text-md">{activity.activityDescription}</p>
+            <p className="text-gray-600 mb-3 text-sm lg:text-md">
+              {activity.activityDescription}
+            </p>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               <div className="flex items-center text-gray-600">
@@ -71,9 +92,9 @@ const ActivitiesTab: React.FC<ActivitiesTabProps> = ({ activities }) => {
                 </svg>
                 {activity.durationHours} hours
               </div>
-              <div className="flex items-center text-gray-600">
+              <div className="flex items-center space-x-1 sm:space-x-2">
                 <svg
-                  className="w-4 h-4 mr-2 text-teal-500"
+                  className="w-3 h-3 sm:w-4 sm:h-4 text-teal-600 flex-shrink-0"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -82,27 +103,15 @@ const ActivitiesTab: React.FC<ActivitiesTabProps> = ({ activities }) => {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
                   />
                 </svg>
-                {activity.minParticipate}-{activity.maxParticipate} people
-              </div>
-              <div className="flex items-center text-gray-600">
-                <svg
-                  className="w-4 h-4 mr-2 text-emerald-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-                {formatTime(activity.availableFrom)} -{" "}
-                {formatTime(activity.availableTo)}
+
+                <span className="text-xs sm:text-sm font-medium text-teal-800">
+                  {activity.maxParticipate === 0
+                    ? "Any"
+                    : `${activity.minParticipate}-${activity.maxParticipate}`}
+                </span>
               </div>
             </div>
 
@@ -129,6 +138,25 @@ const ActivitiesTab: React.FC<ActivitiesTabProps> = ({ activities }) => {
           </div>
         ))}
       </div>
+
+      {/* Load More Button */}
+      {hasMoreActivities && (
+        <div className="mt-6 flex justify-center">
+          <button
+            onClick={handleLoadMore}
+            className="px-6 py-3 bg-gradient-to-r from-sky-500 to-teal-500 text-white text-sm font-medium rounded-md hover:from-sky-600 hover:to-teal-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 shadow-sm hover:shadow-md"
+          >
+            More Activities
+          </button>
+        </div>
+      )}
+
+      {/* Show All Loaded Message */}
+      {!hasMoreActivities && activities.length > initialLoadCount && (
+        <div className="mt-6 text-center text-sm text-gray-500">
+          All {activities.length} activities loaded
+        </div>
+      )}
     </div>
   );
 };

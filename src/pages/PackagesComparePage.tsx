@@ -12,6 +12,7 @@ import { PackageComparison as ComparisonPackage } from "@/types/package-comparis
 import { Tour } from "@/types/tour-types";
 import { PackageService } from "@/services/packageService";
 import { TourService } from "@/services/tourService";
+import PackagesCompareLoading from "@/components/package-comparison-components/PackagesCompareLoading";
 
 const PackagesComparePage = () => {
   const searchParams = useSearchParams();
@@ -168,7 +169,9 @@ const PackagesComparePage = () => {
       maximumFractionDigits: 0,
     }).format(amount);
   };
-
+  if (loading) {
+    return <PackagesCompareLoading />;
+  }
   // Render package images gallery
   const renderPackageImages = (pkg: ComparisonPackage) => {
     if (!pkg.images || pkg.images.length === 0) return null;

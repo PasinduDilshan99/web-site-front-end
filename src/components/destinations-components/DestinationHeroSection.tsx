@@ -3,6 +3,7 @@ import { HeroSectionService } from "@/services/heroSectionService";
 import { DestinationHeroData } from "@/types/hero-section-types";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
+import HeroSectionLoading from "../loading-components/HeroSectionLoading";
 
 const DestinationHeroSection = () => {
   const [loading, setLoading] = useState(true);
@@ -13,6 +14,7 @@ const DestinationHeroSection = () => {
   const [selectedRegion, setSelectedRegion] = useState<string>("all");
   const [selectedType, setSelectedType] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     const fetchHeroData = async () => {
@@ -20,7 +22,8 @@ const DestinationHeroSection = () => {
         setLoading(true);
         setError(null);
 
-        const { data: items, error } = await HeroSectionService.fetchDestinationHeroData();
+        const { data: items, error } =
+          await HeroSectionService.fetchDestinationHeroData();
 
         if (error) {
           setError(error);
@@ -67,28 +70,8 @@ const DestinationHeroSection = () => {
     setTimeout(() => setIsAutoPlaying(true), 10000);
   };
 
-  const getFallbackImage = (index: number) => {
-    const fallbackImages = [
-      "photo-1507525428034-b723cf961d3e", // Beach sunset
-      "photo-1518837695005-2083093ee35b", // Ocean waves
-      "photo-1505142468610-359e7d316be0", // Mountain lake
-      "photo-1439066615861-d1af74d74000", // Underwater sea
-      "photo-1493246507139-91e8fad9978e", // Coastal view
-      "photo-1506929562872-bb421503ef21", // Ocean activity
-      "photo-1551632811-561732d1e306", // Adventure
-      "photo-1528181304800-259b08848526", // Coastal town
-      "photo-1566073771259-6a8506099945", // Wildlife
-      "photo-1520250497591-112f2f40a3f4", // Water sports
-      "photo-1536152471326-642d4aa9cba5", // Heritage
-      "photo-1544551763-46a013bb70d5", // Leisure
-      "photo-1523348837708-15d4a09cfac2", // Culture
-      "photo-1585506936724-fa0c19c7b7c4", // Nature
-      "photo-1579444741963-5bce5eb9d1d2", // Exploration
-      "photo-1551632811-561732d1e306", // Mountains
-      "photo-1520250497591-112f2f40a3f4", // Tropical
-      "photo-1469474968028-56623f02e42e", // Panorama
-    ];
-    return `https://images.unsplash.com/${fallbackImages[index % fallbackImages.length]}?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80`;
+  const handleImageError = (index: number) => {
+    setFailedImages((prev) => new Set(prev).add(index));
   };
 
   const handleButtonClick = (link?: string) => {
@@ -108,56 +91,93 @@ const DestinationHeroSection = () => {
 
   // Get destination region
   const getDestinationRegion = (destination: DestinationHeroData) => {
-    const name = destination.name.toLowerCase();
-    if (['colombo', 'negombo', 'galle', 'bentota', 'mirissa'].includes(name)) return 'south-west';
-    if (['kandy', 'ella', 'nuwara', 'hatton'].includes(name)) return 'central';
-    if (['anuradhapura', 'polonnaruwa', 'dambulla', 'sigiriya'].includes(name)) return 'cultural-triangle';
-    if (['yala', 'udawalawe'].includes(name)) return 'south-east';
-    if (['arugam', 'trincomalee'].includes(name)) return 'east-coast';
-    if (['jaffna'].includes(name)) return 'north';
-    return 'other';
+    const name = destination.name?.toLowerCase() || "";
+    if (
+      ["colombo", "negombo", "galle", "bentota", "mirissa"].some((city) =>
+        name.includes(city),
+      )
+    )
+      return "south-west";
+    if (
+      ["kandy", "ella", "nuwara", "hatton"].some((city) => name.includes(city))
+    )
+      return "central";
+    if (
+      ["anuradhapura", "polonnaruwa", "dambulla", "sigiriya"].some((city) =>
+        name.includes(city),
+      )
+    )
+      return "cultural-triangle";
+    if (["yala", "udawalawe"].some((city) => name.includes(city)))
+      return "south-east";
+    if (["arugam", "trincomalee"].some((city) => name.includes(city)))
+      return "east-coast";
+    if (["jaffna"].some((city) => name.includes(city))) return "north";
+    return "other";
   };
 
   // Get destination type
   const getDestinationType = (destination: DestinationHeroData) => {
-    const subtitle = destination.subtitle?.toLowerCase() || '';
-    const description = destination.description?.toLowerCase() || '';
-    
-    if (subtitle.includes('beach') || description.includes('beach')) return 'beach';
-    if (subtitle.includes('cultural') || description.includes('cultural') || subtitle.includes('capital') || description.includes('capital')) return 'cultural';
-    if (subtitle.includes('wildlife') || subtitle.includes('safari') || description.includes('wildlife') || description.includes('elephant')) return 'wildlife';
-    if (subtitle.includes('hill') || subtitle.includes('mountain') || description.includes('hill')) return 'hill-station';
-    if (subtitle.includes('city') || subtitle.includes('town')) return 'urban';
-    if (subtitle.includes('historic') || subtitle.includes('ancient') || subtitle.includes('temple')) return 'historical';
-    if (subtitle.includes('surf')) return 'adventure';
-    return 'other';
+    const subtitle = destination.subtitle?.toLowerCase() || "";
+    const description = destination.description?.toLowerCase() || "";
+
+    if (subtitle.includes("beach") || description.includes("beach"))
+      return "beach";
+    if (
+      subtitle.includes("cultural") ||
+      description.includes("cultural") ||
+      subtitle.includes("capital") ||
+      description.includes("capital")
+    )
+      return "cultural";
+    if (
+      subtitle.includes("wildlife") ||
+      subtitle.includes("safari") ||
+      description.includes("wildlife") ||
+      description.includes("elephant")
+    )
+      return "wildlife";
+    if (
+      subtitle.includes("hill") ||
+      subtitle.includes("mountain") ||
+      description.includes("hill")
+    )
+      return "hill-station";
+    if (subtitle.includes("city") || subtitle.includes("town")) return "urban";
+    if (
+      subtitle.includes("historic") ||
+      subtitle.includes("ancient") ||
+      subtitle.includes("temple")
+    )
+      return "historical";
+    if (subtitle.includes("surf")) return "adventure";
+    return "other";
   };
 
   // Filter destinations
   const filteredDestinations = heroData.filter((destination) => {
-    const regionMatch = selectedRegion === "all" || getDestinationRegion(destination) === selectedRegion;
-    const typeMatch = selectedType === "all" || getDestinationType(destination) === selectedType;
-    
+    const regionMatch =
+      selectedRegion === "all" ||
+      getDestinationRegion(destination) === selectedRegion;
+    const typeMatch =
+      selectedType === "all" ||
+      getDestinationType(destination) === selectedType;
+
     // Search filter
-    const searchMatch = searchQuery === "" || 
+    const searchMatch =
+      searchQuery === "" ||
       destination.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       destination.subtitle?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      destination.name.toLowerCase().includes(searchQuery.toLowerCase());
-    
+      destination.name?.toLowerCase().includes(searchQuery.toLowerCase());
+
     return regionMatch && typeMatch && searchMatch;
   });
 
-  const currentSlideData = filteredDestinations[currentSlide] || heroData[currentSlide] || {};
+  const currentSlideData =
+    filteredDestinations[currentSlide] || heroData[currentSlide] || {};
 
   if (loading) {
-    return (
-      <div className="relative w-full h-[650px] md:h-[750px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900 flex items-center justify-center">
-        <div className="text-center text-white">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-400 mx-auto mb-4"></div>
-          <p className="text-lg">Loading Amazing Destinations...</p>
-        </div>
-      </div>
-    );
+    return <HeroSectionLoading text="Destination hero content loading...." />;
   }
 
   if (error || heroData.length === 0) {
@@ -198,31 +218,33 @@ const DestinationHeroSection = () => {
 
   return (
     <div className="relative w-full h-[650px] lg:h-[850px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
-      {/* Image Slider */}
+      {/* Image Slider - Only show image if available and not failed */}
       <div className="relative w-full h-full">
-        {heroData.map((item, index) => (
-          <div
-            key={item.id || index}
-            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-              index === currentSlide ? "opacity-100" : "opacity-0"
-            }`}
-          >
+        {heroData.map((item, index) => {
+          const hasImage = item.imageUrl && !failedImages.has(index);
+
+          return (
             <div
-              className="w-full h-full bg-cover bg-center bg-no-repeat"
-              style={{
-                backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.6), rgba(8, 145, 178, 0.5)), url('${
-                  item.imageUrl || getFallbackImage(index)
-                }')`,
-              }}
-              onError={(e) => {
-                const target = e.target as HTMLDivElement;
-                target.style.backgroundImage = `linear-gradient(rgba(15, 23, 42, 0.7), rgba(8, 145, 178, 0.6)), url('${getFallbackImage(
-                  index
-                )}')`;
-              }}
-            />
-          </div>
-        ))}
+              key={item.id || index}
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                index === currentSlide ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              {hasImage ? (
+                <div
+                  className="w-full h-full bg-cover bg-center bg-no-repeat"
+                  style={{
+                    backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.6), rgba(8, 145, 178, 0.5)), url('${item.imageUrl}')`,
+                  }}
+                  onError={() => handleImageError(index)}
+                />
+              ) : (
+                // Pure gradient background when no image or image failed
+                <div className="w-full h-full bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900" />
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* Slide Counter */}
@@ -259,48 +281,89 @@ const DestinationHeroSection = () => {
                   />
                 </svg>
                 <span className="font-semibold capitalize">
-                  {currentRegion.replace(/-/g, ' ')}
+                  {currentRegion.replace(/-/g, " ")}
                 </span>
               </div>
               <div className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 flex items-center gap-2">
                 <svg
                   className={`w-4 h-4 ${
-                    currentType === "beach" ? "text-yellow-300" :
-                    currentType === "cultural" ? "text-purple-300" :
-                    currentType === "wildlife" ? "text-green-300" :
-                    currentType === "hill-station" ? "text-blue-300" :
-                    currentType === "urban" ? "text-gray-300" :
-                    currentType === "historical" ? "text-amber-300" :
-                    "text-cyan-300"
+                    currentType === "beach"
+                      ? "text-yellow-300"
+                      : currentType === "cultural"
+                        ? "text-purple-300"
+                        : currentType === "wildlife"
+                          ? "text-green-300"
+                          : currentType === "hill-station"
+                            ? "text-blue-300"
+                            : currentType === "urban"
+                              ? "text-gray-300"
+                              : currentType === "historical"
+                                ? "text-amber-300"
+                                : "text-cyan-300"
                   }`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
                   {currentType === "beach" && (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4 4 0 003 15z" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4 4 0 003 15z"
+                    />
                   )}
                   {currentType === "cultural" && (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
+                    />
                   )}
                   {currentType === "wildlife" && (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                    />
                   )}
                   {currentType === "hill-station" && (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"
+                    />
                   )}
                   {currentType === "urban" && (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                    />
                   )}
                   {currentType === "historical" && (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
+                    />
                   )}
                   {currentType === "adventure" && (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M13 10V3L4 14h7v7l9-11h-7z"
+                    />
                   )}
                 </svg>
                 <span className="font-semibold capitalize">
-                  {currentType.replace(/-/g, ' ')}
+                  {currentType.replace(/-/g, " ")}
                 </span>
               </div>
             </div>
@@ -447,7 +510,9 @@ const DestinationHeroSection = () => {
                 </div>
                 <div className="text-left">
                   <p className="text-sm text-cyan-200/90">Cultural Mix</p>
-                  <p className="text-base font-bold text-white">Diverse Heritage</p>
+                  <p className="text-base font-bold text-white">
+                    Diverse Heritage
+                  </p>
                 </div>
               </div>
             </div>

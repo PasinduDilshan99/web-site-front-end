@@ -11,9 +11,9 @@ const TermsAndConditionsPage = () => {
   const lastUpdated = "February 1, 2026";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50 to-amber-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-emerald-50">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-purple-600 via-purple-500 to-amber-500 text-white py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
+      <div className="bg-gradient-to-r from-cyan-600 via-blue-500 to-emerald-500 text-white py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <div className="inline-block mb-4 sm:mb-6">
             <div className="flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-white/20 rounded-full backdrop-blur-sm">
@@ -75,7 +75,7 @@ const TermsAndConditionsPage = () => {
               className="w-full px-6 sm:px-8 py-4 sm:py-6 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-500 to-amber-600 rounded-lg flex items-center justify-center">
+                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-cyan-500 to-emerald-600 rounded-lg flex items-center justify-center">
                   <svg
                     className="w-5 h-5 sm:w-6 sm:h-6 text-white"
                     fill="none"
@@ -136,7 +136,7 @@ const TermsAndConditionsPage = () => {
                     You accept all risks associated with travel activities
                   </li>
                 </ul>
-                <div className="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-500 mt-4">
+                <div className="bg-cyan-50 p-4 rounded-lg border-l-4 border-cyan-500 mt-4">
                   <p className="text-sm">
                     <strong>Important:</strong> If you are booking on behalf of
                     others, you confirm that you have their authority to accept
@@ -154,7 +154,7 @@ const TermsAndConditionsPage = () => {
               className="w-full px-6 sm:px-8 py-4 sm:py-6 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-amber-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-emerald-500 to-cyan-600 rounded-lg flex items-center justify-center">
                   <svg
                     className="w-5 h-5 sm:w-6 sm:h-6 text-white"
                     fill="none"
@@ -218,7 +218,7 @@ const TermsAndConditionsPage = () => {
                 <h4 className="font-semibold text-gray-900 text-base sm:text-lg mt-6">
                   Deposit and Payment
                 </h4>
-                <div className="bg-amber-50 p-4 rounded-lg space-y-2">
+                <div className="bg-emerald-50 p-4 rounded-lg space-y-2">
                   <p>
                     <strong>Deposit:</strong> A non-refundable deposit of 30%
                     is required to confirm your booking
@@ -239,7 +239,7 @@ const TermsAndConditionsPage = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="flex items-center space-x-2 bg-gray-50 p-3 rounded-lg">
                     <svg
-                      className="w-5 h-5 text-purple-600"
+                      className="w-5 h-5 text-cyan-600"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -254,7 +254,7 @@ const TermsAndConditionsPage = () => {
                   </div>
                   <div className="flex items-center space-x-2 bg-gray-50 p-3 rounded-lg">
                     <svg
-                      className="w-5 h-5 text-purple-600"
+                      className="w-5 h-5 text-cyan-600"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -269,7 +269,7 @@ const TermsAndConditionsPage = () => {
                   </div>
                   <div className="flex items-center space-x-2 bg-gray-50 p-3 rounded-lg">
                     <svg
-                      className="w-5 h-5 text-purple-600"
+                      className="w-5 h-5 text-cyan-600"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -283,7 +283,7 @@ const TermsAndConditionsPage = () => {
                   </div>
                   <div className="flex items-center space-x-2 bg-gray-50 p-3 rounded-lg">
                     <svg
-                      className="w-5 h-5 text-purple-600"
+                      className="w-5 h-5 text-cyan-600"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -308,7 +308,7 @@ const TermsAndConditionsPage = () => {
               className="w-full px-6 sm:px-8 py-4 sm:py-6 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-600 to-amber-500 rounded-lg flex items-center justify-center">
+                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-cyan-600 to-emerald-500 rounded-lg flex items-center justify-center">
                   <svg
                     className="w-5 h-5 sm:w-6 sm:h-6 text-white"
                     fill="none"
@@ -353,7 +353,7 @@ const TermsAndConditionsPage = () => {
                   Cancellation Policy
                 </h4>
                 <div className="space-y-3">
-                  <div className="bg-gradient-to-r from-purple-50 to-amber-50 p-4 rounded-lg border-l-4 border-purple-500">
+                  <div className="bg-gradient-to-r from-cyan-50 to-emerald-50 p-4 rounded-lg border-l-4 border-cyan-500">
                     <p className="font-semibold text-gray-900 mb-1">
                       More than 60 days before travel
                     </p>
@@ -361,19 +361,19 @@ const TermsAndConditionsPage = () => {
                       50% refund (deposit is non-refundable)
                     </p>
                   </div>
-                  <div className="bg-gradient-to-r from-purple-50 to-amber-50 p-4 rounded-lg border-l-4 border-purple-500">
+                  <div className="bg-gradient-to-r from-cyan-50 to-emerald-50 p-4 rounded-lg border-l-4 border-cyan-500">
                     <p className="font-semibold text-gray-900 mb-1">
                       30-60 days before travel
                     </p>
                     <p className="text-sm">25% refund</p>
                   </div>
-                  <div className="bg-gradient-to-r from-purple-50 to-amber-50 p-4 rounded-lg border-l-4 border-amber-500">
+                  <div className="bg-gradient-to-r from-cyan-50 to-emerald-50 p-4 rounded-lg border-l-4 border-emerald-500">
                     <p className="font-semibold text-gray-900 mb-1">
                       15-29 days before travel
                     </p>
                     <p className="text-sm">10% refund</p>
                   </div>
-                  <div className="bg-gradient-to-r from-purple-50 to-amber-50 p-4 rounded-lg border-l-4 border-red-500">
+                  <div className="bg-gradient-to-r from-cyan-50 to-emerald-50 p-4 rounded-lg border-l-4 border-red-500">
                     <p className="font-semibold text-gray-900 mb-1">
                       Less than 15 days before travel
                     </p>
@@ -381,7 +381,7 @@ const TermsAndConditionsPage = () => {
                   </div>
                 </div>
 
-                <div className="bg-amber-50 p-4 rounded-lg mt-4">
+                <div className="bg-emerald-50 p-4 rounded-lg mt-4">
                   <h4 className="font-semibold text-gray-900 mb-2">
                     Special Circumstances
                   </h4>
@@ -410,7 +410,7 @@ const TermsAndConditionsPage = () => {
               className="w-full px-6 sm:px-8 py-4 sm:py-6 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-500 to-amber-500 rounded-lg flex items-center justify-center">
+                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-cyan-500 to-emerald-500 rounded-lg flex items-center justify-center">
                   <svg
                     className="w-5 h-5 sm:w-6 sm:h-6 text-white"
                     fill="none"
@@ -470,7 +470,7 @@ const TermsAndConditionsPage = () => {
                   <li>Compliance with Sri Lankan customs and immigration laws</li>
                 </ul>
 
-                <div className="bg-purple-50 p-4 sm:p-6 rounded-lg mt-4">
+                <div className="bg-cyan-50 p-4 sm:p-6 rounded-lg mt-4">
                   <h4 className="font-semibold text-gray-900 mb-3">
                     Important Notes:
                   </h4>
@@ -500,7 +500,7 @@ const TermsAndConditionsPage = () => {
               className="w-full px-6 sm:px-8 py-4 sm:py-6 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-amber-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-emerald-500 to-cyan-600 rounded-lg flex items-center justify-center">
                   <svg
                     className="w-5 h-5 sm:w-6 sm:h-6 text-white"
                     fill="none"
@@ -560,7 +560,7 @@ const TermsAndConditionsPage = () => {
                 <h4 className="font-semibold text-gray-900 text-base sm:text-lg mt-6">
                   Limitations of Liability
                 </h4>
-                <div className="bg-amber-50 p-4 rounded-lg space-y-2">
+                <div className="bg-emerald-50 p-4 rounded-lg space-y-2">
                   <p className="text-sm">
                     We are NOT liable for:
                   </p>
@@ -577,7 +577,7 @@ const TermsAndConditionsPage = () => {
                 <h4 className="font-semibold text-gray-900 text-base sm:text-lg mt-6">
                   Travel Insurance
                 </h4>
-                <div className="bg-purple-50 p-4 sm:p-6 rounded-lg border-l-4 border-purple-500">
+                <div className="bg-cyan-50 p-4 sm:p-6 rounded-lg border-l-4 border-cyan-500">
                   <p className="font-semibold text-gray-900 mb-2">
                     HIGHLY RECOMMENDED
                   </p>
@@ -604,7 +604,7 @@ const TermsAndConditionsPage = () => {
               className="w-full px-6 sm:px-8 py-4 sm:py-6 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-600 to-amber-500 rounded-lg flex items-center justify-center">
+                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-cyan-600 to-emerald-500 rounded-lg flex items-center justify-center">
                   <svg
                     className="w-5 h-5 sm:w-6 sm:h-6 text-white"
                     fill="none"
@@ -668,23 +668,23 @@ const TermsAndConditionsPage = () => {
                   We reserve the right to make changes to your itinerary due to:
                 </p>
                 <div className="space-y-3 mt-3">
-                  <div className="bg-purple-50 p-3 rounded-lg">
+                  <div className="bg-cyan-50 p-3 rounded-lg">
                     <p className="text-sm">
                       <strong>Force Majeure:</strong> Natural disasters, political unrest, pandemics
                     </p>
                   </div>
-                  <div className="bg-amber-50 p-3 rounded-lg">
+                  <div className="bg-emerald-50 p-3 rounded-lg">
                     <p className="text-sm">
                       <strong>Service Provider Issues:</strong> Cancellations or changes by hotels/operators
                     </p>
                   </div>
-                  <div className="bg-purple-50 p-3 rounded-lg">
+                  <div className="bg-cyan-50 p-3 rounded-lg">
                     <p className="text-sm">
                       <strong>Safety Concerns:</strong> Weather conditions, security advisories
                     </p>
                   </div>
                 </div>
-                <p className="text-sm mt-4 bg-amber-50 p-4 rounded-lg">
+                <p className="text-sm mt-4 bg-emerald-50 p-4 rounded-lg">
                   In such cases, we will provide alternative arrangements of
                   similar or better standard where possible, or offer a refund
                   for affected services.
@@ -700,7 +700,7 @@ const TermsAndConditionsPage = () => {
               className="w-full px-6 sm:px-8 py-4 sm:py-6 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-500 to-amber-600 rounded-lg flex items-center justify-center">
+                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-cyan-500 to-emerald-600 rounded-lg flex items-center justify-center">
                   <svg
                     className="w-5 h-5 sm:w-6 sm:h-6 text-white"
                     fill="none"
@@ -786,7 +786,7 @@ const TermsAndConditionsPage = () => {
               className="w-full px-6 sm:px-8 py-4 sm:py-6 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-amber-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-emerald-500 to-cyan-600 rounded-lg flex items-center justify-center">
                   <svg
                     className="w-5 h-5 sm:w-6 sm:h-6 text-white"
                     fill="none"
@@ -857,7 +857,7 @@ const TermsAndConditionsPage = () => {
               className="w-full px-6 sm:px-8 py-4 sm:py-6 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-600 to-amber-500 rounded-lg flex items-center justify-center">
+                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-cyan-600 to-emerald-500 rounded-lg flex items-center justify-center">
                   <svg
                     className="w-5 h-5 sm:w-6 sm:h-6 text-white"
                     fill="none"
@@ -904,7 +904,7 @@ const TermsAndConditionsPage = () => {
                   services shall be subject to the exclusive jurisdiction of the
                   courts of Colombo, Sri Lanka.
                 </p>
-                <div className="bg-purple-50 p-4 rounded-lg">
+                <div className="bg-cyan-50 p-4 rounded-lg">
                   <h4 className="font-semibold text-gray-900 mb-2">
                     Dispute Resolution
                   </h4>
@@ -921,7 +921,7 @@ const TermsAndConditionsPage = () => {
         </div>
 
         {/* Contact Section */}
-        {/* <div className="mt-8 sm:mt-12 lg:mt-16 bg-gradient-to-r from-purple-600 via-purple-500 to-amber-500 rounded-xl sm:rounded-2xl p-6 sm:p-8 lg:p-10 text-white shadow-2xl">
+        {/* <div className="mt-8 sm:mt-12 lg:mt-16 bg-gradient-to-r from-cyan-600 via-blue-500 to-emerald-500 rounded-xl sm:rounded-2xl p-6 sm:p-8 lg:p-10 text-white shadow-2xl">
           <div className="text-center">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6">
               Questions About Our Terms?
