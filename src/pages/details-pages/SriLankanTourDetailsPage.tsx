@@ -2,8 +2,19 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import ReviewsSection from "@/components/sri-lankan-tours-components/ReviewsSection";
-import TourMapContainer from "@/components/sri-lankan-tours-components/tour-map-components/TourMapContainer";
-import Loading from "@/components/common-components/loading/Loading";
+import dynamic from 'next/dynamic';
+
+const TourMapContainer = dynamic(
+  () => import('@/components/sri-lankan-tours-components/tour-map-components/TourMapContainer'),
+  { 
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-64 bg-gray-100 animate-pulse rounded-lg flex items-center justify-center">
+        <span className="text-gray-500">Loading map...</span>
+      </div>
+    )
+  }
+);import Loading from "@/components/common-components/loading/Loading";
 import { ErrorState } from "@/components/common-components/error-state/ErrorState";
 import { EmptyState } from "@/components/common-components/empty-state/EmptyState";
 import SLTourDetailsHeroSection from "@/components/sri-lankan-tours-components/SLTourDetailsHeroSection";
