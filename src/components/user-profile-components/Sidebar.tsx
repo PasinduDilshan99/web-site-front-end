@@ -38,9 +38,12 @@ import {
   Wallet,
   Users,
   Target,
+  Loader,
+  Hourglass,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
+import SideBarLoading from "./SideBarLoading";
 
 // Sea Blue & Sea Green Theme Colors
 const THEME = {
@@ -91,14 +94,30 @@ const getIcon = (itemName: string) => {
   if (name.includes("browsing") && name.includes("history")) return Eye;
   if (name.includes("cancelled") && name.includes("tour")) return X;
   if (name.includes("completed") && name.includes("tour")) return CheckCircle;
+  if (name.includes("pending") && name.includes("tour")) return Hourglass;
   if (name.includes("coupon") || name.includes("offer")) return Ticket;
   if (name.includes("destination") && name.includes("review")) return MapPin;
   if (name.includes("notification")) return Bell;
   if (name.includes("package") && name.includes("review")) return Package;
   if (name.includes("requested") && name.includes("tour")) return Clock;
-  if (name.includes("review") && !name.includes("tour") && !name.includes("destination") && !name.includes("package") && !name.includes("activity")) return Star;
+  if (
+    name.includes("review") &&
+    !name.includes("tour") &&
+    !name.includes("destination") &&
+    !name.includes("package") &&
+    !name.includes("activity")
+  )
+    return Star;
   if (name.includes("tour") && name.includes("review")) return Star;
-  if (name.includes("tour") && !name.includes("upcoming") && !name.includes("completed") && !name.includes("cancelled") && !name.includes("requested")) return MapPin;
+  if (
+    name.includes("tour") &&
+    !name.includes("upcoming") &&
+    !name.includes("completed") &&
+    !name.includes("cancelled") &&
+    !name.includes("requested") &&
+    !name.includes("pending")
+  )
+    return MapPin;
   if (name.includes("upcoming") && name.includes("tour")) return Calendar;
   if (name.includes("user") && name.includes("benefit")) return Gift;
   if (name.includes("wallet")) return Wallet;
@@ -111,7 +130,8 @@ const getIcon = (itemName: string) => {
   if (name.includes("alert")) return AlertCircle;
   if (name.includes("payment") || name.includes("card")) return CreditCard;
   if (name.includes("document") || name.includes("file")) return FileText;
-  if (name.includes("help") || name.includes("support") || name.includes("faq")) return HelpCircle;
+  if (name.includes("help") || name.includes("support") || name.includes("faq"))
+    return HelpCircle;
   if (name.includes("admin") || name.includes("management")) return Shield;
 
   // Default
@@ -542,41 +562,16 @@ export default function Sidebar() {
 
   // Loading state
   if (loading) {
-    return (
-      <div
-        className={`hidden md:block fixed md:sticky md:top-0 z-40 bg-white border-r border-blue-200 transition-all duration-300 ${
-          isCollapsed ? "w-20" : "w-64"
-        }`}
-        style={{ height: '100vh', maxHeight: '100vh' }}
-      >
-        <div className="p-4 border-b border-blue-200">
-          <div className="animate-pulse flex items-center space-x-3">
-            <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-200 to-green-200"></div>
-            {!isCollapsed && (
-              <div className="space-y-2">
-                <div className="h-4 w-32 bg-gradient-to-r from-blue-200 to-green-200 rounded"></div>
-                <div className="h-3 w-24 bg-gradient-to-r from-blue-100 to-green-100 rounded"></div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="p-4 space-y-2">
-          {[...Array(6)].map((_, i) => (
-            <div
-              key={i}
-              className="h-12 rounded-lg bg-gradient-to-r from-blue-50 to-green-50 animate-pulse"
-            ></div>
-          ))}
-        </div>
-      </div>
-    );
+    return <SideBarLoading isCollapsed={isCollapsed} />;
   }
 
   // Error state
   if (error) {
     return (
-      <div className="hidden md:block w-64 bg-white border-r border-blue-200 p-4 fixed md:sticky md:top-0 z-40" style={{ height: '100vh', maxHeight: '100vh' }}>
+      <div
+        className="hidden md:block w-64 bg-white border-r border-blue-200 p-4 fixed md:sticky md:top-0 z-40"
+        style={{ height: "100vh", maxHeight: "100vh" }}
+      >
         <div className="text-center p-4 space-y-3">
           <div className="h-12 w-12 mx-auto rounded-full bg-gradient-to-r from-red-100 to-pink-100 flex items-center justify-center">
             <X className="text-red-500" size={24} />
@@ -600,7 +595,7 @@ export default function Sidebar() {
         className={`hidden md:block fixed md:sticky md:top-0 z-40 bg-white border-r border-blue-200 transition-all duration-300 ${
           isCollapsed ? "w-20" : "w-64"
         }`}
-        style={{ height: '100vh', maxHeight: '100vh' }}
+        style={{ height: "100vh", maxHeight: "100vh" }}
       >
         <div className="h-full flex flex-col items-center justify-center p-4">
           <div className="h-16 w-16 rounded-full bg-gradient-to-r from-gray-100 to-gray-200 flex items-center justify-center mb-4">
@@ -621,14 +616,18 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Mobile menu button (outside sidebar) */}
-      {isMobile && !isMobileOpen && (
+      {/* Mobile arrow button - Always visible */}
+      {isMobile && (
         <button
-          onClick={() => setIsMobileOpen(true)}
-          className="fixed top-4 left-4 z-30 p-2 bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-lg shadow-lg md:hidden"
-          aria-label="Open sidebar"
+          onClick={() => setIsMobileOpen(!isMobileOpen)}
+          className="fixed top-1/2 left-0 transform -translate-y-1/2 z-50 h-16 w-6 bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-r-lg flex items-center justify-center shadow-lg hover:w-8 transition-all duration-300 group md:hidden"
+          aria-label={isMobileOpen ? "Close sidebar" : "Open sidebar"}
         >
-          <Menu size={20} />
+          {isMobileOpen ? (
+            <ChevronLeft size={18} className="group-hover:scale-110" />
+          ) : (
+            <ChevronRight size={18} className="group-hover:scale-110" />
+          )}
         </button>
       )}
 
@@ -655,8 +654,8 @@ export default function Sidebar() {
           transform: isMobile
             ? `translateX(${isMobileOpen ? "0" : "-100%"})`
             : "translateX(0)",
-          height: '100vh',
-          maxHeight: '100vh',
+          height: "100vh",
+          maxHeight: "100vh",
         }}
         onMouseEnter={() => !isMobile && setIsHovered(true)}
         onMouseLeave={() => !isMobile && setIsHovered(false)}
@@ -714,12 +713,12 @@ export default function Sidebar() {
         </div>
 
         {/* Scrollable Content - PROPERLY CONFIGURED */}
-        <div 
+        <div
           className="flex-1 overflow-y-auto overflow-x-hidden py-4"
           style={{
-            WebkitOverflowScrolling: 'touch',
-            scrollbarWidth: 'thin',
-            scrollbarColor: '#CBD5E0 transparent',
+            WebkitOverflowScrolling: "touch",
+            scrollbarWidth: "thin",
+            scrollbarColor: "#CBD5E0 transparent",
           }}
         >
           <style jsx>{`
@@ -730,11 +729,11 @@ export default function Sidebar() {
               background: transparent;
             }
             div::-webkit-scrollbar-thumb {
-              background-color: #CBD5E0;
+              background-color: #cbd5e0;
               border-radius: 3px;
             }
             div::-webkit-scrollbar-thumb:hover {
-              background-color: #A0AEC0;
+              background-color: #a0aec0;
             }
           `}</style>
           <nav className="space-y-1">

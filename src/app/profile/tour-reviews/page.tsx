@@ -1,20 +1,23 @@
 // app/profile/tour-reviews/page.tsx
-"use client"
-import { useAuth } from '@/context/AuthContext';
-import { UserProfileAPIService } from '@/services/userProfileAPIService';
-import { TourReview } from '@/types/user-profile';
-import { USER_PROFILE_TOUR_REVIEWS_VIEW_PRIVILEGE } from '@/utils/privileges';
-import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+"use client";
+import UserProfileTourReviewsLoading from "@/components/user-profile-components/Loadings/UserProfileTourReviewsLoading";
+import { useAuth } from "@/context/AuthContext";
+import { UserProfileAPIService } from "@/services/userProfileAPIService";
+import { TourReview } from "@/types/user-profile";
+import { USER_PROFILE_TOUR_REVIEWS_VIEW_PRIVILEGE } from "@/utils/privileges";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 
 export default function TourReviewsPage() {
   const [tourReviews, setTourReviews] = useState<TourReview[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeFilter, setActiveFilter] = useState<'all' | 'recent' | 'top-rated'>('all');
+  const [activeFilter, setActiveFilter] = useState<
+    "all" | "recent" | "top-rated"
+  >("all");
   const apiService = new UserProfileAPIService();
-  
-  const {user} = useAuth()
-  const router = useRouter()
+
+  const { user } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     if (
@@ -35,21 +38,21 @@ export default function TourReviewsPage() {
       const response = await apiService.getTourReviews();
       setTourReviews(response.data || []);
     } catch (error) {
-      console.error('Failed to load tour reviews:', error);
+      console.error("Failed to load tour reviews:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredReviews = tourReviews.filter(review => {
-    if (activeFilter === 'all') return true;
-    if (activeFilter === 'recent') {
+  const filteredReviews = tourReviews.filter((review) => {
+    if (activeFilter === "all") return true;
+    if (activeFilter === "recent") {
       const reviewDate = new Date(review.reviewCreatedAt);
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       return reviewDate >= thirtyDaysAgo;
     }
-    if (activeFilter === 'top-rated') return review.rating >= 4;
+    if (activeFilter === "top-rated") return review.rating >= 4;
     return true;
   });
 
@@ -62,10 +65,10 @@ export default function TourReviewsPage() {
               key={star}
               className={`w-4 h-4 md:w-5 md:h-5 ${
                 star <= Math.floor(rating)
-                  ? 'text-amber-500 fill-current'
+                  ? "text-amber-500 fill-current"
                   : star === Math.ceil(rating) && rating % 1 !== 0
-                  ? 'text-amber-500 fill-current'
-                  : 'text-gray-300'
+                    ? "text-amber-500 fill-current"
+                    : "text-gray-300"
               }`}
               viewBox="0 0 20 20"
             >
@@ -73,37 +76,15 @@ export default function TourReviewsPage() {
             </svg>
           ))}
         </div>
-        <span className="text-sm font-semibold text-sky-600">{rating.toFixed(1)}</span>
+        <span className="text-sm font-semibold text-sky-600">
+          {rating.toFixed(1)}
+        </span>
       </div>
     );
   };
 
   if (loading) {
-    return (
-      <div className="flex-1 p-4 md:p-6 lg:p-8 bg-gradient-to-br from-sky-25 to-teal-25 min-h-screen">
-        <div className="max-w-7xl mx-auto">
-          {/* Header Loading */}
-          <div className="animate-pulse mb-8">
-            <div className="h-8 md:h-10 bg-gradient-to-r from-sky-200 to-teal-200 rounded-lg w-48 mb-4"></div>
-            <div className="h-4 bg-gradient-to-r from-sky-100 to-teal-100 rounded w-64"></div>
-          </div>
-
-          {/* Filter Loading */}
-          <div className="flex space-x-3 mb-6">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-10 bg-gradient-to-r from-sky-100 to-teal-100 rounded-lg w-24"></div>
-            ))}
-          </div>
-
-          {/* Reviews Loading */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-64 md:h-72 bg-gradient-to-r from-sky-100 to-teal-100 rounded-xl"></div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
+    return <UserProfileTourReviewsLoading />;
   }
 
   return (
@@ -124,54 +105,64 @@ export default function TourReviewsPage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <div>
               <div className="flex items-center space-x-4 mb-2">
-                <span className="text-2xl md:text-3xl font-bold text-gray-800">{tourReviews.length}</span>
+                <span className="text-2xl md:text-3xl font-bold text-gray-800">
+                  {tourReviews.length}
+                </span>
                 <div className="hidden md:flex items-center space-x-3">
                   <div className="flex items-center space-x-1">
                     <span className="text-amber-500">★</span>
                     <span className="font-semibold">
-                      {tourReviews.length > 0 
-                        ? (tourReviews.reduce((acc, r) => acc + r.rating, 0) / tourReviews.length).toFixed(1)
-                        : '0.0'
-                      }
+                      {tourReviews.length > 0
+                        ? (
+                            tourReviews.reduce((acc, r) => acc + r.rating, 0) /
+                            tourReviews.length
+                          ).toFixed(1)
+                        : "0.0"}
                     </span>
                   </div>
                   <span className="text-gray-400">•</span>
                   <span className="text-gray-600">
-                    {tourReviews.reduce((acc, r) => acc + r.numberOfParticipate, 0)} total participants
+                    {tourReviews.reduce(
+                      (acc, r) => acc + r.numberOfParticipate,
+                      0,
+                    )}{" "}
+                    total participants
                   </span>
                 </div>
               </div>
-              <p className="text-sm text-gray-600">Tour reviews across your travel history</p>
+              <p className="text-sm text-gray-600">
+                Tour reviews across your travel history
+              </p>
             </div>
 
             {/* Filter Buttons */}
             <div className="flex items-center space-x-2">
               <button
-                onClick={() => setActiveFilter('all')}
+                onClick={() => setActiveFilter("all")}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 whitespace-nowrap ${
-                  activeFilter === 'all'
-                    ? 'bg-gradient-to-r from-sky-500 to-teal-500 text-white shadow-md'
-                    : 'bg-white text-gray-700 border border-sky-200 hover:border-sky-300'
+                  activeFilter === "all"
+                    ? "bg-gradient-to-r from-sky-500 to-teal-500 text-white shadow-md"
+                    : "bg-white text-gray-700 border border-sky-200 hover:border-sky-300"
                 }`}
               >
                 All Reviews
               </button>
               <button
-                onClick={() => setActiveFilter('recent')}
+                onClick={() => setActiveFilter("recent")}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 whitespace-nowrap ${
-                  activeFilter === 'recent'
-                    ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md'
-                    : 'bg-white text-gray-700 border border-blue-200 hover:border-blue-300'
+                  activeFilter === "recent"
+                    ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md"
+                    : "bg-white text-gray-700 border border-blue-200 hover:border-blue-300"
                 }`}
               >
                 Recent (30d)
               </button>
               <button
-                onClick={() => setActiveFilter('top-rated')}
+                onClick={() => setActiveFilter("top-rated")}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 whitespace-nowrap ${
-                  activeFilter === 'top-rated'
-                    ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md'
-                    : 'bg-white text-gray-700 border border-amber-200 hover:border-amber-300'
+                  activeFilter === "top-rated"
+                    ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md"
+                    : "bg-white text-gray-700 border border-amber-200 hover:border-amber-300"
                 }`}
               >
                 Top Rated
@@ -185,15 +176,18 @@ export default function TourReviewsPage() {
               <div className="flex items-center space-x-1">
                 <span className="text-amber-500">★</span>
                 <span className="font-semibold">
-                  {tourReviews.length > 0 
-                    ? (tourReviews.reduce((acc, r) => acc + r.rating, 0) / tourReviews.length).toFixed(1)
-                    : '0.0'
-                  }
+                  {tourReviews.length > 0
+                    ? (
+                        tourReviews.reduce((acc, r) => acc + r.rating, 0) /
+                        tourReviews.length
+                      ).toFixed(1)
+                    : "0.0"}
                 </span>
               </div>
               <span className="text-gray-400">•</span>
               <span className="text-sm text-gray-600">
-                {tourReviews.reduce((acc, r) => acc + r.numberOfParticipate, 0)} participants
+                {tourReviews.reduce((acc, r) => acc + r.numberOfParticipate, 0)}{" "}
+                participants
               </span>
             </div>
           </div>
@@ -204,13 +198,14 @@ export default function TourReviewsPage() {
           <div className="bg-white rounded-xl md:rounded-2xl shadow-lg border border-sky-200 p-6 md:p-8 text-center">
             <div className="text-sky-400 text-5xl md:text-6xl mb-4">🚌</div>
             <h3 className="text-xl md:text-2xl font-semibold text-gray-800 mb-2">
-              {activeFilter === 'all' ? 'No Tour Reviews Yet' : 'No Reviews Match Filter'}
+              {activeFilter === "all"
+                ? "No Tour Reviews Yet"
+                : "No Reviews Match Filter"}
             </h3>
             <p className="text-gray-600 mb-4 md:mb-6 max-w-md mx-auto">
-              {activeFilter === 'all'
+              {activeFilter === "all"
                 ? "You haven't reviewed any tours yet. Share your travel experiences!"
-                : `No ${activeFilter === 'recent' ? 'recent' : 'top-rated'} tour reviews found.`
-              }
+                : `No ${activeFilter === "recent" ? "recent" : "top-rated"} tour reviews found.`}
             </p>
             <button className="px-6 py-3 bg-gradient-to-r from-sky-500 to-teal-600 text-white rounded-lg hover:shadow-lg transition-all duration-300 font-medium">
               Browse Tours
@@ -231,33 +226,54 @@ export default function TourReviewsPage() {
                         <div className="flex items-center gap-2 mb-2">
                           <StarRating rating={review.rating} />
                           <span className="text-xs text-gray-500">
-                            {new Date(review.reviewCreatedAt).toLocaleDateString('en-US', {
-                              year: 'numeric',
-                              month: 'short',
-                              day: 'numeric'
+                            {new Date(
+                              review.reviewCreatedAt,
+                            ).toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
                             })}
                           </span>
                         </div>
                         <h3 className="text-lg md:text-xl font-bold text-gray-800 mb-1 line-clamp-1">
                           {review.tourName}
                         </h3>
-                        <p className="text-sm text-gray-600 mb-2">{review.reviewerName}</p>
+                        <p className="text-sm text-gray-600 mb-2">
+                          {review.reviewerName}
+                        </p>
                       </div>
                       <span className="bg-gradient-to-r from-sky-50 to-teal-50 text-sky-800 text-xs font-semibold px-3 py-1.5 rounded-full border border-sky-200 whitespace-nowrap">
-                        {review.numberOfParticipate} {review.numberOfParticipate === 1 ? 'person' : 'people'}
+                        {review.numberOfParticipate}{" "}
+                        {review.numberOfParticipate === 1 ? "person" : "people"}
                       </span>
                     </div>
 
                     {/* Review Text */}
-                    <p className="text-gray-700 mb-4 line-clamp-3 text-sm md:text-base">{review.review}</p>
+                    <p className="text-gray-700 mb-4 line-clamp-3 text-sm md:text-base">
+                      {review.review}
+                    </p>
 
                     {/* Journey Route */}
                     <div className="flex items-center justify-between text-sm text-gray-600 mb-4 p-3 bg-gradient-to-r from-sky-50 to-teal-50 rounded-lg border border-sky-100">
-                      <span className="font-medium truncate">{review.startLocation}</span>
-                      <svg className="w-4 h-4 text-sky-500 mx-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      <span className="font-medium truncate">
+                        {review.startLocation}
+                      </span>
+                      <svg
+                        className="w-4 h-4 text-sky-500 mx-2 flex-shrink-0"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17 8l4 4m0 0l-4 4m4-4H3"
+                        />
                       </svg>
-                      <span className="font-medium truncate">{review.endLocation}</span>
+                      <span className="font-medium truncate">
+                        {review.endLocation}
+                      </span>
                     </div>
 
                     {/* Images Gallery */}
@@ -271,7 +287,7 @@ export default function TourReviewsPage() {
                             >
                               <img
                                 src={image.imageUrl}
-                                alt={image.imageName || 'Tour image'}
+                                alt={image.imageName || "Tour image"}
                                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                                 loading="lazy"
                               />
@@ -285,8 +301,18 @@ export default function TourReviewsPage() {
                     <div className="mt-4 pt-4 border-t border-sky-50 flex justify-between items-center">
                       <button className="text-sky-600 hover:text-sky-700 text-sm font-medium flex items-center space-x-1 transition-colors">
                         <span>View Details</span>
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
                         </svg>
                       </button>
                       <div className="flex items-center space-x-3 text-xs text-gray-500">
@@ -319,32 +345,52 @@ export default function TourReviewsPage() {
         {/* Stats Summary */}
         {tourReviews.length > 0 && (
           <div className="mt-8 md:mt-12 bg-white rounded-xl md:rounded-2xl shadow-lg border border-sky-200 p-6 md:p-8">
-            <h3 className="text-lg md:text-xl font-semibold text-gray-800 mb-4 md:mb-6">Tour Review Insights</h3>
+            <h3 className="text-lg md:text-xl font-semibold text-gray-800 mb-4 md:mb-6">
+              Tour Review Insights
+            </h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="text-center p-4 bg-gradient-to-br from-sky-50 to-sky-100 rounded-lg border border-sky-200">
-                <div className="text-2xl md:text-3xl font-bold text-sky-600">{tourReviews.length}</div>
-                <div className="text-xs md:text-sm text-gray-600 mt-1">Total Reviews</div>
+                <div className="text-2xl md:text-3xl font-bold text-sky-600">
+                  {tourReviews.length}
+                </div>
+                <div className="text-xs md:text-sm text-gray-600 mt-1">
+                  Total Reviews
+                </div>
               </div>
               <div className="text-center p-4 bg-gradient-to-br from-teal-50 to-teal-100 rounded-lg border border-teal-200">
                 <div className="text-2xl md:text-3xl font-bold text-teal-600">
-                  {tourReviews.length > 0 
-                    ? (tourReviews.reduce((acc, r) => acc + r.rating, 0) / tourReviews.length).toFixed(1)
-                    : '0.0'
-                  }
+                  {tourReviews.length > 0
+                    ? (
+                        tourReviews.reduce((acc, r) => acc + r.rating, 0) /
+                        tourReviews.length
+                      ).toFixed(1)
+                    : "0.0"}
                 </div>
-                <div className="text-xs md:text-sm text-gray-600 mt-1">Avg Rating</div>
+                <div className="text-xs md:text-sm text-gray-600 mt-1">
+                  Avg Rating
+                </div>
               </div>
               <div className="text-center p-4 bg-gradient-to-br from-amber-50 to-amber-100 rounded-lg border border-amber-200">
                 <div className="text-2xl md:text-3xl font-bold text-amber-600">
-                  {tourReviews.reduce((acc, r) => acc + r.numberOfParticipate, 0)}
+                  {tourReviews.reduce(
+                    (acc, r) => acc + r.numberOfParticipate,
+                    0,
+                  )}
                 </div>
-                <div className="text-xs md:text-sm text-gray-600 mt-1">Participants</div>
+                <div className="text-xs md:text-sm text-gray-600 mt-1">
+                  Participants
+                </div>
               </div>
               <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg border border-blue-200">
                 <div className="text-2xl md:text-3xl font-bold text-blue-600">
-                  {tourReviews.reduce((acc, r) => acc + (r.images?.length || 0), 0)}
+                  {tourReviews.reduce(
+                    (acc, r) => acc + (r.images?.length || 0),
+                    0,
+                  )}
                 </div>
-                <div className="text-xs md:text-sm text-gray-600 mt-1">Photos</div>
+                <div className="text-xs md:text-sm text-gray-600 mt-1">
+                  Photos
+                </div>
               </div>
             </div>
           </div>

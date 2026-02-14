@@ -82,6 +82,8 @@ export const GET_COMPLETED_BOOKINGS_DETAILS_DATA_FE = `${API}${BOOKING}/complete
 export const GET_UPCOMING_BOOKINGS_DETAILS_DATA_FE = `${API}${BOOKING}/upcoming`;
 export const GET_REQUESTED_BOOKINGS_DETAILS_DATA_FE = `${API}${BOOKING}/requested`;
 export const GET_CANCELLED_BOOKINGS_DETAILS_DATA_FE = `${API}${BOOKING}/cancelled`;
+export const GET_PENDING_BOOKINGS_DETAILS_DATA_FE = `${API}${BOOKING}/pending`;
+export const INSERT_BOOKINGS_INQUIRY_DETAILS_DATA_FE = `${API}${BOOKING}/insert-booking-inquiry`;
 
 // User Benefits
 export const GET_ALL_ACTIVE_USER_BENEFITS_FE = `${API}${USER_BENEFITS}`;

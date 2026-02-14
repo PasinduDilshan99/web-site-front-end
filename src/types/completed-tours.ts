@@ -116,3 +116,4 @@ export interface CompletedToursResponse {
   data: CompletedTour[];
   timestamp: string;
 }
+

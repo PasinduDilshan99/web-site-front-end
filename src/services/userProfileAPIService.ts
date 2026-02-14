@@ -15,7 +15,9 @@ import { CancelledTour, CancelledToursResponse } from "@/types/cancelled-tours";
 import { RequestedToursResponse } from "@/types/requested-tours";
 import { UserBenefitsResponse } from "@/types/user-benefits";
 import { UpcomingToursResponse } from "@/types/upcoming-tours";
-import { CompletedToursResponse } from "@/types/completed-tours";
+import {
+  CompletedToursResponse,
+} from "@/types/completed-tours";
 import { WishListResponse } from "@/types/wishlist";
 import { CouponsResponse } from "@/types/coupon";
 import {
@@ -39,6 +41,7 @@ import {
   GET_COMPLETED_BOOKINGS_DETAILS_DATA_FE,
   GET_COUPON_DETAILS_DATA_FE,
   GET_HISTORY_DETAILS_DATA_FE,
+  GET_PENDING_BOOKINGS_DETAILS_DATA_FE,
   GET_REQUESTED_BOOKINGS_DETAILS_DATA_FE,
   GET_UPCOMING_BOOKINGS_DETAILS_DATA_FE,
   GET_USER_NOTIFICATION_DETAILS_DATA_FE,
@@ -59,6 +62,7 @@ import {
   UPDATE_USER_NOTIFICATION_DETAILS_DATA_FE,
   UPDATE_USER_PROFILE_DETAILS_DATA_FE,
 } from "@/utils/frontEndConstant";
+import { PendingToursResponse } from "@/types/pending-tours";
 
 export class UserProfileAPIService {
   private getAuthHeaders(): HeadersInit {
@@ -509,6 +513,25 @@ export class UserProfileAPIService {
   async getCompletedTours(): Promise<CompletedToursResponse> {
     try {
       const response = await fetch(GET_COMPLETED_BOOKINGS_DETAILS_DATA_FE, {
+        method: "GET",
+        headers: this.getAuthHeaders(),
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching completed tours:", error);
+      throw error;
+    }
+  }
+
+  async getPendingTours(): Promise<PendingToursResponse> {
+    try {
+      const response = await fetch(GET_PENDING_BOOKINGS_DETAILS_DATA_FE, {
         method: "GET",
         headers: this.getAuthHeaders(),
         credentials: "include",

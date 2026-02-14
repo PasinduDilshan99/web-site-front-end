@@ -12,8 +12,11 @@ import {
 } from "lucide-react";
 import { TourAssignedEmployeeResponse } from "@/types/employee-types";
 import { useAuth } from "@/context/AuthContext";
-import BookingModal, { BookingFormData } from "../booking-components/BookingModal";
+import BookingModal, {
+  BookingFormData,
+} from "../booking-components/BookingModal";
 import BookingSuccessMessage from "../booking-components/BookingSuccessMessage";
+import { bookingService } from "@/services/bookingService";
 
 interface SLTourDetailsBookingSidebarProps {
   tour: TourDetails;
@@ -36,9 +39,9 @@ const SLTourDetailsBookingSidebar: React.FC<
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const { user } = useAuth();
-  
+
   const price = selectedPackage?.pricePerPerson || 50;
   const originalPrice = selectedPackage?.totalPrice;
   const discount = selectedPackage?.discount || 0;
@@ -50,36 +53,22 @@ const SLTourDetailsBookingSidebar: React.FC<
 
   const handleSubmitBooking = async (formData: BookingFormData) => {
     setIsSubmitting(true);
-    try {
-      const response = await fetch("/api/booking-requests", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: formData.userId,
-          tourId: formData.tourId,
-          tourName: formData.tourName,
-          packageId: formData.packageId,
-          packageName: formData.packageName,
-          name: formData.name,
-          email: formData.email,
-          contactNumber: formData.contactNumber,
-          country: formData.country,
-          status: "pending",
-          createdAt: new Date().toISOString(),
-        }),
-      });
 
-      if (!response.ok) {
-        throw new Error("Failed to submit booking request");
-      }
+    try {
+      await bookingService.insertBookingInquiry({
+        tourId: formData.tourId,
+        packageId: formData.packageId ?? null,
+        name: formData?.name,
+        email: formData?.email,
+        contactNumber: formData?.contactNumber,
+        country: formData?.country,
+      });
 
       setIsBookingModalOpen(false);
       setShowSuccessMessage(true);
     } catch (error) {
       console.error("Booking submission error:", error);
-      alert("Failed to submit booking request. Please try again.");
+      alert("Failed to submit booking inquiry. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -147,7 +136,7 @@ const SLTourDetailsBookingSidebar: React.FC<
           </div>
 
           {/* Book Now Button */}
-          <button 
+          <button
             onClick={handleBookNow}
             className="w-full bg-gradient-to-r from-sky-600 to-teal-600 hover:from-sky-700 hover:to-teal-700 text-white py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold text-base sm:text-lg transition-all duration-200 transform hover:scale-[1.02] sm:hover:scale-105 shadow-md hover:shadow-lg active:scale-95"
           >

@@ -8,6 +8,7 @@ import { UNIQUE_CODE_NAME } from "@/utils/constant";
 import { UserUpdateRequest } from "@/types/user-profile-types";
 import PasswordValidationModal from "@/components/user-profile-components/PasswordValidationModal";
 import Image from "next/image";
+import UpdateUserProfileLoading from "@/components/user-profile-components/Loadings/UpdateUserProfileLoading";
 
 const UserProfileUpdatePage = () => {
   const router = useRouter();
@@ -225,23 +226,7 @@ const UserProfileUpdatePage = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-sky-50 to-teal-50 p-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="animate-pulse space-y-6">
-            <div className="h-8 bg-sky-200 rounded w-48"></div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[...Array(12)].map((_, i) => (
-                <div key={i} className="space-y-2">
-                  <div className="h-4 bg-sky-200 rounded w-24"></div>
-                  <div className="h-10 bg-sky-200 rounded"></div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <UpdateUserProfileLoading/>
   }
 
   if (!userProfile) {

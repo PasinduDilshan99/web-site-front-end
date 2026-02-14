@@ -1,20 +1,23 @@
 // app/profile/package-reviews/page.tsx
-"use client"
-import { useAuth } from '@/context/AuthContext';
-import { UserProfileAPIService } from '@/services/userProfileAPIService';
-import { PackageReview } from '@/types/user-profile';
-import { USER_PROFILE_PACKAGE_REVIEWS_VIEW_PRIVILEGE } from '@/utils/privileges';
-import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+"use client";
+import UserProfilePackageReviewsLoading from "@/components/user-profile-components/Loadings/UserProfilePackageReviewsLoading";
+import { useAuth } from "@/context/AuthContext";
+import { UserProfileAPIService } from "@/services/userProfileAPIService";
+import { PackageReview } from "@/types/user-profile";
+import { USER_PROFILE_PACKAGE_REVIEWS_VIEW_PRIVILEGE } from "@/utils/privileges";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 
 export default function PackageReviewsPage() {
   const [packageReviews, setPackageReviews] = useState<PackageReview[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeFilter, setActiveFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const [activeFilter, setActiveFilter] = useState<
+    "all" | "active" | "inactive"
+  >("all");
   const apiService = new UserProfileAPIService();
 
-  const {user} = useAuth()
-  const router = useRouter()
+  const { user } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     if (
@@ -35,16 +38,16 @@ export default function PackageReviewsPage() {
       const response = await apiService.getPackageReviews();
       setPackageReviews(response.data || []);
     } catch (error) {
-      console.error('Failed to load package reviews:', error);
+      console.error("Failed to load package reviews:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredReviews = packageReviews.filter(review => {
-    if (activeFilter === 'all') return true;
-    if (activeFilter === 'active') return review.status === 'ACTIVE';
-    if (activeFilter === 'inactive') return review.status !== 'ACTIVE';
+  const filteredReviews = packageReviews.filter((review) => {
+    if (activeFilter === "all") return true;
+    if (activeFilter === "active") return review.status === "ACTIVE";
+    if (activeFilter === "inactive") return review.status !== "ACTIVE";
     return true;
   });
 
@@ -57,10 +60,10 @@ export default function PackageReviewsPage() {
               key={star}
               className={`w-5 h-5 ${
                 star <= Math.floor(rating)
-                  ? 'text-amber-500 fill-current'
+                  ? "text-amber-500 fill-current"
                   : star === Math.ceil(rating) && rating % 1 !== 0
-                  ? 'text-amber-500 fill-current'
-                  : 'text-gray-300'
+                    ? "text-amber-500 fill-current"
+                    : "text-gray-300"
               }`}
               viewBox="0 0 20 20"
             >
@@ -68,51 +71,35 @@ export default function PackageReviewsPage() {
             </svg>
           ))}
         </div>
-        <span className="text-base font-bold text-sky-600">{rating.toFixed(1)}</span>
+        <span className="text-base font-bold text-sky-600">
+          {rating.toFixed(1)}
+        </span>
       </div>
     );
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
   if (loading) {
-    return (
-      <div className="flex-1 p-4 md:p-6 lg:p-8 bg-gradient-to-br from-sky-25 to-teal-25 min-h-screen">
-        <div className="max-w-6xl mx-auto">
-          {/* Header Loading */}
-          <div className="animate-pulse mb-8">
-            <div className="h-8 md:h-10 bg-gradient-to-r from-sky-200 to-teal-200 rounded-lg w-48 mb-4"></div>
-            <div className="h-4 bg-gradient-to-r from-sky-100 to-teal-100 rounded w-64"></div>
-          </div>
-          
-          {/* Stats Loading */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-24 bg-gradient-to-r from-sky-100 to-teal-100 rounded-xl"></div>
-            ))}
-          </div>
-
-          {/* Reviews Loading */}
-          <div className="space-y-4 md:space-y-6">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-64 md:h-72 bg-gradient-to-r from-sky-100 to-teal-100 rounded-xl md:rounded-2xl"></div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
+    return <UserProfilePackageReviewsLoading />;
   }
 
-  const activeReviews = packageReviews.filter(r => r.status === 'ACTIVE').length;
-  const averageRating = packageReviews.length > 0 
-    ? (packageReviews.reduce((acc, review) => acc + review.rating, 0) / packageReviews.length).toFixed(1)
-    : '0.0';
+  const activeReviews = packageReviews.filter(
+    (r) => r.status === "ACTIVE",
+  ).length;
+  const averageRating =
+    packageReviews.length > 0
+      ? (
+          packageReviews.reduce((acc, review) => acc + review.rating, 0) /
+          packageReviews.length
+        ).toFixed(1)
+      : "0.0";
 
   return (
     <div className="flex-1 p-4 md:p-6 lg:p-8 bg-gradient-to-br from-sky-25 to-teal-25 min-h-screen">
@@ -132,22 +119,39 @@ export default function PackageReviewsPage() {
           <div className="mb-6 md:mb-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
               <div className="bg-white rounded-xl shadow-sm border border-sky-100 p-4 text-center">
-                <div className="text-2xl md:text-3xl font-bold text-sky-600">{packageReviews.length}</div>
-                <div className="text-xs md:text-sm text-gray-600 mt-1">Total Reviews</div>
+                <div className="text-2xl md:text-3xl font-bold text-sky-600">
+                  {packageReviews.length}
+                </div>
+                <div className="text-xs md:text-sm text-gray-600 mt-1">
+                  Total Reviews
+                </div>
               </div>
               <div className="bg-white rounded-xl shadow-sm border border-teal-100 p-4 text-center">
-                <div className="text-2xl md:text-3xl font-bold text-teal-600">{averageRating}</div>
-                <div className="text-xs md:text-sm text-gray-600 mt-1">Avg Rating</div>
+                <div className="text-2xl md:text-3xl font-bold text-teal-600">
+                  {averageRating}
+                </div>
+                <div className="text-xs md:text-sm text-gray-600 mt-1">
+                  Avg Rating
+                </div>
               </div>
               <div className="bg-white rounded-xl shadow-sm border border-emerald-100 p-4 text-center">
-                <div className="text-2xl md:text-3xl font-bold text-emerald-600">{activeReviews}</div>
-                <div className="text-xs md:text-sm text-gray-600 mt-1">Active</div>
+                <div className="text-2xl md:text-3xl font-bold text-emerald-600">
+                  {activeReviews}
+                </div>
+                <div className="text-xs md:text-sm text-gray-600 mt-1">
+                  Active
+                </div>
               </div>
               <div className="bg-white rounded-xl shadow-sm border border-blue-100 p-4 text-center">
                 <div className="text-2xl md:text-3xl font-bold text-blue-600">
-                  {packageReviews.reduce((acc, review) => acc + (review.images?.length || 0), 0)}
+                  {packageReviews.reduce(
+                    (acc, review) => acc + (review.images?.length || 0),
+                    0,
+                  )}
                 </div>
-                <div className="text-xs md:text-sm text-gray-600 mt-1">Photos</div>
+                <div className="text-xs md:text-sm text-gray-600 mt-1">
+                  Photos
+                </div>
               </div>
             </div>
           </div>
@@ -161,31 +165,31 @@ export default function PackageReviewsPage() {
             </h2>
             <div className="flex items-center space-x-2">
               <button
-                onClick={() => setActiveFilter('all')}
+                onClick={() => setActiveFilter("all")}
                 className={`px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-medium transition-all duration-300 ${
-                  activeFilter === 'all'
-                    ? 'bg-gradient-to-r from-sky-500 to-teal-500 text-white shadow-sm'
-                    : 'bg-white text-gray-700 border border-sky-200 hover:border-sky-300'
+                  activeFilter === "all"
+                    ? "bg-gradient-to-r from-sky-500 to-teal-500 text-white shadow-sm"
+                    : "bg-white text-gray-700 border border-sky-200 hover:border-sky-300"
                 }`}
               >
                 All
               </button>
               <button
-                onClick={() => setActiveFilter('active')}
+                onClick={() => setActiveFilter("active")}
                 className={`px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-medium transition-all duration-300 ${
-                  activeFilter === 'active'
-                    ? 'bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-sm'
-                    : 'bg-white text-gray-700 border border-emerald-200 hover:border-emerald-300'
+                  activeFilter === "active"
+                    ? "bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-sm"
+                    : "bg-white text-gray-700 border border-emerald-200 hover:border-emerald-300"
                 }`}
               >
                 Active
               </button>
               <button
-                onClick={() => setActiveFilter('inactive')}
+                onClick={() => setActiveFilter("inactive")}
                 className={`px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-medium transition-all duration-300 ${
-                  activeFilter === 'inactive'
-                    ? 'bg-gradient-to-r from-gray-500 to-slate-500 text-white shadow-sm'
-                    : 'bg-white text-gray-700 border border-gray-200 hover:border-gray-300'
+                  activeFilter === "inactive"
+                    ? "bg-gradient-to-r from-gray-500 to-slate-500 text-white shadow-sm"
+                    : "bg-white text-gray-700 border border-gray-200 hover:border-gray-300"
                 }`}
               >
                 Inactive
@@ -198,13 +202,14 @@ export default function PackageReviewsPage() {
           <div className="bg-white rounded-xl md:rounded-2xl shadow-lg border border-sky-200 p-6 md:p-8 text-center">
             <div className="text-sky-400 text-5xl md:text-6xl mb-4">📦</div>
             <h3 className="text-xl md:text-2xl font-semibold text-gray-800 mb-2">
-              {activeFilter === 'all' ? 'No Package Reviews Yet' : `No ${activeFilter} Reviews`}
+              {activeFilter === "all"
+                ? "No Package Reviews Yet"
+                : `No ${activeFilter} Reviews`}
             </h3>
             <p className="text-gray-600 mb-6 max-w-md mx-auto">
-              {activeFilter === 'all' 
+              {activeFilter === "all"
                 ? "You haven't reviewed any packages yet. Start sharing your experiences with travel packages!"
-                : `No ${activeFilter} package reviews found. Try changing the filter.`
-              }
+                : `No ${activeFilter} package reviews found. Try changing the filter.`}
             </p>
             <button className="px-6 py-3 bg-gradient-to-r from-sky-500 to-teal-600 text-white rounded-lg hover:shadow-md transition-all duration-300 font-medium">
               Write Your First Review
@@ -236,16 +241,18 @@ export default function PackageReviewsPage() {
                       </div>
                       <StarRating rating={review.rating} />
                     </div>
-                    
+
                     <div className="flex flex-col items-end gap-2">
                       <span className="bg-gradient-to-r from-sky-50 to-teal-50 text-sky-800 text-xs md:text-sm font-semibold px-3 py-1.5 rounded-full border border-sky-200 whitespace-nowrap">
                         {review.numberOfParticipate} participants
                       </span>
-                      <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${
-                        review.status === 'ACTIVE'
-                          ? 'bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-800 border border-emerald-200'
-                          : 'bg-gradient-to-r from-gray-50 to-slate-50 text-gray-800 border border-gray-200'
-                      }`}>
+                      <span
+                        className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+                          review.status === "ACTIVE"
+                            ? "bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-800 border border-emerald-200"
+                            : "bg-gradient-to-r from-gray-50 to-slate-50 text-gray-800 border border-gray-200"
+                        }`}
+                      >
                         {review.status}
                       </span>
                     </div>
@@ -297,7 +304,7 @@ export default function PackageReviewsPage() {
                           <span>{review.comments?.length || 0} comments</span>
                         </span>
                       </div>
-                      
+
                       <div className="flex items-center space-x-3 text-xs md:text-sm text-gray-600">
                         <span className="flex items-center space-x-1.5">
                           <span className="w-4 h-4 text-gray-500">📅</span>
