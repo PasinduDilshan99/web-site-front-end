@@ -148,7 +148,7 @@ export default function PasswordChangePage() {
         {/* Content */}
         <div className="relative z-10 flex flex-col justify-center items-start p-16 text-white">
           <h1 className="font-serif text-6xl mb-6" style={{ fontFamily: "'Dancing Script', cursive" }}>
-            Travelista Tours
+            Felicita Trips
           </h1>
           <p className="text-xl text-blue-100 max-w-md leading-relaxed mb-8">
             Keep your account secure by updating your password regularly
