@@ -328,7 +328,7 @@ const DestinationDetailsHeroSection: React.FC<DestinationDetailsHeroSectionProps
                 
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 md:p-8 mx-auto max-w-3xl mb-8">
                   <p className="text-md md:text-lg lg:text-xl text-gray-100 leading-relaxed mb-6">
-                    {destination.destinationDescription}
+                    {destination.images[selectedImageIndex].imageDescription}
                   </p>
 
                   {/* Destination Info - CENTERED */}

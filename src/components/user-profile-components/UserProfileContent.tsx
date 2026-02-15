@@ -220,8 +220,8 @@ export default function UserProfileContent({
 
                 <InfoCard>
                   <InfoField
-                    label="Religion"
-                    value={userProfile.religion || "Not specified"}
+                    label="Nationality"
+                    value={userProfile.countryName || "Not specified"}
                   />
                 </InfoCard>
               </div>

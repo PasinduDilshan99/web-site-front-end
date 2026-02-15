@@ -23,18 +23,18 @@ const FOOTER = "/footer";
 const PLAN_YOUR_TRIP = "/plan-your-trip";
 const EMPLOYEES = "/employees";
 const INQUIRY = "/inquiry";
-const OUR_STORY = "/our-story"
-const CONTACT_US = "/contact-us"
-const WISH_LIST = "/wish-list"
-const AUTH = "/auth"
-const USER_PROFILE = "/user-profile"
-const HISTORY_MANAGEMENT = "/history-management"
-const COUPON = "/coupon"
-const USER_NOTIFICATION_PERMISSIONS = "/user-notification-permissions"
-const ACCOUNT_SECURITY = "/account-security"
-const BOOKING = "/booking"
-const BROWSER_HISTORY = "/browser-history"
-
+const OUR_STORY = "/our-story";
+const CONTACT_US = "/contact-us";
+const WISH_LIST = "/wish-list";
+const AUTH = "/auth";
+const USER_PROFILE = "/user-profile";
+const HISTORY_MANAGEMENT = "/history-management";
+const COUPON = "/coupon";
+const USER_NOTIFICATION_PERMISSIONS = "/user-notification-permissions";
+const ACCOUNT_SECURITY = "/account-security";
+const BOOKING = "/booking";
+const BROWSER_HISTORY = "/browser-history";
+const OTHERS = "/others";
 
 // Auth
 export const LOGIN_FE = `${API}${AUTH}/login`;
@@ -47,7 +47,6 @@ export const UPDATE_SECRET_QUESTIONS_DATA_FE = `${API}${AUTH}/update-secret-ques
 export const USERNAME_PASSWORD_VALIDATION_DATA_FE = `${API}${AUTH}/username-password-validation`;
 export const GET_ACTIVE_SECRET_QUESTIONS_DATA_FE = `${API}${AUTH}/secret-questions`;
 export const GET_SECRET_QUESTIONS_BY_USER_DATA_FE = `${API}${AUTH}/secret-questions-by-user`;
-
 
 // User Profile
 export const UPDATE_USER_PROFILE_DETAILS_DATA_FE = `${API}${USER_PROFILE}/update-user-details`;
@@ -88,7 +87,6 @@ export const INSERT_BOOKINGS_INQUIRY_DETAILS_DATA_FE = `${API}${BOOKING}/insert-
 // User Benefits
 export const GET_ALL_ACTIVE_USER_BENEFITS_FE = `${API}${USER_BENEFITS}`;
 export const GET_USER_PROFILE_USER_BENEFITS_DATA_FE = `${API}${USER_BENEFITS}/user-profile`;
-
 
 // Link Bar
 export const GET_ACTIVE_LINK_BAR_DATA = `${API}${LINK_BAR}`;
@@ -141,6 +139,7 @@ export const GET_TOURS_REVIEWS_DETAILS_DATA_FE = `${API}${TOUR}/reviews`;
 export const GET_TOUR_EXTRA_DETAILS_BY_ID_DATA_FE = `${API}${TOUR}/extra-details`;
 export const GET_TOUR_DAY_TO_DAY_DETAILS_BY_ID_DATA_FE = `${API}${TOUR}/day-to-day-details`;
 export const GET_ALL_TOURS_BASIC_DETAILS_DATA_FE = `${API}${TOUR}/basic-details`;
+export const GET_TOUR_MAP_DETAILS_DATA_FE = `${API}${TOUR}/tour-map`;
 
 // Packages
 export const GET_ALL_PACKAGES_DETAILS_DATA_FE = `${API}${PACKAGES}`;
@@ -203,34 +202,35 @@ export const GET_CONTACT_US_CONTACT_METHODS_DATA_FE = `${API}${CONTACT_US}/conta
 export const GET_EMPLOYEE_DETAILS_BY_TOUR_ID_DATA_FE = `${API}${EMPLOYEES}/employees-details-by-tour-id`;
 export const GET_CEO_DETAILS_DATA_FE = `${API}${EMPLOYEES}/ceo-details`;
 
-
 // FAQ
 export const GET_ALL_FAQ_DATA_FE = `${API}${FAQ}`;
 export const GET_ACTIVE_FAQ_DATA_FE = `${API}${FAQ}/active`;
 export const UPDATE_FAQ_VIEW_COUNT_DATA_FE = `${API}${FAQ}/update-view-count`;
-export const GET_FAQ_OPTIONS_DATA_FE =`${API}${FAQ}/options`;
+export const GET_FAQ_OPTIONS_DATA_FE = `${API}${FAQ}/options`;
 export const ADD_FAQ_REQUEST_DATA_FE = `${API}${FAQ}/insert-faq-request`;
 
 // Wish List
-export const ADD_ACTIVITY_WISH_LIST_DATA= `${API}${WISH_LIST}/insert-activity-wish-list`;
-export const ADD_DESTINATION_WISH_LIST_DATA= `${API}${WISH_LIST}/insert-destination-wish-list`;
-export const ADD_TOUR_WISH_LIST_DATA= `${API}${WISH_LIST}/insert-tour-wish-list`;
-export const ADD_PACKAGE_WISH_LIST_DATA= `${API}${WISH_LIST}/insert-package-wish-list`;
+export const ADD_ACTIVITY_WISH_LIST_DATA = `${API}${WISH_LIST}/insert-activity-wish-list`;
+export const ADD_DESTINATION_WISH_LIST_DATA = `${API}${WISH_LIST}/insert-destination-wish-list`;
+export const ADD_TOUR_WISH_LIST_DATA = `${API}${WISH_LIST}/insert-tour-wish-list`;
+export const ADD_PACKAGE_WISH_LIST_DATA = `${API}${WISH_LIST}/insert-package-wish-list`;
 export const GET_WIS_LIST_DETAILS_DATA_FE = `${API}${WISH_LIST}/details`;
-
 
 // Browser History
 export const ADD_BROWSER_HISTORY_REQUEST_DATA_FE = `${API}${BROWSER_HISTORY}/add`;
 
-export const GET_TOUR_DETAILS_BY_ID_FE = `${API}${TOUR}/details-by-id`;
+// Others
+export const UPLOAD_IMAGE_TO_CLOUDINARY_FE = `${API}${OTHERS}/save-images`;
 
+
+
+export const GET_TOUR_DETAILS_BY_ID_FE = `${API}${TOUR}/details-by-id`;
 
 export const GET_ALL_PARTNERS = `${API}${PARTNERS}`;
 
 export const GET_ACTIVE_WORK_FLOW_STEPS = `${API}${WORK_FLOW}`;
 
 export const GET_ACTIVE_DESTINATIONS_LOCATIONS_CATEGORIES_FE = `${API}${DESTINATIONS}/locations-categories`;
-
 
 export const GET_ALL_ACTIVE_REVIEW_FE = `${API}${REVIEW}`;
 
@@ -241,7 +241,6 @@ export const GET_ACTIVE_ACTIVITIES_FE = `${API}${ACTIVITIES}`;
 export const GET_ACTIVE_ACTIVITIES_CATEGORIES_FE = `${API}${ACTIVITIES}/categories`;
 export const GET_PLAN_YOUR_TRIP_ACTIVE_DESTINATIONS_FE = `${API}${PLAN_YOUR_TRIP}`;
 export const GET_PLAN_YOUR_TRIP_DESTINATIONS_TOURS_FE = `${API}${PLAN_YOUR_TRIP}/map`;
-
 
 // Accommodations
 export const GET_AVAILABLE_ACCOMMODATION = `${API}${ACCOMMODATION}`;
