@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Calendar, User, Clock, Eye, Share2, Bookmark } from "lucide-react";
 import { formatDate } from "@/utils/blog-utils";
 import { useAuth } from "@/context/AuthContext";
+import Image from "next/image";
 
 interface BlogHeaderProps {
   blogId: number;
@@ -11,6 +12,7 @@ interface BlogHeaderProps {
   isBookmark: boolean;
   subtitle: string;
   writerName: string;
+  writerImageUrl: string;
   date: string;
   readTime: number;
   totalReactions: number;
@@ -28,6 +30,7 @@ const BlogHeader: React.FC<BlogHeaderProps> = ({
   isBookmark,
   subtitle,
   writerName,
+  writerImageUrl,
   date,
   readTime,
   totalReactions,
@@ -40,7 +43,7 @@ const BlogHeader: React.FC<BlogHeaderProps> = ({
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [localIsBookmarked, setLocalIsBookmarked] = useState(isBookmark);
-  
+
   // Ref to prevent multiple clicks
   const isProcessing = useRef(false);
 
@@ -55,7 +58,7 @@ const BlogHeader: React.FC<BlogHeaderProps> = ({
     if (isProcessing.current) {
       return;
     }
-    
+
     // Check if user is logged in
     if (!user) {
       if (onNeedLogin) {
@@ -67,10 +70,9 @@ const BlogHeader: React.FC<BlogHeaderProps> = ({
     try {
       isProcessing.current = true;
       setIsLoading(true);
-      
+
       // Call the parent's bookmark handler
       onBookmark();
-      
     } catch (error) {
       console.error("Error handling bookmark:", error);
     } finally {
@@ -94,7 +96,7 @@ const BlogHeader: React.FC<BlogHeaderProps> = ({
       {/* Category & Stats */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <span className="px-4 py-2 bg-gradient-to-r from-purple-600 to-amber-500 text-white text-sm font-semibold rounded-full shadow-lg">
+          <span className="px-4 py-2 bg-gradient-to-r from-teal-500 to-blue-600 text-white text-sm font-semibold rounded-full shadow-lg">
             Travel Blog
           </span>
           <span className="text-sm text-gray-600 flex items-center gap-1">
@@ -106,7 +108,7 @@ const BlogHeader: React.FC<BlogHeaderProps> = ({
         <div className="flex items-center gap-4">
           <button
             onClick={onShare}
-            className="flex items-center gap-2 px-4 py-2 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-teal-50 text-teal-700 rounded-lg hover:bg-teal-100 transition-colors"
             title="Share this blog"
           >
             <Share2 className="w-5 h-5" />
@@ -117,7 +119,7 @@ const BlogHeader: React.FC<BlogHeaderProps> = ({
             disabled={isLoading}
             className={`p-2 rounded-lg transition-all flex items-center gap-1 group relative ${
               localIsBookmarked
-                ? "bg-amber-50 text-amber-600 hover:bg-amber-100"
+                ? "bg-blue-50 text-blue-600 hover:bg-blue-100"
                 : "bg-gray-50 text-gray-600 hover:bg-gray-100"
             } disabled:opacity-50 disabled:cursor-not-allowed`}
             title={getBookmarkTooltip()}
@@ -142,36 +144,46 @@ const BlogHeader: React.FC<BlogHeaderProps> = ({
       </div>
 
       {/* Title */}
-      <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-purple-900 mb-4 leading-tight">
+      <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-teal-800 mb-4 leading-tight">
         {title}
       </h1>
 
       {/* Subtitle */}
       {subtitle && (
-        <h2 className="text-xl md:text-2xl text-amber-600 mb-6 font-medium">
+        <h2 className="text-xl md:text-2xl text-blue-600 mb-6 font-medium">
           {subtitle}
         </h2>
       )}
 
       {/* Author & Date */}
-      <div className="flex flex-wrap items-center gap-6 mb-8 pt-6 border-t border-purple-100">
+      <div className="flex flex-wrap items-center gap-6 mb-8 pt-6 border-t border-teal-100">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-amber-400 flex items-center justify-center">
-            <User className="w-6 h-6 text-white" />
+          <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+            {writerImageUrl ? (
+              <Image
+                src={writerImageUrl}
+                alt="Writer"
+                width={48}
+                height={48}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <User className="w-6 h-6 text-gray-500" />
+            )}
           </div>
           <div>
-            <h4 className="font-semibold text-purple-900">{writerName}</h4>
+            <h4 className="font-semibold text-teal-800">{writerName}</h4>
             <p className="text-sm text-gray-600">Travel Writer</p>
           </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2 text-gray-600">
-            <Calendar className="w-5 h-5 text-purple-500" />
+            <Calendar className="w-5 h-5 text-teal-500" />
             <span>{formatDate(date)}</span>
           </div>
           <div className="flex items-center gap-2 text-gray-600">
-            <Clock className="w-5 h-5 text-amber-500" />
+            <Clock className="w-5 h-5 text-blue-500" />
             <span>{readTime} min read</span>
           </div>
         </div>
@@ -179,18 +191,20 @@ const BlogHeader: React.FC<BlogHeaderProps> = ({
 
       {/* Stats Bar */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-4 rounded-xl text-center">
-          <div className="text-2xl font-bold text-purple-700">
+        <div className="bg-gradient-to-r from-teal-50 to-teal-100 p-4 rounded-xl text-center">
+          <div className="text-2xl font-bold text-teal-700">
             {totalReactions}
           </div>
           <div className="text-sm text-gray-600">Reactions</div>
         </div>
-        <div className="bg-gradient-to-r from-amber-50 to-amber-100 p-4 rounded-xl text-center">
-          <div className="text-2xl font-bold text-amber-700">{totalComments}</div>
+        <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-xl text-center">
+          <div className="text-2xl font-bold text-blue-700">
+            {totalComments}
+          </div>
           <div className="text-sm text-gray-600">Comments</div>
         </div>
-        <div className="bg-gradient-to-r from-purple-50 to-amber-50 p-4 rounded-xl text-center">
-          <div className="text-2xl font-bold text-purple-700">{readTime}</div>
+        <div className="bg-gradient-to-r from-teal-50 to-blue-50 p-4 rounded-xl text-center">
+          <div className="text-2xl font-bold text-teal-700">{readTime}</div>
           <div className="text-sm text-gray-600">Min Read</div>
         </div>
         <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-4 rounded-xl text-center">

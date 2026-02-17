@@ -1,9 +1,17 @@
 // app/blog/[id]/components/CommentsSection.tsx
 import React, { useState, useEffect } from "react";
-import { User, Send, TrendingUp, MessageCircle, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  User,
+  Send,
+  TrendingUp,
+  MessageCircle,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 import CommentItem from "./CommentItem";
 import { BlogComment } from "@/types/blog-types";
 import { useAuth } from "@/context/AuthContext";
+import Image from "next/image";
 
 interface CommentsSectionProps {
   comments: BlogComment[];
@@ -66,10 +74,10 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
     if (!isExpanding) {
       setIsLoadingMore(true);
       setIsExpanding(true);
-      
+
       // Smooth loading with delay
       setTimeout(() => {
-        setVisibleCount(prev => Math.min(prev + 3, comments.length));
+        setVisibleCount((prev) => Math.min(prev + 3, comments.length));
         setIsLoadingMore(false);
         setIsExpanding(false);
       }, 300);
@@ -92,13 +100,13 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
   const hasLessComments = visibleCount > 3;
 
   return (
-    <div className="bg-white rounded-3xl shadow-xl p-6 md:p-8 mb-8 border border-purple-200">
+    <div className="bg-white rounded-3xl shadow-xl p-6 md:p-8 mb-8 border border-teal-200">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-2xl font-bold text-purple-900">
+        <h3 className="text-2xl font-bold text-teal-800">
           Comments ({totalComments})
         </h3>
         <div className="flex items-center gap-2 text-sm text-gray-600">
-          <TrendingUp className="w-5 h-5 text-amber-500" />
+          <TrendingUp className="w-5 h-5 text-blue-500" />
           Most recent first
         </div>
       </div>
@@ -106,18 +114,28 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
       {/* Add Comment */}
       <div className="mb-8">
         <div className="flex gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-amber-400 flex items-center justify-center flex-shrink-0">
-            <User className="w-5 h-5 text-white" />
+          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-teal-500 to-blue-500 flex items-center justify-center flex-shrink-0 overflow-hidden">
+            {user?.imageUrl ? (
+              <Image
+                src={user?.imageUrl}
+                alt="Writer"
+                width={48}
+                height={48}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <User className="w-6 h-6 text-gray-500" />
+            )}{" "}
           </div>
           <div className="flex-1">
             <textarea
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               placeholder="Share your thoughts on this blog..."
-              className="text-purple-500 w-full px-4 py-3 border border-purple-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent resize-none h-32"
+              className="text-teal-700 w-full px-4 py-3 border border-teal-300 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none h-32"
               rows={4}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && e.ctrlKey) {
+                if (e.key === "Enter" && e.ctrlKey) {
                   handleCommentSubmit();
                 }
               }}
@@ -129,7 +147,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
               <button
                 onClick={handleCommentSubmit}
                 disabled={!commentText.trim() || isSubmittingComment}
-                className="px-6 py-2 bg-gradient-to-r from-purple-600 to-amber-500 text-white rounded-lg hover:from-purple-700 hover:to-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
+                className="px-6 py-2 bg-gradient-to-r from-teal-500 to-blue-600 text-white rounded-lg hover:from-teal-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
               >
                 {isSubmittingComment ? (
                   <>
@@ -153,7 +171,9 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
         {visibleComments.length > 0 ? (
           <>
             {/* Comments List with smooth transition */}
-            <div className={`space-y-4 transition-all duration-300 ease-in-out ${isExpanding ? 'opacity-80' : 'opacity-100'}`}>
+            <div
+              className={`space-y-4 transition-all duration-300 ease-in-out ${isExpanding ? "opacity-80" : "opacity-100"}`}
+            >
               {visibleComments.map((comment) => (
                 <CommentItem
                   key={comment.comment_id}
@@ -177,7 +197,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
                 <button
                   onClick={handleShowMore}
                   disabled={isLoadingMore || isExpanding}
-                  className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-amber-400 text-white rounded-full hover:from-purple-600 hover:to-amber-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl"
+                  className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-teal-500 to-blue-600 text-white rounded-full hover:from-teal-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl"
                 >
                   {isLoadingMore ? (
                     <>
@@ -187,7 +207,10 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
                   ) : (
                     <>
                       <ChevronDown className="w-5 h-5" />
-                      <span>Show More Comments ({comments.length - visibleCount} more)</span>
+                      <span>
+                        Show More Comments ({comments.length - visibleCount}{" "}
+                        more)
+                      </span>
                     </>
                   )}
                 </button>

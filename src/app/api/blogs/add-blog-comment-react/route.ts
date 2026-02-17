@@ -14,6 +14,7 @@ export async function POST(request: NextRequest) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        cookie: request.headers.get("cookie") || "",
       },
       credentials: "include",
       body: JSON.stringify(body),
@@ -25,7 +26,7 @@ export async function POST(request: NextRequest) {
       console.error("Backend returned error:", text);
       return NextResponse.json(
         { error: "Failed to add comment reaction" },
-        { status: response.status }
+        { status: response.status },
       );
     }
 
@@ -35,7 +36,7 @@ export async function POST(request: NextRequest) {
     console.error("Error adding comment reaction:", error);
     return NextResponse.json(
       { error: "Something went wrong while adding comment reaction" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

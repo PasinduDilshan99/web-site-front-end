@@ -5,20 +5,19 @@ interface BlogParams {
   blogId: string;
 }
 
-
 export async function GET(
   request: NextRequest,
-  context: { params: BlogParams | Promise<BlogParams> }
+  context: { params: BlogParams | Promise<BlogParams> },
 ) {
   try {
-  const { blogId } = await context.params;
+    const { blogId } = await context.params;
 
     console.log("blog tags API - blogId:", blogId);
 
     if (!blogId) {
       return NextResponse.json(
         { error: "blog ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -33,6 +32,7 @@ export async function GET(
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        cookie: request.headers.get("cookie") || "",
       },
       cache: "no-store",
     });
@@ -42,7 +42,7 @@ export async function GET(
       console.error("Backend returned error:", text);
       return NextResponse.json(
         { error: "Failed to fetch blog details" },
-        { status: response.status }
+        { status: response.status },
       );
     }
 
@@ -52,7 +52,7 @@ export async function GET(
     console.error("Error fetching blog details:", error);
     return NextResponse.json(
       { error: "Something went wrong" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -112,154 +112,154 @@ const findUserReactionInComments = (
 };
 
 // Fetch blog details
-export const fetchBlogDetails = async (
-  id: number
-): Promise<BlogDetailsData> => {
-  const response = await fetch(
-    "http://localhost:8080/felicita/v0/api/blog/blog-details",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id }),
-      credentials: "include",
-    }
-  );
+// export const fetchBlogDetails = async (
+//   id: number
+// ): Promise<BlogDetailsData> => {
+//   const response = await fetch(
+//     "http://localhost:8080/felicita/v0/api/blog/blog-details",
+//     {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({ id }),
+//       credentials: "include",
+//     }
+//   );
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
+//   if (!response.ok) {
+//     throw new Error(`HTTP error! status: ${response.status}`);
+//   }
 
-  const apiResponse: ApiResponse = await response.json();
+//   const apiResponse: ApiResponse = await response.json();
 
-  if (apiResponse.code === 200 && apiResponse.data) {
-    const data = apiResponse.data;
+//   if (apiResponse.code === 200 && apiResponse.data) {
+//     const data = apiResponse.data;
 
-    // Normalize null values to empty arrays
-    return {
-      ...data,
-      comments: data.comments || [],
-      blog_reactions: data.blog_reactions || [],
-      images: data.images || [],
-      likeCount: data.likeCount || 0,
-      title: data.title || "Untitled Blog",
-      description: data.description || "",
-      subtitle: data.subtitle || "",
-      writer_name: data.writer_name || "Unknown Author",
-      blog_created_at: data.blog_created_at || new Date().toISOString(),
-    };
-  } else {
-    throw new Error(apiResponse.message || "Failed to fetch blog details");
-  }
-};
+//     // Normalize null values to empty arrays
+//     return {
+//       ...data,
+//       comments: data.comments || [],
+//       blog_reactions: data.blog_reactions || [],
+//       images: data.images || [],
+//       likeCount: data.likeCount || 0,
+//       title: data.title || "Untitled Blog",
+//       description: data.description || "",
+//       subtitle: data.subtitle || "",
+//       writer_name: data.writer_name || "Unknown Author",
+//       blog_created_at: data.blog_created_at || new Date().toISOString(),
+//     };
+//   } else {
+//     throw new Error(apiResponse.message || "Failed to fetch blog details");
+//   }
+// };
 
 // Fetch related blogs
-export const fetchRelatedBlogs = async (
-  writerId: number,
-  currentBlogId: number
-): Promise<BlogDetailsData[]> => {
-  try {
-    const response = await fetch(
-      "http://localhost:8080/felicita/v0/api/blog/active",
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      }
-    );
+// export const fetchRelatedBlogs = async (
+//   writerId: number,
+//   currentBlogId: number
+// ): Promise<BlogDetailsData[]> => {
+//   try {
+//     const response = await fetch(
+//       "http://localhost:8080/felicita/v0/api/blog/active",
+//       {
+//         method: "GET",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         credentials: "include",
+//       }
+//     );
 
-    if (!response.ok) {
-      return [];
-    }
+//     if (!response.ok) {
+//       return [];
+//     }
 
-    const result = await response.json();
-    if (result.code === 200 && result.data) {
-      // Filter blogs by same writer, excluding current blog
-      const related = result.data
-        .filter(
-          (blog: BlogDetailsData) =>
-            blog.writer_id === writerId && blog.blog_id !== currentBlogId
-        )
-        .slice(0, 3); // Show max 3 related blogs
+//     const result = await response.json();
+//     if (result.code === 200 && result.data) {
+//       // Filter blogs by same writer, excluding current blog
+//       const related = result.data
+//         .filter(
+//           (blog: BlogDetailsData) =>
+//             blog.writer_id === writerId && blog.blog_id !== currentBlogId
+//         )
+//         .slice(0, 3); // Show max 3 related blogs
 
-      // If not enough same-writer blogs, get random blogs
-      if (related.length < 3) {
-        const randomBlogs = result.data
-          .filter((blog: BlogDetailsData) => blog.blog_id !== currentBlogId)
-          .slice(0, 3 - related.length);
-        return [...related, ...randomBlogs];
-      }
+//       // If not enough same-writer blogs, get random blogs
+//       if (related.length < 3) {
+//         const randomBlogs = result.data
+//           .filter((blog: BlogDetailsData) => blog.blog_id !== currentBlogId)
+//           .slice(0, 3 - related.length);
+//         return [...related, ...randomBlogs];
+//       }
 
-      return related;
-    }
+//       return related;
+//     }
 
-    return [];
-  } catch (err) {
-    console.error("Error fetching related blogs:", err);
-    return [];
-  }
-};
+//     return [];
+//   } catch (err) {
+//     console.error("Error fetching related blogs:", err);
+//     return [];
+//   }
+// };
 
 // Fetch tags
-export const fetchTags = async (): Promise<BlogTag[]> => {
-  try {
-    const response = await fetch(
-      "http://localhost:8080/felicita/v0/api/blog/tags",
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      }
-    );
+// export const fetchTags = async (): Promise<BlogTag[]> => {
+//   try {
+//     const response = await fetch(
+//       "http://localhost:8080/felicita/v0/api/blog/tags",
+//       {
+//         method: "GET",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         credentials: "include",
+//       }
+//     );
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+//     if (!response.ok) {
+//       throw new Error(`HTTP error! status: ${response.status}`);
+//     }
 
-    const result: TagsApiResponse = await response.json();
-    if (result.code === 200 && result.data) {
-      // Filter only active tags and sort by name
-      return result.data
-        .filter((tag) => tag.statusName === "ACTIVE")
-        .sort((a, b) => a.name.localeCompare(b.name));
-    }
+//     const result: TagsApiResponse = await response.json();
+//     if (result.code === 200 && result.data) {
+//       // Filter only active tags and sort by name
+//       return result.data
+//         .filter((tag) => tag.statusName === "ACTIVE")
+//         .sort((a, b) => a.name.localeCompare(b.name));
+//     }
 
-    return [];
-  } catch (err) {
-    console.error("Error fetching tags:", err);
-    return [];
-  }
-};
+//     return [];
+//   } catch (err) {
+//     console.error("Error fetching tags:", err);
+//     return [];
+//   }
+// };
 
 
 // In blog-utils.ts
-export const fetchBlogTags = async (blogId: number): Promise<BlogTag[]> => {
-  try {
-    const response = await fetch(
-      `http://localhost:8080/felicita/v0/api/blog/tags/${blogId}`,
-      {
-        credentials: 'include',
-      }
-    );
+// export const fetchBlogTags = async (blogId: number): Promise<BlogTag[]> => {
+//   try {
+//     const response = await fetch(
+//       `http://localhost:8080/felicita/v0/api/blog/tags/${blogId}`,
+//       {
+//         credentials: 'include',
+//       }
+//     );
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch blog tags: ${response.status}`);
-    }
+//     if (!response.ok) {
+//       throw new Error(`Failed to fetch blog tags: ${response.status}`);
+//     }
 
-    const result = await response.json();
+//     const result = await response.json();
 
-    if (result.code === 200) {
-      return result.data || [];
-    } else {
-      throw new Error(result.message || 'Failed to fetch blog tags');
-    }
-  } catch (error) {
-    console.error('Error fetching blog tags:', error);
-    throw error;
-  }
-};
+//     if (result.code === 200) {
+//       return result.data || [];
+//     } else {
+//       throw new Error(result.message || 'Failed to fetch blog tags');
+//     }
+//   } catch (error) {
+//     console.error('Error fetching blog tags:', error);
+//     throw error;
+//   }
+// };

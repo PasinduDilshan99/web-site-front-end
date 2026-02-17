@@ -1,22 +1,29 @@
 // services/blog-service.ts
-import { 
-  ADD_BLOG_DATA_FE, 
-  GET_ACTIVE_BLOGS_DETAILS_DATA_FE, 
-  GET_BLOGS_DERAILS_BY_TAG_NAME_DATA_FE, 
-  GET_BLOGS_DERAILS_BY_WRITER_NAME_DATA_FE 
+import {
+  ADD_BLOG_BOOKMARK_DATA_FE,
+  ADD_BLOG_COMMENT_DATA_FE,
+  ADD_BLOG_COMMENT_REACT_DATA_FE,
+  ADD_BLOG_DATA_FE,
+  ADD_BLOG_REACT_DATA_FE,
+  GET_ACTIVE_BLOGS_DETAILS_DATA_FE,
+  GET_BLOGS_DERAILS_BY_BLOG_ID_DATA_FE,
+  GET_BLOGS_DERAILS_BY_TAG_NAME_DATA_FE,
+  GET_BLOGS_DERAILS_BY_WRITER_NAME_DATA_FE,
+  GET_BLOGS_TAG_BY_BLOG_ID_DATA_FE,
+  GET_BLOGS_TAG_DETAILS_DATA_FE,
 } from "@/utils/frontEndConstant";
-import { 
-  ActiveBlogsResponse, 
-  BlogCreateRequest, 
-  BlogCreateResponse, 
-  BlogDetailsData, 
+import {
+  ActiveBlogsResponse,
+  BlogCreateRequest,
+  BlogCreateResponse,
+  BlogDetailsData,
   BlogListApiResponse,
-  BlogReactRequest, 
-  CommentRequest, 
-  CommentReactRequest, 
-  BlogReactApiResponse, 
-  BlogCommentApiResponse, 
-  BlogCommentReactApiResponse, 
+  BlogReactRequest,
+  CommentRequest,
+  CommentReactRequest,
+  BlogReactApiResponse,
+  BlogCommentApiResponse,
+  BlogCommentReactApiResponse,
   BlogTagAPIResponse,
   BlogTag,
   ApiResponse,
@@ -24,18 +31,18 @@ import {
   BlogComment,
   BlogCommentReply,
   BlogReaction,
-  BlogComment as CommentType
+  BlogComment as CommentType,
 } from "@/types/blog-types";
 
-const API_BASE_URL = 'http://localhost:8080/felicita/api/v0/blog';
+// const API_BASE_URL = 'http://localhost:8080/felicita/api/v0/blog';
 
 export class BlogService {
   // Helper function to get headers
   private static getHeaders(): HeadersInit {
     const headers: HeadersInit = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     };
-    
+
     return headers;
   }
 
@@ -110,27 +117,30 @@ export class BlogService {
    */
   static findUserReactionInComments(
     comments: CommentType[] | null,
-    userId: number
+    userId: number,
   ): Record<number, string> {
     const reactionsMap: Record<number, string> = {};
-    
+
     if (!comments) return reactionsMap;
-    
+
     const traverseComments = (commentList: CommentType[]) => {
-      commentList.forEach(comment => {
+      commentList.forEach((comment) => {
         if (comment.reactions) {
-          const userReaction = comment.reactions.find(reaction => reaction.user_id === userId);
+          const userReaction = comment.reactions.find(
+            (reaction) => reaction.user_id === userId,
+          );
           if (userReaction && userReaction.reaction_type_name) {
-            reactionsMap[comment.comment_id] = userReaction.reaction_type_name.toLowerCase();
+            reactionsMap[comment.comment_id] =
+              userReaction.reaction_type_name.toLowerCase();
           }
         }
-        
+
         if (comment.replies) {
           this.traverseReplies(comment.replies, reactionsMap, userId);
         }
       });
     };
-    
+
     traverseComments(comments);
     return reactionsMap;
   }
@@ -141,16 +151,19 @@ export class BlogService {
   private static traverseReplies(
     replies: BlogCommentReply[],
     reactionsMap: Record<number, string>,
-    userId: number
+    userId: number,
   ): void {
-    replies.forEach(reply => {
+    replies.forEach((reply) => {
       if (reply.reactions) {
-        const userReaction = reply.reactions.find(reaction => reaction.user_id === userId);
+        const userReaction = reply.reactions.find(
+          (reaction) => reaction.user_id === userId,
+        );
         if (userReaction && userReaction.reaction_type_name) {
-          reactionsMap[reply.comment_id] = userReaction.reaction_type_name.toLowerCase();
+          reactionsMap[reply.comment_id] =
+            userReaction.reaction_type_name.toLowerCase();
         }
       }
-      
+
       if (reply.replies) {
         this.traverseReplies(reply.replies, reactionsMap, userId);
       }
@@ -168,7 +181,7 @@ export class BlogService {
     message?: string;
   }> {
     try {
-      const response = await fetch(`${API_BASE_URL}/blog-details`, {
+      const response = await fetch(GET_BLOGS_DERAILS_BY_BLOG_ID_DATA_FE, {
         method: "POST",
         headers: this.getHeaders(),
         body: JSON.stringify({ id }),
@@ -177,7 +190,9 @@ export class BlogService {
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+        throw new Error(
+          `HTTP error! status: ${response.status}, message: ${errorText}`,
+        );
       }
 
       const apiResponse: ApiResponse = await response.json();
@@ -215,7 +230,10 @@ export class BlogService {
       console.error("Error fetching blog details:", error);
       return {
         data: null,
-        error: error instanceof Error ? error.message : "Something went wrong while fetching blog details",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Something went wrong while fetching blog details",
       };
     }
   }
@@ -225,7 +243,7 @@ export class BlogService {
    */
   static async fetchRelatedBlogs(
     writerId: number,
-    currentBlogId: number
+    currentBlogId: number,
   ): Promise<{
     data: BlogDetailsData[];
     error: string | null;
@@ -233,14 +251,14 @@ export class BlogService {
     try {
       // First fetch all active blogs
       const { data: allBlogs, error } = await this.fetchActiveBlogs();
-      
+
       if (error) {
         return { data: [], error };
       }
 
       // Filter blogs by same writer, excluding current blog
       const sameWriterBlogs = allBlogs.filter(
-        (blog) => blog.writer_id === writerId && blog.blog_id !== currentBlogId
+        (blog) => blog.writer_id === writerId && blog.blog_id !== currentBlogId,
       );
 
       // Show max 3 related blogs
@@ -249,7 +267,7 @@ export class BlogService {
       // If not enough same-writer blogs, get random blogs
       if (related.length < 3) {
         const randomBlogs = allBlogs
-          .filter(blog => blog.blog_id !== currentBlogId)
+          .filter((blog) => blog.blog_id !== currentBlogId)
           .slice(0, 3 - related.length);
         return {
           data: [...related, ...randomBlogs],
@@ -265,7 +283,10 @@ export class BlogService {
       console.error("Error fetching related blogs:", error);
       return {
         data: [],
-        error: error instanceof Error ? error.message : "Failed to fetch related blogs",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch related blogs",
       };
     }
   }
@@ -279,7 +300,7 @@ export class BlogService {
     message?: string;
   }> {
     try {
-      const response = await fetch(`${API_BASE_URL}/tags`, {
+      const response = await fetch(GET_BLOGS_TAG_DETAILS_DATA_FE, {
         method: "GET",
         headers: this.getHeaders(),
         credentials: "include",
@@ -287,11 +308,13 @@ export class BlogService {
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+        throw new Error(
+          `HTTP error! status: ${response.status}, message: ${errorText}`,
+        );
       }
 
       const result: TagsApiResponse = await response.json();
-      
+
       if (result.code === 200 && result.data) {
         // Filter only active tags and sort by name
         const activeTags = result.data
@@ -328,13 +351,15 @@ export class BlogService {
     message?: string;
   }> {
     try {
-      const response = await fetch(`${API_BASE_URL}/tags/${blogId}`, {
-        credentials: 'include',
+      const response = await fetch(GET_BLOGS_TAG_BY_BLOG_ID_DATA_FE, {
+        credentials: "include",
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+        throw new Error(
+          `HTTP error! status: ${response.status}, message: ${errorText}`,
+        );
       }
 
       const result = await response.json();
@@ -348,15 +373,16 @@ export class BlogService {
       } else {
         return {
           data: [],
-          error: result.message || 'Failed to fetch blog tags',
+          error: result.message || "Failed to fetch blog tags",
           message: result.message,
         };
       }
     } catch (error) {
-      console.error('Error fetching blog tags:', error);
+      console.error("Error fetching blog tags:", error);
       return {
         data: [],
-        error: error instanceof Error ? error.message : 'Failed to fetch blog tags',
+        error:
+          error instanceof Error ? error.message : "Failed to fetch blog tags",
       };
     }
   }
@@ -372,29 +398,32 @@ export class BlogService {
     message?: string;
   }> {
     try {
-      const response = await fetch(`${API_BASE_URL}/react`, {
-        method: 'POST',
+      const response = await fetch(ADD_BLOG_REACT_DATA_FE, {
+        method: "POST",
         headers: this.getHeaders(),
         body: JSON.stringify(data),
-        credentials: 'include',
+        credentials: "include",
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+        throw new Error(
+          `HTTP error! status: ${response.status}, message: ${errorText}`,
+        );
       }
 
       const result: BlogReactApiResponse = await response.json();
-      return { 
-        data: result, 
+      return {
+        data: result,
         error: null,
-        message: result.message 
+        message: result.message,
       };
     } catch (error) {
-      console.error('Error reacting to blog:', error);
+      console.error("Error reacting to blog:", error);
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Failed to react to blog',
+        error:
+          error instanceof Error ? error.message : "Failed to react to blog",
       };
     }
   }
@@ -411,32 +440,34 @@ export class BlogService {
       // If parentId is undefined, send null
       const requestData = {
         ...data,
-        parentId: data.parentId === undefined ? null : data.parentId
+        parentId: data.parentId === undefined ? null : data.parentId,
       };
 
-      const response = await fetch(`${API_BASE_URL}/add-comment`, {
-        method: 'POST',
+      const response = await fetch(ADD_BLOG_COMMENT_DATA_FE, {
+        method: "POST",
         headers: this.getHeaders(),
         body: JSON.stringify(requestData),
-        credentials: 'include',
+        credentials: "include",
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+        throw new Error(
+          `HTTP error! status: ${response.status}, message: ${errorText}`,
+        );
       }
 
       const result: BlogCommentApiResponse = await response.json();
-      return { 
-        data: result, 
+      return {
+        data: result,
         error: null,
-        message: result.message 
+        message: result.message,
       };
     } catch (error) {
-      console.error('Error adding comment:', error);
+      console.error("Error adding comment:", error);
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Failed to add comment',
+        error: error instanceof Error ? error.message : "Failed to add comment",
       };
     }
   }
@@ -450,29 +481,32 @@ export class BlogService {
     message?: string;
   }> {
     try {
-      const response = await fetch(`${API_BASE_URL}/comment-react`, {
-        method: 'POST',
+      const response = await fetch(ADD_BLOG_COMMENT_REACT_DATA_FE, {
+        method: "POST",
         headers: this.getHeaders(),
         body: JSON.stringify(data),
-        credentials: 'include',
+        credentials: "include",
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+        throw new Error(
+          `HTTP error! status: ${response.status}, message: ${errorText}`,
+        );
       }
 
       const result: BlogCommentReactApiResponse = await response.json();
-      return { 
-        data: result, 
+      return {
+        data: result,
         error: null,
-        message: result.message 
+        message: result.message,
       };
     } catch (error) {
-      console.error('Error reacting to comment:', error);
+      console.error("Error reacting to comment:", error);
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Failed to react to comment',
+        error:
+          error instanceof Error ? error.message : "Failed to react to comment",
       };
     }
   }
@@ -487,42 +521,45 @@ export class BlogService {
     message?: string;
   }> {
     try {
-      const response = await fetch(`${API_BASE_URL}/add-bookmark`, {
-        method: 'POST',
+      const response = await fetch(ADD_BLOG_BOOKMARK_DATA_FE, {
+        method: "POST",
         headers: this.getHeaders(),
         body: JSON.stringify({ blogId }),
-        credentials: 'include',
+        credentials: "include",
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+        throw new Error(
+          `HTTP error! status: ${response.status}, message: ${errorText}`,
+        );
       }
 
       const result: BlogTagAPIResponse = await response.json();
-      
+
       if (result.code === 200) {
         return {
           success: true,
           data: result,
           error: null,
-          message: result.message
+          message: result.message,
         };
       } else {
         return {
           success: false,
           data: result,
-          error: result.message || 'Bookmark operation failed',
-          message: result.message
+          error: result.message || "Bookmark operation failed",
+          message: result.message,
         };
       }
     } catch (error) {
-      console.error('Error toggling bookmark:', error);
+      console.error("Error toggling bookmark:", error);
       return {
         success: false,
         data: null,
-        error: error instanceof Error ? error.message : 'Failed to toggle bookmark',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        error:
+          error instanceof Error ? error.message : "Failed to toggle bookmark",
+        message: error instanceof Error ? error.message : "Unknown error",
       };
     }
   }
@@ -531,8 +568,8 @@ export class BlogService {
    * Enhanced bookmark method with validation
    */
   static async toggleBookmarkWithValidation(
-    blogId: number, 
-    currentState: boolean
+    blogId: number,
+    currentState: boolean,
   ): Promise<{
     success: boolean;
     newState: boolean;
@@ -540,14 +577,15 @@ export class BlogService {
     error: string | null;
   }> {
     try {
-      const { success, data, error, message } = await this.toggleBookmark(blogId);
+      const { success, data, error, message } =
+        await this.toggleBookmark(blogId);
 
       if (!success) {
         return {
           success: false,
           newState: currentState,
-          message: error || 'Operation failed',
-          error: error
+          message: error || "Operation failed",
+          error: error,
         };
       }
 
@@ -555,21 +593,21 @@ export class BlogService {
         const serverMessage = data?.message.toLowerCase() || "";
         const isInsert = serverMessage.includes("insert");
         const isRemove = serverMessage.includes("remove");
-        
+
         // Validate response matches expected state change
         if ((isInsert && !currentState) || (isRemove && currentState)) {
           return {
             success: true,
             newState: isInsert, // true if inserted, false if removed
             message: serverMessage,
-            error: null
+            error: null,
           };
         } else {
           return {
             success: false,
             newState: currentState,
-            message: 'Server response mismatch',
-            error: 'Server response does not match expected operation'
+            message: "Server response mismatch",
+            error: "Server response does not match expected operation",
           };
         }
       }
@@ -577,16 +615,17 @@ export class BlogService {
       return {
         success: false,
         newState: currentState,
-        message: message || 'Operation failed',
-        error: error
+        message: message || "Operation failed",
+        error: error,
       };
     } catch (error) {
-      console.error('Error in toggleBookmarkWithValidation:', error);
+      console.error("Error in toggleBookmarkWithValidation:", error);
       return {
         success: false,
         newState: currentState,
-        message: error instanceof Error ? error.message : 'Failed to toggle bookmark',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message:
+          error instanceof Error ? error.message : "Failed to toggle bookmark",
+        error: error instanceof Error ? error.message : "Unknown error",
       };
     }
   }
@@ -630,7 +669,7 @@ export class BlogService {
   }> {
     try {
       const { data: allBlogs, error } = await this.fetchActiveBlogs();
-      
+
       if (error) {
         return { data: [], error };
       }
@@ -649,7 +688,8 @@ export class BlogService {
       console.error("Error fetching random blogs:", err);
       return {
         data: [],
-        error: err instanceof Error ? err.message : "Failed to fetch random blogs",
+        error:
+          err instanceof Error ? err.message : "Failed to fetch random blogs",
       };
     }
   }
@@ -660,7 +700,9 @@ export class BlogService {
     message?: string;
   }> {
     try {
-      const response = await fetch(`${GET_BLOGS_DERAILS_BY_WRITER_NAME_DATA_FE}/${encodeURIComponent(writerName)}`);
+      const response = await fetch(
+        `${GET_BLOGS_DERAILS_BY_WRITER_NAME_DATA_FE}/${encodeURIComponent(writerName)}`,
+      );
       const result: BlogListApiResponse = await response.json();
 
       if (response.ok && result.code === 200) {
@@ -691,7 +733,9 @@ export class BlogService {
     message?: string;
   }> {
     try {
-      const response = await fetch(`${GET_BLOGS_DERAILS_BY_TAG_NAME_DATA_FE}/${encodeURIComponent(tag)}`);
+      const response = await fetch(
+        `${GET_BLOGS_DERAILS_BY_TAG_NAME_DATA_FE}/${encodeURIComponent(tag)}`,
+      );
       const result: BlogListApiResponse = await response.json();
 
       if (response.ok && result.code === 200) {
@@ -755,7 +799,10 @@ export class BlogService {
       console.error("Error creating blog:", err);
       return {
         success: false,
-        message: err instanceof Error ? err.message : "An error occurred while creating the blog",
+        message:
+          err instanceof Error
+            ? err.message
+            : "An error occurred while creating the blog",
         error: err instanceof Error ? err.message : "Unknown error occurred",
       };
     }

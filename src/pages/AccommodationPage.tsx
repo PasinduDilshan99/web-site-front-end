@@ -10,15 +10,11 @@ import React from "react";
 const AccommodationPage = () => {
   return (
     <div>
-      <NavBar />
-      <div>
-        <HotelsSection />
-        <VillasSection />
-        <ResortsSection />
-        <RestaurantsSection />
-        <HostelsSection />
-      </div>
-      <Footer />
+      <HotelsSection />
+      <VillasSection />
+      <ResortsSection />
+      <RestaurantsSection />
+      <HostelsSection />
     </div>
   );
 };

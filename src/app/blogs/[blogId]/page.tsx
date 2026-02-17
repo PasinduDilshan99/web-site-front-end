@@ -20,6 +20,7 @@ import BlogContent from "@/components/blog-components/BlogContent";
 import BlogTags from "@/components/blog-components/BlogTags";
 import BlogLoginDialog from "@/components/blog-components/BlogLoginDialog";
 import Sidebar from "@/components/blog-components/Sidebar";
+import BlogDetailsLoading from "@/components/blog-components/BlogDetailsLoading";
 
 const BlogDetailsPage = () => {
   const params = useParams();
@@ -52,16 +53,17 @@ const BlogDetailsPage = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       if (!id || isNaN(parseInt(id as string))) {
         throw new Error("Invalid blog ID");
       }
-      
+
       const blogId = parseInt(id as string);
-      
+
       // Fetch blog details using BlogService
-      const { data: blogDetails, error: detailsError } = await BlogService.fetchBlogDetails(blogId);
-      
+      const { data: blogDetails, error: detailsError } =
+        await BlogService.fetchBlogDetails(blogId);
+
       if (detailsError || !blogDetails) {
         throw new Error(detailsError || "Failed to fetch blog details");
       }
@@ -89,21 +91,20 @@ const BlogDetailsPage = () => {
 
       setCommentReactions(reactions);
       setBlogData(blogDetails);
-      setTotalComments(BlogService.calculateTotalComments(blogDetails.comments));
+      setTotalComments(
+        BlogService.calculateTotalComments(blogDetails.comments),
+      );
 
       // Fetch related blogs
-      const { data: related, error: relatedError } = await BlogService.fetchRelatedBlogs(
-        blogDetails.writer_id,
-        blogId,
-      );
-      
+      const { data: related, error: relatedError } =
+        await BlogService.fetchRelatedBlogs(blogDetails.writer_id, blogId);
+
       if (!relatedError) {
         setRelatedBlogs(related);
       }
-      
+
       // Fetch tags for this blog
       handleGetTags(blogId);
-      
     } catch (err) {
       console.error("Error loading blog data:", err);
       setError(
@@ -126,10 +127,12 @@ const BlogDetailsPage = () => {
     if (!blogData) return;
 
     try {
-      const { data: response, error: reactError } = await BlogService.blogReact({
-        blogId: blogData.blog_id,
-        reactType: reactType,
-      });
+      const { data: response, error: reactError } = await BlogService.blogReact(
+        {
+          blogId: blogData.blog_id,
+          reactType: reactType,
+        },
+      );
 
       if (!reactError && response) {
         const message = response.message?.toLowerCase() || "";
@@ -227,14 +230,14 @@ const BlogDetailsPage = () => {
       setShowLoginDialog(true);
       return;
     }
-    
+
     if (!blogData || isBookmarkProcessing.current) return;
-    
+
     try {
       isBookmarkProcessing.current = true;
       const originalState = blogData.isBookmark;
       const newBookmarkState = !originalState;
-      
+
       // Optimistic update
       setBlogData({
         ...blogData,
@@ -242,9 +245,13 @@ const BlogDetailsPage = () => {
       });
 
       // Use the enhanced bookmark method with validation
-      const { success, newState, error: bookmarkError } = await BlogService.toggleBookmarkWithValidation(
+      const {
+        success,
+        newState,
+        error: bookmarkError,
+      } = await BlogService.toggleBookmarkWithValidation(
         blogData.blog_id,
-        originalState
+        originalState,
       );
 
       if (!success) {
@@ -264,10 +271,14 @@ const BlogDetailsPage = () => {
     } catch (error) {
       console.error("Network error updating bookmark:", error);
       // Revert optimistic update
-      setBlogData(prev => prev ? {
-        ...prev,
-        isBookmark: !prev.isBookmark,
-      } : null);
+      setBlogData((prev) =>
+        prev
+          ? {
+              ...prev,
+              isBookmark: !prev.isBookmark,
+            }
+          : null,
+      );
     } finally {
       setTimeout(() => {
         isBookmarkProcessing.current = false;
@@ -289,11 +300,12 @@ const BlogDetailsPage = () => {
     try {
       setIsSubmittingComment(true);
 
-      const { data: response, error: commentError } = await BlogService.addComment({
-        blogId: blogData.blog_id,
-        parentId: null,
-        comment: commentText,
-      });
+      const { data: response, error: commentError } =
+        await BlogService.addComment({
+          blogId: blogData.blog_id,
+          parentId: null,
+          comment: commentText,
+        });
 
       if (!commentError) {
         setCommentText("");
@@ -312,20 +324,21 @@ const BlogDetailsPage = () => {
   const handleSubmitReply = async (parentCommentId: number) => {
     const replyText = replyTexts[parentCommentId];
     if (!replyText?.trim()) return;
-    
+
     if (!user) {
       setShowLoginDialog(true);
       return;
     }
-    
+
     if (!blogData) return;
-    
+
     try {
-      const { data: response, error: replyError } = await BlogService.addComment({
-        blogId: blogData.blog_id,
-        parentId: parentCommentId,
-        comment: replyText,
-      });
+      const { data: response, error: replyError } =
+        await BlogService.addComment({
+          blogId: blogData.blog_id,
+          parentId: parentCommentId,
+          comment: replyText,
+        });
 
       if (!replyError) {
         setReplyTexts({ ...replyTexts, [parentCommentId]: "" });
@@ -346,10 +359,11 @@ const BlogDetailsPage = () => {
     }
 
     try {
-      const { data: response, error: reactError } = await BlogService.commentReact({
-        commentId: commentId,
-        reactType: reactType,
-      });
+      const { data: response, error: reactError } =
+        await BlogService.commentReact({
+          commentId: commentId,
+          reactType: reactType,
+        });
 
       if (!reactError && response) {
         const message = response.message?.toLowerCase() || "";
@@ -429,14 +443,16 @@ const BlogDetailsPage = () => {
       setLoadingTags(true);
 
       // Fetch tags for this specific blog
-      const { data: blogTags, error: blogTagsError } = await BlogService.fetchBlogTags(blogId);
-      
+      const { data: blogTags, error: blogTagsError } =
+        await BlogService.fetchBlogTags(blogId);
+
       if (!blogTagsError && blogTags.length > 0) {
         setTags(blogTags);
       } else {
         // If no specific blog tags, fetch all tags as fallback
-        const { data: allTags, error: allTagsError } = await BlogService.fetchTags();
-        
+        const { data: allTags, error: allTagsError } =
+          await BlogService.fetchTags();
+
         if (!allTagsError) {
           setTags(allTags);
         } else {
@@ -465,17 +481,13 @@ const BlogDetailsPage = () => {
   }, []);
 
   if (loading) {
-    return (
-      <Loading message="Loading blog post..." variant="spinner" size="lg" />
-    );
+    return <BlogDetailsLoading />;
   }
 
   if (error || !blogData) {
     return (
       <>
-        <LinkBar />
-        <NavBar />
-        <div className="min-h-screen bg-gradient-to-b from-purple-50 to-amber-50 flex items-center justify-center px-4">
+        <div className="min-h-screen bg-gradient-to-b from-teal-50 to-blue-50 flex items-center justify-center px-4">
           <ErrorState
             title="Blog Not Found"
             message="The blog post you're looking for doesn't exist."
@@ -486,25 +498,23 @@ const BlogDetailsPage = () => {
             onAction={() => router.push("/blogs")}
           />
         </div>
-        <Footer />
       </>
     );
   }
 
-  const totalReactions = BlogService.calculateTotalReactions(blogData.blog_reactions);
+  const totalReactions = BlogService.calculateTotalReactions(
+    blogData.blog_reactions,
+  );
   const readTime = BlogService.getReadTime(blogData.description);
 
   return (
     <>
-      <LinkBar />
-      <NavBar />
-
-      <div className="min-h-screen bg-gradient-to-b from-purple-50 to-amber-50">
+      <div className="min-h-screen bg-gradient-to-b from-teal-50 to-blue-50">
         {/* Back Button */}
         <div className="container mx-auto px-4 py-6">
           <button
             onClick={() => router.push("/blogs")}
-            className="flex items-center gap-2 text-purple-700 hover:text-amber-600 font-medium transition-colors"
+            className="flex items-center gap-2 text-teal-700 hover:text-blue-600 font-medium transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
             Back to All Blogs
@@ -516,7 +526,7 @@ const BlogDetailsPage = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
             {/* Main Content */}
             <div className="lg:col-span-2">
-              <div className="bg-white rounded-3xl shadow-xl p-6 md:p-8 mb-8 border border-purple-200">
+              <div className="bg-white rounded-3xl shadow-xl p-6 md:p-8 mb-8 border border-teal-200">
                 <BlogHeader
                   blogId={blogData.blog_id}
                   title={blogData.title}
@@ -524,6 +534,7 @@ const BlogDetailsPage = () => {
                   isBookmark={blogData.isBookmark}
                   subtitle={blogData.subtitle}
                   writerName={blogData.writer_name}
+                  writerImageUrl={blogData.writer_image_url}
                   date={blogData.blog_created_at}
                   readTime={readTime}
                   totalReactions={totalReactions}
@@ -584,6 +595,7 @@ const BlogDetailsPage = () => {
             {/* Sidebar */}
             <Sidebar
               writerName={blogData.writer_name}
+              writerImageUrl={blogData.writer_image_url}
               blogCount={blogData.comments?.length || 0}
               relatedBlogs={relatedBlogs}
               tags={tags}
@@ -593,7 +605,6 @@ const BlogDetailsPage = () => {
           </div>
         </main>
       </div>
-      <Footer />
 
       {/* Login Dialog */}
       <BlogLoginDialog

@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, X, Expand, Image } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Expand, Image, Leaf } from 'lucide-react';
 import { ServiceProviderImage } from '@/types/accommodations-types/service-provider-types';
 
 interface VillaGalleryProps {
@@ -15,10 +15,13 @@ const VillaGallery: React.FC<VillaGalleryProps> = ({ images }) => {
   // Handle null or empty images array
   if (!images || !images.length) {
     return (
-      <div className="bg-white rounded-2xl shadow-xl p-8 text-center border border-emerald-200">
-        <Image className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-        <div className="text-gray-400 text-lg">No images available</div>
-        <p className="text-gray-500 text-sm mt-2">Images will be added soon</p>
+      <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-12 text-center border border-[#1B4D3E]/10">
+        <div className="relative inline-block">
+          <Image className="w-20 h-20 text-[#1B4D3E]/30 mx-auto mb-4" />
+          <Leaf className="w-8 h-8 text-[#428577]/30 absolute -top-2 -right-4" />
+        </div>
+        <div className="text-[#1B4D3E] text-lg font-medium">No images available</div>
+        <p className="text-[#2E6B5C] text-sm mt-2">Images will be added to this luxury retreat soon</p>
       </div>
     );
   }
@@ -37,7 +40,7 @@ const VillaGallery: React.FC<VillaGalleryProps> = ({ images }) => {
 
   return (
     <>
-      <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-emerald-200">
+      <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden border border-[#1B4D3E]/10">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 p-2">
           {images.slice(0, 5).map((image, index) => (
             <div 
@@ -50,17 +53,17 @@ const VillaGallery: React.FC<VillaGalleryProps> = ({ images }) => {
               <img
                 src={image.imageUrl}
                 alt={image.imageName || 'Villa image'}
-                className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-300"
+                className="w-full h-full object-cover rounded-lg group-hover:scale-110 transition-transform duration-700"
                 onError={(e) => {
-                  // Fallback if image fails to load
                   (e.target as HTMLImageElement).src = '/images/placeholder-villa.jpg';
                 }}
               />
-              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 rounded-lg flex items-center justify-center">
-                <Expand className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1B4D3E]/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 rounded-lg flex items-center justify-center">
+                <Expand className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform group-hover:scale-110" />
               </div>
               {index === 4 && images.length > 5 && (
-                <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center rounded-lg">
+                <div className="absolute inset-0 bg-[#1B4D3E]/80 flex items-center justify-center rounded-lg backdrop-blur-sm">
                   <span className="text-white text-lg font-semibold">
                     +{images.length - 5} more
                   </span>
@@ -73,24 +76,24 @@ const VillaGallery: React.FC<VillaGalleryProps> = ({ images }) => {
 
       {/* Modal */}
       {selectedImage !== null && (
-        <div className="fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-[#1B4D3E]/95 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
           <button
             onClick={() => setSelectedImage(null)}
-            className="absolute top-6 right-6 text-white hover:text-emerald-400 transition-colors z-10"
+            className="absolute top-6 right-6 text-white hover:text-[#428577] transition-colors z-10 bg-black/20 p-2 rounded-full backdrop-blur-sm"
           >
             <X className="w-8 h-8" />
           </button>
           
           <button
             onClick={prevImage}
-            className="absolute left-6 text-white hover:text-emerald-400 transition-colors z-10"
+            className="absolute left-6 text-white hover:text-[#428577] transition-colors z-10 bg-black/20 p-2 rounded-full backdrop-blur-sm"
           >
             <ChevronLeft className="w-8 h-8" />
           </button>
           
           <button
             onClick={nextImage}
-            className="absolute right-6 text-white hover:text-emerald-400 transition-colors z-10"
+            className="absolute right-6 text-white hover:text-[#428577] transition-colors z-10 bg-black/20 p-2 rounded-full backdrop-blur-sm"
           >
             <ChevronRight className="w-8 h-8" />
           </button>
@@ -99,20 +102,22 @@ const VillaGallery: React.FC<VillaGalleryProps> = ({ images }) => {
             <img
               src={images[selectedImage].imageUrl}
               alt={images[selectedImage].imageName || 'Villa image'}
-              className="max-w-full max-h-full object-contain rounded-lg"
+              className="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl"
               onError={(e) => {
                 (e.target as HTMLImageElement).src = '/images/placeholder-villa.jpg';
               }}
             />
-            <div className="text-white text-center mt-4 bg-black bg-opacity-50 p-3 rounded-lg">
-              <div className="font-semibold">
-                {images[selectedImage].imageName || 'Villa Image'}
-              </div>
-              {images[selectedImage].imageDescription && (
-                <div className="text-sm opacity-90 mt-1">
-                  {images[selectedImage].imageDescription}
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#1B4D3E] to-transparent p-6 rounded-b-2xl">
+              <div className="text-white">
+                <div className="font-semibold text-lg">
+                  {images[selectedImage].imageName || 'Villa Image'}
                 </div>
-              )}
+                {images[selectedImage].imageDescription && (
+                  <div className="text-sm opacity-90 mt-1">
+                    {images[selectedImage].imageDescription}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

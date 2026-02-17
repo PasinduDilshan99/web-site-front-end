@@ -1,13 +1,13 @@
 import { GET_BLOGS_DERAILS_BY_TAG_NAME_DATA } from "@/utils/backEndConstant";
 import { NextRequest, NextResponse } from "next/server";
 
-interface BlogParams{
+interface BlogParams {
   tagName: string;
 }
 
 export async function GET(
   request: NextRequest,
-  context: { params: BlogParams | Promise<BlogParams> }
+  context: { params: BlogParams | Promise<BlogParams> },
 ) {
   try {
     const { tagName } = await context.params;
@@ -17,7 +17,7 @@ export async function GET(
     if (!tagName) {
       return NextResponse.json(
         { error: "blog ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -32,6 +32,7 @@ export async function GET(
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        cookie: request.headers.get("cookie") || "",
       },
       cache: "no-store",
     });
@@ -41,7 +42,7 @@ export async function GET(
       console.error("Backend returned error:", text);
       return NextResponse.json(
         { error: "Failed to fetch blog details" },
-        { status: response.status }
+        { status: response.status },
       );
     }
 
@@ -51,7 +52,7 @@ export async function GET(
     console.error("Error fetching blog details:", error);
     return NextResponse.json(
       { error: "Something went wrong" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,13 +1,13 @@
-// app/hostels/components/AdventureHostelCard.tsx
+// app/hostels/components/DetailedHostelCard.tsx
 import React, { useState } from "react";
 import { HostelSectionHostel } from "@/types/accommodations-types/hostel-types";
 import Image from "next/image";
 
-interface AdventureHostelCardProps {
+interface DetailedHostelCardProps {
   hostel: HostelSectionHostel;
 }
 
-const DetailedHostelCard: React.FC<AdventureHostelCardProps> = ({ hostel }) => {
+const DetailedHostelCard: React.FC<DetailedHostelCardProps> = ({ hostel }) => {
   const [showAllImages, setShowAllImages] = useState(false);
   const [showAllRooms, setShowAllRooms] = useState(false);
 
@@ -16,7 +16,7 @@ const DetailedHostelCard: React.FC<AdventureHostelCardProps> = ({ hostel }) => {
   const displayMeals = hostel.meals?.slice(0, 2) || [];
   const displayReviews = hostel.reviews?.recentReviews?.slice(0, 1) || [];
 
-  // Calculate price range and categorize rooms
+  // Calculate price range
   const priceRange = hostel.rooms && hostel.rooms.length > 0 
     ? {
         min: Math.min(...hostel.rooms.map(room => room.localPricePerNight)),
@@ -34,31 +34,41 @@ const DetailedHostelCard: React.FC<AdventureHostelCardProps> = ({ hostel }) => {
   ).length || 0;
 
   return (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-green-200 hover:shadow-xl transition-all duration-300 group">
-      {/* Hostel Header with Adventure Theme */}
-      <div className="bg-gradient-to-r from-green-600 to-blue-500 p-4 text-white relative overflow-hidden">
+    <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-[#B5E5D4] hover:border-[#C9EFE3] overflow-hidden group">
+      {/* Hostel Header - Fresh & Social Theme */}
+      <div className="bg-gradient-to-r from-[#B5E5D4] to-[#DDF9F2] p-4 text-[#2D4F43] relative overflow-hidden">
         {/* Adventure Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-2 right-2 text-2xl">⛰️</div>
           <div className="absolute bottom-2 left-2 text-2xl">🌲</div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xl">🌊</div>
         </div>
         
         <div className="relative">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <h2 className="text-xl font-bold mb-1 line-clamp-1">{hostel.hostelName}</h2>
-              <p className="text-green-100 text-sm mb-2 line-clamp-2">{hostel.hostelDescription}</p>
-              <div className="flex items-center flex-wrap gap-2">
-                <div className="flex items-center bg-white/20 px-2 py-1 rounded-full">
-                  <span className="text-yellow-300 text-sm">⭐</span>
-                  <span className="ml-1 text-xs font-bold">{hostel.starRating}</span>
-                </div>
-                <span className="bg-white/20 px-2 py-1 rounded-full text-xs">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="bg-white/80 px-2 py-0.5 rounded-full text-xs font-medium border border-[#B5E5D4]">
                   {hostel.hostelType}
                 </span>
                 {priceRange && (
-                  <span className="bg-white/20 px-2 py-1 rounded-full text-xs font-bold">
-                    ${priceRange.min}+
+                  <span className="bg-white/80 px-2 py-0.5 rounded-full text-xs font-medium border border-[#B5E5D4]">
+                    From ${priceRange.min}
+                  </span>
+                )}
+              </div>
+              <h2 className="text-xl font-bold mb-1 line-clamp-1 group-hover:translate-x-1 transition-transform">
+                {hostel.hostelName}
+              </h2>
+              <p className="text-[#2D4F43]/80 text-sm mb-2 line-clamp-2">{hostel.hostelDescription}</p>
+              <div className="flex items-center flex-wrap gap-2">
+                <div className="flex items-center bg-white/80 px-2 py-1 rounded-full border border-[#B5E5D4]">
+                  <span className="text-[#3A9B9B] text-sm">⭐</span>
+                  <span className="ml-1 text-xs font-bold text-[#2D4F43]">{hostel.starRating}</span>
+                </div>
+                {hostel.reviews && hostel.reviews.totalReviews > 0 && (
+                  <span className="text-[#2D4F43]/70 text-xs">
+                    {hostel.reviews.totalReviews} reviews
                   </span>
                 )}
               </div>
@@ -68,93 +78,98 @@ const DetailedHostelCard: React.FC<AdventureHostelCardProps> = ({ hostel }) => {
       </div>
 
       <div className="p-4">
-        {/* Images Gallery - Adventure Style */}
+        {/* Images Gallery - Fresh Style */}
         {hostel.hostelImages && hostel.hostelImages.length > 0 && (
           <div className="mb-4">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="font-semibold text-gray-800 text-sm flex items-center">
-                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                Adventure Photos
+              <h3 className="font-semibold text-[#2D4F43] text-sm flex items-center">
+                <span className="w-1.5 h-1.5 bg-[#B5E5D4] rounded-full mr-2"></span>
+                Fresh Spaces
               </h3>
               {hostel.hostelImages.length > 3 && (
                 <button
                   onClick={() => setShowAllImages(!showAllImages)}
-                  className="text-green-600 hover:text-green-700 text-xs font-medium flex items-center"
+                  className="text-[#3A9B9B] hover:text-[#2D4F43] text-xs font-medium flex items-center gap-1 transition-colors"
                 >
-                  {showAllImages ? 'Show Less' : `+${hostel.hostelImages.length - 3}`}
+                  {showAllImages ? 'Show Less' : `+${hostel.hostelImages.length - 3} more`}
                 </button>
               )}
             </div>
             <div className={`grid gap-2 ${showAllImages ? 'grid-cols-2' : 'grid-cols-3'}`}>
               {displayImages?.map((image, index) => (
-                <div key={index} className="relative aspect-square rounded-lg overflow-hidden group/image border-2 border-green-200">
+                <div key={index} className="relative aspect-square rounded-lg overflow-hidden group/image border border-[#B5E5D4] shadow-sm">
                   <Image
                     src={image.imageUrl}
                     alt={image.caption}
                     fill
-                    className="object-cover group-hover/image:scale-110 transition-transform duration-300"
+                    className="object-cover group-hover/image:scale-110 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-black/0 group-hover/image:bg-black/40 transition-all duration-300 flex items-center justify-center">
-                    <span className="text-white text-xs opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 text-center px-1">
-                      {image.caption}
-                    </span>
-                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#B5E5D4]/30 to-transparent opacity-0 group-hover/image:opacity-100 transition-opacity duration-300"></div>
+                  {index === 2 && !showAllImages && hostel.hostelImages && hostel.hostelImages.length > 3 && (
+                    <div className="absolute inset-0 bg-[#B5E5D4]/70 backdrop-blur-sm flex items-center justify-center text-[#2D4F43] font-bold text-lg">
+                      +{hostel.hostelImages.length - 3}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        {/* Quick Stats - Adventure Focused */}
-        <div className="grid grid-cols-4 gap-2 mb-4 p-3 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border border-green-200">
+        {/* Quick Stats - Fresh Focused */}
+        <div className="grid grid-cols-4 gap-2 mb-4 p-3 bg-gradient-to-r from-[#F5FDFA] to-[#FAFFFD] rounded-xl border border-[#B5E5D4]">
           <div className="text-center">
-            <div className="text-green-600 font-bold text-sm">{hostel.totalRooms}</div>
-            <div className="text-gray-600 text-xs">Total</div>
+            <div className="text-[#2D4F43] font-bold text-sm">{hostel.totalRooms}</div>
+            <div className="text-[#5A8F7A] text-[10px] uppercase tracking-wider">Total</div>
           </div>
-          <div className="text-center">
-            <div className="text-blue-600 font-bold text-sm">{dormitoryCount}</div>
-            <div className="text-gray-600 text-xs">Dorms</div>
+          <div className="text-center border-l border-[#B5E5D4]">
+            <div className="text-[#2D4F43] font-bold text-sm">{dormitoryCount}</div>
+            <div className="text-[#5A8F7A] text-[10px] uppercase tracking-wider">Dorms</div>
           </div>
-          <div className="text-center">
-            <div className="text-orange-600 font-bold text-sm">{privateRoomCount}</div>
-            <div className="text-gray-600 text-xs">Private</div>
+          <div className="text-center border-l border-[#B5E5D4]">
+            <div className="text-[#2D4F43] font-bold text-sm">{privateRoomCount}</div>
+            <div className="text-[#5A8F7A] text-[10px] uppercase tracking-wider">Private</div>
           </div>
-          <div className="text-center">
-            <div className="text-purple-600 font-bold text-sm">
-              {hostel.petFriendly ? 'Yes' : 'No'}
+          <div className="text-center border-l border-[#B5E5D4]">
+            <div className="text-[#2D4F43] font-bold text-sm">
+              {hostel.petFriendly ? '✓' : '✗'}
             </div>
-            <div className="text-gray-600 text-xs">Pets</div>
+            <div className="text-[#5A8F7A] text-[10px] uppercase tracking-wider">Pets</div>
           </div>
         </div>
 
-        {/* Location & Contact - Compact */}
-        <div className="mb-4 p-3 bg-gray-50 rounded-lg border">
-          <div className="space-y-1 text-xs">
-            <div className="flex items-center text-gray-600">
-              <span className="mr-2">📍</span>
+        {/* Location & Contact */}
+        <div className="mb-4 p-3 bg-[#F5FDFA] rounded-xl border border-[#B5E5D4]">
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="flex items-center text-[#2D4F43]">
+              <span className="text-[#3A9B9B] mr-2">📍</span>
               <span className="line-clamp-1">{hostel.address.split(',')[0]}</span>
             </div>
-            <div className="flex items-center justify-between text-gray-500">
-              <span>🕒 {hostel.checkInTime}</span>
-              <span>📞 {hostel.contactNumber}</span>
+            <div className="flex items-center text-[#2D4F43]">
+              <span className="text-[#3A9B9B] mr-2">📞</span>
+              <span>{hostel.contactNumber}</span>
+            </div>
+            <div className="flex items-center text-[#5A8F7A] col-span-2 bg-white p-2 rounded-lg">
+              <span className="text-[#3A9B9B] mr-2">🕒</span>
+              <span>Check-in: {hostel.checkInTime} | Check-out: {hostel.checkOutTime}</span>
             </div>
           </div>
         </div>
 
-        {/* Room Types - Adventure Categorized */}
-        {displayRooms && (
+        {/* Room Types - Fresh Categorized */}
+        {displayRooms && displayRooms.length > 0 && (
           <div className="mb-4">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="font-semibold text-gray-800 text-sm flex items-center">
-                <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+              <h3 className="font-semibold text-[#2D4F43] text-sm flex items-center">
+                <span className="w-1.5 h-1.5 bg-[#B5E5D4] rounded-full mr-2"></span>
                 Room Options
               </h3>
               {hostel.rooms && hostel.rooms.length > 3 && (
                 <button
                   onClick={() => setShowAllRooms(!showAllRooms)}
-                  className="text-blue-600 hover:text-blue-700 text-xs font-medium flex items-center"
+                  className="text-[#3A9B9B] hover:text-[#2D4F43] text-xs font-medium flex items-center gap-1"
                 >
-                  {showAllRooms ? 'Show Less' : `+${hostel.rooms.length - 3}`}
+                  {showAllRooms ? 'Show Less' : `+${hostel.rooms.length - 3} more`}
                 </button>
               )}
             </div>
@@ -164,24 +179,28 @@ const DetailedHostelCard: React.FC<AdventureHostelCardProps> = ({ hostel }) => {
                 return (
                   <div
                     key={index}
-                    className={`flex justify-between items-center text-xs p-2 rounded-lg border transition-colors ${
+                    className={`flex justify-between items-center p-3 rounded-xl border transition-all duration-300 ${
                       isDorm 
-                        ? 'bg-blue-50 border-blue-200 hover:border-blue-300' 
-                        : 'bg-orange-50 border-orange-200 hover:border-orange-300'
+                        ? 'bg-[#F5FDFA] border-[#B5E5D4] hover:border-[#3A9B9B]' 
+                        : 'bg-white border-[#DDF9F2] hover:border-[#5FB3B3]'
                     }`}
                   >
                     <div className="flex-1">
-                      <div className="font-medium text-gray-800 flex items-center">
+                      <div className="font-semibold text-[#2D4F43] flex items-center">
                         {isDorm ? '🏕️' : '🏠'} {room.roomType}
                       </div>
-                      <div className="text-gray-500 flex items-center space-x-2 mt-1">
-                        <span>👥 {room.capacity} people</span>
-                        <span>🛏️ {room.bedType}</span>
+                      <div className="flex items-center gap-3 mt-1 text-xs text-[#5A8F7A]">
+                        <span className="flex items-center gap-1">
+                          <span>👥</span> {room.capacity} people
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <span>🛏️</span> {room.bedType}
+                        </span>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-green-600 font-bold">${room.localPricePerNight}</div>
-                      <button className="mt-1 bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs font-medium transition-colors">
+                      <div className="text-[#2D4F43] font-bold">${room.localPricePerNight}</div>
+                      <button className="mt-1 bg-[#B5E5D4] hover:bg-[#3A9B9B] text-[#2D4F43] hover:text-white px-3 py-1 rounded-lg text-xs font-medium transition-all duration-300">
                         Book
                       </button>
                     </div>
@@ -195,21 +214,23 @@ const DetailedHostelCard: React.FC<AdventureHostelCardProps> = ({ hostel }) => {
         {/* Meals - Budget Focused */}
         {displayMeals.length > 0 && (
           <div className="mb-4">
-            <h3 className="font-semibold text-gray-800 text-sm mb-2 flex items-center">
-              <span className="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
+            <h3 className="font-semibold text-[#2D4F43] text-sm mb-2 flex items-center">
+              <span className="w-1.5 h-1.5 bg-[#C9EFE3] rounded-full mr-2"></span>
               Budget Meals
             </h3>
             <div className="space-y-1">
               {displayMeals.map((meal, index) => (
                 <div
                   key={index}
-                  className="flex justify-between items-center text-xs p-2 bg-orange-50 rounded border border-orange-200"
+                  className="flex justify-between items-center p-2 bg-[#FAFFFD] rounded-lg border border-[#DDF9F2]"
                 >
                   <div>
-                    <span className="font-medium text-gray-800">{meal.mealType}</span>
-                    <span className="text-gray-500 text-xs ml-2">• {meal.mealDescription}</span>
+                    <span className="font-medium text-[#2D4F43]">{meal.mealType}</span>
+                    <span className="text-[#5A8F7A] text-xs ml-2">• {meal.mealDescription}</span>
                   </div>
-                  <span className="text-orange-600 font-semibold">${meal.localPrice}</span>
+                  <span className="text-[#2D4F43] font-medium bg-white px-2 py-1 rounded-full border border-[#B5E5D4]">
+                    ${meal.localPrice}
+                  </span>
                 </div>
               ))}
             </div>
@@ -218,51 +239,54 @@ const DetailedHostelCard: React.FC<AdventureHostelCardProps> = ({ hostel }) => {
 
         {/* Community Features */}
         <div className="mb-4">
-          <h3 className="font-semibold text-gray-800 text-sm mb-2 flex items-center">
-            <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
-            Hostel Features
+          <h3 className="font-semibold text-[#2D4F43] text-sm mb-2 flex items-center">
+            <span className="w-1.5 h-1.5 bg-[#DDF9F2] rounded-full mr-2"></span>
+            Hostel Vibes
           </h3>
           <div className="flex flex-wrap gap-1">
             {hostel.wifiAvailable && (
-              <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs">
-                🌐 Free WiFi
+              <span className="bg-[#F5FDFA] text-[#2D4F43] px-2 py-1 rounded-full text-xs border border-[#B5E5D4]">
+                📶 Free WiFi
               </span>
             )}
             {hostel.parkingFacility && (
-              <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs">
-                🅿️ Parking
+              <span className="bg-[#F5FDFA] text-[#2D4F43] px-2 py-1 rounded-full text-xs border border-[#C9EFE3]">
+                🅿️ Free Parking
               </span>
             )}
             {hostel.petFriendly && (
-              <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs">
+              <span className="bg-[#F5FDFA] text-[#2D4F43] px-2 py-1 rounded-full text-xs border border-[#DDF9F2]">
                 🐾 Pet Friendly
               </span>
             )}
-            <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs">
-              👥 Social Areas
+            <span className="bg-[#F5FDFA] text-[#2D4F43] px-2 py-1 rounded-full text-xs border border-[#B5E5D4]">
+              👥 Common Room
+            </span>
+            <span className="bg-[#F5FDFA] text-[#2D4F43] px-2 py-1 rounded-full text-xs border border-[#C9EFE3]">
+              🍳 Shared Kitchen
             </span>
           </div>
         </div>
 
         {/* Reviews - Traveler Focused */}
         {hostel.reviews && hostel.reviews.totalReviews > 0 && (
-          <div className="mb-4 p-3 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border border-green-200">
+          <div className="mb-4 p-3 bg-gradient-to-r from-[#F5FDFA] to-[#FAFFFD] rounded-xl border border-[#B5E5D4]">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center space-x-2">
-                <div className="flex items-center bg-white px-2 py-1 rounded-full shadow-sm border">
-                  <span className="text-green-600 font-bold text-xs mr-1">
+                <div className="flex items-center bg-white px-2 py-1 rounded-full shadow-sm border border-[#B5E5D4]">
+                  <span className="text-[#2D4F43] font-bold text-xs mr-1">
                     {hostel.reviews.averageRating}
                   </span>
-                  <span className="text-yellow-400 text-xs">⭐</span>
+                  <span className="text-[#B5E5D4] text-xs">⭐</span>
                 </div>
-                <span className="text-gray-700 text-xs font-medium">
+                <span className="text-[#2D4F43] text-xs font-medium">
                   {hostel.reviews.totalReviews} traveler reviews
                 </span>
               </div>
             </div>
             {displayReviews.length > 0 && (
               <div className="text-xs">
-                <p className="text-gray-600 italic line-clamp-2">
+                <p className="text-[#2D4F43] italic line-clamp-2">
                   {displayReviews[0].comment}
                 </p>
               </div>
@@ -270,23 +294,32 @@ const DetailedHostelCard: React.FC<AdventureHostelCardProps> = ({ hostel }) => {
           </div>
         )}
 
-        {/* Cancellation Policy - Budget Traveler Focused */}
-        <div className="mb-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-          <h4 className="font-semibold text-gray-800 text-sm mb-1 flex items-center">
-            <span className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>
+        {/* Cancellation Policy - Traveler Friendly */}
+        <div className="mb-4 p-3 bg-[#FAFFFD] rounded-xl border border-[#DDF9F2]">
+          <h4 className="font-semibold text-[#2D4F43] text-sm mb-1 flex items-center">
+            <span className="w-1.5 h-1.5 bg-[#C9EFE3] rounded-full mr-2"></span>
             Flexible Cancellation
           </h4>
-          <p className="text-gray-700 text-xs line-clamp-2">{hostel.cancellationPolicy}</p>
+          <p className="text-[#5A8F7A] text-xs leading-relaxed line-clamp-2">{hostel.cancellationPolicy}</p>
         </div>
 
-        {/* Action Buttons - Adventure Theme */}
-        <div className="flex space-x-2 pt-3 border-t border-gray-100">
-          <button className="flex-1 bg-gradient-to-r from-green-600 to-blue-500 hover:from-green-700 hover:to-blue-600 text-white py-2 rounded-lg font-bold text-sm transition-all duration-300 transform hover:scale-105 shadow-lg">
-            Book Adventure
+        {/* Action Buttons - Fresh Theme */}
+        <div className="flex space-x-2 pt-3 border-t border-[#B5E5D4]">
+          <button className="flex-1 bg-gradient-to-r from-[#B5E5D4] to-[#DDF9F2] hover:from-[#3A9B9B] hover:to-[#5FB3B3] text-[#2D4F43] hover:text-white py-2.5 rounded-xl font-bold text-sm transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg">
+            Book This Hostel
           </button>
-          <button className="px-3 py-2 border border-green-300 text-green-600 hover:bg-green-50 rounded-lg font-medium text-xs transition-colors">
-            Share
+          <button className="px-4 py-2 border-2 border-[#B5E5D4] text-[#2D4F43] hover:bg-[#F5FDFA] rounded-xl font-medium text-xs transition-colors">
+            <span className="flex items-center gap-1">
+              📋 Details
+            </span>
           </button>
+        </div>
+
+        {/* Social Vibe */}
+        <div className="mt-3 flex items-center justify-center gap-1 text-[10px] text-[#5A8F7A]">
+          <span>✨</span>
+          <span>Perfect for meeting fellow travelers</span>
+          <span>✨</span>
         </div>
       </div>
     </div>

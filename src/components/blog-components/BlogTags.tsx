@@ -11,13 +11,13 @@ interface BlogTagsProps {
 
 const BlogTags: React.FC<BlogTagsProps> = ({ tags, loadingTags, onTagClick }) => {
   return (
-    <div className="mt-8 pt-8 border-t border-purple-100">
+    <div className="mt-8 pt-8 border-t border-teal-100">
       <div className="flex flex-wrap items-center gap-2">
-        <Tag className="w-5 h-5 text-purple-600" />
-        <span className="text-sm font-medium text-purple-700">Related Tags:</span>
+        <Tag className="w-5 h-5 text-teal-600" />
+        <span className="text-sm font-medium text-teal-700">Related Tags:</span>
         {loadingTags ? (
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 border-2 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-4 h-4 border-2 border-teal-600 border-t-transparent rounded-full animate-spin"></div>
             <span className="text-sm text-gray-500">Loading tags...</span>
           </div>
         ) : tags.length > 0 ? (
@@ -25,7 +25,7 @@ const BlogTags: React.FC<BlogTagsProps> = ({ tags, loadingTags, onTagClick }) =>
             <button
               key={tag.id}
               onClick={() => onTagClick(tag.name)}
-              className="px-3 py-1 bg-gradient-to-r from-purple-50 to-amber-50 text-purple-700 rounded-full text-sm hover:from-purple-100 hover:to-amber-100 transition-colors cursor-pointer border border-purple-200"
+              className="px-3 py-1 bg-gradient-to-r from-teal-50 to-blue-50 text-teal-700 rounded-full text-sm hover:from-teal-100 hover:to-blue-100 transition-colors cursor-pointer border border-teal-200"
             >
               #{tag.name}
             </button>

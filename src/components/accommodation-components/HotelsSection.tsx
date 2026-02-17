@@ -12,6 +12,7 @@ import { ErrorState } from "../common-components/error-state/ErrorState";
 import SectionHeader from "../common-components/section-header/SectionHeader";
 import AnimatedButton from "../common-components/buttons/AnimatedButton";
 import { useRouter } from "next/navigation";
+import HotelsSectionLoading from "./loadings/HotelsSectionLoading";
 
 const HotelsSection = () => {
   const [hotels, setHotels] = useState<HotelSectionHotel[]>([]);
@@ -78,14 +79,12 @@ const HotelsSection = () => {
   };
 
   if (loading) {
-    return (
-      <Loading message="Loading activities..." variant="spinner" size="md" />
-    );
+    return <HotelsSectionLoading visibleCount={visibleCount} />;
   }
 
   if (error) {
     return (
-      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
+      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-br from-[#2A6F97] via-[#3F8AB2] to-[#54A5CC]">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           <ErrorState
             title="Failed to Load activities"
@@ -102,27 +101,27 @@ const HotelsSection = () => {
   }
 
   return (
-    <div className=" mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-gradient-to-br from-purple-100 via-purple-100 to-amber-100">
+    <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-gradient-to-br from-[#F0F7FF] via-[#E6F0FA] to-[#D9E9F5]">
       {/* Header */}
       <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
         <SectionHeader
-          subtitle=""
+          subtitle="LUXURY ACCOMMODATIONS"
           title="Featured Hotels"
-          description="Discover the perfect stay for your next adventure"
-          fromColor="#A855F7"
-          toColor="#F59E0B"
+          description="Discover the perfect stay for your next adventure with our curated collection of premium hotels"
+          fromColor="#2A6F97"
+          toColor="#54A5CC"
         />
       </div>
 
       {/* Hotels Grid */}
       <div
         className={`
-        grid gap-6
-        grid-cols-1           /* Mobile: 1 column */
-        sm:grid-cols-2        /* Small: 2 columns */
-        lg:grid-cols-3        /* Laptop: 3 columns */
-        xl:grid-cols-3        /* PC: 4 columns */
-        2xl:grid-cols-4       /* Extra large: 5 columns */
+        grid gap-8          /* Increased gap for luxury feel */
+        grid-cols-1         /* Mobile: 1 column */
+        sm:grid-cols-2      /* Small: 2 columns */
+        lg:grid-cols-3      /* Laptop: 3 columns */
+        xl:grid-cols-3      /* PC: 4 columns */
+        2xl:grid-cols-4     /* Extra large: 5 columns */
       `}
       >
         {displayedHotels.map((hotel) => (
@@ -131,8 +130,11 @@ const HotelsSection = () => {
       </div>
 
       {/* Show More Button (if there are more hotels) */}
-      <div className="text-center mt-6 sm:mt-8 md:mt-10 lg:mt-12 xl:mt-16">
-        <AnimatedButton onClick={() => router.push("/accommodations/hotels")}>
+      <div className="text-center mt-8 sm:mt-10 md:mt-12 lg:mt-16 xl:mt-20">
+        <AnimatedButton
+          onClick={() => router.push("/accommodations/hotels")}
+          className="bg-[#2A6F97] hover:bg-[#1D4F6E] text-white shadow-lg hover:shadow-xl transition-all duration-300"
+        >
           View All Hotels
         </AnimatedButton>
       </div>
@@ -140,11 +142,13 @@ const HotelsSection = () => {
       {/* Empty State */}
       {hotels.length === 0 && (
         <div className="text-center py-12">
-          <div className="text-gray-400 text-6xl mb-4">🏨</div>
-          <p className="text-gray-500 text-lg">
+          <div className="text-[#2A6F97] text-6xl mb-4 opacity-50">🏨</div>
+          <p className="text-[#1D4F6E] text-lg font-medium">
             No hotels available at the moment.
           </p>
-          <p className="text-gray-400 text-sm mt-2">Please check back later.</p>
+          <p className="text-[#3F8AB2] text-sm mt-2">
+            Please check back later.
+          </p>
         </div>
       )}
     </div>

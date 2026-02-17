@@ -27,7 +27,7 @@ interface HotelFilterSectionProps {
   onResetFilters: () => void;
   locations: string[];
   categories: string[];
-  amenities: string[]; // Keep it in props but mark as optional if unused
+  amenities: string[];
 }
 
 const HotelFilterSection: React.FC<HotelFilterSectionProps> = ({
@@ -36,7 +36,7 @@ const HotelFilterSection: React.FC<HotelFilterSectionProps> = ({
   onResetFilters,
   locations,
   categories,
-  amenities, // Keep this parameter even if unused
+  amenities,
 }) => {
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
@@ -44,6 +44,8 @@ const HotelFilterSection: React.FC<HotelFilterSectionProps> = ({
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     }).format(price);
   };
 
@@ -51,30 +53,35 @@ const HotelFilterSection: React.FC<HotelFilterSectionProps> = ({
     setShowAdvancedFilters(!showAdvancedFilters);
   };
 
-  // If amenities is truly unused, you can prefix with underscore to suppress warning
-  const _amenities = amenities; // This suppresses the unused variable warning
-
   return (
-    <div className="bg-gradient-to-r from-purple-50 to-amber-50 rounded-2xl p-6 md:p-8 mb-8 border-2 border-purple-200 shadow-lg">
+    <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 md:p-8 mb-8 border border-[#2A6F97]/20 shadow-xl hover:shadow-2xl transition-all duration-500">
+      {/* Header with Luxury Styling */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-        <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-amber-600 bg-clip-text text-transparent">
-          Filter Hotels
-        </h2>
+        <div className="relative">
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-[#2A6F97] to-[#54A5CC] bg-clip-text text-transparent">
+            Find Your Perfect Stay
+          </h2>
+          <p className="text-sm text-gray-500 mt-1">Refine your luxury hotel search</p>
+          {/* Decorative line */}
+          <div className="absolute -bottom-2 left-0 w-12 h-0.5 bg-gradient-to-r from-[#2A6F97] to-[#54A5CC] rounded-full"></div>
+        </div>
+        
         <div className="flex gap-3">
           <button
             onClick={onResetFilters}
-            className="px-6 py-2 bg-gradient-to-r from-purple-600 to-amber-600 text-white rounded-lg hover:from-purple-700 hover:to-amber-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg"
+            className="px-6 py-2.5 border-2 border-[#2A6F97] text-[#2A6F97] rounded-xl hover:bg-[#2A6F97] hover:text-white transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
           >
             Reset Filters
           </button>
         </div>
       </div>
 
-      {/* Basic Filters */}
+      {/* Basic Filters - Luxury Styling */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         {/* Search */}
-        <div className="space-y-2">
-          <label className="block text-sm font-semibold text-gray-800">
+        <div className="space-y-2 group">
+          <label className="block text-sm font-semibold text-gray-700 flex items-center gap-2">
+            <span className="w-1 h-4 bg-[#2A6F97] rounded-full"></span>
             Search Hotels
           </label>
           <input
@@ -82,17 +89,24 @@ const HotelFilterSection: React.FC<HotelFilterSectionProps> = ({
             placeholder="Search by name, description..."
             value={filters.search}
             onChange={(e) => onFilterChange("search", e.target.value)}
-            className="w-full px-4 py-2 border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500 transition-all"
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2A6F97]/30 focus:border-[#2A6F97] bg-white text-gray-900 placeholder-gray-400 transition-all group-hover:border-[#2A6F97]/30"
           />
         </div>
 
         {/* Price Range */}
-        <div className="space-y-2">
-          <label className="block text-sm font-semibold text-gray-800">
+        <div className="space-y-2 group">
+          <label className="block text-sm font-semibold text-gray-700 flex items-center gap-2">
+            <span className="w-1 h-4 bg-[#2A6F97] rounded-full"></span>
             Price Range (per night)
           </label>
-          <div className="text-sm font-medium text-purple-700 mb-2">
-            {formatPrice(filters.priceRange[0])} - {formatPrice(filters.priceRange[1])}
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-sm font-medium text-[#2A6F97] bg-[#2A6F97]/10 px-3 py-1 rounded-full">
+              {formatPrice(filters.priceRange[0])}
+            </span>
+            <span className="text-xs text-gray-400">to</span>
+            <span className="text-sm font-medium text-[#2A6F97] bg-[#2A6F97]/10 px-3 py-1 rounded-full">
+              {formatPrice(filters.priceRange[1])}
+            </span>
           </div>
           <input
             type="range"
@@ -103,13 +117,19 @@ const HotelFilterSection: React.FC<HotelFilterSectionProps> = ({
             onChange={(e) =>
               onFilterChange("priceRange", [filters.priceRange[0], parseInt(e.target.value, 10)])
             }
-            className="w-full h-3 bg-gradient-to-r from-purple-300 to-amber-300 rounded-lg appearance-none cursor-pointer accent-purple-600"
+            className="w-full h-2 bg-gradient-to-r from-[#2A6F97] to-[#54A5CC] rounded-lg appearance-none cursor-pointer accent-[#2A6F97]"
           />
+          <div className="flex justify-between text-xs text-gray-400 mt-1">
+            <span>{formatPrice(0)}</span>
+            <span>{formatPrice(500)}</span>
+            <span>{formatPrice(1000)}</span>
+          </div>
         </div>
 
         {/* Star Rating */}
-        <div className="space-y-2">
-          <label className="block text-sm font-semibold text-gray-800">
+        <div className="space-y-2 group">
+          <label className="block text-sm font-semibold text-gray-700 flex items-center gap-2">
+            <span className="w-1 h-4 bg-[#2A6F97] rounded-full"></span>
             Minimum Rating
           </label>
           <div className="flex items-center space-x-2">
@@ -119,11 +139,12 @@ const HotelFilterSection: React.FC<HotelFilterSectionProps> = ({
                 onClick={() =>
                   onFilterChange("starRating", rating === filters.starRating ? 0 : rating)
                 }
-                className={`p-2 rounded-lg transition-all ${
+                className={`p-2 rounded-lg transition-all duration-300 transform hover:scale-110 ${
                   filters.starRating >= rating
-                    ? "bg-yellow-400 text-white shadow-md"
-                    : "bg-gray-200 text-gray-400 hover:bg-gray-300"
+                    ? "bg-gradient-to-r from-[#2A6F97] to-[#54A5CC] text-white shadow-md"
+                    : "bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-[#2A6F97]"
                 }`}
+                title={`${rating} Star${rating > 1 ? 's' : ''}`}
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -134,14 +155,15 @@ const HotelFilterSection: React.FC<HotelFilterSectionProps> = ({
         </div>
 
         {/* Category */}
-        <div className="space-y-2">
-          <label className="block text-sm font-semibold text-gray-800">
+        <div className="space-y-2 group">
+          <label className="block text-sm font-semibold text-gray-700 flex items-center gap-2">
+            <span className="w-1 h-4 bg-[#2A6F97] rounded-full"></span>
             Hotel Type
           </label>
           <select
             value={filters.category}
             onChange={(e) => onFilterChange("category", e.target.value)}
-            className="w-full px-4 py-2 border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2A6F97]/30 focus:border-[#2A6F97] bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer group-hover:border-[#2A6F97]/30"
           >
             <option value="">All Types</option>
             {categories.map((category) => (
@@ -153,20 +175,21 @@ const HotelFilterSection: React.FC<HotelFilterSectionProps> = ({
         </div>
       </div>
 
-      {/* Advanced Filters */}
+      {/* Advanced Filters - Luxury Styling */}
       <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
         showAdvancedFilters ? "max-h-96 opacity-100 mb-6" : "max-h-0 opacity-0"
       }`}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4 border-t border-[#2A6F97]/10">
           {/* Location */}
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-800">
+          <div className="space-y-2 group">
+            <label className="block text-sm font-semibold text-gray-700 flex items-center gap-2">
+              <span className="w-1 h-4 bg-[#2A6F97] rounded-full"></span>
               Location
             </label>
             <select
               value={filters.location}
               onChange={(e) => onFilterChange("location", e.target.value)}
-              className="w-full px-4 py-2 border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2A6F97]/30 focus:border-[#2A6F97] bg-white text-gray-900 font-medium transition-all group-hover:border-[#2A6F97]/30"
             >
               <option value="">All Locations</option>
               {locations.map((location) => (
@@ -178,8 +201,9 @@ const HotelFilterSection: React.FC<HotelFilterSectionProps> = ({
           </div>
 
           {/* WiFi */}
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-800">
+          <div className="space-y-2 group">
+            <label className="block text-sm font-semibold text-gray-700 flex items-center gap-2">
+              <span className="w-1 h-4 bg-[#2A6F97] rounded-full"></span>
               WiFi
             </label>
             <select
@@ -188,17 +212,18 @@ const HotelFilterSection: React.FC<HotelFilterSectionProps> = ({
                 const value = e.target.value === "" ? null : e.target.value === "true";
                 onFilterChange("hasWifi", value);
               }}
-              className="w-full px-4 py-2 border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2A6F97]/30 focus:border-[#2A6F97] bg-white text-gray-900 font-medium transition-all group-hover:border-[#2A6F97]/30"
             >
               <option value="">Any</option>
-              <option value="true">With WiFi</option>
-              <option value="false">Without WiFi</option>
+              <option value="true">Premium WiFi Available</option>
+              <option value="false">No WiFi</option>
             </select>
           </div>
 
           {/* Parking */}
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-800">
+          <div className="space-y-2 group">
+            <label className="block text-sm font-semibold text-gray-700 flex items-center gap-2">
+              <span className="w-1 h-4 bg-[#2A6F97] rounded-full"></span>
               Parking
             </label>
             <select
@@ -207,17 +232,18 @@ const HotelFilterSection: React.FC<HotelFilterSectionProps> = ({
                 const value = e.target.value === "" ? null : e.target.value === "true";
                 onFilterChange("hasParking", value);
               }}
-              className="w-full px-4 py-2 border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2A6F97]/30 focus:border-[#2A6F97] bg-white text-gray-900 font-medium transition-all group-hover:border-[#2A6F97]/30"
             >
               <option value="">Any</option>
-              <option value="true">With Parking</option>
-              <option value="false">Without Parking</option>
+              <option value="true">Valet Parking Available</option>
+              <option value="false">No Parking</option>
             </select>
           </div>
 
           {/* Pet Friendly */}
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-800">
+          <div className="space-y-2 group">
+            <label className="block text-sm font-semibold text-gray-700 flex items-center gap-2">
+              <span className="w-1 h-4 bg-[#2A6F97] rounded-full"></span>
               Pet Friendly
             </label>
             <select
@@ -226,36 +252,57 @@ const HotelFilterSection: React.FC<HotelFilterSectionProps> = ({
                 const value = e.target.value === "" ? null : e.target.value === "true";
                 onFilterChange("isPetFriendly", value);
               }}
-              className="w-full px-4 py-2 border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2A6F97]/30 focus:border-[#2A6F97] bg-white text-gray-900 font-medium transition-all group-hover:border-[#2A6F97]/30"
             >
               <option value="">Any</option>
               <option value="true">Pet Friendly</option>
-              <option value="false">Not Pet Friendly</option>
+              <option value="false">No Pets Allowed</option>
             </select>
           </div>
+
+          {/* Amenities (if needed) */}
+          {amenities.length > 0 && (
+            <div className="space-y-2 group md:col-span-2 lg:col-span-1">
+              <label className="block text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <span className="w-1 h-4 bg-[#2A6F97] rounded-full"></span>
+                Premium Amenities
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {amenities.slice(0, 3).map((amenity) => (
+                  <label key={amenity} className="flex items-center gap-2 text-sm text-gray-600">
+                    <input
+                      type="checkbox"
+                      className="rounded border-gray-300 text-[#2A6F97] focus:ring-[#2A6F97]/30"
+                    />
+                    <span className="capitalize">{amenity}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Advanced Filters Toggle */}
+      {/* Advanced Filters Toggle - Luxury Styling */}
       <div className={`relative ${showAdvancedFilters ? "mt-6" : "mb-6"}`}>
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t-2 border-purple-200"></div>
+          <div className="w-full border-t border-[#2A6F97]/20"></div>
         </div>
         <div className="relative flex justify-center">
           <button
             onClick={toggleAdvancedFilters}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-amber-500 text-white rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+            className="inline-flex items-center gap-2 px-6 py-2.5 bg-white text-[#2A6F97] border-2 border-[#2A6F97] rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:bg-[#2A6F97] hover:text-white transform hover:scale-105 group"
           >
             {showAdvancedFilters ? (
               <>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
                 </svg>
                 Hide Advanced Filters
               </>
             ) : (
               <>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 transition-transform group-hover:translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
                 Show Advanced Filters
@@ -271,7 +318,7 @@ const HotelFilterSection: React.FC<HotelFilterSectionProps> = ({
   );
 };
 
-// Active Filters Summary Component
+// Active Filters Summary Component - Luxury Styling
 interface ActiveFiltersSummaryProps {
   filters: HotelFilters;
   onFilterChange: (filterName: keyof HotelFilters, value: FilterValue) => void;
@@ -285,6 +332,8 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     }).format(price);
   };
 
@@ -300,7 +349,7 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
   if (filters.search) {
     activeFilters.push({
       name: "search",
-      label: `Search: "${filters.search}"`,
+      label: `"${filters.search}"`,
       value: filters.search,
     });
   }
@@ -308,7 +357,7 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
   if (filters.starRating > 0) {
     activeFilters.push({
       name: "starRating",
-      label: `Rating: ${filters.starRating}+ stars`,
+      label: `${filters.starRating}+ Stars`,
       value: filters.starRating,
     });
   }
@@ -316,7 +365,7 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
   if (filters.category) {
     activeFilters.push({
       name: "category",
-      label: `Type: ${filters.category}`,
+      label: filters.category,
       value: filters.category,
     });
   }
@@ -324,7 +373,7 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
   if (filters.location) {
     activeFilters.push({
       name: "location",
-      label: `Location: ${filters.location}`,
+      label: filters.location,
       value: filters.location,
     });
   }
@@ -332,7 +381,7 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
   if (filters.hasWifi !== null) {
     activeFilters.push({
       name: "hasWifi",
-      label: `WiFi: ${filters.hasWifi ? 'Yes' : 'No'}`,
+      label: `WiFi: ${filters.hasWifi ? 'Premium' : 'None'}`,
       value: filters.hasWifi,
     });
   }
@@ -340,7 +389,7 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
   if (filters.hasParking !== null) {
     activeFilters.push({
       name: "hasParking",
-      label: `Parking: ${filters.hasParking ? 'Yes' : 'No'}`,
+      label: `Parking: ${filters.hasParking ? 'Valet' : 'None'}`,
       value: filters.hasParking,
     });
   }
@@ -356,7 +405,7 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
   if (filters.priceRange[1] < 1000) {
     activeFilters.push({
       name: "priceRange",
-      label: `Price up to: ${formatPrice(filters.priceRange[1])}`,
+      label: `Up to ${formatPrice(filters.priceRange[1])}`,
       value: filters.priceRange,
     });
   }
@@ -380,23 +429,24 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
   };
 
   return (
-    <div className="border-t-2 border-purple-200 pt-4 mt-4">
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-sm font-semibold text-gray-800">
-          Active Filters:
+    <div className="border-t border-[#2A6F97]/10 pt-4 mt-4">
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-sm font-semibold text-gray-700">Active Filters:</span>
+        <span className="text-xs bg-[#2A6F97]/10 text-[#2A6F97] px-2 py-0.5 rounded-full">
+          {activeFilters.length}
         </span>
-        <span className="text-sm text-gray-600">({activeFilters.length})</span>
       </div>
       <div className="flex flex-wrap gap-2">
         {activeFilters.map((filter) => (
           <span
             key={filter.name}
-            className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-purple-100 to-amber-100 text-purple-800 rounded-full text-xs font-medium border border-purple-200 transition-all duration-200 hover:shadow-md"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#F0F7FF] text-[#2A6F97] rounded-full text-xs font-medium border border-[#2A6F97]/20 transition-all duration-200 hover:shadow-md group"
           >
             {filter.label}
             <button
               onClick={() => removeFilter(filter.name)}
-              className="hover:text-red-600 transition-colors duration-200 ml-1"
+              className="hover:text-red-500 transition-colors duration-200 ml-1"
+              aria-label={`Remove ${filter.label} filter`}
             >
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

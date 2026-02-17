@@ -7,6 +7,7 @@ export interface BlogImage {
 
 export interface CommentReaction {
   username: string;
+  image_url: string;
   user_id: number;
   reaction_type: string;
   reaction_type_name?: string;
@@ -14,6 +15,7 @@ export interface CommentReaction {
 
 export interface BlogCommentReply {
   username: string;
+  image_url:string;
   comment: string;
   reactions: CommentReaction[] | null;
   replies: BlogCommentReply[] | null;
@@ -27,6 +29,7 @@ export interface BlogCommentReply {
 
 export interface BlogComment {
   username: string;
+  image_url: string;
   comment: string;
   reactions: CommentReaction[] | null;
   replies: BlogCommentReply[] | null;
@@ -56,6 +59,7 @@ export interface BlogDetailsData {
   blog_id: number;
   writer_id: number;
   writer_name: string;
+  writer_image_url: string;
   blog_status: string;
   blog_created_at: string;
   blog_reactions: BlogReaction[];
@@ -69,7 +73,7 @@ export interface BlogFilters {
   writer: string;
   category: string;
   dateRange: [string, string];
-  sortBy: 'recent' | 'likes' | 'comments' | 'date-asc' | 'date-desc';
+  sortBy: "recent" | "likes" | "comments" | "date-asc" | "date-desc";
 }
 
 export interface PaginationState {
@@ -89,7 +93,7 @@ export interface BlogReactApiResponse {
   code: number;
   status: string;
   message: string;
-  data: {message:string};
+  data: { message: string };
   timestamp: string;
 }
 
@@ -97,7 +101,7 @@ export interface BlogCommentReactApiResponse {
   code: number;
   status: string;
   message: string;
-  data: {message:string};
+  data: { message: string };
   timestamp: string;
 }
 
@@ -105,11 +109,11 @@ export interface BlogCommentApiResponse {
   code: number;
   status: string;
   message: string;
-  data: {message:string};
+  data: { message: string };
   timestamp: string;
 }
 
-export interface BlogTagAPIResponse{
+export interface BlogTagAPIResponse {
   code: number;
   status: string;
   message: string;
@@ -123,14 +127,13 @@ export interface BlogTagResponse {
   description: string;
   statusId: number;
   statusName: "ACTIVE" | "INACTIVE"; // extend if needed
-  createdAt: string;   // ISO date string
+  createdAt: string; // ISO date string
   createdBy: string | null;
   updatedAt: string;
   updatedBy: string | null;
   terminatedAt: string | null;
   terminatedBy: string | null;
 }
-
 
 export interface BlogTag {
   id: number;
@@ -261,16 +264,15 @@ export interface CommentReactRequest {
 
 // Reaction types
 export const REACTION_TYPES = {
-  LIKE: 'like',
-  LOVE: 'love',
-  HAHA: 'haha',
-  WOW: 'wow',
-  SAD: 'sad',
-  ANGRY: 'angry'
+  LIKE: "like",
+  LOVE: "love",
+  HAHA: "haha",
+  WOW: "wow",
+  SAD: "sad",
+  ANGRY: "angry",
 } as const;
 
-export type ReactionType = typeof REACTION_TYPES[keyof typeof REACTION_TYPES];
-
+export type ReactionType = (typeof REACTION_TYPES)[keyof typeof REACTION_TYPES];
 
 export interface BlogReactionType {
   username: string;
@@ -319,7 +321,6 @@ export interface BlogType {
   blog_reactions: BlogReactionType[];
 }
 
-
 export interface ActiveBlogsResponse {
   code: number;
   status: string;
@@ -329,12 +330,18 @@ export interface ActiveBlogsResponse {
 }
 
 // If you want to combine with existing Comment interfaces:
-export interface CombinedBlogComment extends Omit<BlogComment, 'reactions' | 'replies'> {
+export interface CombinedBlogComment extends Omit<
+  BlogComment,
+  "reactions" | "replies"
+> {
   reactions: CommentReaction[] | null;
   replies: CombinedBlogCommentReply[] | null;
 }
 
-export interface CombinedBlogCommentReply extends Omit<BlogCommentReply, 'reactions' | 'replies'> {
+export interface CombinedBlogCommentReply extends Omit<
+  BlogCommentReply,
+  "reactions" | "replies"
+> {
   reactions: CommentReaction[] | null;
   replies: CombinedBlogCommentReply[] | null;
 }

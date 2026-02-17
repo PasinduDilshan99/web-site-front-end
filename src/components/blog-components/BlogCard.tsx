@@ -134,7 +134,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog, onClick }) => {
   return (
     <div 
       onClick={handleCardClick}
-      className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-purple-100 cursor-pointer hover:-translate-y-1"
+      className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-teal-100 cursor-pointer hover:-translate-y-1"
     >
       {/* Image Container */}
       <div className="relative h-56 md:h-64 overflow-hidden">
@@ -148,18 +148,18 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog, onClick }) => {
         />
         
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-purple-900/30 via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-teal-900/30 via-transparent to-transparent"></div>
         
         {/* Category Badge */}
         <div className="absolute top-4 left-4">
-          <span className="px-3 py-1.5 bg-gradient-to-r from-purple-600 to-amber-500 text-white text-xs font-semibold rounded-full shadow-lg">
+          <span className="px-3 py-1.5 bg-gradient-to-r from-teal-500 to-blue-600 text-white text-xs font-semibold rounded-full shadow-lg">
             {category}
           </span>
         </div>
         
         {/* Date Badge */}
         <div className="absolute top-4 right-4">
-          <span className="px-3 py-1.5 bg-white/90 backdrop-blur-sm text-purple-700 text-xs font-medium rounded-full shadow-sm">
+          <span className="px-3 py-1.5 bg-white/90 backdrop-blur-sm text-teal-700 text-xs font-medium rounded-full shadow-sm">
             {formatDate(blog.blog_created_at)}
           </span>
         </div>
@@ -169,18 +169,18 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog, onClick }) => {
       <div className="p-6">
         {/* Writer Info */}
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-amber-400 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-r from-teal-500 to-blue-500 flex items-center justify-center">
             <User className="w-4 h-4 text-white" />
           </div>
           <div>
-            <div className="text-sm font-semibold text-purple-800">{blog.writer_name}</div>
+            <div className="text-sm font-semibold text-teal-800">{blog.writer_name}</div>
             <div className="text-xs text-gray-500">Travel Writer</div>
           </div>
         </div>
 
         {/* Title & Subtitle */}
         <div className="mb-4">
-          <h3 className="text-xl font-bold text-purple-900 mb-2 line-clamp-1 group-hover:text-amber-600 transition-colors">
+          <h3 className="text-xl font-bold text-teal-900 mb-2 line-clamp-1 group-hover:text-blue-600 transition-colors">
             {blog.title}
           </h3>
           {blog.subtitle && (
@@ -196,27 +196,27 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog, onClick }) => {
         </p>
 
         {/* Stats & Actions */}
-        <div className="flex items-center justify-between pt-4 border-t border-amber-100">
+        <div className="flex items-center justify-between pt-4 border-t border-blue-200">
           {/* Stats */}
           <div className="flex items-center gap-4">
             {/* Reactions */}
             <div className="flex items-center gap-2 group/stat">
-              <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center group-hover/stat:bg-purple-100 transition-colors">
-                <Heart className="w-4 h-4 text-purple-600" />
+              <div className="w-8 h-8 rounded-full bg-teal-50 flex items-center justify-center group-hover/stat:bg-teal-100 transition-colors">
+                <Heart className="w-4 h-4 text-teal-600" />
               </div>
               <div className="text-center">
-                <div className="text-sm font-bold text-purple-700">{totalReactions}</div>
+                <div className="text-sm font-bold text-teal-700">{totalReactions}</div>
                 <div className="text-xs text-gray-500">Likes</div>
               </div>
             </div>
 
             {/* Comments */}
             <div className="flex items-center gap-2 group/stat">
-              <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center group-hover/stat:bg-amber-100 transition-colors">
-                <MessageCircle className="w-4 h-4 text-amber-600" />
+              <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center group-hover/stat:bg-blue-100 transition-colors">
+                <MessageCircle className="w-4 h-4 text-blue-600" />
               </div>
               <div className="text-center">
-                <div className="text-sm font-bold text-amber-700">{totalComments}</div>
+                <div className="text-sm font-bold text-blue-700">{totalComments}</div>
                 <div className="text-xs text-gray-500">Comments</div>
               </div>
             </div>
@@ -234,9 +234,9 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog, onClick }) => {
           </div>
 
           {/* Read More */}
-          <div className="flex items-center gap-2 text-purple-600 group-hover:text-amber-600 transition-colors">
+          <div className="flex items-center gap-2 text-teal-600 group-hover:text-blue-600 transition-colors">
             <span className="text-sm font-semibold">Read</span>
-            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-100 to-amber-100 flex items-center justify-center group-hover:from-purple-200 group-hover:to-amber-200 transition-all">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-teal-100 to-blue-100 flex items-center justify-center group-hover:from-teal-200 group-hover:to-blue-200 transition-all">
               <ArrowRight className="w-4 h-4" />
             </div>
           </div>

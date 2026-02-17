@@ -30,8 +30,8 @@ const RelatedBlogs: React.FC<RelatedBlogsProps> = ({ relatedBlogs, writerName })
   };
 
   return (
-    <div className="bg-white rounded-3xl shadow-xl p-6 border border-purple-200">
-      <h3 className="text-xl font-bold text-purple-900 mb-6">
+    <div className="bg-white rounded-3xl shadow-xl p-6 border border-teal-200">
+      <h3 className="text-xl font-bold text-teal-800 mb-6">
         More from {writerName}
       </h3>
       <div className="space-y-4">
@@ -39,7 +39,7 @@ const RelatedBlogs: React.FC<RelatedBlogsProps> = ({ relatedBlogs, writerName })
           <div
             key={blog.blog_id}
             onClick={() => router.push(`/blogs/${blog.blog_id}`)}
-            className="group cursor-pointer p-4 rounded-xl border border-purple-100 hover:border-amber-300 hover:shadow-md transition-all"
+            className="group cursor-pointer p-4 rounded-xl border border-teal-100 hover:border-blue-300 hover:shadow-md transition-all"
           >
             <div className="flex items-start gap-3">
               {blog.images && blog.images.length > 0 && (
@@ -53,7 +53,7 @@ const RelatedBlogs: React.FC<RelatedBlogsProps> = ({ relatedBlogs, writerName })
                 </div>
               )}
               <div>
-                <h4 className="font-semibold text-purple-900 group-hover:text-amber-600 transition-colors line-clamp-2">
+                <h4 className="font-semibold text-teal-800 group-hover:text-blue-600 transition-colors line-clamp-2">
                   {blog.title}
                 </h4>
                 <p className="text-xs text-gray-500 mt-1">
@@ -66,7 +66,7 @@ const RelatedBlogs: React.FC<RelatedBlogsProps> = ({ relatedBlogs, writerName })
       </div>
       <button
         onClick={() => router.push(`/blogs?writer=${writerName}`)}
-        className="w-full mt-6 py-3 text-center text-purple-700 font-medium hover:text-amber-600 transition-colors border border-purple-300 rounded-xl hover:border-amber-300"
+        className="w-full mt-6 py-3 text-center text-teal-700 font-medium hover:text-blue-600 transition-colors border border-teal-300 rounded-xl hover:border-blue-300"
       >
         View All Blogs →
       </button>
