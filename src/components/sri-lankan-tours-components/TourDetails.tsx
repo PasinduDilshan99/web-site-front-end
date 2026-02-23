@@ -1,9 +1,9 @@
 // components/TourDetails.tsx
-import { ActiveToursType } from "@/types/sri-lankan-tour-types";
 import React from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { addBrowserHistory } from "@/services/browserHistoryService";
+import { ActiveToursType } from "@/types/tour-types";
 
 interface TourDetailsProps {
   tour: ActiveToursType;
@@ -11,6 +11,7 @@ interface TourDetailsProps {
 
 const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
   const { user } = useAuth();
+  
   const formatDuration = (days: number) => {
     const nights = days > 0 ? days - 1 : 0;
     const formattedDays = days < 10 ? "0" + days : days.toString();
@@ -23,9 +24,14 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
     const basePrice = 50;
     let multiplier = 1;
 
-    if (tour.tourCategoryName === "Luxury") multiplier = 2.5;
-    else if (tour.tourCategoryName === "Family") multiplier = 1.2;
-    else if (tour.tourCategoryName === "Budget") multiplier = 0.8;
+    // Check if there are any categories and use the first one for pricing logic
+    // You might want to adjust this logic based on your business rules
+    if (tour.tourCategoryDtos && tour.tourCategoryDtos.length > 0) {
+      const categoryName = tour.tourCategoryDtos[0].tourCategoryName;
+      if (categoryName === "Luxury") multiplier = 2.5;
+      else if (categoryName === "Family") multiplier = 1.2;
+      else if (categoryName === "Budget") multiplier = 0.8;
+    }
 
     return Math.round(basePrice * tour.duration * multiplier);
   };
@@ -44,6 +50,15 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
       console.error("Failed to record browser history:", err);
     }
   };
+
+  // Get primary tour type and category (first one) for display
+  const primaryTourType = tour.tourTypeDtos && tour.tourTypeDtos.length > 0 
+    ? tour.tourTypeDtos[0] 
+    : null;
+  
+  const primaryTourCategory = tour.tourCategoryDtos && tour.tourCategoryDtos.length > 0 
+    ? tour.tourCategoryDtos[0] 
+    : null;
 
   return (
     <div className="p-4 sm:p-5 md:p-6 flex-1 flex flex-col">
@@ -68,7 +83,7 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
       </div>
 
       {/* Locations */}
-      <div className="flex  gap-2 mb-3 sm:mb-4 text-gray-600">
+      <div className="flex gap-2 mb-3 sm:mb-4 text-gray-600">
         {/* Start Location */}
         <div className="flex items-center gap-2 text-sm sm:text-base">
           <span className="inline-flex w-4 h-4 sm:w-5 sm:h-5 bg-blue-100 rounded-full items-center justify-center flex-shrink-0">
@@ -137,12 +152,37 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
       {/* Tour Type and Category Badges */}
       <div className="flex items-center justify-between pt-3 border-t border-gray-100">
         <div className="flex gap-1 sm:gap-2 flex-wrap">
-          <span className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-purple-100 text-purple-800 border border-purple-200">
-            {tour.tourTypeName}
-          </span>
-          <span className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-amber-100 text-amber-800 border border-amber-200">
-            {tour.tourCategoryName}
-          </span>
+          {/* Display all tour types */}
+          {tour.tourTypeDtos && tour.tourTypeDtos.length > 0 ? (
+            tour.tourTypeDtos.map((type, index) => (
+              <span 
+                key={type.tourTypeId || index}
+                className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-purple-100 text-purple-800 border border-purple-200"
+              >
+                {type.tourTypeName}
+              </span>
+            ))
+          ) : (
+            <span className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-gray-100 text-gray-800 border border-gray-200">
+              No Type
+            </span>
+          )}
+
+          {/* Display all tour categories */}
+          {/* {tour.tourCategoryDtos && tour.tourCategoryDtos.length > 0 ? (
+            tour.tourCategoryDtos.map((category, index) => (
+              <span 
+                key={category.tourCategoryId || index}
+                className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-amber-100 text-amber-800 border border-amber-200"
+              >
+                {category.tourCategoryName}
+              </span>
+            ))
+          ) : (
+            <span className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-gray-100 text-gray-800 border border-gray-200">
+              No Category
+            </span>
+          )} */}
         </div>
       </div>
     </div>

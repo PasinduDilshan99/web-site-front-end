@@ -1,10 +1,10 @@
 // components/TourImageGallery.tsx
-import { ActiveToursType } from "@/types/sri-lankan-tour-types";
 import React, { useEffect, useState } from "react";
 import { WishListService } from "@/services/wishListService";
 import { PLACE_HOLDER_IMAGE } from "@/utils/constant";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
+import { ActiveToursType } from "@/types/tour-types";
 
 interface TourImageGalleryProps {
   tour: ActiveToursType;

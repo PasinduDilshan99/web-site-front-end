@@ -51,7 +51,7 @@ import SriLankanTourDetailsLoading from "@/components/sri-lankan-tours-component
 const SriLankanTourDetailsPage = () => {
   const params = useParams();
   const sriLankanTourId = params?.sriLankanTourId || null;
-  const tourId = sriLankanTourId?.[0] || "1";
+  const tourId = sriLankanTourId || "1";
 
   const [tour, setTour] = React.useState<TourDetails | null>(null);
   const [reviews, setReviews] = React.useState<TourReview[]>([]);
@@ -792,7 +792,7 @@ const SriLankanTourDetailsPage = () => {
         error={reviewsError}
         onRetry={handleRetryReviews}
       /> */}
-      <TourMapContainer tourId={Number.parseInt(tourId[0])} />
+      <TourMapContainer tourId={Number.parseInt(tourId)} />
       {/* <TourHistorySection
         histories={histories}
         loading={historyLoading}

@@ -35,6 +35,7 @@ const ACCOUNT_SECURITY = "/account-security";
 const BOOKING = "/booking";
 const BROWSER_HISTORY = "/browser-history";
 const OTHERS = "/others";
+const COMMON = "/common";
 
 // Auth
 export const LOGIN_FE = `${API}${AUTH}/login`;
@@ -218,6 +219,9 @@ export const GET_WIS_LIST_DETAILS_DATA_FE = `${API}${WISH_LIST}/details`;
 
 // Browser History
 export const ADD_BROWSER_HISTORY_REQUEST_DATA_FE = `${API}${BROWSER_HISTORY}/add`;
+
+// Common
+export const GET_ALL_CATEGORIES_DATA_FE = `${API}${COMMON}/all-categories`;
 
 // Others
 export const UPLOAD_IMAGE_TO_CLOUDINARY_FE = `${API}${OTHERS}/save-images`;

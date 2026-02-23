@@ -16,27 +16,6 @@ export interface TourImage {
   imageUrl: string;
 }
 
-export interface ActiveToursType {
-  tourId: number;
-  tourName: string;
-  tourDescription: string;
-  duration: number;
-  latitude: number;
-  longitude: number;
-  startLocation: string;
-  endLocation: string;
-  tourTypeName: string;
-  tourTypeDescription: string;
-  tourCategoryName: string;
-  tourCategoryDescription: string;
-  seasonName: string;
-  seasonDescription: string;
-  statusName: string;
-  schedules: Schedule[];
-  images: TourImage[];
-  wish: boolean;
-}
-
 export interface ActiveToursAPIResponse {
   code: number;
   status: string;
@@ -118,9 +97,8 @@ export interface ActiveToursType {
   longitude: number;
   startLocation: string;
   endLocation: string;
-  tourTypeName: string;
-  tourTypeDescription: string;
-  tourCategoryName: string;
+  tourTypeDtos: TourTypeDto[];
+  tourCategoryDtos: TourCategoryDto[];
   tourCategoryDescription: string;
   seasonName: string;
   seasonDescription: string;
@@ -128,6 +106,18 @@ export interface ActiveToursType {
   schedules: Schedule[];
   images: TourImage[];
   wish: boolean;
+}
+
+export interface TourTypeDto {
+  tourTypeId?: number;
+  tourTypeName: string;
+  tourTypeDescription?: string;
+}
+
+export interface TourCategoryDto {
+  tourCategoryId?: number;
+  tourCategoryName: string;
+  tourCategoryDescription?: string;
 }
 
 export interface Schedule {

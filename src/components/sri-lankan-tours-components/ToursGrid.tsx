@@ -1,6 +1,6 @@
 import React from "react";
 import TourCard from "./TourCard";
-import { ActiveToursType } from "@/types/sri-lankan-tour-types";
+import { ActiveToursType } from "@/types/tour-types";
 
 interface ToursGridProps {
   tours: ActiveToursType[];

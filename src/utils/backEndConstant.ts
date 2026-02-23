@@ -62,6 +62,7 @@ const USER_NOTIFICATION_PERMISSIONS = "/user-notification-permissions";
 const ACCOUNT_SECURITY = "/account-security";
 const BOOKING = "/booking";
 const BROWSER_HISTORY = "/browser-history";
+const COMMON = "/common";
 
 // Auth
 export const LOGIN = `${BASE_PATH}${API}${VERSION}${AUTH}/login`;
@@ -248,9 +249,13 @@ export const GET_WIS_LIST_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${WISH_LIS
 // Browser History
 export const ADD_BROWSER_HISTORY_REQUEST_DATA = `${BASE_PATH}${API}${VERSION}${BROWSER_HISTORY}/add`;
 
+// Common
+export const GET_ALL_CATEGORIES_DATA = `${BASE_PATH}${API}${VERSION}${COMMON}/all-categories`;
+
 // Others
 export const UPLOAD_IMAGE_TO_CLOUDINARY =
   "https://api.cloudinary.com/v1_1/dtzrivqye/image/upload";
+
 
   
 

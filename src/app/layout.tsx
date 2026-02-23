@@ -8,6 +8,7 @@ import ChatBot from "@/components/ChatBot";
 import NavBar from "@/components/common-components/navBar/NavBar";
 import LinkBar from "@/components/common-components/linkBar/LinkBar";
 import Footer from "../components/common-components/footer/Footer";
+import { CommonProvider } from "@/context/CommonContext";
 
 export const metadata: Metadata = {
   title: {
@@ -26,13 +27,15 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AuthProvider>
-          {/* <DecemberSnowfall /> */}
-          {/* <GlobalGradientScrollbar /> */}
-          {/* <LinkBar /> */}
-          <NavBar />
-          <main>{children}</main>
-          <Footer />
-          {/* <ChatBot /> */}
+          <CommonProvider>
+            {/* <DecemberSnowfall /> */}
+            {/* <GlobalGradientScrollbar /> */}
+            {/* <LinkBar /> */}
+            <NavBar />
+            <main>{children}</main>
+            <Footer />
+            {/* <ChatBot /> */}
+          </CommonProvider>
         </AuthProvider>
       </body>
     </html>
