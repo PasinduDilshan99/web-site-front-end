@@ -5,8 +5,6 @@ export async function POST(request: NextRequest) {
   try {
     const { tourId } = await request.json();
 
-    console.log('Tour API Route - Received tourId:', tourId);
-
     if (!tourId) {
       return NextResponse.json(
         { error: "Tour ID is required" },

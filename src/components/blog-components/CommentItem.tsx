@@ -19,6 +19,7 @@ import {
   ReactionType,
 } from "@/types/blog-types";
 import { useAuth } from "@/context/AuthContext";
+import Image from "next/image";
 
 interface CommentItemProps {
   comment: BlogComment | BlogCommentReply;
@@ -47,10 +48,13 @@ const CommentItem: React.FC<CommentItemProps> = ({
   formatDate,
   onNeedLogin,
 }) => {
+  console.log('==============comment======================');
+  console.log(comment);
+  console.log('====================================');
   const { user } = useAuth();
   const isReply = depth > 0;
   const [localReplyText, setLocalReplyText] = useState(
-    replyTexts[comment.comment_id] || ""
+    replyTexts[comment.comment_id] || "",
   );
   const [showReactions, setShowReactions] = useState(false);
   const [isReacting, setIsReacting] = useState(false);
@@ -123,13 +127,13 @@ const CommentItem: React.FC<CommentItemProps> = ({
       case REACTION_TYPES.HAHA:
         return "text-yellow-500";
       case REACTION_TYPES.WOW:
-        return "text-purple-500";
+        return "text-teal-500";
       case REACTION_TYPES.SAD:
         return "text-blue-400";
       case REACTION_TYPES.ANGRY:
         return "text-red-600";
       default:
-        return "text-purple-600";
+        return "text-teal-600";
     }
   };
 
@@ -141,18 +145,28 @@ const CommentItem: React.FC<CommentItemProps> = ({
     <div
       key={comment.comment_id}
       className={`${isReply ? "ml-8 md:ml-12" : ""} ${
-        depth > 0 ? "border-l-2 border-amber-200 pl-4" : ""
+        depth > 0 ? "border-l-2 border-blue-200 pl-4" : ""
       }`}
     >
-      <div className="bg-white rounded-xl p-4 md:p-6 mb-4 shadow-sm border border-purple-100">
+      <div className="bg-white rounded-xl p-4 md:p-6 mb-4 shadow-sm border border-teal-100">
         <div className="flex items-start gap-3 mb-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-amber-400 flex items-center justify-center flex-shrink-0">
-            <User className="w-5 h-5 text-white" />
+          <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+            {comment.image_url ? (
+              <Image
+                src={comment.image_url}
+                alt="Writer"
+                width={48}
+                height={48}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <User className="w-6 h-6 text-gray-500" />
+            )}
           </div>
           <div className="flex-1">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
               <div>
-                <h4 className="font-semibold text-purple-900">
+                <h4 className="font-semibold text-teal-800">
                   {comment.username}
                 </h4>
                 <p className="text-xs text-gray-500">
@@ -164,7 +178,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
                   <button
                     onClick={toggleReplies}
                     disabled={isExpanding}
-                    className="text-sm text-gray-500 hover:text-purple-700 flex items-center gap-1 transition-colors disabled:opacity-50"
+                    className="text-sm text-gray-500 hover:text-teal-700 flex items-center gap-1 transition-colors disabled:opacity-50"
                     title={showReplies ? "Hide replies" : "Show replies"}
                   >
                     <MessageSquare className="w-4 h-4" />
@@ -185,10 +199,10 @@ const CommentItem: React.FC<CommentItemProps> = ({
                       setShowReplyInput(
                         showReplyInput === comment.comment_id
                           ? null
-                          : comment.comment_id
+                          : comment.comment_id,
                       )
                     }
-                    className="text-sm text-purple-600 hover:text-amber-600 font-medium flex items-center gap-1"
+                    className="text-sm text-teal-600 hover:text-blue-600 font-medium flex items-center gap-1"
                   >
                     <Send className="w-4 h-4" />
                     Reply
@@ -202,8 +216,8 @@ const CommentItem: React.FC<CommentItemProps> = ({
                     disabled={isReacting}
                     className={`text-sm flex items-center gap-1 px-2 py-1 rounded disabled:opacity-50 ${
                       userReaction
-                        ? "text-purple-700 bg-purple-50"
-                        : "text-gray-600 hover:text-purple-700 hover:bg-gray-50"
+                        ? "text-teal-700 bg-teal-50"
+                        : "text-gray-600 hover:text-teal-700 hover:bg-gray-50"
                     }`}
                   >
                     {isReacting ? (
@@ -234,14 +248,18 @@ const CommentItem: React.FC<CommentItemProps> = ({
                                 key={type}
                                 className="flex items-center gap-0.5 bg-gray-50 px-0.5 py-0.5 rounded"
                               >
-                                <span className={getReactionColor(type.toLowerCase())}>
+                                <span
+                                  className={getReactionColor(
+                                    type.toLowerCase(),
+                                  )}
+                                >
                                   {getReactionIcon(type.toLowerCase())}
                                 </span>
                                 <span className="text-xs text-gray-700 font-medium">
                                   {count}
                                 </span>
                               </div>
-                            )
+                            ),
                           );
                         })()}
                       </div>
@@ -263,7 +281,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
                         >
                           <div
                             className={`w-6 h-6 flex items-center justify-center ${getReactionColor(
-                              type
+                              type,
                             )}`}
                           >
                             {getReactionIcon(type)}
@@ -289,12 +307,12 @@ const CommentItem: React.FC<CommentItemProps> = ({
                 onChange={(e) => handleReplyTextChange(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Write a reply..."
-                className="flex-1 px-4 py-2 border border-purple-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                className="flex-1 px-4 py-2 border border-teal-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
               />
               <button
                 onClick={() => onSubmitReply(comment.comment_id)}
                 disabled={!localReplyText.trim()}
-                className="px-4 py-2 bg-gradient-to-r from-purple-600 to-amber-500 text-white rounded-lg hover:from-purple-700 hover:to-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="px-4 py-2 bg-gradient-to-r from-teal-500 to-blue-600 text-white rounded-lg hover:from-teal-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 <Send className="w-5 h-5" />
               </button>
@@ -309,7 +327,9 @@ const CommentItem: React.FC<CommentItemProps> = ({
               showReplies ? "max-h-[5000px]" : "max-h-0"
             }`}
           >
-            <div className={`mt-4 ${showReplies ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}>
+            <div
+              className={`mt-4 ${showReplies ? "opacity-100" : "opacity-0"} transition-opacity duration-300`}
+            >
               {commentData.replies?.map((reply) => (
                 <CommentItem
                   key={reply.comment_id}

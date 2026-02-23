@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, X, Expand } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Expand, Waves } from 'lucide-react';
 import { ServiceProviderImage } from '@/types/accommodations-types/service-provider-types';
 
 interface ResortGalleryProps {
@@ -14,8 +14,10 @@ const ResortGallery: React.FC<ResortGalleryProps> = ({ images }) => {
 
   if (!images.length) {
     return (
-      <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-12 text-center border border-teal-200">
-        <div className="text-gray-400 text-xl">No images available</div>
+      <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl p-12 text-center border border-[#0A2F44]/10">
+        <Waves className="w-16 h-16 text-[#0A2F44]/30 mx-auto mb-4" />
+        <div className="text-[#0A2F44] text-xl font-medium">No images available</div>
+        <p className="text-[#144A5E] text-sm mt-2">Gallery images will be added soon</p>
       </div>
     );
   }
@@ -34,12 +36,12 @@ const ResortGallery: React.FC<ResortGalleryProps> = ({ images }) => {
 
   return (
     <>
-      <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl overflow-hidden border border-teal-200">
+      <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl overflow-hidden border border-[#0A2F44]/10">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2 p-2">
           {images.slice(0, 5).map((image, index) => (
             <div 
               key={image.imageId}
-              className={`relative aspect-square cursor-pointer group ${
+              className={`relative aspect-square cursor-pointer group overflow-hidden ${
                 index === 0 ? 'md:col-span-2 md:row-span-2' : ''
               }`}
               onClick={() => setSelectedImage(index)}
@@ -47,13 +49,14 @@ const ResortGallery: React.FC<ResortGalleryProps> = ({ images }) => {
               <img
                 src={image.imageUrl}
                 alt={image.imageName}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 rounded-xl"
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 rounded-xl"
               />
-              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 rounded-xl flex items-center justify-center">
-                <Expand className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0A2F44]/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 rounded-xl flex items-center justify-center">
+                <Expand className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform group-hover:scale-110" />
               </div>
               {index === 4 && images.length > 5 && (
-                <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center rounded-xl">
+                <div className="absolute inset-0 bg-[#0A2F44]/80 flex items-center justify-center rounded-xl backdrop-blur-sm">
                   <span className="text-white text-lg font-semibold">
                     +{images.length - 5} more
                   </span>
@@ -66,24 +69,24 @@ const ResortGallery: React.FC<ResortGalleryProps> = ({ images }) => {
 
       {/* Modal */}
       {selectedImage !== null && (
-        <div className="fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-[#0A2F44]/95 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
           <button
             onClick={() => setSelectedImage(null)}
-            className="absolute top-6 right-6 text-white hover:text-teal-400 transition-colors z-10"
+            className="absolute top-6 right-6 text-white hover:text-[#1F5F72] transition-colors z-10 bg-black/20 p-2 rounded-full backdrop-blur-sm"
           >
             <X className="w-10 h-10" />
           </button>
           
           <button
             onClick={prevImage}
-            className="absolute left-6 text-white hover:text-teal-400 transition-colors z-10"
+            className="absolute left-6 text-white hover:text-[#1F5F72] transition-colors z-10 bg-black/20 p-2 rounded-full backdrop-blur-sm"
           >
             <ChevronLeft className="w-10 h-10" />
           </button>
           
           <button
             onClick={nextImage}
-            className="absolute right-6 text-white hover:text-teal-400 transition-colors z-10"
+            className="absolute right-6 text-white hover:text-[#1F5F72] transition-colors z-10 bg-black/20 p-2 rounded-full backdrop-blur-sm"
           >
             <ChevronRight className="w-10 h-10" />
           </button>
@@ -92,9 +95,9 @@ const ResortGallery: React.FC<ResortGalleryProps> = ({ images }) => {
             <img
               src={images[selectedImage].imageUrl}
               alt={images[selectedImage].imageName}
-              className="max-w-full max-h-full object-contain rounded-2xl"
+              className="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl"
             />
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-50 text-white px-6 py-3 rounded-full backdrop-blur-sm">
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-[#0A2F44] to-[#1F5F72] text-white px-6 py-3 rounded-full backdrop-blur-sm shadow-lg">
               {images[selectedImage].imageName}
             </div>
           </div>
@@ -106,7 +109,7 @@ const ResortGallery: React.FC<ResortGalleryProps> = ({ images }) => {
                 onClick={() => setSelectedImage(index)}
                 className={`w-3 h-3 rounded-full transition-all ${
                   index === selectedImage 
-                    ? 'bg-teal-400 scale-125' 
+                    ? 'bg-[#1F5F72] scale-125' 
                     : 'bg-white bg-opacity-50 hover:bg-opacity-75'
                 }`}
               />

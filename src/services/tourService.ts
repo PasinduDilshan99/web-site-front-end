@@ -5,6 +5,7 @@ import {
   GET_TOUR_DAY_TO_DAY_DETAILS_BY_ID_DATA_FE,
   GET_TOUR_DETAILS_BY_ID_DATA_FE,
   GET_TOUR_EXTRA_DETAILS_BY_ID_DATA_FE,
+  GET_TOUR_MAP_DETAILS_DATA_FE,
   GET_TOURS_DETAILS_BY_REQUEST_DATA_FE,
   GET_TOURS_HISTORY_DETAILS_DATA_FE,
   GET_TOURS_HISTORY_IMAGES_DETAILS_DATA_FE,
@@ -31,6 +32,7 @@ import {
   TourReviewsResponse,
   TourSearchRequest,
 } from "@/types/tour-types";
+import { TourMapApiResponse, TourMapLocation } from "@/types/tour-map-types";
 
 export class TourService {
   static async fetchActiveTours(): Promise<{
@@ -234,7 +236,7 @@ export class TourService {
       const response = await fetch(GET_TOURS_REVIEWS_DETAILS_DATA_FE, {
         method: "GET",
         headers: {
-           "Content-Type": "application/json",
+          "Content-Type": "application/json",
         },
         credentials: "include",
       });
@@ -246,21 +248,23 @@ export class TourService {
     }
   }
 
-//
+  //
   // Get tour details
   static async getTourDetails(tourId: string): Promise<{
     data: TourDetails | null;
     error: string | null;
   }> {
     try {
-      const response = await fetch(`${GET_TOUR_DETAILS_BY_ID_DATA_FE}/${tourId}`);
-      
+      const response = await fetch(
+        `${GET_TOUR_DETAILS_BY_ID_DATA_FE}/${tourId}`,
+      );
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data: ApiResponse = await response.json();
-      
+
       if (data.code === 200) {
         return {
           data: data.data,
@@ -281,20 +285,57 @@ export class TourService {
     }
   }
 
+  static async getTourMapDetailsById(tourId: string): Promise<{
+    data: TourMapLocation[] | null;
+    error: string | null;
+  }> {
+    try {
+      const response = await fetch(
+        `${GET_TOUR_MAP_DETAILS_DATA_FE}/${tourId}`,
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data: TourMapApiResponse = await response.json();
+
+      if (data.code === 200) {
+        return {
+          data: data.data,
+          error: null,
+        };
+      } else {
+        return {
+          data: null,
+          error: data.message || "Failed to fetch tour map details",
+        };
+      }
+    } catch (err) {
+      console.error("Error fetching tour map details:", err);
+      return {
+        data: null,
+        error: err instanceof Error ? err.message : "An error occurred",
+      };
+    }
+  }
+
   // Get tour reviews
   static async getTourReviewsById(tourId: string): Promise<{
     data: TourReview[];
     error: string | null;
   }> {
     try {
-      const response = await fetch(`${GET_TOURS_REVIEWS_DETAILS_DATA_FE}/${tourId}`);
-      
+      const response = await fetch(
+        `${GET_TOURS_REVIEWS_DETAILS_DATA_FE}/${tourId}`,
+      );
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data: ReviewsApiResponse = await response.json();
-      
+
       if (data.code === 200) {
         return {
           data: data.data || [],
@@ -321,14 +362,16 @@ export class TourService {
     error: string | null;
   }> {
     try {
-      const response = await fetch(`${GET_TOUR_DAY_TO_DAY_DETAILS_BY_ID_DATA_FE}/${tourId}`);
-      
+      const response = await fetch(
+        `${GET_TOUR_DAY_TO_DAY_DETAILS_BY_ID_DATA_FE}/${tourId}`,
+      );
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data: DayDetailsApiResponse = await response.json();
-      
+
       if (data.code === 200) {
         return {
           data: data.data || [],
@@ -355,8 +398,10 @@ export class TourService {
     error: string | null;
   }> {
     try {
-      const response = await fetch(`${GET_TOUR_EXTRA_DETAILS_BY_ID_DATA_FE}/${tourId}`);
-      
+      const response = await fetch(
+        `${GET_TOUR_EXTRA_DETAILS_BY_ID_DATA_FE}/${tourId}`,
+      );
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -390,8 +435,10 @@ export class TourService {
     error: string | null;
   }> {
     try {
-      const response = await fetch(`${GET_TOURS_HISTORY_DETAILS_DATA_FE}/${tourId}`);
-      
+      const response = await fetch(
+        `${GET_TOURS_HISTORY_DETAILS_DATA_FE}/${tourId}`,
+      );
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -413,7 +460,8 @@ export class TourService {
       console.error("Error fetching tour history:", err);
       return {
         data: [],
-        error: err instanceof Error ? err.message : "Failed to load tour history",
+        error:
+          err instanceof Error ? err.message : "Failed to load tour history",
       };
     }
   }
@@ -424,8 +472,10 @@ export class TourService {
     error: string | null;
   }> {
     try {
-      const response = await fetch(`${GET_TOURS_HISTORY_IMAGES_DETAILS_DATA_FE}/${tourId}`);
-      
+      const response = await fetch(
+        `${GET_TOURS_HISTORY_IMAGES_DETAILS_DATA_FE}/${tourId}`,
+      );
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -447,25 +497,20 @@ export class TourService {
       console.error("Error fetching tour history images:", err);
       return {
         data: [],
-        error: err instanceof Error ? err.message : "Failed to load tour images",
+        error:
+          err instanceof Error ? err.message : "Failed to load tour images",
       };
     }
   }
 
-
-    static async fetchAllToursBasicDetails(): Promise<{
+  static async fetchAllToursBasicDetails(): Promise<{
     tours: Tour[];
     error: string | null;
   }> {
     try {
-      const response = await fetch(
-        GET_ALL_TOURS_BASIC_DETAILS_DATA_FE,
-        {
-          headers: {
-           
-          },
-        }
-      );
+      const response = await fetch(GET_ALL_TOURS_BASIC_DETAILS_DATA_FE, {
+        headers: {},
+      });
       const result = await response.json();
 
       if (result.code === 200) {
@@ -487,5 +532,4 @@ export class TourService {
       };
     }
   }
-  
 }

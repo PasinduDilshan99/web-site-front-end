@@ -1,5 +1,6 @@
 import { TourDetails } from "@/types/package-types";
 import React from "react";
+import ReactMarkdown from "react-markdown";
 
 interface SLTourDetailsOverviewProps {
   tour: TourDetails;
@@ -97,9 +98,27 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
 
       {/* Responsive text */}
       <div className="prose max-w-none">
-        <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
+        <ReactMarkdown
+          components={{
+            strong: ({ node, ...props }) => (
+              <span className="font-bold text-teal-700 block mt-4 mb-2 text-base sm:text-lg">
+                {props.children}
+              </span>
+            ),
+            p: ({ node, ...props }) => (
+              <p className="text-gray-700 leading-relaxed text-sm sm:text-base mb-3">
+                {props.children}
+              </p>
+            ),
+            li: ({ node, ...props }) => (
+              <li className="text-gray-700 leading-relaxed text-sm sm:text-base ml-4 list-disc">
+                {props.children}
+              </li>
+            ),
+          }}
+        >
           {tour.tourDescription}
-        </p>
+        </ReactMarkdown>
       </div>
     </div>
   );

@@ -15,7 +15,9 @@ import { CancelledTour, CancelledToursResponse } from "@/types/cancelled-tours";
 import { RequestedToursResponse } from "@/types/requested-tours";
 import { UserBenefitsResponse } from "@/types/user-benefits";
 import { UpcomingToursResponse } from "@/types/upcoming-tours";
-import { CompletedToursResponse } from "@/types/completed-tours";
+import {
+  CompletedToursResponse,
+} from "@/types/completed-tours";
 import { WishListResponse } from "@/types/wishlist";
 import { CouponsResponse } from "@/types/coupon";
 import {
@@ -33,8 +35,34 @@ import {
   UpdateAccountResponseData,
   UserUpdateRequest,
 } from "@/types/user-profile-types";
-
-const API_BASE_URL = "http://localhost:8080/felicita/api/v0/user-profile";
+import {
+  GET_ACCOUNT_SECURITY_DETAILS_FE,
+  GET_CANCELLED_BOOKINGS_DETAILS_DATA_FE,
+  GET_COMPLETED_BOOKINGS_DETAILS_DATA_FE,
+  GET_COUPON_DETAILS_DATA_FE,
+  GET_HISTORY_DETAILS_DATA_FE,
+  GET_PENDING_BOOKINGS_DETAILS_DATA_FE,
+  GET_REQUESTED_BOOKINGS_DETAILS_DATA_FE,
+  GET_UPCOMING_BOOKINGS_DETAILS_DATA_FE,
+  GET_USER_NOTIFICATION_DETAILS_DATA_FE,
+  GET_USER_PROFILE_ACTIVITY_REVIEWS_DETAILS_DATA_FE,
+  GET_USER_PROFILE_ALL_REVIEWS_DETAILS_DATA_FE,
+  GET_USER_PROFILE_DESTINATION_REVIEWS_DETAILS_DATA_FE,
+  GET_USER_PROFILE_PACKAGE_REVIEWS_DETAILS_DATA_FE,
+  GET_USER_PROFILE_SIDE_BAR_DATA_FE,
+  GET_USER_PROFILE_TOUR_REVIEWS_DETAILS_DATA_FE,
+  GET_USER_PROFILE_USER_BENEFITS_DATA_FE,
+  GET_USER_PROFILE_USER_DETAILS_DATA_FE,
+  GET_USER_PROFILE_WALLET_DETAILS_DATA_FE,
+  GET_WIS_LIST_DETAILS_DATA_FE,
+  REQUEST_EMAIL_VERIFY_SECURITY_DETAILS_FE,
+  REQUEST_MOBILE_VERIFY_SECURITY_DETAILS_FE,
+  UPDATE_EMAIL_VERIFY_SECURITY_DETAILS_FE,
+  UPDATE_MOBILE_VERIFY_SECURITY_DETAILS_FE,
+  UPDATE_USER_NOTIFICATION_DETAILS_DATA_FE,
+  UPDATE_USER_PROFILE_DETAILS_DATA_FE,
+} from "@/utils/frontEndConstant";
+import { PendingToursResponse } from "@/types/pending-tours";
 
 export class UserProfileAPIService {
   private getAuthHeaders(): HeadersInit {
@@ -46,27 +74,21 @@ export class UserProfileAPIService {
   }
 
   async getSidebarData(): Promise<SidebarResponse> {
-    try {
-      const response = await fetch(`${API_BASE_URL}/side-bar`, {
-        method: "GET",
-        headers: this.getAuthHeaders(),
-        credentials: "include",
-      });
+    const response = await fetch(GET_USER_PROFILE_SIDE_BAR_DATA_FE, {
+      method: "GET",
+      credentials: "include",
+    });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error("Error fetching sidebar data:", error);
-      throw error;
+    if (!response.ok) {
+      throw new Error("Failed to fetch sidebar");
     }
+
+    return response.json();
   }
 
   async getUserProfile(): Promise<UserProfileResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/user`, {
+      const response = await fetch(GET_USER_PROFILE_USER_DETAILS_DATA_FE, {
         method: "GET",
         headers: this.getAuthHeaders(),
         credentials: "include",
@@ -83,37 +105,40 @@ export class UserProfileAPIService {
     }
   }
 
-  async fetchContentByUrl(url: string): Promise<unknown> {
-    if (!url) {
-      return null;
-    }
+  // async fetchContentByUrl(url: string): Promise<unknown> {
+  //   if (!url) {
+  //     return null;
+  //   }
 
-    try {
-      const response = await fetch(`${API_BASE_URL}${url}`, {
-        method: "GET",
-        headers: this.getAuthHeaders(),
-        credentials: "include",
-      });
+  //   try {
+  //     const response = await fetch(`${API_BASE_URL}${url}`, {
+  //       method: "GET",
+  //       headers: this.getAuthHeaders(),
+  //       credentials: "include",
+  //     });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! status: ${response.status}`);
+  //     }
 
-      return await response.json();
-    } catch (error) {
-      console.error(`Error fetching content for URL ${url}:`, error);
-      throw error;
-    }
-  }
+  //     return await response.json();
+  //   } catch (error) {
+  //     console.error(`Error fetching content for URL ${url}:`, error);
+  //     throw error;
+  //   }
+  // }
 
   // Specific review endpoints
   async getTourReviews(): Promise<TourReviewAPIResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/tour-reviews`, {
-        method: "GET",
-        headers: this.getAuthHeaders(),
-        credentials: "include",
-      });
+      const response = await fetch(
+        GET_USER_PROFILE_TOUR_REVIEWS_DETAILS_DATA_FE,
+        {
+          method: "GET",
+          headers: this.getAuthHeaders(),
+          credentials: "include",
+        },
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -128,11 +153,14 @@ export class UserProfileAPIService {
 
   async getActivityReviews(): Promise<ActivityReviewAPIResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/activity-reviews`, {
-        method: "GET",
-        headers: this.getAuthHeaders(),
-        credentials: "include",
-      });
+      const response = await fetch(
+        GET_USER_PROFILE_ACTIVITY_REVIEWS_DETAILS_DATA_FE,
+        {
+          method: "GET",
+          headers: this.getAuthHeaders(),
+          credentials: "include",
+        },
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -147,11 +175,14 @@ export class UserProfileAPIService {
 
   async getDestinationReviews(): Promise<DestinationReviewAPIResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/destination-reviews`, {
-        method: "GET",
-        headers: this.getAuthHeaders(),
-        credentials: "include",
-      });
+      const response = await fetch(
+        GET_USER_PROFILE_DESTINATION_REVIEWS_DETAILS_DATA_FE,
+        {
+          method: "GET",
+          headers: this.getAuthHeaders(),
+          credentials: "include",
+        },
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -166,11 +197,14 @@ export class UserProfileAPIService {
 
   async getPackageReviews(): Promise<PackageReviewAPIResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/package-reviews`, {
-        method: "GET",
-        headers: this.getAuthHeaders(),
-        credentials: "include",
-      });
+      const response = await fetch(
+        GET_USER_PROFILE_PACKAGE_REVIEWS_DETAILS_DATA_FE,
+        {
+          method: "GET",
+          headers: this.getAuthHeaders(),
+          credentials: "include",
+        },
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -185,11 +219,14 @@ export class UserProfileAPIService {
 
   async getAllReviews(): Promise<UserProfileReviewAPIResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/reviews`, {
-        method: "GET",
-        headers: this.getAuthHeaders(),
-        credentials: "include",
-      });
+      const response = await fetch(
+        GET_USER_PROFILE_ALL_REVIEWS_DETAILS_DATA_FE,
+        {
+          method: "GET",
+          headers: this.getAuthHeaders(),
+          credentials: "include",
+        },
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -207,7 +244,7 @@ export class UserProfileAPIService {
 
   async getWalletData(): Promise<WalletResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/wallet`, {
+      const response = await fetch(GET_USER_PROFILE_WALLET_DETAILS_DATA_FE, {
         method: "GET",
         headers: this.getAuthHeaders(),
         credentials: "include",
@@ -239,18 +276,15 @@ export class UserProfileAPIService {
         pageNumber: request?.pageNumber ?? 0,
       };
 
-      const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/history-management/history-data",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...this.getAuthHeaders(),
-          },
-          credentials: "include",
-          body: JSON.stringify(body),
+      const response = await fetch(GET_HISTORY_DETAILS_DATA_FE, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...this.getAuthHeaders(),
         },
-      );
+        credentials: "include",
+        body: JSON.stringify(body),
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -269,14 +303,11 @@ export class UserProfileAPIService {
 
   async getUserCoupons(): Promise<CouponsResponse> {
     try {
-      const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/coupon/user-details",
-        {
-          method: "GET",
-          headers: this.getAuthHeaders(),
-          credentials: "include",
-        },
-      );
+      const response = await fetch(GET_COUPON_DETAILS_DATA_FE, {
+        method: "GET",
+        headers: this.getAuthHeaders(),
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -294,14 +325,11 @@ export class UserProfileAPIService {
 
   async getNotificationPermissions(): Promise<NotificationResponse> {
     try {
-      const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/user-notification-permissions/details",
-        {
-          method: "GET",
-          headers: this.getAuthHeaders(),
-          credentials: "include",
-        },
-      );
+      const response = await fetch(GET_USER_NOTIFICATION_DETAILS_DATA_FE, {
+        method: "GET",
+        headers: this.getAuthHeaders(),
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -318,18 +346,15 @@ export class UserProfileAPIService {
     request: UpdateNotificationRequest,
   ): Promise<unknown> {
     try {
-      const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/user-notification-permissions/update",
-        {
-          method: "POST",
-          headers: {
-            ...this.getAuthHeaders(),
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(request),
+      const response = await fetch(UPDATE_USER_NOTIFICATION_DETAILS_DATA_FE, {
+        method: "POST",
+        headers: {
+          ...this.getAuthHeaders(),
+          "Content-Type": "application/json",
         },
-      );
+        credentials: "include",
+        body: JSON.stringify(request),
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -347,14 +372,11 @@ export class UserProfileAPIService {
 
   async getAccountSecurityDetails(): Promise<AccountSecurityResponse> {
     try {
-      const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/account-security/details",
-        {
-          method: "GET",
-          headers: this.getAuthHeaders(),
-          credentials: "include",
-        },
-      );
+      const response = await fetch(GET_ACCOUNT_SECURITY_DETAILS_FE, {
+        method: "GET",
+        headers: this.getAuthHeaders(),
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -371,18 +393,15 @@ export class UserProfileAPIService {
     request: MobileVerifyRequest,
   ): Promise<unknown> {
     try {
-      const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/account-security/mobile-verify",
-        {
-          method: "POST",
-          headers: {
-            ...this.getAuthHeaders(),
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(request),
+      const response = await fetch(REQUEST_MOBILE_VERIFY_SECURITY_DETAILS_FE, {
+        method: "POST",
+        headers: {
+          ...this.getAuthHeaders(),
+          "Content-Type": "application/json",
         },
-      );
+        credentials: "include",
+        body: JSON.stringify(request),
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -397,18 +416,15 @@ export class UserProfileAPIService {
 
   async verifyMobileCode(request: MobileUpdateRequest): Promise<unknown> {
     try {
-      const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/account-security/mobile-update",
-        {
-          method: "POST",
-          headers: {
-            ...this.getAuthHeaders(),
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(request),
+      const response = await fetch(UPDATE_MOBILE_VERIFY_SECURITY_DETAILS_FE, {
+        method: "POST",
+        headers: {
+          ...this.getAuthHeaders(),
+          "Content-Type": "application/json",
         },
-      );
+        credentials: "include",
+        body: JSON.stringify(request),
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -425,18 +441,15 @@ export class UserProfileAPIService {
     request: EmailVerifyRequest,
   ): Promise<unknown> {
     try {
-      const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/account-security/email-verify",
-        {
-          method: "POST",
-          headers: {
-            ...this.getAuthHeaders(),
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(request),
+      const response = await fetch(REQUEST_EMAIL_VERIFY_SECURITY_DETAILS_FE, {
+        method: "POST",
+        headers: {
+          ...this.getAuthHeaders(),
+          "Content-Type": "application/json",
         },
-      );
+        credentials: "include",
+        body: JSON.stringify(request),
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -451,18 +464,15 @@ export class UserProfileAPIService {
 
   async verifyEmailCode(request: EmailUpdateRequest): Promise<unknown> {
     try {
-      const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/account-security/email-update",
-        {
-          method: "POST",
-          headers: {
-            ...this.getAuthHeaders(),
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(request),
+      const response = await fetch(UPDATE_EMAIL_VERIFY_SECURITY_DETAILS_FE, {
+        method: "POST",
+        headers: {
+          ...this.getAuthHeaders(),
+          "Content-Type": "application/json",
         },
-      );
+        credentials: "include",
+        body: JSON.stringify(request),
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -480,14 +490,11 @@ export class UserProfileAPIService {
 
   async getWishListDetails(): Promise<WishListResponse> {
     try {
-      const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/wish-list/details",
-        {
-          method: "GET",
-          headers: this.getAuthHeaders(),
-          credentials: "include",
-        },
-      );
+      const response = await fetch(GET_WIS_LIST_DETAILS_DATA_FE, {
+        method: "GET",
+        headers: this.getAuthHeaders(),
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -505,14 +512,30 @@ export class UserProfileAPIService {
 
   async getCompletedTours(): Promise<CompletedToursResponse> {
     try {
-      const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/booking/completed",
-        {
-          method: "GET",
-          headers: this.getAuthHeaders(),
-          credentials: "include",
-        },
-      );
+      const response = await fetch(GET_COMPLETED_BOOKINGS_DETAILS_DATA_FE, {
+        method: "GET",
+        headers: this.getAuthHeaders(),
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching completed tours:", error);
+      throw error;
+    }
+  }
+
+  async getPendingTours(): Promise<PendingToursResponse> {
+    try {
+      const response = await fetch(GET_PENDING_BOOKINGS_DETAILS_DATA_FE, {
+        method: "GET",
+        headers: this.getAuthHeaders(),
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -529,14 +552,11 @@ export class UserProfileAPIService {
 
   async getUpcomingTours(): Promise<UpcomingToursResponse> {
     try {
-      const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/booking/upcoming",
-        {
-          method: "GET",
-          headers: this.getAuthHeaders(),
-          credentials: "include",
-        },
-      );
+      const response = await fetch(GET_UPCOMING_BOOKINGS_DETAILS_DATA_FE, {
+        method: "GET",
+        headers: this.getAuthHeaders(),
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -554,14 +574,11 @@ export class UserProfileAPIService {
 
   async getUserBenefits(): Promise<UserBenefitsResponse> {
     try {
-      const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/user-benefits/user-profile",
-        {
-          method: "GET",
-          headers: this.getAuthHeaders(),
-          credentials: "include",
-        },
-      );
+      const response = await fetch(GET_USER_PROFILE_USER_BENEFITS_DATA_FE, {
+        method: "GET",
+        headers: this.getAuthHeaders(),
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -578,14 +595,11 @@ export class UserProfileAPIService {
   // Add this method to your existing class
   async getRequestedTours(): Promise<RequestedToursResponse> {
     try {
-      const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/booking/requested",
-        {
-          method: "GET",
-          headers: this.getAuthHeaders(),
-          credentials: "include",
-        },
-      );
+      const response = await fetch(GET_REQUESTED_BOOKINGS_DETAILS_DATA_FE, {
+        method: "GET",
+        headers: this.getAuthHeaders(),
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -602,14 +616,11 @@ export class UserProfileAPIService {
   // Add this method to your existing class
   async getCancelledTours(): Promise<CancelledToursResponse> {
     try {
-      const response = await fetch(
-        "http://localhost:8080/felicita/api/v0/booking/cancelled",
-        {
-          method: "GET",
-          headers: this.getAuthHeaders(),
-          credentials: "include",
-        },
-      );
+      const response = await fetch(GET_CANCELLED_BOOKINGS_DETAILS_DATA_FE, {
+        method: "GET",
+        headers: this.getAuthHeaders(),
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -626,8 +637,8 @@ export class UserProfileAPIService {
     request: UserUpdateRequest,
   ): Promise<UpdateAccountResponseData> {
     try {
-      const response = await fetch(`${API_BASE_URL}/update-account`, {
-        method: "POST", 
+      const response = await fetch(UPDATE_USER_PROFILE_DETAILS_DATA_FE, {
+        method: "POST",
         headers: this.getAuthHeaders(),
         credentials: "include",
         body: JSON.stringify(request),

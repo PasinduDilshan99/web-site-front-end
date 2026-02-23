@@ -10,6 +10,7 @@ const BlogHeroSection = () => {
   const [heroData, setHeroData] = useState<BlogHeroData[]>([]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     const fetchHeroData = async () => {
@@ -63,17 +64,8 @@ const BlogHeroSection = () => {
     setTimeout(() => setIsAutoPlaying(true), 10000);
   };
 
-  const getFallbackImage = (index: number) => {
-    const fallbackImages = [
-      "1507525428034-b723cf961d3e", // Beach sunset
-      "1518684079-3c830dcef090", // Mountain landscape
-      "1526778548025-fa2f459cd5c1", // Cultural temple
-      "1500530855697-b586d89ba3ee", // Forest trail
-      "1500048993959-d995ddee5f06", // Food market
-    ];
-    return `https://images.unsplash.com/photo-${
-      fallbackImages[index % fallbackImages.length]
-    }?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80`;
+  const handleImageError = (index: number) => {
+    setFailedImages((prev) => new Set(prev).add(index));
   };
 
   const handleButtonClick = (link?: string) => {
@@ -94,9 +86,9 @@ const BlogHeroSection = () => {
 
   if (loading) {
     return (
-      <div className="relative w-full h-[500px] md:h-[600px] overflow-hidden bg-gradient-to-br from-amber-900 to-purple-800 flex items-center justify-center">
+      <div className="relative w-full h-[500px] md:h-[600px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900 flex items-center justify-center">
         <div className="text-center text-white">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-400 mx-auto mb-4"></div>
           <p className="text-lg">Loading Travel Stories...</p>
         </div>
       </div>
@@ -105,27 +97,27 @@ const BlogHeroSection = () => {
 
   if (error || heroData.length === 0) {
     return (
-      <div className="relative w-full h-[500px] md:h-[600px] overflow-hidden bg-gradient-to-br from-amber-900 to-purple-800 flex items-center justify-center">
-        <div className="text-center text-white px-4">
+      <div className="relative w-full h-[500px] md:h-[600px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900 flex items-center justify-center">
+        <div className="text-center text-white px-4 max-w-2xl mx-auto">
           <div className="mb-6">
             <h1 className="text-4xl md:text-5xl font-bold mb-3">
               Travel Stories
             </h1>
-            <div className="w-32 h-1 bg-amber-400 mx-auto rounded-full"></div>
+            <div className="w-32 h-1 bg-gradient-to-r from-sky-400 to-teal-400 mx-auto rounded-full"></div>
           </div>
-          <p className="text-xl text-red-400 mb-6">
+          <p className="text-xl text-sky-300 mb-6">
             {error || "No blog content available"}
           </p>
-          <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
             <button
               onClick={() => window.location.reload()}
-              className="px-6 py-3 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors mr-4"
+              className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:from-sky-700 hover:to-teal-700 transition-all duration-300 shadow-md"
             >
               Retry
             </button>
             <Link
               href="/blogs"
-              className="px-6 py-3 border-2 border-white text-white rounded-lg hover:bg-white hover:text-gray-900 transition-all duration-300"
+              className="w-full sm:w-auto px-6 py-3 border-2 border-sky-300 text-white rounded-lg hover:bg-sky-50 hover:text-slate-900 transition-all duration-300 text-center"
             >
               Browse All Blogs
             </Link>
@@ -138,68 +130,70 @@ const BlogHeroSection = () => {
   const currentSlideData = heroData[currentSlide];
 
   return (
-    <div className="relative w-full h-[500px] md:h-[600px] overflow-hidden bg-gradient-to-br from-amber-900 to-purple-800">
-      {/* Image Slider */}
+    <div className="relative w-full h-[500px] md:h-[600px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
+      {/* Image Slider - Only show image if available and not failed */}
       <div className="relative w-full h-full">
-        {heroData.map((item, index) => (
-          <div
-            key={item.id || index}
-            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-              index === currentSlide ? "opacity-100" : "opacity-0"
-            }`}
-          >
+        {heroData.map((item, index) => {
+          const hasImage = item.imageUrl && !failedImages.has(index);
+          
+          return (
             <div
-              className="w-full h-full bg-cover bg-center bg-no-repeat"
-              style={{
-                backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('${
-                  item.imageUrl || getFallbackImage(index)
-                }')`,
-              }}
-              onError={(e) => {
-                const target = e.target as HTMLDivElement;
-                target.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('${getFallbackImage(
-                  index
-                )}')`;
-              }}
-            />
-          </div>
-        ))}
+              key={item.id || index}
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                index === currentSlide ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              {hasImage ? (
+                <div
+                  className="w-full h-full bg-cover bg-center bg-no-repeat"
+                  style={{
+                    backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.6), rgba(8, 145, 178, 0.5)), url('${item.imageUrl}')`,
+                  }}
+                  onError={() => handleImageError(index)}
+                />
+              ) : (
+                // Pure gradient background when no image or image failed
+                <div className="w-full h-full bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900" />
+              )}
+            </div>
+          );
+        })}
       </div>
 
-      {/* Content Overlay */}
-      <div className="absolute inset-0 flex items-center">
+      {/* Content Overlay - CENTERED */}
+      <div className="absolute inset-0 flex items-center justify-center">
         <div className="container mx-auto px-4 md:px-6 lg:px-8">
-          <div className="max-w-4xl text-white">
+          <div className="max-w-4xl text-white mx-auto text-center">
             <div className="mb-8">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight tracking-tight">
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight tracking-tight">
                 {currentSlideData.title || "Travel Stories"}
               </h1>
 
               {currentSlideData.subtitle && (
                 <div className="mb-6">
-                  <h2 className="text-2xl md:text-3xl font-semibold mb-3 text-amber-200">
+                  <h2 className="text-xl md:text-3xl font-semibold mb-3 text-sky-200">
                     {currentSlideData.subtitle}
                   </h2>
-                  <div className="w-20 h-1 bg-amber-400 rounded-full"></div>
+                  <div className="w-20 h-1 bg-gradient-to-r from-sky-400 to-teal-400 rounded-full mx-auto"></div>
                 </div>
               )}
             </div>
 
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 md:p-8 max-w-2xl mb-8">
-              <p className="text-lg md:text-xl mb-6 text-gray-100 leading-relaxed">
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 md:p-8 max-w-2xl mx-auto mb-8">
+              <p className="text-md md:text-xl mb-6 text-gray-100 leading-relaxed">
                 {currentSlideData.description ||
                   "Discover the best destinations, hidden gems, and authentic local experiences. Updated weekly to inspire your next Sri Lankan adventure."}
               </p>
 
               {(currentSlideData.primaryButtonText ||
                 currentSlideData.secondaryButtonText) && (
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-wrap gap-4 justify-center">
                   {currentSlideData.primaryButtonText && (
                     <button
                       onClick={() =>
                         handleButtonClick(currentSlideData.primaryButtonLink)
                       }
-                      className="px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold rounded-lg hover:from-amber-600 hover:to-orange-600 transform hover:scale-105 transition-all duration-300 shadow-lg flex items-center gap-2"
+                      className="text-sm lg:text-md px-3 py-2 lg:px-6 lg:py-3 bg-gradient-to-r from-sky-500 to-teal-500 text-white font-semibold rounded-lg hover:from-sky-600 hover:to-teal-600 transform hover:scale-105 transition-all duration-300 shadow-lg flex items-center gap-2"
                     >
                       <svg
                         className="w-5 h-5"
@@ -222,7 +216,7 @@ const BlogHeroSection = () => {
                       onClick={() =>
                         handleButtonClick(currentSlideData.secondaryButtonLink)
                       }
-                      className="px-6 py-3 border-2 border-white/50 text-white font-semibold rounded-lg hover:bg-white hover:text-gray-900 transition-all duration-300 flex items-center gap-2"
+                      className="text-sm lg:text-md px-3 py-2 lg:px-6 lg:py-3 border-2 border-sky-300/50 text-white font-semibold rounded-lg hover:bg-sky-50/20 hover:border-sky-200 backdrop-blur-sm transition-all duration-300 flex items-center gap-2"
                     >
                       <svg
                         className="w-5 h-5"
@@ -242,7 +236,7 @@ const BlogHeroSection = () => {
                   )}
                   <button
                     onClick={() => (window.location.href = "/blogs/create")}
-                    className="px-6 py-3 bg-gradient-to-r from-purple-600 to-amber-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-amber-700 transform hover:scale-105 transition-all duration-300 shadow-lg flex items-center gap-2"
+                    className="text-sm lg:text-md px-3 py-2 lg:px-6 lg:py-3  bg-gradient-to-r from-cyan-500 to-sky-600 text-white font-semibold rounded-lg hover:from-cyan-600 hover:to-sky-700 transform hover:scale-105 transition-all duration-300 shadow-lg flex items-center gap-2"
                   >
                     <svg
                       className="w-5 h-5"
@@ -263,11 +257,11 @@ const BlogHeroSection = () => {
               )}
             </div>
 
-            {/* Quick Stats */}
-            <div className="flex flex-wrap gap-4">
-              <div className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
+            {/* Quick Stats - CENTERED */}
+            <div className="hidden lg:flex flex-wrap gap-4 justify-center">
+              <div className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-sky-400/30">
                 <svg
-                  className="w-5 h-5 text-amber-300"
+                  className="w-5 h-5 text-sky-300"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -281,9 +275,9 @@ const BlogHeroSection = () => {
                 </svg>
                 <span className="text-sm font-medium">Weekly Updates</span>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
+              <div className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-teal-400/30">
                 <svg
-                  className="w-5 h-5 text-amber-300"
+                  className="w-5 h-5 text-teal-300"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -303,9 +297,9 @@ const BlogHeroSection = () => {
                 </svg>
                 <span className="text-sm font-medium">Local Insights</span>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
+              <div className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-cyan-400/30">
                 <svg
-                  className="w-5 h-5 text-amber-300"
+                  className="w-5 h-5 text-cyan-300"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -329,7 +323,7 @@ const BlogHeroSection = () => {
         <div className="hidden md:flex">
           <button
             onClick={prevSlide}
-            className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
+            className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group shadow-lg"
             aria-label="Previous slide"
           >
             <svg
@@ -349,7 +343,7 @@ const BlogHeroSection = () => {
 
           <button
             onClick={nextSlide}
-            className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
+            className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group shadow-lg"
             aria-label="Next slide"
           >
             <svg
@@ -378,7 +372,7 @@ const BlogHeroSection = () => {
               onClick={() => goToSlide(index)}
               className={`w-3 h-3 rounded-full transition-all duration-300 ${
                 index === currentSlide
-                  ? "bg-amber-400 scale-125"
+                  ? "bg-gradient-to-r from-sky-400 to-teal-400 scale-125 shadow-lg"
                   : "bg-white/50 hover:bg-white/75"
               }`}
               aria-label={`Go to slide ${index + 1}`}
@@ -391,7 +385,7 @@ const BlogHeroSection = () => {
       {heroData.length > 1 && (
         <div className="absolute bottom-0 left-0 w-full h-1 bg-white/10">
           <div
-            className="h-full bg-gradient-to-r from-amber-400 to-purple-400 transition-all duration-300"
+            className="h-full bg-gradient-to-r from-sky-400 via-teal-400 to-cyan-400 transition-all duration-300"
             style={{
               width: `${((currentSlide + 1) / heroData.length) * 100}%`,
             }}
@@ -401,17 +395,17 @@ const BlogHeroSection = () => {
 
       {/* Slide Counter */}
       {heroData.length > 1 && (
-        <div className="absolute top-6 left-6 text-white/70 text-sm backdrop-blur-sm bg-black/20 px-3 py-1 rounded-full">
+        <div className="absolute top-6 left-6 text-white/70 text-sm backdrop-blur-sm bg-black/30 px-3 py-1 rounded-full border border-white/20">
           {currentSlide + 1} / {heroData.length}
         </div>
       )}
 
       {/* Blog Stats Badge */}
-      <div className="absolute top-6 right-6">
-        <div className="flex items-center gap-2 px-4 py-2 bg-amber-500/20 backdrop-blur-sm rounded-full border border-amber-400/30">
-          <div className="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></div>
+      <div className="hidden lg:flex absolute top-6 right-6">
+        <div className="flex items-center gap-2 px-4 py-2 bg-sky-500/20 backdrop-blur-sm rounded-full border border-sky-400/30">
+          <div className="w-2 h-2 bg-sky-400 rounded-full animate-pulse"></div>
           <span className="text-sm font-medium text-white">
-            <span className="text-amber-200 font-bold">5</span> Blog Categories
+            <span className="text-sky-200 font-bold">5</span> Blog Categories
           </span>
         </div>
       </div>

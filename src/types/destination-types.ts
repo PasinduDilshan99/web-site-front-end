@@ -182,7 +182,6 @@ export interface TrendingDestinationsApiResponse {
   timestamp: string;
 }
 
-
 // types/tour-map-types.ts
 
 // Tour Map Types
@@ -199,7 +198,7 @@ export interface TourMapDestination {
   destinationName: string;
   destinationDescription: string;
   destinationStatus: string;
-  destinationCategory: string;
+  destinationCategories: string[]; // Changed from string to string[]
   destinationCategoryStatus: string;
   destinationLocation: string;
   destinationLatitude: number;
@@ -214,6 +213,7 @@ export interface TourMapCategory {
   id: string;
   name: string;
   color: string;
+  hoverColor: string;
   image?: string;
 }
 
@@ -229,7 +229,7 @@ export interface TourMapApiResponse {
 export interface TourMapPlace {
   id: number;
   name: string;
-  category: string;
+  categories: string[]; // Changed from category to categories (array)
   lat: number;
   lng: number;
   description: string;
@@ -256,10 +256,18 @@ export interface TourMapLeafletMarker {
 export interface TourMapLeafletControl {
   L: {
     map: (element: HTMLElement) => TourMapLeafletMap;
-    tileLayer: (url: string, options: unknown) => { addTo: (map: TourMapLeafletMap) => unknown };
-    marker: (coords: [number, number], options: unknown) => TourMapLeafletMarker;
+    tileLayer: (
+      url: string,
+      options: unknown,
+    ) => { addTo: (map: TourMapLeafletMap) => unknown };
+    marker: (
+      coords: [number, number],
+      options: unknown,
+    ) => TourMapLeafletMarker;
     divIcon: (options: unknown) => unknown;
-    featureGroup: (markers: TourMapLeafletMarker[]) => { getBounds: () => { pad: (padding: number) => unknown } };
+    featureGroup: (markers: TourMapLeafletMarker[]) => {
+      getBounds: () => { pad: (padding: number) => unknown };
+    };
   };
 }
 
@@ -419,7 +427,7 @@ export interface PopularDestinationsDetailsType {
   statusName: string;
   activities: Activity[];
   images: DestinationImage[];
-  wish:boolean;
+  wish: boolean;
 }
 
 export interface Activity {

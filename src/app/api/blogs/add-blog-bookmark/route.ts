@@ -14,10 +14,10 @@ export async function POST(request: NextRequest) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        cookie: request.headers.get("cookie") || "",
       },
       credentials: "include",
       body: JSON.stringify(body),
-      cache: "no-store",
     });
 
     if (!response.ok) {
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
       console.error("Backend returned error:", text);
       return NextResponse.json(
         { error: "Failed to add blog bookmark" },
-        { status: response.status }
+        { status: response.status },
       );
     }
 
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     console.error("Error adding blog bookmark:", error);
     return NextResponse.json(
       { error: "Something went wrong while adding blog bookmark" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

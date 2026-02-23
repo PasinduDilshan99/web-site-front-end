@@ -1,6 +1,6 @@
 // components/resort/ResortPackages.tsx
 import React from 'react';
-import { Calendar, Users, Clock, Star, CheckCircle, Gift, Sparkles } from 'lucide-react';
+import { Calendar, Users, Clock, Star, CheckCircle, Gift, Sparkles, Waves } from 'lucide-react';
 import { PackageDetails } from '@/types/accommodations-types/service-provider-types';
 
 interface ResortPackagesProps {
@@ -13,13 +13,16 @@ const ResortPackages: React.FC<ResortPackagesProps> = ({ packages }) => {
   }
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-teal-200">
+    <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-[#0A2F44]/10">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900 bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent">
-            Exclusive Packages
-          </h2>
-          <p className="text-gray-600 mt-2">Curated experiences for the perfect stay</p>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-3 bg-gradient-to-r from-[#0A2F44] to-[#1F5F72] rounded-xl">
+              <Gift className="w-6 h-6 text-white" />
+            </div>
+            <h2 className="text-3xl font-bold text-[#0A2F44]">Exclusive Packages</h2>
+          </div>
+          <p className="text-[#144A5E] mt-2">Curated oceanfront experiences for the perfect stay</p>
         </div>
         <div className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-2 rounded-full">
           <Sparkles className="w-5 h-5" />
@@ -31,7 +34,7 @@ const ResortPackages: React.FC<ResortPackagesProps> = ({ packages }) => {
         {packages.map((pkg) => (
           <div 
             key={pkg.serviceProviderPackageId}
-            className="border-2 border-teal-200 rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 bg-gradient-to-br from-white to-blue-50/50 group"
+            className="border border-[#0A2F44]/10 rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 bg-gradient-to-br from-white to-[#F0F7FA] group hover:border-[#1F5F72]/30"
           >
             {pkg.images.length > 0 && (
               <div className="relative h-56 overflow-hidden">
@@ -40,9 +43,9 @@ const ResortPackages: React.FC<ResortPackagesProps> = ({ packages }) => {
                   alt={pkg.images[0].packageImageName}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0A2F44]/70 to-transparent"></div>
                 <div className="absolute top-4 left-4">
-                  <span className="bg-gradient-to-r from-teal-500 to-blue-500 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
+                  <span className="bg-gradient-to-r from-[#0A2F44] to-[#1F5F72] text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
                     Premium Package
                   </span>
                 </div>
@@ -55,7 +58,7 @@ const ResortPackages: React.FC<ResortPackagesProps> = ({ packages }) => {
                 )}
                 <div className="absolute bottom-4 left-4 text-white">
                   <h3 className="text-2xl font-bold mb-1">{pkg.packageName}</h3>
-                  <p className="text-blue-100">{pkg.packageDescription}</p>
+                  <p className="text-white/80">{pkg.packageDescription}</p>
                 </div>
               </div>
             )}
@@ -64,12 +67,12 @@ const ResortPackages: React.FC<ResortPackagesProps> = ({ packages }) => {
               <div className="flex justify-between items-start mb-6">
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <Clock className="w-5 h-5 text-teal-600" />
-                    <span className="font-semibold text-gray-700">{pkg.durationDays} Nights</span>
+                    <Clock className="w-5 h-5 text-[#0A2F44]" />
+                    <span className="font-semibold text-[#144A5E]">{pkg.durationDays} Nights</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Users className="w-5 h-5 text-blue-600" />
-                    <span className="text-gray-600">
+                    <Users className="w-5 h-5 text-[#1F5F72]" />
+                    <span className="text-[#144A5E]">
                       For {pkg.minPersons === pkg.maxPersons 
                         ? `${pkg.minPersons} person${pkg.minPersons > 1 ? 's' : ''}`
                         : `${pkg.minPersons}-${pkg.maxPersons} people`
@@ -79,11 +82,11 @@ const ResortPackages: React.FC<ResortPackagesProps> = ({ packages }) => {
                 </div>
                 
                 <div className="text-right">
-                  <div className="text-3xl font-bold text-teal-600">
+                  <div className="text-3xl font-bold text-[#1F5F72]">
                     ${pkg.localPrice}
                   </div>
                   <div className="text-sm text-gray-500">total package</div>
-                  <div className="text-xs text-teal-600 font-semibold mt-1">
+                  <div className="text-xs text-[#0A2F44] font-semibold mt-1">
                     ${Math.round(pkg.localPrice / pkg.durationDays)}/night
                   </div>
                 </div>
@@ -91,16 +94,16 @@ const ResortPackages: React.FC<ResortPackagesProps> = ({ packages }) => {
               
               {pkg.features.length > 0 && (
                 <div className="mb-6">
-                  <h4 className="font-semibold text-gray-800 mb-3 text-lg flex items-center gap-2">
+                  <h4 className="font-semibold text-[#0A2F44] mb-3 text-lg flex items-center gap-2">
                     <Star className="w-5 h-5 text-amber-500" />
                     Package Highlights
                   </h4>
                   <div className="grid grid-cols-1 gap-2">
                     {pkg.features.slice(0, 4).map((feature, index) => (
-                      <div key={index} className="flex items-center gap-3 p-2">
+                      <div key={index} className="flex items-center gap-3 p-2 hover:bg-[#E6F0F5] rounded-lg transition-colors">
                         <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                        <span className="text-gray-700">
-                          <strong className="text-teal-600">{feature.featureName}:</strong> {feature.featureValue}
+                        <span className="text-[#144A5E]">
+                          <strong className="text-[#0A2F44]">{feature.featureName}:</strong> {feature.featureValue}
                         </span>
                       </div>
                     ))}
@@ -110,15 +113,15 @@ const ResortPackages: React.FC<ResortPackagesProps> = ({ packages }) => {
               
               {pkg.inclusions.length > 0 && (
                 <div className="mb-6">
-                  <h4 className="font-semibold text-gray-800 mb-3 text-lg flex items-center gap-2">
-                    <Gift className="w-5 h-5 text-blue-500" />
+                  <h4 className="font-semibold text-[#0A2F44] mb-3 text-lg flex items-center gap-2">
+                    <Gift className="w-5 h-5 text-[#1F5F72]" />
                     Whats Included
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     {pkg.inclusions.slice(0, 5).map((inclusion, index) => (
                       <span
                         key={index}
-                        className="px-4 py-2 bg-gradient-to-r from-blue-100 to-teal-100 text-blue-800 rounded-xl text-sm font-medium border border-blue-200 shadow-sm"
+                        className="px-4 py-2 bg-gradient-to-r from-[#E6F0F5] to-[#F0F7FA] text-[#0A2F44] rounded-xl text-sm font-medium border border-[#0A2F44]/10 shadow-sm"
                       >
                         {inclusion.inclusionName}
                       </span>
@@ -133,10 +136,10 @@ const ResortPackages: React.FC<ResortPackagesProps> = ({ packages }) => {
               )}
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <button className="flex-1 bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-600 hover:to-blue-600 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                <button className="flex-1 bg-gradient-to-r from-[#0A2F44] via-[#144A5E] to-[#1F5F72] hover:from-[#052230] hover:to-[#0A2F44] text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
                   Book This Package
                 </button>
-                <button className="px-6 py-4 border-2 border-teal-500 text-teal-600 hover:bg-teal-50 font-semibold rounded-xl transition-all duration-300">
+                <button className="px-6 py-4 border-2 border-[#0A2F44]/20 text-[#0A2F44] hover:bg-[#0A2F44] hover:text-white font-semibold rounded-xl transition-all duration-300">
                   View Full Details
                 </button>
               </div>
@@ -147,7 +150,7 @@ const ResortPackages: React.FC<ResortPackagesProps> = ({ packages }) => {
       
       {packages.length > 2 && (
         <div className="mt-8 text-center">
-          <button className="bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-600 hover:to-blue-600 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl">
+          <button className="bg-gradient-to-r from-[#0A2F44] to-[#1F5F72] hover:from-[#052230] hover:to-[#144A5E] text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl">
             Explore All {packages.length} Packages
           </button>
         </div>

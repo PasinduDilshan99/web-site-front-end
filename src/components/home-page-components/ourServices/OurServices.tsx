@@ -47,7 +47,34 @@ const OurServices = () => {
 
   if (loading) {
     return (
-      <BasicCycleLoading message="Loading partners..." variant="spinner" size="md" />
+      <div className="min-h-[300px] bg-gradient-to-br from-slate-900 via-gray-900 to-teal-950 flex items-center justify-center p-8">
+        <div className="w-full mx-auto">
+          {/* Simple loading header */}
+          <div className="flex justify-center mb-8">
+            <div className="flex items-center space-x-3 px-4 py-2 bg-gray-900/50 backdrop-blur-sm rounded-full border border-teal-500/30">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-teal-400"></div>
+              <span className="text-teal-300 text-sm">
+                Loading our services...
+              </span>
+            </div>
+          </div>
+
+          {/* Services Cards */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 md:gap-6">
+            {[...Array(4)].map((_, index) => (
+              <div
+                key={index}
+                className="bg-gradient-to-br from-gray-800/80 to-teal-900/30 rounded-lg p-4 md:p-5 border border-teal-500/20 animate-pulse flex flex-col items-center"
+                style={{ animationDelay: `${index * 120}ms` }}
+              >
+                <div className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-gray-700 to-teal-800/50 rounded-full mb-3 shadow-lg shadow-teal-500/10"></div>
+                <div className="h-4 bg-gradient-to-r from-gray-700 to-teal-800/50 rounded w-20 md:w-24 mb-2"></div>
+                <div className="h-3 bg-gradient-to-r from-gray-700 to-cyan-800/40 rounded w-16 md:w-20"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     );
   }
 
@@ -76,7 +103,7 @@ const OurServices = () => {
   }
 
   return (
-    <section className="py-6 xs:py-8 sm:py-10 lg:py-12 xl:py-16 bg-white">
+    <section className="bg-white py-6 lg:py-8 xl:py-12 xl:pb-16">
       <div className="mx-auto px-4 xs:px-5 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
@@ -129,11 +156,11 @@ const OurServices = () => {
                 <h3 className="text-base xs:text-lg sm:text-xl md:text-2xl font-semibold mb-1 xs:mb-2 text-gray-900 group-hover:text-gray-900 transition-colors duration-500 leading-tight xs:leading-snug">
                   {service.serviceTitle}
                 </h3>
-{service.serviceSubTitle && (
-  <p className="text-xs xs:text-sm sm:text-base font-medium bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent mb-1 xs:mb-2 group-hover:text-opacity-100 transition-all duration-500 leading-tight">
-    {service.serviceSubTitle}
-  </p>
-)}
+                {service.serviceSubTitle && (
+                  <p className="text-xs xs:text-sm sm:text-base font-medium bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent mb-1 xs:mb-2 group-hover:text-opacity-100 transition-all duration-500 leading-tight">
+                    {service.serviceSubTitle}
+                  </p>
+                )}
                 <p className="text-gray-600 text-xs xs:text-sm sm:text-base group-hover:text-gray-800 transition-colors duration-500 leading-relaxed xs:leading-normal">
                   {service.serviceDescription}
                 </p>

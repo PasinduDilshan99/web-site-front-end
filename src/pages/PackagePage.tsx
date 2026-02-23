@@ -17,6 +17,7 @@ import SectionHeader from "@/components/common-components/section-header/Section
 import PackageHeroSection from "@/components/packages-components/PackageHeroSection";
 import { PackageService } from "@/services/packageService";
 import { ActivePackagesForFilters } from "@/types/package-types";
+import PackagesLoading from "@/components/packages-components/PackagesLoading";
 
 // Define API response interface for packages
 interface PackageListResponse {
@@ -137,9 +138,9 @@ const PackagePage: React.FC = () => {
         setLoading(true);
         await fetchFilterOptions();
         await fetchPackagesWithFilters();
-        fetchReviews();
-        fetchHistory();
-        fetchHistoryImages();
+        // fetchReviews();
+        // fetchHistory();
+        // fetchHistoryImages();
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       }
@@ -172,83 +173,83 @@ const PackagePage: React.FC = () => {
     }
   }, [itemsPerPage]); // Only depends on itemsPerPage
 
-  const fetchReviews = async (): Promise<void> => {
-    try {
-      setReviewsLoading(true);
-      setReviewsError(null);
+  // const fetchReviews = async (): Promise<void> => {
+  //   try {
+  //     setReviewsLoading(true);
+  //     setReviewsError(null);
 
-      // USING THE SERVICE INSTEAD OF DIRECT FETCH
-      const { reviews: fetchedReviews, error } =
-        await PackageService.fetchReviews();
+  //     // USING THE SERVICE INSTEAD OF DIRECT FETCH
+  //     const { reviews: fetchedReviews, error } =
+  //       await PackageService.fetchReviews();
 
-      if (error) {
-        setReviewsError(error);
-      } else {
-        setReviews(fetchedReviews);
-        setReviewsError(null);
-      }
-    } catch (err) {
-      setReviewsError(
-        err instanceof Error
-          ? err.message
-          : "An error occurred while fetching reviews",
-      );
-    } finally {
-      setReviewsLoading(false);
-    }
-  };
+  //     if (error) {
+  //       setReviewsError(error);
+  //     } else {
+  //       setReviews(fetchedReviews);
+  //       setReviewsError(null);
+  //     }
+  //   } catch (err) {
+  //     setReviewsError(
+  //       err instanceof Error
+  //         ? err.message
+  //         : "An error occurred while fetching reviews",
+  //     );
+  //   } finally {
+  //     setReviewsLoading(false);
+  //   }
+  // };
 
-  const fetchHistory = async (): Promise<void> => {
-    try {
-      setHistoryLoading(true);
-      setHistoryError(null);
+  // const fetchHistory = async (): Promise<void> => {
+  //   try {
+  //     setHistoryLoading(true);
+  //     setHistoryError(null);
 
-      // USING THE SERVICE INSTEAD OF DIRECT FETCH
-      const { history: fetchedHistory, error } =
-        await PackageService.fetchHistory();
+  //     // USING THE SERVICE INSTEAD OF DIRECT FETCH
+  //     const { history: fetchedHistory, error } =
+  //       await PackageService.fetchHistory();
 
-      if (error) {
-        setHistoryError(error);
-      } else {
-        setHistory(fetchedHistory);
-        setHistoryError(null);
-      }
-    } catch (err) {
-      setHistoryError(
-        err instanceof Error
-          ? err.message
-          : "An error occurred while fetching package history",
-      );
-    } finally {
-      setHistoryLoading(false);
-    }
-  };
+  //     if (error) {
+  //       setHistoryError(error);
+  //     } else {
+  //       setHistory(fetchedHistory);
+  //       setHistoryError(null);
+  //     }
+  //   } catch (err) {
+  //     setHistoryError(
+  //       err instanceof Error
+  //         ? err.message
+  //         : "An error occurred while fetching package history",
+  //     );
+  //   } finally {
+  //     setHistoryLoading(false);
+  //   }
+  // };
 
-  const fetchHistoryImages = async (): Promise<void> => {
-    try {
-      setHistoryImagesLoading(true);
-      setHistoryImagesError(null);
+  // const fetchHistoryImages = async (): Promise<void> => {
+  //   try {
+  //     setHistoryImagesLoading(true);
+  //     setHistoryImagesError(null);
 
-      // USING THE SERVICE INSTEAD OF DIRECT FETCH
-      const { historyImages: fetchedImages, error } =
-        await PackageService.fetchHistoryImages();
+  //     // USING THE SERVICE INSTEAD OF DIRECT FETCH
+  //     const { historyImages: fetchedImages, error } =
+  //       await PackageService.fetchHistoryImages();
 
-      if (error) {
-        setHistoryImagesError(error);
-      } else {
-        setHistoryImages(fetchedImages);
-        setHistoryImagesError(null);
-      }
-    } catch (err) {
-      setHistoryImagesError(
-        err instanceof Error
-          ? err.message
-          : "An error occurred while fetching package history images",
-      );
-    } finally {
-      setHistoryImagesLoading(false);
-    }
-  };
+  //     if (error) {
+  //       setHistoryImagesError(error);
+  //     } else {
+  //       setHistoryImages(fetchedImages);
+  //       setHistoryImagesError(null);
+  //     }
+  //   } catch (err) {
+  //     setHistoryImagesError(
+  //       err instanceof Error
+  //         ? err.message
+  //         : "An error occurred while fetching package history images",
+  //     );
+  //   } finally {
+  //     setHistoryImagesLoading(false);
+  //   }
+  // };
 
   const handleFilterChange = (
     filterName: keyof Filters,
@@ -302,34 +303,28 @@ const PackagePage: React.FC = () => {
     setIsInitialLoad(true);
     fetchFilterOptions();
     fetchPackagesWithFilters();
-    fetchReviews();
-    fetchHistory();
-    fetchHistoryImages();
+    // fetchReviews();
+    // fetchHistory();
+    // fetchHistoryImages();
   };
 
   const handleReviewsRetry = () => {
     setReviewsError(null);
-    fetchReviews();
+    // fetchReviews();
   };
 
   const handleHistoryRetry = () => {
     setHistoryError(null);
-    fetchHistory();
+    // fetchHistory();
   };
 
   const handleHistoryImagesRetry = () => {
     setHistoryImagesError(null);
-    fetchHistoryImages();
+    // fetchHistoryImages();
   };
 
   if (loading) {
-    return (
-      <Loading
-        message="Loading packages details..."
-        variant="spinner"
-        size="md"
-      />
-    );
+    return <PackagesLoading itemsPerPage={itemsPerPage} />;
   }
 
   if (error) {
@@ -355,8 +350,6 @@ const PackagePage: React.FC = () => {
   const endItem = Math.min(currentPage * itemsPerPage, totalPackages);
 
   return (
-    <>
-      <PackageHeroSection />
       <div className="mx-auto px-4 py-8 bg-gradient-to-br from-sky-100 via-white to-cyan-100">
         {/* Page Header */}
         <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
@@ -491,7 +484,6 @@ const PackagePage: React.FC = () => {
           onRetry={handleHistoryImagesRetry}
         /> */}
       </div>
-    </>
   );
 };
 

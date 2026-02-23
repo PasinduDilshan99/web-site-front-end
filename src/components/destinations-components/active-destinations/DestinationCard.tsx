@@ -2,6 +2,9 @@ import { EnhancedDestination } from "@/types/destination-types";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { WishListService } from "@/services/wishListService";
+import { useAuth } from "@/context/AuthContext";
+import { addBrowserHistory } from "@/services/browserHistoryService";
+import { PLACE_HOLDER_IMAGE } from "@/utils/constant";
 
 interface DestinationCardProps {
   destination: EnhancedDestination;
@@ -9,6 +12,7 @@ interface DestinationCardProps {
 
 const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const { user } = useAuth();
   const [isWishlisted, setIsWishlisted] = useState(destination.wish || false);
   const [loadingWishlist, setLoadingWishlist] = useState(false);
   const router = useRouter();
@@ -22,7 +26,18 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
     setActiveImageIndex(imageIndex);
   };
 
-  const handleExploreClick = () => {
+  const handleExploreClick = async () => {
+    if (user) {
+      try {
+        await addBrowserHistory({
+          type: "DESTINATIONS",
+          dataId: destination.destinationId,
+        });
+      } catch (err) {
+        console.error("Failed to record browser history:", err);
+      }
+    }
+
     router.push(`/destinations/${destination.destinationId}`);
   };
 
@@ -31,7 +46,9 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
     if (loadingWishlist) return; // prevent double click
     setLoadingWishlist(true);
     try {
-      await WishListService.addDestinationWishList({ destinationId: destination.destinationId });
+      await WishListService.addDestinationWishList({
+        destinationId: destination.destinationId,
+      });
       setIsWishlisted((prev) => !prev);
     } catch (err) {
       console.error("Failed to update wishlist", err);
@@ -57,7 +74,7 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
             }
             className="w-full h-full object-cover transition-all duration-500 ease-in-out"
             onError={(e) => {
-              e.currentTarget.src = "/api/placeholder/400/250";
+              e.currentTarget.src = PLACE_HOLDER_IMAGE;
             }}
           />
         ) : (
@@ -76,35 +93,78 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
         )}
 
         {/* Wishlist Heart Icon */}
-        <button
-          onClick={handleWishlistToggle}
-          className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-sky-50 transition-colors z-10"
-          title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-        >
-          {isWishlisted ? (
-            <svg
-              className="w-4 h-4 text-red-500"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-            </svg>
-          ) : (
-            <svg
-              className="w-4 h-4 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-              />
-            </svg>
-          )}
-        </button>
+        {user && (
+          <button
+            onClick={handleWishlistToggle}
+            disabled={loadingWishlist}
+            className={`
+      absolute top-3 right-3 
+      w-8 h-8 sm:w-9 sm:h-9
+      flex items-center justify-center
+      bg-white/95 backdrop-blur-sm
+      rounded-full
+      shadow-lg hover:shadow-xl
+      transition-all duration-300 ease-out
+      z-10
+      group
+      ${
+        loadingWishlist
+          ? "opacity-60 cursor-not-allowed scale-95"
+          : "hover:scale-110 active:scale-95 hover:bg-white"
+      }
+    `}
+            aria-label={
+              isWishlisted ? "Remove from wishlist" : "Add to wishlist"
+            }
+          >
+            {loadingWishlist ? (
+              <svg
+                className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-500 animate-spin"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
+              </svg>
+            ) : isWishlisted ? (
+              <svg
+                className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-500 transition-transform duration-300 group-hover:scale-110"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+              </svg>
+            ) : (
+              <svg
+                className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 transition-all duration-300 group-hover:text-rose-400 group-hover:scale-110"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.8}
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                />
+              </svg>
+            )}
+
+            {/* Subtle ripple effect on hover */}
+            <span className="absolute inset-0 rounded-full bg-gradient-to-r from-rose-400/0 via-rose-400/0 to-rose-400/0 group-hover:from-rose-400/10 group-hover:via-rose-400/5 group-hover:to-rose-400/10 transition-all duration-500"></span>
+          </button>
+        )}
 
         {/* Thumbnail Images */}
         {destination.images.length > 1 && (
@@ -123,6 +183,9 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
                   src={image.imageUrl}
                   alt={image.imageDescription}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src = PLACE_HOLDER_IMAGE;
+                  }}
                 />
               </div>
             ))}
@@ -183,42 +246,54 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
         <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2 leading-tight">
           {destination.destinationName}
         </h3>
-
-        {/* Location */}
-        <p className="text-sky-600 text-sm mb-4 flex items-center font-medium">
-          <svg
-            className="w-4 h-4 mr-1"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-            />
-          </svg>
-          {destination.location}
+        <p className="text-md text-gray-900 mb-2 line-clamp-2 leading-tight">
+          {destination.destinationDescription}
         </p>
 
-        {/* Category */}
-        <p className="text-teal-600 text-sm mb-4 font-medium bg-teal-50 px-3 py-1 rounded-full w-fit">
-          {destination.categoryName}
-        </p>
+        {/* Location & Category*/}
+        <div className="flex justify-between">
+          <p className="text-sky-600 text-sm mb-4 flex items-center font-medium">
+            <svg
+              className="w-4 h-4 mr-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+            </svg>
+            {destination.location}
+          </p>
+          <p className="text-teal-600 text-sm mb-4 font-medium bg-teal-50 px-3 py-1 rounded-full w-fit">
+            {destination.categoryName}
+          </p>
+        </div>
 
         <div className="flex justify-between items-center mt-auto">
           {/* Activities Count */}
           <div className="flex items-center">
-            <svg className="w-4 h-4 mr-1 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            <svg
+              className="w-4 h-4 mr-1 text-teal-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+              />
             </svg>
             <span className="text-gray-600 text-sm font-medium">
               {destination.activities.length} activities

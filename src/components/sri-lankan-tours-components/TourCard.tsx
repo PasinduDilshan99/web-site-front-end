@@ -1,9 +1,8 @@
 // components/TourCard.tsx
-import { ActiveToursType } from "@/types/sri-lankan-tour-types";
 import React from "react";
 import TourImageGallery from "./TourImageGallery";
 import TourDetails from "./TourDetails";
-
+import { ActiveToursType } from "@/types/tour-types";
 interface TourCardProps {
   tour: ActiveToursType;
 }

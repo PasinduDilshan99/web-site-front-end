@@ -16,6 +16,7 @@ import BlogFilter from "@/components/blog-components/BlogFilter";
 import BlogCard from "@/components/blog-components/BlogCard";
 import { useSearchParams } from "next/navigation";
 import { BlogService } from "@/services/blogService"; // Import service
+import BlogPageLoading from "@/components/blog-components/BlogPageLoading";
 
 const BlogPage: React.FC = () => {
   const searchParams = useSearchParams();
@@ -82,13 +83,13 @@ const BlogPage: React.FC = () => {
 
   // Helper function to calculate total reactions
   const calculateTotalReactions = (
-    blogReactions: BlogReaction[] | null
+    blogReactions: BlogReaction[] | null,
   ): number => {
     if (!blogReactions || !Array.isArray(blogReactions)) return 0;
 
     return blogReactions.reduce(
       (total, reaction) => total + (reaction.count || 0),
-      0
+      0,
     );
   };
 
@@ -114,7 +115,7 @@ const BlogPage: React.FC = () => {
       setError(null);
 
       let result;
-      
+
       // USING THE SERVICE INSTEAD OF DIRECT FETCH
       if (writerParam) {
         result = await BlogService.fetchBlogsByWriter(writerParam);
@@ -139,8 +140,8 @@ const BlogPage: React.FC = () => {
           result.data
             .map((blog: BlogDetailsData) => blog.blogCategory)
             .filter(
-              (category: string | null) => category && category.trim() !== ""
-            )
+              (category: string | null) => category && category.trim() !== "",
+            ),
         ),
       ] as string[];
 
@@ -197,7 +198,7 @@ const BlogPage: React.FC = () => {
           blog.description.toLowerCase().includes(searchLower) ||
           blog.writer_name.toLowerCase().includes(searchLower) ||
           (blog.blogCategory &&
-            blog.blogCategory.toLowerCase().includes(searchLower))
+            blog.blogCategory.toLowerCase().includes(searchLower)),
       );
     }
 
@@ -209,7 +210,7 @@ const BlogPage: React.FC = () => {
     // Category filter
     if (filters.category) {
       filtered = filtered.filter(
-        (blog) => blog.blogCategory === filters.category
+        (blog) => blog.blogCategory === filters.category,
       );
     }
 
@@ -285,7 +286,7 @@ const BlogPage: React.FC = () => {
   // Handle filter change
   const handleFilterChange = (
     filterName: keyof BlogFilters,
-    value: unknown
+    value: unknown,
   ): void => {
     console.log(`Filter changed: ${filterName} =`, value);
 
@@ -390,13 +391,7 @@ const BlogPage: React.FC = () => {
   }, [filters]);
 
   if (loading) {
-    return (
-      <Loading
-        message="Loading travel stories..."
-        variant="spinner"
-        size="md"
-      />
-    );
+    return <BlogPageLoading />;
   }
 
   if (error) {
@@ -407,26 +402,22 @@ const BlogPage: React.FC = () => {
 
   return (
     <div>
-      <div>
-        <BlogHeroSection />
-      </div>
-
-      <div className="mx-auto px-4 py-8 md:py-12 lg:py-16 bg-gradient-to-b from-purple-50 to-amber-50 min-h-screen">
+      <div className="mx-auto px-4 py-8 md:py-12 lg:py-16 bg-gradient-to-b from-teal-50 to-blue-50 min-h-screen">
         {/* Page Header */}
         <div className="text-center mb-8 md:mb-12">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-purple-900 mb-4">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-teal-800 mb-4">
             {writerParam
               ? `${writerParam}'s Blogs`
               : searchParam
-              ? `Search Results for "${searchParam}"`
-              : "Travel Stories & Insights"}
+                ? `Search Results for "${searchParam}"`
+                : "Travel Stories & Insights"}
           </h1>
           <p className="text-gray-600 max-w-3xl mx-auto">
             {writerParam
               ? `Discover all blogs written by ${writerParam}`
               : searchParam
-              ? `Showing blogs related to "${searchParam}"`
-              : "Discover authentic travel experiences, expert tips, and inspiring stories from our community of travel writers and explorers."}
+                ? `Showing blogs related to "${searchParam}"`
+                : "Discover authentic travel experiences, expert tips, and inspiring stories from our community of travel writers and explorers."}
           </p>
         </div>
 
@@ -440,28 +431,28 @@ const BlogPage: React.FC = () => {
             categories={categories}
           />
         ) : (
-          <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-purple-200">
+          <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-teal-200">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
-                <h2 className="text-xl font-bold text-purple-900">
+                <h2 className="text-xl font-bold text-teal-800">
                   {writerParam
                     ? `Filtered by Writer: ${writerParam}`
                     : searchParam
-                    ? `Filtered by Search: ${searchParam}`
-                    : ""}
+                      ? `Filtered by Search: ${searchParam}`
+                      : ""}
                 </h2>
                 <p className="text-sm text-gray-600">
                   Showing {blogs.length} blog{blogs.length !== 1 ? "s" : ""}
                   {writerParam
                     ? ` by ${writerParam}`
                     : searchParam
-                    ? ` related to "${searchParam}"`
-                    : ""}
+                      ? ` related to "${searchParam}"`
+                      : ""}
                 </p>
               </div>
               <button
                 onClick={resetFilters}
-                className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-50 to-amber-50 text-purple-700 font-medium rounded-lg hover:from-purple-100 hover:to-amber-100 transition-colors border border-purple-200"
+                className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-teal-50 to-blue-50 text-teal-700 font-medium rounded-lg hover:from-teal-100 hover:to-blue-100 transition-colors border border-teal-200"
               >
                 Clear Filter
               </button>
@@ -472,7 +463,7 @@ const BlogPage: React.FC = () => {
         {/* Results Section */}
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <h3 className="text-2xl font-semibold text-purple-900">
+            <h3 className="text-2xl font-semibold text-teal-800">
               {filteredBlogs.length} Blog
               {filteredBlogs.length !== 1 ? "s" : ""} Found
             </h3>
@@ -481,7 +472,7 @@ const BlogPage: React.FC = () => {
             <div className="flex items-center gap-3">
               <label
                 htmlFor="itemsPerPage"
-                className="text-sm font-medium text-purple-700 whitespace-nowrap"
+                className="text-sm font-medium text-teal-700 whitespace-nowrap"
               >
                 Show:
               </label>
@@ -491,7 +482,7 @@ const BlogPage: React.FC = () => {
                 onChange={(e) =>
                   handleItemsPerPageChange(Number(e.target.value))
                 }
-                className="text-purple-500 px-3 py-2 border border-purple-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-sm bg-white"
+                className="text-teal-600 px-3 py-2 border border-teal-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-sm bg-white"
               >
                 {itemsPerPageOptions.map((option) => (
                   <option key={option} value={option}>
@@ -595,20 +586,18 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
   };
 
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-8 pt-6 border-t border-amber-200">
+    <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-8 pt-6 border-t border-blue-200">
       <div className="text-sm text-gray-600">
-        Showing{" "}
-        <span className="font-semibold text-purple-700">{startItem}</span> to{" "}
-        <span className="font-semibold text-purple-700">{endItem}</span> of{" "}
-        <span className="font-semibold text-purple-700">{totalItems}</span>{" "}
-        blogs
+        Showing <span className="font-semibold text-teal-700">{startItem}</span>{" "}
+        to <span className="font-semibold text-teal-700">{endItem}</span> of{" "}
+        <span className="font-semibold text-teal-700">{totalItems}</span> blogs
       </div>
 
       <div className="flex items-center gap-1">
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-3 py-2 rounded-md border border-purple-300 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-purple-50 transition-colors text-purple-700"
+          className="px-3 py-2 rounded-md border border-teal-300 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-teal-50 transition-colors text-teal-700"
         >
           Previous
         </button>
@@ -620,10 +609,10 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
             disabled={page === "..."}
             className={`px-3 py-2 rounded-md text-sm font-medium min-w-[40px] ${
               page === currentPage
-                ? "bg-gradient-to-r from-purple-600 to-amber-600 text-white shadow-lg"
+                ? "bg-gradient-to-r from-teal-500 to-blue-600 text-white shadow-lg"
                 : page === "..."
-                ? "cursor-default text-gray-500"
-                : "border border-purple-300 text-purple-700 hover:bg-purple-50 transition-colors"
+                  ? "cursor-default text-gray-500"
+                  : "border border-teal-300 text-teal-700 hover:bg-teal-50 transition-colors"
             }`}
           >
             {page}
@@ -633,7 +622,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="px-3 py-2 rounded-md border border-purple-300 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-purple-50 transition-colors text-purple-700"
+          className="px-3 py-2 rounded-md border border-teal-300 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-teal-50 transition-colors text-teal-700"
         >
           Next
         </button>
@@ -652,7 +641,7 @@ const NoResults: React.FC<{ onResetFilters: () => void }> = ({
     </div>
     <button
       onClick={onResetFilters}
-      className="px-6 py-2 bg-gradient-to-r from-purple-600 to-amber-600 text-white rounded-lg hover:from-purple-700 hover:to-amber-700 transition-colors shadow-lg hover:shadow-xl"
+      className="px-6 py-2 bg-gradient-to-r from-teal-500 to-blue-600 text-white rounded-lg hover:from-teal-600 hover:to-blue-700 transition-colors shadow-lg hover:shadow-xl"
     >
       Reset Filters
     </button>

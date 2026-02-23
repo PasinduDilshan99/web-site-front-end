@@ -1,6 +1,6 @@
 // components/hostel/HostelPackages.tsx
 import React from 'react';
-import { Calendar, Users, Clock, Star, CheckCircle, Bed, MapPin, Globe } from 'lucide-react';
+import { Calendar, Users, Clock, Star, CheckCircle, Bed, MapPin, Globe, Leaf } from 'lucide-react';
 import { PackageDetails } from '@/types/accommodations-types/service-provider-types';
 
 interface HostelPackagesProps {
@@ -18,15 +18,14 @@ const HostelPackages: React.FC<HostelPackagesProps> = ({ packages }) => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 border border-blue-100">
+    <>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Hostel Packages & Deals</h2>
-          <p className="text-gray-600 mt-1">Special offers for solo travelers and groups</p>
+          <p className="text-[#5A8F7A] text-sm">Special offers for solo travelers and groups</p>
         </div>
-        <div className="flex items-center gap-2 text-blue-600">
+        <div className="flex items-center gap-2 text-[#3A9B9B]">
           <Star className="w-5 h-5" />
-          <span className="font-semibold">Best Value for Budget Travelers</span>
+          <span className="font-semibold">Budget-Friendly</span>
         </div>
       </div>
       
@@ -34,14 +33,14 @@ const HostelPackages: React.FC<HostelPackagesProps> = ({ packages }) => {
         {packages.map((pkg) => (
           <div 
             key={pkg.serviceProviderPackageId}
-            className="border-2 border-blue-100 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-blue-300 hover:translate-y-[-2px]"
+            className="border border-[#B5E5D4] rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-[#C9EFE3] hover:translate-y-[-2px] bg-white"
           >
             {/* Package Header with Badges */}
-            <div className="relative p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
+            <div className="relative p-4 bg-gradient-to-r from-[#F5FDFA] to-[#FAFFFD] border-b border-[#B5E5D4]">
               <div className="flex justify-between items-start">
-                <h3 className="text-lg font-bold text-gray-900 line-clamp-1">{pkg.packageName}</h3>
+                <h3 className="text-lg font-bold text-[#2D4F43] line-clamp-1">{pkg.packageName}</h3>
                 {pkg.packageCategory && (
-                  <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full">
+                  <span className="px-2 py-1 bg-[#F5FDFA] text-[#2D4F43] text-xs font-semibold rounded-full border border-[#B5E5D4]">
                     {pkg.packageCategory}
                   </span>
                 )}
@@ -49,17 +48,17 @@ const HostelPackages: React.FC<HostelPackagesProps> = ({ packages }) => {
               
               <div className="flex flex-wrap gap-2 mt-3">
                 {pkg.discountPercentage && pkg.discountPercentage > 0 && (
-                  <span className="bg-red-500 text-white px-2 py-1 rounded text-xs font-semibold">
+                  <span className="bg-[#B5E5D4] text-[#2D4F43] px-2 py-1 rounded text-xs font-semibold border border-[#B5E5D4]">
                     {pkg.discountPercentage}% OFF
                   </span>
                 )}
                 {pkg.isCustomizable && (
-                  <span className="bg-green-500 text-white px-2 py-1 rounded text-xs font-semibold">
+                  <span className="bg-[#C9EFE3] text-[#2D4F43] px-2 py-1 rounded text-xs font-semibold border border-[#C9EFE3]">
                     Customizable
                   </span>
                 )}
                 {pkg.seasonType && (
-                  <span className="bg-amber-500 text-white px-2 py-1 rounded text-xs font-semibold">
+                  <span className="bg-[#DDF9F2] text-[#2D4F43] px-2 py-1 rounded text-xs font-semibold border border-[#DDF9F2]">
                     {pkg.seasonType} Season
                   </span>
                 )}
@@ -80,32 +79,32 @@ const HostelPackages: React.FC<HostelPackagesProps> = ({ packages }) => {
             {/* Package Content */}
             <div className="p-4">
               {/* Description */}
-              <p className="text-gray-600 text-sm mb-4 line-clamp-2">{pkg.packageDescription}</p>
+              <p className="text-[#5A8F7A] text-sm mb-4 line-clamp-2">{pkg.packageDescription}</p>
               
               {/* Price Section */}
-              <div className="mb-4">
+              <div className="mb-4 p-3 bg-[#F5FDFA] rounded-lg border border-[#B5E5D4]">
                 <div className="flex items-end gap-2">
-                  <div className="text-2xl font-bold text-blue-600">
+                  <div className="text-2xl font-bold text-[#2D4F43]">
                     {formatPrice(pkg.localPrice, pkg.currencyCode)}
                   </div>
                   {pkg.foreignPrice && pkg.foreignPrice !== pkg.localPrice && (
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-[#5A8F7A]">
                       ~{formatPrice(pkg.foreignPrice, 'USD')}
                     </div>
                   )}
                 </div>
-                <div className="text-xs text-gray-500">total for {pkg.durationDays} nights</div>
+                <div className="text-xs text-[#5A8F7A]">total for {pkg.durationDays} nights</div>
               </div>
               
               {/* Key Features Grid */}
               <div className="grid grid-cols-2 gap-3 mb-4">
-                <div className="flex items-center gap-2 text-xs text-gray-700">
-                  <Clock className="w-3 h-3 text-blue-600" />
+                <div className="flex items-center gap-2 text-xs text-[#2D4F43] bg-[#F5FDFA] p-2 rounded-lg border border-[#B5E5D4]">
+                  <Clock className="w-3 h-3 text-[#3A9B9B]" />
                   <span>{pkg.durationDays} Nights</span>
                 </div>
                 
-                <div className="flex items-center gap-2 text-xs text-gray-700">
-                  <Users className="w-3 h-3 text-blue-600" />
+                <div className="flex items-center gap-2 text-xs text-[#2D4F43] bg-[#F5FDFA] p-2 rounded-lg border border-[#C9EFE3]">
+                  <Users className="w-3 h-3 text-[#3A9B9B]" />
                   <span>
                     {pkg.minPersons === pkg.maxPersons 
                       ? `${pkg.minPersons} ${pkg.minPersons > 1 ? 'People' : 'Person'}`
@@ -115,28 +114,28 @@ const HostelPackages: React.FC<HostelPackagesProps> = ({ packages }) => {
                 </div>
                 
                 {pkg.includesChildren && (
-                  <div className="flex items-center gap-2 text-xs text-gray-700">
-                    <Bed className="w-3 h-3 text-green-600" />
+                  <div className="flex items-center gap-2 text-xs text-[#2D4F43] bg-[#F5FDFA] p-2 rounded-lg border border-[#DDF9F2]">
+                    <Bed className="w-3 h-3 text-[#3A9B9B]" />
                     <span>Kids {pkg.maxChildrenIncluded ? `(${pkg.maxChildrenIncluded} max)` : 'Included'}</span>
                   </div>
                 )}
                 
                 {pkg.advanceBookingDays && (
-                  <div className="flex items-center gap-2 text-xs text-gray-700">
-                    <Calendar className="w-3 h-3 text-purple-600" />
-                    <span>Book {pkg.advanceBookingDays} days ahead</span>
+                  <div className="flex items-center gap-2 text-xs text-[#2D4F43] bg-[#F5FDFA] p-2 rounded-lg border border-[#B5E5D4]">
+                    <Calendar className="w-3 h-3 text-[#3A9B9B]" />
+                    <span>Book {pkg.advanceBookingDays}d ahead</span>
                   </div>
                 )}
               </div>
               
               {/* Date Range */}
               {pkg.startDate && pkg.endDate && (
-                <div className="mb-4 p-3 bg-blue-50 rounded-lg">
-                  <div className="flex items-center gap-2 text-xs text-blue-700">
+                <div className="mb-4 p-3 bg-[#F5FDFA] rounded-lg border border-[#B5E5D4]">
+                  <div className="flex items-center gap-2 text-xs text-[#3A9B9B]">
                     <Calendar className="w-3 h-3" />
                     <span>Available:</span>
                   </div>
-                  <div className="text-xs text-gray-700 mt-1">
+                  <div className="text-xs text-[#2D4F43] mt-1">
                     {new Date(pkg.startDate).toLocaleDateString()} - {new Date(pkg.endDate).toLocaleDateString()}
                   </div>
                 </div>
@@ -145,18 +144,18 @@ const HostelPackages: React.FC<HostelPackagesProps> = ({ packages }) => {
               {/* Quick Features */}
               {pkg.features.length > 0 && (
                 <div className="mb-4">
-                  <div className="text-xs font-semibold text-gray-800 mb-2">Features:</div>
+                  <div className="text-xs font-semibold text-[#2D4F43] mb-2">Features:</div>
                   <div className="space-y-1">
                     {pkg.features.slice(0, 2).map((feature, index) => (
                       <div key={index} className="flex items-center gap-2">
-                        <CheckCircle className="w-3 h-3 text-green-500" />
-                        <span className="text-xs text-gray-700 truncate">
+                        <CheckCircle className="w-3 h-3 text-[#3A9B9B]" />
+                        <span className="text-xs text-[#5A8F7A] truncate">
                           {feature.featureName}
                         </span>
                       </div>
                     ))}
                     {pkg.features.length > 2 && (
-                      <div className="text-xs text-blue-600 font-medium">
+                      <div className="text-xs text-[#3A9B9B] font-medium">
                         + {pkg.features.length - 2} more features
                       </div>
                     )}
@@ -167,18 +166,18 @@ const HostelPackages: React.FC<HostelPackagesProps> = ({ packages }) => {
               {/* Inclusions */}
               {pkg.inclusions.length > 0 && (
                 <div className="mb-4">
-                  <div className="text-xs font-semibold text-gray-800 mb-2">Includes:</div>
+                  <div className="text-xs font-semibold text-[#2D4F43] mb-2">Includes:</div>
                   <div className="flex flex-wrap gap-1">
                     {pkg.inclusions.slice(0, 3).map((inclusion, index) => (
                       <span
                         key={index}
-                        className="px-2 py-1 bg-green-50 text-green-700 rounded text-xs border border-green-200"
+                        className="px-2 py-1 bg-[#F5FDFA] text-[#2D4F43] rounded text-xs border border-[#B5E5D4]"
                       >
                         {inclusion.inclusionName}
                       </span>
                     ))}
                     {pkg.inclusions.length > 3 && (
-                      <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded text-xs border border-blue-200">
+                      <span className="px-2 py-1 bg-[#F5FDFA] text-[#5A8F7A] rounded text-xs border border-[#C9EFE3]">
                         +{pkg.inclusions.length - 3}
                       </span>
                     )}
@@ -188,27 +187,27 @@ const HostelPackages: React.FC<HostelPackagesProps> = ({ packages }) => {
               
               {/* Highlights */}
               {pkg.highlights && (
-                <div className="mb-4 p-3 bg-amber-50 rounded-lg">
-                  <div className="text-xs font-semibold text-amber-800 mb-1">Highlights</div>
-                  <div className="text-xs text-amber-700 line-clamp-2">{pkg.highlights}</div>
+                <div className="mb-4 p-3 bg-[#FAFFFD] rounded-lg border border-[#DDF9F2]">
+                  <div className="text-xs font-semibold text-[#2D4F43] mb-1">Highlights</div>
+                  <div className="text-xs text-[#5A8F7A] line-clamp-2">{pkg.highlights}</div>
                 </div>
               )}
               
               {/* Buttons */}
               <div className="flex gap-2">
-                <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors duration-200">
+                <button className="flex-1 bg-gradient-to-r from-[#B5E5D4] to-[#DDF9F2] hover:from-[#9FD4C0] hover:to-[#C9EFE3] text-[#2D4F43] font-semibold py-2 px-4 rounded-lg text-sm transition-all duration-300 transform hover:scale-105 border border-[#B5E5D4]">
                   Book Now
                 </button>
-                <button className="px-3 py-2 border border-blue-600 text-blue-600 hover:bg-blue-50 rounded-lg text-sm transition-colors duration-200">
+                <button className="px-3 py-2 border border-[#B5E5D4] text-[#2D4F43] hover:bg-[#F5FDFA] rounded-lg text-sm transition-colors duration-200">
                   Details
                 </button>
               </div>
               
               {/* Policy Info */}
-              <div className="mt-3 pt-3 border-t border-gray-100">
-                <div className="flex items-center justify-between text-xs text-gray-500">
+              <div className="mt-3 pt-3 border-t border-[#B5E5D4]/30">
+                <div className="flex items-center justify-between text-xs text-[#5A8F7A]">
                   {pkg.cancellationPolicy && (
-                    <span className="truncate">{pkg.cancellationPolicy}</span>
+                    <span className="truncate">Free cancellation</span>
                   )}
                   {pkg.packageCode && (
                     <span className="font-mono">Code: {pkg.packageCode}</span>
@@ -223,8 +222,8 @@ const HostelPackages: React.FC<HostelPackagesProps> = ({ packages }) => {
       {/* View All Button */}
       {packages.length > 3 && (
         <div className="mt-6 text-center">
-          <button className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold py-2 px-6 border-2 border-blue-600 hover:border-blue-700 rounded-full transition-colors duration-200">
-            <Globe className="w-4 h-4" />
+          <button className="inline-flex items-center gap-2 text-[#2D4F43] hover:text-[#3A9B9B] font-semibold py-2 px-6 border-2 border-[#B5E5D4] hover:border-[#C9EFE3] rounded-full transition-colors duration-200 bg-white/50">
+            <Leaf className="w-4 h-4" />
             View All Packages ({packages.length})
           </button>
         </div>
@@ -233,16 +232,16 @@ const HostelPackages: React.FC<HostelPackagesProps> = ({ packages }) => {
       {/* Empty State */}
       {packages.length === 0 && (
         <div className="text-center py-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
-            <Bed className="w-8 h-8 text-blue-600" />
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-[#F5FDFA] rounded-full mb-4 border border-[#B5E5D4]">
+            <Bed className="w-8 h-8 text-[#3A9B9B]" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">No Packages Available</h3>
-          <p className="text-gray-600 max-w-md mx-auto">
+          <h3 className="text-lg font-semibold text-[#2D4F43] mb-2">No Packages Available</h3>
+          <p className="text-[#5A8F7A] max-w-md mx-auto">
             Check back later for special hostel packages and deals for solo travelers, groups, and budget adventures.
           </p>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

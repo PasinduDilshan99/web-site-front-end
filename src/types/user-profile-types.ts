@@ -2,20 +2,29 @@ export interface UserUpdateRequest {
   firstName: string;
   middleName?: string;
   lastName: string;
-  addressId?: number;
-  nic?: string;
-  genderId?: number;
-  passportNumber?: string;
-  drivingLicenseNumber?: string;
+  dateOfBirth?: string; 
+  gender?: string;
+  country?: string;
+
   email?: string;
-  email2?: string;
   mobileNumber1?: string;
   mobileNumber2?: string;
-  regionId?: number;
-  religionId?: number;
-  dateOfBirth?: string; // yyyy-MM-dd
+
+  nic?: string;
+  passportNumber?: string;
+  drivingLicenseNumber?: string;
+
+  addressNumber?: string;
+  addressLine1?: string;
+  addressLine2?: string;
+  city?: string;
+  district?: string;
+  province?: string;
+  postalCode?: string;
+
   imageUrl?: string;
 }
+
 
 export interface UpdateAccountResponseData {
   message: string;

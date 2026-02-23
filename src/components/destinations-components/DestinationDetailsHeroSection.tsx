@@ -14,7 +14,7 @@ const DestinationDetailsHeroSection: React.FC<DestinationDetailsHeroSectionProps
 }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [imageLoaded, setImageLoaded] = useState(false);
+  const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
   const [weatherData, setWeatherData] = useState<WeatherResponse | null>(null);
   const [weatherLoading, setWeatherLoading] = useState(false);
   const [weatherError, setWeatherError] = useState<string | null>(null);
@@ -78,8 +78,8 @@ const DestinationDetailsHeroSection: React.FC<DestinationDetailsHeroSectionProps
     setTimeout(() => setIsAutoPlaying(true), 10000);
   };
 
-  const getFallbackImage = () => {
-    return "https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80";
+  const handleImageError = (index: number) => {
+    setFailedImages((prev) => new Set(prev).add(index));
   };
 
   // Helper function to convert Celsius to Fahrenheit
@@ -155,7 +155,7 @@ const DestinationDetailsHeroSection: React.FC<DestinationDetailsHeroSectionProps
 
   if (!destination.images.length) {
     return (
-      <div className="relative h-96 bg-gradient-to-r from-sky-600 to-teal-600 flex items-center justify-center">
+      <div className="relative h-96 bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900 flex items-center justify-center">
         <div className="absolute bottom-0 left-0 right-0 p-6 text-white bg-gradient-to-t from-black/60 to-transparent">
           <div className="max-w-7xl mx-auto text-center">
             <h1 className="text-4xl font-bold mb-2">{destination.destinationName}</h1>
@@ -166,38 +166,46 @@ const DestinationDetailsHeroSection: React.FC<DestinationDetailsHeroSectionProps
     );
   }
 
-  const currentImage = destination.images[selectedImageIndex];
-
   return (
     <>
       {/* Hero Section with Slider */}
-      <div className="relative h-[500px] md:h-[600px] overflow-hidden bg-gradient-to-r from-sky-600 to-teal-600">
+      <div className="relative h-[500px] md:h-[600px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
         {/* Image Slider */}
         <div className="relative w-full h-full">
-          {destination.images.map((image, index) => (
-            <div
-              key={image.imageId}
-              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                index === selectedImageIndex ? "opacity-100" : "opacity-0"
-              }`}
-            >
-              <Image
-                src={image.imageUrl}
-                alt={image.imageName || `Destination image ${index + 1}`}
-                className="w-full h-full object-cover"
-                width={2000}
-                height={1200}
-                priority={index === 0}
-                onLoad={() => setImageLoaded(true)}
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = getFallbackImage();
-                }}
-              />
-              {/* Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-            </div>
-          ))}
+          {destination.images.map((image, index) => {
+            const hasImage = !failedImages.has(index);
+            
+            return (
+              <div
+                key={image.imageId}
+                className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                  index === selectedImageIndex ? "opacity-100" : "opacity-0"
+                }`}
+              >
+                {hasImage ? (
+                  <>
+                    <Image
+                      src={image.imageUrl}
+                      alt={image.imageName || `Destination image ${index + 1}`}
+                      className="w-full h-full object-cover"
+                      width={2000}
+                      height={1200}
+                      priority={index === 0}
+                      onError={() => handleImageError(index)}
+                    />
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                  </>
+                ) : (
+                  // Pure gradient background when image failed
+                  <div className="w-full h-full bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
+                    {/* Gradient Overlay for consistency */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
 
         {/* Weather Widget - Positioned to avoid overlap */}
@@ -320,7 +328,7 @@ const DestinationDetailsHeroSection: React.FC<DestinationDetailsHeroSectionProps
                 
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 md:p-8 mx-auto max-w-3xl mb-8">
                   <p className="text-md md:text-lg lg:text-xl text-gray-100 leading-relaxed mb-6">
-                    {destination.destinationDescription}
+                    {destination.images[selectedImageIndex].imageDescription}
                   </p>
 
                   {/* Destination Info - CENTERED */}

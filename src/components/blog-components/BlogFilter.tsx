@@ -30,15 +30,15 @@ const BlogFilter: React.FC<BlogFilterProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-purple-200">
+    <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-teal-200">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="p-3 bg-gradient-to-r from-purple-600 to-amber-500 rounded-xl">
+          <div className="p-3 bg-gradient-to-r from-teal-500 to-blue-600 rounded-xl">
             <Filter className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-purple-900">
+            <h2 className="text-2xl font-bold text-teal-800">
               Filter & Sort
             </h2>
             <p className="text-sm text-gray-600">
@@ -49,7 +49,7 @@ const BlogFilter: React.FC<BlogFilterProps> = ({
         
         <button
           onClick={onResetFilters}
-          className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-50 to-amber-50 text-purple-700 font-medium rounded-lg hover:from-purple-100 hover:to-amber-100 transition-colors border border-purple-200"
+          className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-teal-50 to-blue-50 text-teal-700 font-medium rounded-lg hover:from-teal-100 hover:to-blue-100 transition-colors border border-teal-200"
         >
           <RotateCcw className="w-4 h-4" />
           Reset All
@@ -59,13 +59,13 @@ const BlogFilter: React.FC<BlogFilterProps> = ({
       {/* Search Bar */}
       <div className="mb-6">
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-purple-500" />
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-teal-500" />
           <input
             type="text"
             value={filters.search}
             onChange={(e) => onFilterChange('search', e.target.value)}
             placeholder="Search blogs, titles, or authors..."
-            className="text-black w-full pl-12 pr-4 py-3.5 border-2 border-purple-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-base transition-all bg-purple-50/50"
+            className="text-black w-full pl-12 pr-4 py-3.5 border-2 border-teal-200 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-base transition-all bg-teal-50/50"
           />
         </div>
       </div>
@@ -74,14 +74,14 @@ const BlogFilter: React.FC<BlogFilterProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {/* Writer Filter */}
         <div>
-          <label className="flex items-center gap-2 text-sm font-semibold text-purple-800 mb-2">
-            <User className="w-4 h-4 text-purple-600" />
+          <label className="flex items-center gap-2 text-sm font-semibold text-teal-800 mb-2">
+            <User className="w-4 h-4 text-teal-600" />
             Author
           </label>
           <select
             value={filters.writer}
             onChange={(e) => onFilterChange('writer', e.target.value)}
-            className="text-gray-500 w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-base bg-white transition-all cursor-pointer hover:border-purple-300"
+            className="text-gray-500 w-full px-4 py-3 border-2 border-teal-200 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-base bg-white transition-all cursor-pointer hover:border-teal-300"
           >
             <option value="">All Authors</option>
             {writers.map((writer) => (
@@ -94,14 +94,14 @@ const BlogFilter: React.FC<BlogFilterProps> = ({
 
         {/* Category Filter */}
         <div>
-          <label className="flex items-center gap-2 text-sm font-semibold text-purple-800 mb-2">
-            <Tag className="w-4 h-4 text-purple-600" />
+          <label className="flex items-center gap-2 text-sm font-semibold text-teal-800 mb-2">
+            <Tag className="w-4 h-4 text-teal-600" />
             Category
           </label>
           <select
             value={filters.category}
             onChange={(e) => onFilterChange('category', e.target.value)}
-            className="text-gray-500 w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-base bg-white transition-all cursor-pointer hover:border-purple-300"
+            className="text-gray-500 w-full px-4 py-3 border-2 border-teal-200 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-base bg-white transition-all cursor-pointer hover:border-teal-300"
           >
             <option value="">All Categories</option>
             {categories.map((category) => (
@@ -114,14 +114,14 @@ const BlogFilter: React.FC<BlogFilterProps> = ({
 
         {/* Sort By */}
         <div>
-          <label className="flex items-center gap-2 text-sm font-semibold text-purple-800 mb-2">
-            <TrendingUp className="w-4 h-4 text-purple-600" />
+          <label className="flex items-center gap-2 text-sm font-semibold text-teal-800 mb-2">
+            <TrendingUp className="w-4 h-4 text-teal-600" />
             Sort By
           </label>
           <select
             value={filters.sortBy}
             onChange={(e) => onFilterChange('sortBy', e.target.value)}
-            className="text-gray-500 w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-base bg-white transition-all cursor-pointer hover:border-purple-300"
+            className="text-gray-500 w-full px-4 py-3 border-2 border-teal-200 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-base bg-white transition-all cursor-pointer hover:border-teal-300"
           >
             <option value="recent">🕐 Most Recent</option>
             <option value="likes">❤️ Most Liked</option>
@@ -133,8 +133,8 @@ const BlogFilter: React.FC<BlogFilterProps> = ({
 
         {/* Date Range */}
         <div>
-          <label className="flex items-center gap-2 text-sm font-semibold text-purple-800 mb-2">
-            <Calendar className="w-4 h-4 text-purple-600" />
+          <label className="flex items-center gap-2 text-sm font-semibold text-teal-800 mb-2">
+            <Calendar className="w-4 h-4 text-teal-600" />
             Date Range
           </label>
           <div className="grid grid-cols-2 gap-3">
@@ -144,9 +144,9 @@ const BlogFilter: React.FC<BlogFilterProps> = ({
                 value={filters.dateRange[0]}
                 onChange={(e) => handleDateChange(e.target.value, true)}
                 max={filters.dateRange[1]}
-                className="text-gray-500 w-full px-3 py-2.5 border-2 border-purple-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-sm transition-all"
+                className="text-gray-500 w-full px-3 py-2.5 border-2 border-teal-200 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-sm transition-all"
               />
-              <div className="text-xs text-purple-600 mt-1 text-center">From</div>
+              <div className="text-xs text-teal-600 mt-1 text-center">From</div>
             </div>
             <div>
               <input
@@ -154,9 +154,9 @@ const BlogFilter: React.FC<BlogFilterProps> = ({
                 value={filters.dateRange[1]}
                 onChange={(e) => handleDateChange(e.target.value, false)}
                 min={filters.dateRange[0]}
-                className="text-gray-500 w-full px-3 py-2.5 border-2 border-purple-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-sm transition-all"
+                className="text-gray-500 w-full px-3 py-2.5 border-2 border-teal-200 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-sm transition-all"
               />
-              <div className="text-xs text-purple-600 mt-1 text-center">To</div>
+              <div className="text-xs text-teal-600 mt-1 text-center">To</div>
             </div>
           </div>
         </div>
@@ -164,35 +164,35 @@ const BlogFilter: React.FC<BlogFilterProps> = ({
 
       {/* Active Filters */}
       <div className="flex flex-wrap items-center gap-2 mb-4">
-        <span className="text-sm font-medium text-purple-700">Active filters:</span>
+        <span className="text-sm font-medium text-teal-700">Active filters:</span>
         {filters.search && (
-          <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-purple-100 to-amber-100 text-purple-700 rounded-full text-sm font-medium">
+          <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-teal-100 to-blue-100 text-teal-700 rounded-full text-sm font-medium">
             🔍 {filters.search.substring(0, 15)}{filters.search.length > 15 ? '...' : ''}
-            <button onClick={() => onFilterChange('search', '')} className="hover:text-purple-900 ml-1">
+            <button onClick={() => onFilterChange('search', '')} className="hover:text-teal-900 ml-1">
               <X className="w-3 h-3" />
             </button>
           </span>
         )}
         {filters.writer && (
-          <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">
+          <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-teal-100 text-teal-700 rounded-full text-sm font-medium">
             👤 {filters.writer}
-            <button onClick={() => onFilterChange('writer', '')} className="hover:text-purple-900 ml-1">
+            <button onClick={() => onFilterChange('writer', '')} className="hover:text-teal-900 ml-1">
               <X className="w-3 h-3" />
             </button>
           </span>
         )}
         {filters.category && (
-          <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-amber-100 text-amber-700 rounded-full text-sm font-medium">
+          <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
             🏷️ {filters.category}
-            <button onClick={() => onFilterChange('category', '')} className="hover:text-amber-900 ml-1">
+            <button onClick={() => onFilterChange('category', '')} className="hover:text-blue-900 ml-1">
               <X className="w-3 h-3" />
             </button>
           </span>
         )}
         {(filters.dateRange[0] || filters.dateRange[1]) && (
-          <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-purple-50 to-amber-50 text-purple-700 rounded-full text-sm font-medium">
+          <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-teal-50 to-blue-50 text-teal-700 rounded-full text-sm font-medium">
             📅 Date Range
-            <button onClick={() => onFilterChange('dateRange', ['', ''])} className="hover:text-purple-900 ml-1">
+            <button onClick={() => onFilterChange('dateRange', ['', ''])} className="hover:text-teal-900 ml-1">
               <X className="w-3 h-3" />
             </button>
           </span>
@@ -200,24 +200,36 @@ const BlogFilter: React.FC<BlogFilterProps> = ({
       </div>
 
       {/* Quick Sort Buttons */}
-      <div className="pt-4 border-t border-purple-200">
+      <div className="pt-4 border-t border-teal-200">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm font-medium text-purple-700">Quick sort:</span>
+          <span className="text-sm font-medium text-teal-700">Quick sort:</span>
           <button
             onClick={() => onFilterChange('sortBy', 'recent')}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${filters.sortBy === 'recent' ? 'bg-gradient-to-r from-purple-600 to-amber-500 text-white' : 'bg-purple-50 text-purple-700 hover:bg-purple-100'}`}
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+              filters.sortBy === 'recent' 
+                ? 'bg-gradient-to-r from-teal-500 to-blue-600 text-white' 
+                : 'bg-teal-50 text-teal-700 hover:bg-teal-100'
+            }`}
           >
             🕐 Recent
           </button>
           <button
             onClick={() => onFilterChange('sortBy', 'likes')}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${filters.sortBy === 'likes' ? 'bg-gradient-to-r from-purple-600 to-amber-500 text-white' : 'bg-purple-50 text-purple-700 hover:bg-purple-100'}`}
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+              filters.sortBy === 'likes' 
+                ? 'bg-gradient-to-r from-teal-500 to-blue-600 text-white' 
+                : 'bg-teal-50 text-teal-700 hover:bg-teal-100'
+            }`}
           >
             ❤️ Most Liked
           </button>
           <button
             onClick={() => onFilterChange('sortBy', 'comments')}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${filters.sortBy === 'comments' ? 'bg-gradient-to-r from-purple-600 to-amber-500 text-white' : 'bg-purple-50 text-purple-700 hover:bg-purple-100'}`}
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+              filters.sortBy === 'comments' 
+                ? 'bg-gradient-to-r from-teal-500 to-blue-600 text-white' 
+                : 'bg-teal-50 text-teal-700 hover:bg-teal-100'
+            }`}
           >
             💬 Most Comments
           </button>

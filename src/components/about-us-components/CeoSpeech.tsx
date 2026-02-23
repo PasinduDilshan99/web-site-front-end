@@ -1,6 +1,9 @@
-"use client"
-import React, { useState, useEffect } from 'react';
-import { Quote } from 'lucide-react';
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { Quote } from "lucide-react";
+import { EmployeeService } from "@/services/employeeService";
+import CeoSpeechLoading from "./CeoSpeechLoading";
 
 interface CeoData {
   name: string;
@@ -10,154 +13,139 @@ interface CeoData {
 }
 
 const CeoSpeech: React.FC = () => {
-  const [typingText, setTypingText] = useState<string>('');
-  const [isTyping, setIsTyping] = useState<boolean>(true);
-
-  const ceoData: CeoData = {
-    name: "Pasindu Dilshan",
-    title: "Chief Executive Officer",
-    imageUrl: "/images/users/user-1.jpg",
-    speech: [
-      "Welcome to our journey of innovation and excellence. Since our founding, we have been committed to delivering exceptional experiences to our clients and creating meaningful opportunities for our team.",
-      "Our vision extends beyond business success—we aim to make a lasting positive impact on the communities we serve. Through dedication, creativity, and unwavering integrity, we continue to push boundaries and set new standards in our industry.",
-      "Together, we are building something truly remarkable."
-    ]
-  };
-
-  const lastParagraph = ceoData.speech[ceoData.speech.length - 1];
-  const fullText = lastParagraph;
+  const [ceoData, setCeoData] = useState<CeoData | null>(null);
+  const [typingText, setTypingText] = useState("");
+  const [isTyping, setIsTyping] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!isTyping) return;
+    const fetchCeo = async () => {
+      setLoading(true);
+
+      const { data, error } = await EmployeeService.getCeoDetails();
+
+      if (error) {
+        setError(error);
+      } else if (data) {
+        setCeoData(data);
+      }
+
+      setLoading(false);
+    };
+
+    fetchCeo();
+  }, []);
+
+  useEffect(() => {
+    if (!ceoData || !isTyping) return;
+
+    const lastParagraph = ceoData.speech[ceoData.speech.length - 1] || "";
 
     let currentIndex = 0;
-    const typingInterval = setInterval(() => {
-      if (currentIndex <= fullText.length) {
-        setTypingText(fullText.slice(0, currentIndex));
+
+    const interval = setInterval(() => {
+      if (currentIndex <= lastParagraph.length) {
+        setTypingText(lastParagraph.slice(0, currentIndex));
         currentIndex++;
       } else {
         setIsTyping(false);
-        clearInterval(typingInterval);
+        clearInterval(interval);
       }
-    }, 50);
+    }, 40);
 
-    return () => clearInterval(typingInterval);
-  }, [fullText, isTyping]);
+    return () => clearInterval(interval);
+  }, [ceoData, isTyping]);
 
-  const getInitials = (name: string): string => {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-  };
+  if (loading) {
+    return <CeoSpeechLoading />;
+  }
+
+  if (error || !ceoData) {
+    return (
+      <div className="text-center py-20 text-red-500">
+        Failed to load CEO message
+      </div>
+    );
+  }
+
+  const getInitials = (name: string): string =>
+    name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 py-4 sm:py-4 md:py-8 lg:py-12 px-4 sm:px-6 lg:px-8">
-      <div className="mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-center">
-          
-          {/* Left Side - CEO Image */}
+    <div className="bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 py-6 md:py-10 lg:py-14 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+          {/* LEFT IMAGE */}
           <div className="order-2 lg:order-1 flex justify-center lg:justify-end">
             <div className="relative group">
-              <div className="absolute -inset-4 bg-gradient-to-br from-blue-400 to-teal-400 rounded-full opacity-20 blur-2xl group-hover:opacity-30 transition-opacity duration-500"></div>
-              
-              <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[400px] lg:h-[400px] xl:w-[480px] xl:h-[480px]">
+              <div className="absolute -inset-4 bg-gradient-to-br from-blue-400 to-teal-400 rounded-full opacity-20 blur-2xl"></div>
+
+              <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[420px] lg:h-[420px]">
                 {ceoData.imageUrl ? (
                   <img
                     src={ceoData.imageUrl}
                     alt={ceoData.name}
-                    className="w-full h-full rounded-3xl object-cover shadow-2xl transition-transform duration-500 group-hover:scale-105"
+                    className="w-full h-full rounded-3xl object-cover shadow-2xl"
                   />
                 ) : (
-                  <div className="w-full h-full rounded-3xl bg-gradient-to-br from-blue-500 via-teal-400 to-emerald-500 flex items-center justify-center text-white text-7xl sm:text-8xl md:text-9xl font-bold shadow-2xl transition-transform duration-500 group-hover:scale-105">
+                  <div className="w-full h-full rounded-3xl bg-gradient-to-br from-blue-500 to-teal-500 flex items-center justify-center text-white text-7xl font-bold">
                     {getInitials(ceoData.name)}
                   </div>
                 )}
-                
-                <div className="absolute -bottom-6 -right-6 w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-blue-600 to-teal-500 rounded-2xl opacity-80 -z-10 group-hover:scale-110 transition-transform duration-500"></div>
-                <div className="absolute -top-6 -left-6 w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-cyan-300 to-blue-400 rounded-2xl opacity-60 -z-10 group-hover:scale-110 transition-transform duration-500"></div>
               </div>
 
-              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-white rounded-2xl shadow-xl px-6 py-4 text-center min-w-[280px] sm:min-w-[320px] border-2 border-blue-100">
-                <h3 className="text-xl sm:text-2xl font-bold text-slate-800 mb-1">{ceoData.name}</h3>
-                <p className="text-blue-600 font-semibold text-sm sm:text-base">{ceoData.title}</p>
+              <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-white rounded-2xl shadow-xl px-6 py-4 text-center min-w-[260px] border border-blue-100">
+                <h3 className="text-xl font-bold text-slate-800">
+                  {ceoData.name}
+                </h3>
+                <p className="text-blue-600 font-semibold text-sm">
+                  {ceoData.title}
+                </p>
               </div>
             </div>
           </div>
 
-          {/* Right Side - Speech */}
+          {/* RIGHT SPEECH */}
           <div className="order-1 lg:order-2 space-y-6">
-            {/* Quote icon */}
-            <div className="inline-block p-4 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-2xl shadow-lg border border-blue-200">
-              <Quote className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" />
+            <div className="inline-block p-4 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-2xl">
+              <Quote className="w-8 h-8 text-blue-600" />
             </div>
 
             <div>
-              <h2 className="text-xl sm:text-2xl md:text-4xl font-bold text-slate-800 mb-2">
+              <h2 className="text-2xl md:text-4xl font-bold text-slate-800 mb-2">
                 A Message from Our CEO
               </h2>
+
               <div className="w-24 h-1.5 bg-gradient-to-r from-blue-600 to-teal-500 rounded-full"></div>
             </div>
 
-            <div className="space-y-5 text-gray-700 text-base sm:text-md md:text-lg lg:text-xl leading-relaxed">
+            <div className="space-y-4 text-gray-700 text-base md:text-lg lg:text-xl">
               {ceoData.speech.slice(0, -1).map((paragraph, index) => (
-                <p 
-                  key={index}
-                  className="opacity-0 animate-fadeIn"
-                  style={{ animationDelay: `${index * 0.2}s`, animationFillMode: 'forwards' }}
-                >
-                  {paragraph}
-                </p>
+                <p key={index}>{paragraph}</p>
               ))}
-              
+
               <p className="font-semibold text-blue-800">
                 {typingText}
+
                 {isTyping && (
-                  <span className="inline-block w-0.5 h-5 sm:h-6 bg-blue-600 ml-1 animate-blink"></span>
+                  <span className="inline-block w-0.5 h-5 bg-blue-600 ml-1 animate-pulse"></span>
                 )}
               </p>
             </div>
 
             <div className="pt-6">
-              <div className="inline-block">
-                <p className="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-teal-600 mb-1">
-                  {ceoData.name}
-                </p>
-                <p className="text-sm sm:text-base text-gray-500 italic">{ceoData.title}</p>
-              </div>
+              <p className="text-2xl font-bold text-blue-700">{ceoData.name}</p>
+              <p className="text-gray-500 italic">{ceoData.title}</p>
             </div>
           </div>
-
         </div>
       </div>
-
-      {/* CSS Animations */}
-      <style>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes blink {
-          0%, 50% {
-            opacity: 1;
-          }
-          51%, 100% {
-            opacity: 0;
-          }
-        }
-
-        .animate-fadeIn {
-          animation: fadeIn 0.8s ease-out;
-        }
-
-        .animate-blink {
-          animation: blink 1s infinite;
-        }
-      `}</style>
     </div>
   );
 };

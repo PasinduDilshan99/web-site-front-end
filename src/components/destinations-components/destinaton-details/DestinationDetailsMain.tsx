@@ -8,7 +8,7 @@ interface DestinationDetailsMainProps {
   reviewsLoading: boolean;
   reviewsError: string | null;
   reviews: Review[];
-  onRetryReviews: () => void;
+  // onRetryReviews: () => void;
 }
 
 const DestinationDetailsMain: React.FC<DestinationDetailsMainProps> = ({
@@ -16,7 +16,7 @@ const DestinationDetailsMain: React.FC<DestinationDetailsMainProps> = ({
   reviewsLoading,
   reviewsError,
   reviews,
-  onRetryReviews,
+  // onRetryReviews,
 }) => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [activeTab, setActiveTab] = useState("overview");

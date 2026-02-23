@@ -2,6 +2,7 @@
 import { HeroSectionService } from "@/services/heroSectionService";
 import { FaqHeroData } from "@/types/hero-section-types";
 import React, { useState, useEffect } from "react";
+import HeroSectionLoading from "../loading-components/HeroSectionLoading";
 
 const FaqHeroSection = () => {
   const [loading, setLoading] = useState(true);
@@ -9,6 +10,7 @@ const FaqHeroSection = () => {
   const [heroData, setHeroData] = useState<FaqHeroData[]>([]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     const fetchHeroData = async () => {
@@ -63,15 +65,8 @@ const FaqHeroSection = () => {
     setTimeout(() => setIsAutoPlaying(true), 10000);
   };
 
-  const getFallbackImage = (index: number) => {
-    const fallbackImages = [
-      "photo-1507525428034-b723cf961d3e", // Beach sunset
-      "photo-1518837695005-2083093ee35b", // Ocean waves
-      "photo-1505142468610-359e7d316be0", // Mountain lake
-      "photo-1439066615861-d1af74d74000", // Underwater
-      "photo-1493246507139-91e8fad9978e", // Coastal view
-    ];
-    return `https://images.unsplash.com/${fallbackImages[index % fallbackImages.length]}?w=1600&auto=format&fit=crop&q=80`;
+  const handleImageError = (index: number) => {
+    setFailedImages((prev) => new Set(prev).add(index));
   };
 
   const handleButtonClick = (link?: string) => {
@@ -90,14 +85,7 @@ const FaqHeroSection = () => {
   };
 
   if (loading) {
-    return (
-      <div className="relative w-full h-[500px] sm:h-[600px] md:h-[700px] lg:h-[800px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900 flex items-center justify-center">
-        <div className="text-center text-white px-4">
-          <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 md:h-16 md:w-16 border-b-2 border-sky-400 mx-auto mb-4"></div>
-          <p className="text-base sm:text-lg md:text-xl">Loading Help Center...</p>
-        </div>
-      </div>
-    );
+    return <HeroSectionLoading text="FAQ hero content loading..."/>
   }
 
   if (error || heroData.length === 0) {
@@ -136,31 +124,33 @@ const FaqHeroSection = () => {
 
   return (
     <div className="relative w-full h-[500px] sm:h-[600px] md:h-[650px] lg:h-[700px] xl:h-[750px] 2xl:h-[800px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
-      {/* Image Slider */}
+      {/* Image Slider - Only show gradient if no image or image failed */}
       <div className="relative w-full h-full">
-        {heroData.map((item, index) => (
-          <div
-            key={item.id || index}
-            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-              index === currentSlide ? "opacity-100" : "opacity-0"
-            }`}
-          >
+        {heroData.map((item, index) => {
+          const hasImage = item.imageUrl && !failedImages.has(index);
+          
+          return (
             <div
-              className="w-full h-full bg-cover bg-center bg-no-repeat"
-              style={{
-                backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.7), rgba(8, 145, 178, 0.6)), url('${
-                  item.imageUrl || getFallbackImage(index)
-                }')`,
-              }}
-              onError={(e) => {
-                const target = e.target as HTMLDivElement;
-                target.style.backgroundImage = `linear-gradient(rgba(15, 23, 42, 0.85), rgba(8, 145, 178, 0.8)), url('${getFallbackImage(
-                  index
-                )}')`;
-              }}
-            />
-          </div>
-        ))}
+              key={item.id || index}
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                index === currentSlide ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              {hasImage ? (
+                <div
+                  className="w-full h-full bg-cover bg-center bg-no-repeat"
+                  style={{
+                    backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.7), rgba(8, 145, 178, 0.6)), url('${item.imageUrl}')`,
+                  }}
+                  onError={() => handleImageError(index)}
+                />
+              ) : (
+                // Pure gradient background when no image or image failed
+                <div className="w-full h-full bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900" />
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* Slide Counter */}

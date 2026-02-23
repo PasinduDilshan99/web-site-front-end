@@ -8,7 +8,6 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    console.log("Activities API - Request body:", body);
 
     // Get cookies from the incoming request
     const cookieHeader = request.headers.get("cookie") || "";

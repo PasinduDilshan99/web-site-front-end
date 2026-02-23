@@ -12,8 +12,6 @@ export async function GET(
   try {
   const { tourId } = await context.params;
 
-    console.log("tour History API - tourId:", tourId);
-
     if (!tourId) {
       return NextResponse.json(
         { error: "tour ID is required" },
@@ -26,7 +24,6 @@ export async function GET(
     }
 
     const backendUrl = `${GET_TOUR_DAY_TO_DAY_DETAILS_BY_ID_DATA}/${tourId}`;
-    console.log("Backend URL:", backendUrl);
 
     const response = await fetch(backendUrl, {
       method: "GET",

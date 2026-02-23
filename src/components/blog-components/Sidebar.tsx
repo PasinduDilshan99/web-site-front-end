@@ -4,10 +4,11 @@ import React, { useEffect, useState } from "react";
 import AuthorCard from "./AuthorCard";
 import RelatedBlogs from "./RelatedBlogs";
 import PopularTags from "./PopularTags";
-import { fetchTags } from "@/utils/blog-utils";
+import { BlogService } from "@/services/blogService";
 
 interface SidebarProps {
   writerName: string;
+  writerImageUrl:string;
   blogCount: number;
   relatedBlogs: BlogDetailsData[];
   tags: BlogTag[];
@@ -17,6 +18,7 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({
   writerName,
+  writerImageUrl,
   blogCount,
   relatedBlogs,
   tags,
@@ -27,8 +29,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const fetchAllTags = async () => {
     try {
-      const tagsData = await fetchTags();
-      setTagList(tagsData);
+      const tagsData = await BlogService.fetchTags()
+      setTagList(tagsData.data);
     } catch (error) {
       console.error("Error fetching tags:", error);
     }
@@ -40,7 +42,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <div className="lg:col-span-1 space-y-8">
-      <AuthorCard writerName={writerName} blogCount={blogCount} />
+      <AuthorCard writerName={writerName} blogCount={blogCount} writerImageUrl={writerImageUrl}/>
       <RelatedBlogs relatedBlogs={relatedBlogs} writerName={writerName} />
       <PopularTags
         tagList={tagList}

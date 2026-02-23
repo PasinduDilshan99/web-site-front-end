@@ -1,5 +1,6 @@
 // app/profile/account-security/page.tsx
 "use client";
+import UserProfileAccountSecurityLoading from "@/components/user-profile-components/Loadings/UserProfileAccountSecurityLoading";
 import { useAuth } from "@/context/AuthContext";
 import { UserProfileAPIService } from "@/services/userProfileAPIService";
 import {
@@ -35,7 +36,7 @@ export default function AccountSecurityPage() {
   const apiService = new UserProfileAPIService();
   const router = useRouter();
   const { user } = useAuth();
-  
+
   useEffect(() => {
     if (
       user &&
@@ -116,20 +117,48 @@ export default function AccountSecurityPage() {
     switch (status?.toLowerCase()) {
       case "verified":
         return (
-          <svg className="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+          <svg
+            className="w-4 h-4 mr-1.5"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fillRule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+              clipRule="evenodd"
+            />
           </svg>
         );
       case "pending":
         return (
-          <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg
+            className="w-4 h-4 mr-1.5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
         );
       default:
         return (
-          <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.998-.833-2.732 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          <svg
+            className="w-4 h-4 mr-1.5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.998-.833-2.732 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+            />
           </svg>
         );
     }
@@ -256,26 +285,7 @@ export default function AccountSecurityPage() {
   };
 
   if (loading) {
-    return (
-      <div className="flex-1 p-4 md:p-6 lg:p-8 bg-gradient-to-br from-gray-50 to-white min-h-screen">
-        <div className="max-w-4xl mx-auto">
-          <div className="animate-pulse space-y-8">
-            <div>
-              <div className="h-8 w-64 bg-gradient-to-r from-gray-200 to-gray-300 rounded-lg mb-3"></div>
-              <div className="h-4 w-48 bg-gray-200 rounded"></div>
-            </div>
-            <div className="space-y-6">
-              {[...Array(2)].map((_, i) => (
-                <div key={i} className="space-y-4">
-                  <div className="h-6 w-32 bg-gray-200 rounded"></div>
-                  <div className="h-24 bg-gray-100 rounded-xl"></div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <UserProfileAccountSecurityLoading />;
   }
 
   if (error) {
@@ -284,8 +294,18 @@ export default function AccountSecurityPage() {
         <div className="max-w-md w-full mx-auto">
           <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 text-center">
             <div className="w-16 h-16 bg-gradient-to-r from-red-50 to-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                className="w-8 h-8 text-red-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
             </div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">
@@ -310,8 +330,18 @@ export default function AccountSecurityPage() {
         <div className="max-w-md w-full mx-auto">
           <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 text-center">
             <div className="w-16 h-16 bg-gradient-to-r from-sky-50 to-sky-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg className="w-8 h-8 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              <svg
+                className="w-8 h-8 text-sky-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                />
               </svg>
             </div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">
@@ -406,8 +436,18 @@ export default function AccountSecurityPage() {
                   onClick={cancelVerification}
                   className="text-gray-400 hover:text-gray-600"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </div>
@@ -512,8 +552,18 @@ export default function AccountSecurityPage() {
           <div className="bg-gradient-to-r from-sky-600 to-teal-600 p-5 md:p-6 text-white">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
                 </svg>
               </div>
               <div>
@@ -543,9 +593,11 @@ export default function AccountSecurityPage() {
                       {securityData.email}
                     </p>
                     <div className="flex items-center">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(
-                        primaryEmailVerification.statusName,
-                      )}`}>
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(
+                          primaryEmailVerification.statusName,
+                        )}`}
+                      >
                         {getStatusIcon(primaryEmailVerification.statusName)}
                         {primaryEmailVerification.statusName}
                       </span>
@@ -589,9 +641,11 @@ export default function AccountSecurityPage() {
                   </p>
                   {secondaryEmailVerification.statusName !== "Not Verified" && (
                     <div className="flex items-center gap-2 mt-2">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(
-                        secondaryEmailVerification.statusName,
-                      )}`}>
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(
+                          secondaryEmailVerification.statusName,
+                        )}`}
+                      >
                         {getStatusIcon(secondaryEmailVerification.statusName)}
                         {secondaryEmailVerification.statusName}
                       </span>
@@ -625,8 +679,18 @@ export default function AccountSecurityPage() {
           {/* Security Tips */}
           <div className="bg-gradient-to-br from-sky-50 to-white rounded-xl md:rounded-2xl border border-sky-200 p-5 md:p-6">
             <h3 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
-              <svg className="w-5 h-5 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              <svg
+                className="w-5 h-5 text-sky-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                />
               </svg>
               Security Best Practices
             </h3>
@@ -661,25 +725,41 @@ export default function AccountSecurityPage() {
           {/* Account Status */}
           <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-200 p-5 md:p-6">
             <h3 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
-              <svg className="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                className="w-5 h-5 text-teal-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
               Account Status
             </h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
-                <span className="text-sm font-medium text-gray-600">Overall Security</span>
+                <span className="text-sm font-medium text-gray-600">
+                  Overall Security
+                </span>
                 <span className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold border border-emerald-200">
                   Secure
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="text-center p-3 bg-gray-50 rounded-lg border border-gray-200">
-                  <div className="text-sm font-medium text-gray-600 mb-1">Verified</div>
+                  <div className="text-sm font-medium text-gray-600 mb-1">
+                    Verified
+                  </div>
                   <div className="text-lg font-bold text-emerald-600">1</div>
                 </div>
                 <div className="text-center p-3 bg-gray-50 rounded-lg border border-gray-200">
-                  <div className="text-sm font-medium text-gray-600 mb-1">Pending</div>
+                  <div className="text-sm font-medium text-gray-600 mb-1">
+                    Pending
+                  </div>
                   <div className="text-lg font-bold text-sky-600">1</div>
                 </div>
               </div>

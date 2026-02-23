@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev -p 3000 --turbopack",
     "build": "next build --turbopack",
-    "start": "next start",
+    "start": "next start -p 3000",
     "lint": "eslint"
   },
   "dependencies": {
@@ -21,6 +21,7 @@
     "react-dom": "19.1.0",
     "react-icons": "^5.5.0",
     "react-leaflet": "^5.0.0",
+    "react-markdown": "^10.1.0",
     "react-slick": "^0.31.0",
     "react-snowfall": "^2.4.0",
     "react-to-pdf": "^2.0.3",

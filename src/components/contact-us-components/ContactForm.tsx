@@ -389,7 +389,7 @@ const ContactForm = () => {
     formData.preferredContactMethod === "CALL";
 
   return (
-    <div className="py-16 px-4 md:px-8 bg-gradient-to-b from-white to-gray-50">
+    <div className="bg-gradient-to-b from-white to-gray-50 pb-12 pt-6 lg:pb-16 lg:pt-8 xl:pb-20 xl:pt-10">
       <div className="container mx-auto max-w-6xl">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Left Column - Form */}

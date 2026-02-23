@@ -7,40 +7,16 @@ import EmptyState from "./EmptyState";
 import TourControls from "./TourControls";
 import TestMap from "./TestMap";
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";
-
-type Image = {
-  id: number;
-  url: string;
-  name: string;
-  description?: string;
-};
-
-type Location = {
-  id: number;
-  name: string;
-  lat: number;
-  lng: number;
-  description?: string;
-  images: Image[];
-};
-
-type ApiResponse = {
-  code: number;
-  status: string;
-  message: string;
-  data: Location[];
-  timestamp: string;
-};
+import { TourMapApiResponse, TourMapLocation } from "@/types/tour-map-types";
+import { TourService } from "@/services/tourService";
 
 interface TourMapContainerProps {
   tourId: number;
 }
 
-const API_BASE_URL = "http://localhost:8080/felicita/api/v0";
-
 export default function TourMapContainer({ tourId }: TourMapContainerProps) {
   const [returnToStart, setReturnToStart] = useState(false);
-  const [locations, setLocations] = useState<Location[]>([]);
+  const [locations, setLocations] = useState<TourMapLocation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -49,23 +25,23 @@ export default function TourMapContainer({ tourId }: TourMapContainerProps) {
     setError(null);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/tour/tour-map/${id}`);
+      const result = await TourService.getTourMapDetailsById(id.toString());
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (result.error) {
+        throw new Error(result.error);
       }
 
-      const result: ApiResponse = await response.json();
-
-      if (result.code === 200 && result.data) {
+      if (result.data) {
         setLocations(result.data);
       } else {
-        throw new Error(result.message || "Failed to fetch tour data");
+        setLocations([]);
       }
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "An unknown error occurred";
+
       setError(errorMessage);
+
       console.error("Error fetching tour data:", err);
     } finally {
       setLoading(false);

@@ -1,4 +1,5 @@
 "use client";
+import HeroSectionLoading from "@/components/loading-components/HeroSectionLoading";
 import { HeroSectionService } from "@/services/heroSectionService";
 import { HeroSlideData } from "@/types/hero-section-types";
 import React, { useState, useEffect } from "react";
@@ -14,7 +15,8 @@ const HeroSection = () => {
     const fetchHeroData = async () => {
       try {
         setLoading(true);
-        const { data: items, error } = await HeroSectionService.fetchAllHeroData();
+        const { data: items, error } =
+          await HeroSectionService.fetchAllHeroData();
         if (error) {
           setError(error);
         } else {
@@ -83,57 +85,46 @@ const HeroSection = () => {
 
   // Loading state
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-center text-white w-full max-w-4xl px-4">
-          {/* Header Section Loading State */}
-          <div className="mb-8 sm:mb-10 md:mb-12 lg:mb-16">
-            <div className="animate-spin rounded-full h-12 w-12 sm:h-16 sm:w-16 border-b-2 border-white mx-auto mb-4 sm:mb-6"></div>
-            <div className="h-3 sm:h-4 bg-gray-700 rounded w-32 sm:w-48 mx-auto mb-3 sm:mb-4 animate-pulse"></div>
-            <div className="h-6 sm:h-8 md:h-10 bg-gray-700 rounded w-48 sm:w-64 md:w-80 mx-auto mb-3 sm:mb-4 animate-pulse"></div>
-            <div className="h-1 bg-gray-700 rounded w-12 sm:w-16 mx-auto animate-pulse"></div>
-          </div>
-
-          {/* Hero Image Slider Loading State */}
-          <div className="max-w-full mx-auto space-y-2 sm:space-y-3 md:space-y-4">
-            {[...Array(3)].map((_, rowIndex) => (
-              <div key={rowIndex} className="flex gap-2 sm:gap-3 md:gap-4 overflow-hidden justify-center">
-                {[...Array(6)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="flex-shrink-0 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 xl:w-56 xl:h-56 bg-gray-800 rounded-lg animate-pulse"
-                    style={{
-                      animationDelay: `${rowIndex * 100 + i * 50}ms`,
-                    }}
-                  ></div>
-                ))}
-              </div>
-            ))}
-          </div>
-
-          {/* Button Loading State */}
-          <div className="mt-8 sm:mt-12 md:mt-16 flex flex-col sm:flex-row gap-4 justify-center">
-            <div className="h-12 sm:h-14 bg-gray-800 rounded-full w-48 sm:w-56 animate-pulse"></div>
-            <div className="h-12 sm:h-14 bg-gray-800 rounded-full w-48 sm:w-56 animate-pulse"></div>
-          </div>
-        </div>
-      </div>
-    );
+    return <HeroSectionLoading text="Loading homepage hero section..." />;
   }
-
   // Error state
   if (error || heroData.length === 0) {
     return (
-      <div className="relative w-full h-screen overflow-hidden bg-gray-900 flex items-center justify-center">
-        <div className="text-center text-white">
-          <p className="text-xl text-red-400 mb-4">
-            {error || "No hero content available"}
-          </p>
+      <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-gray-900 to-teal-950 flex items-center justify-center">
+        {/* Animated wave effect in background */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-teal-500/20 to-transparent animate-pulse"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-cyan-500/20 to-transparent animate-pulse [animation-delay:1s]"></div>
+        </div>
+
+        <div className="text-center text-white relative z-10 p-8 rounded-2xl bg-gray-900/50 backdrop-blur-sm border border-teal-500/30 shadow-2xl shadow-teal-500/10">
+          <div className="mb-6">
+            {/* Ocean wave icon */}
+            <svg
+              className="w-16 h-16 mx-auto text-teal-400 mb-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M20 12.5c-1.5 0-2.5-1-4-1s-2.5 1-4 1-2.5-1-4-1-2.5 1-4 1-2.5-1-4-1M20 16.5c-1.5 0-2.5-1-4-1s-2.5 1-4 1-2.5-1-4-1-2.5 1-4 1-2.5-1-4-1"
+              />
+            </svg>
+            <p className="text-xl text-teal-300 mb-2 font-light">
+              {error || "No sea treasures found"}
+            </p>
+            <p className="text-sm text-cyan-300/70 mb-6">
+              The ocean depths are quiet...
+            </p>
+          </div>
           <button
             onClick={() => window.location.reload()}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-8 py-3 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-full hover:from-teal-500 hover:to-cyan-500 transition-all duration-300 shadow-lg shadow-teal-600/30 hover:shadow-xl hover:shadow-teal-600/40 transform hover:scale-105 font-medium"
           >
-            Retry
+            Dive Again
           </button>
         </div>
       </div>
@@ -164,7 +155,7 @@ const HeroSection = () => {
                 // Fallback to placeholder image if original fails
                 const target = e.target as HTMLDivElement;
                 target.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('${getFallbackImage(
-                  index
+                  index,
                 )}')`;
               }}
             />
@@ -174,41 +165,41 @@ const HeroSection = () => {
 
       {/* Content Overlay */}
       <div className="absolute inset-0 flex items-center justify-center">
-  <div className="text-center text-white px-6 max-w-4xl mx-auto">
-    <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-      {currentSlideData.imageTitle}
-      <span className="block bg-gradient-to-r from-cyan-400 to-emerald-500 bg-clip-text text-transparent">
-        {currentSlideData.imageSubTitle}
-      </span>
-    </h1>
-    <p className="text-xl md:text-2xl mb-8 text-gray-200 max-w-2xl mx-auto leading-relaxed">
-      {currentSlideData.imageDescription ||
-        "Discover amazing experiences with us"}
-    </p>
-    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-      {currentSlideData.imagePrimaryButtonText && (
-        <button
-          onClick={() =>
-            handleButtonClick(currentSlideData.imagePrimaryButtonLink)
-          }
-          className="px-8 py-4 bg-gradient-to-r from-blue-600 to-emerald-500 text-white font-semibold rounded-full hover:from-cyan-600 hover:to-emerald-600 transform hover:scale-105 transition-all duration-300 shadow-lg"
-        >
-          {currentSlideData.imagePrimaryButtonText}
-        </button>
-      )}
-      {currentSlideData.imageSecondaryButtonText && (
-        <button
-          onClick={() =>
-            handleButtonClick(currentSlideData.imageSecondaryButtonLink)
-          }
-          className="px-8 py-4 border-2 border-cyan-300 text-white font-semibold rounded-full hover:bg-cyan-500 hover:border-cyan-500 hover:text-white transition-all duration-300"
-        >
-          {currentSlideData.imageSecondaryButtonText}
-        </button>
-      )}
-    </div>
-  </div>
-</div>
+        <div className="text-center text-white px-6 max-w-4xl mx-auto">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+            {currentSlideData.imageTitle}
+            <span className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl block bg-gradient-to-r from-cyan-400 to-emerald-500 bg-clip-text text-transparent">
+              {currentSlideData.imageSubTitle}
+            </span>
+          </h1>
+          <p className="text-xl md:text-2xl mb-8 text-gray-200 max-w-2xl mx-auto leading-relaxed">
+            {currentSlideData.imageDescription ||
+              "Discover amazing experiences with us"}
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            {currentSlideData.imagePrimaryButtonText && (
+              <button
+                onClick={() =>
+                  handleButtonClick(currentSlideData.imagePrimaryButtonLink)
+                }
+                className="px-8 py-4 bg-gradient-to-r from-blue-600 to-emerald-500 text-white font-semibold rounded-full hover:from-cyan-600 hover:to-emerald-600 transform hover:scale-105 transition-all duration-300 shadow-lg"
+              >
+                {currentSlideData.imagePrimaryButtonText}
+              </button>
+            )}
+            {currentSlideData.imageSecondaryButtonText && (
+              <button
+                onClick={() =>
+                  handleButtonClick(currentSlideData.imageSecondaryButtonLink)
+                }
+                className="px-8 py-4 border-2 border-cyan-300 text-white font-semibold rounded-full hover:bg-cyan-500 hover:border-cyan-500 hover:text-white transition-all duration-300"
+              >
+                {currentSlideData.imageSecondaryButtonText}
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
 
       {/* Navigation Arrows */}
       {heroData.length > 1 && (
@@ -271,16 +262,16 @@ const HeroSection = () => {
       )}
 
       {/* Progress Bar */}
-{heroData.length > 1 && (
-  <div className="absolute bottom-0 left-0 w-full h-1 bg-white/20">
-    <div
-      className="h-full bg-gradient-to-r from-cyan-400 to-emerald-500 transition-all duration-300"
-      style={{
-        width: `${((currentSlide + 1) / heroData.length) * 100}%`,
-      }}
-    />
-  </div>
-)}
+      {heroData.length > 1 && (
+        <div className="absolute bottom-0 left-0 w-full h-1 bg-white/20">
+          <div
+            className="h-full bg-gradient-to-r from-cyan-400 to-emerald-500 transition-all duration-300"
+            style={{
+              width: `${((currentSlide + 1) / heroData.length) * 100}%`,
+            }}
+          />
+        </div>
+      )}
 
       {/* Auto-play Indicator */}
       {heroData.length > 1 && (

@@ -1,12 +1,13 @@
 // app/profile/layout.tsx
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import Sidebar from "@/components/user-profile-components/Sidebar";
 import { UNIQUE_CODE_NAME } from "@/utils/constant";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import Loading from "@/components/common-components/loading/Loading";
+import ProfileLayoutLoading from "@/components/user-profile-components/ProfileLayoutLoading";
 
 export default function ProfileLayout({
   children,
@@ -31,7 +32,7 @@ export default function ProfileLayout({
   }, [isClient, router]);
 
   if (!isClient || authLoading) {
-    return <Loading />;
+    return <ProfileLayoutLoading />;
   }
 
   return (

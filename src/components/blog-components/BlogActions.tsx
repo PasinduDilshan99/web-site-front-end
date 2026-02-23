@@ -73,10 +73,10 @@ const BlogActions: React.FC<BlogActionsProps> = ({
       case REACTION_TYPES.LIKE: return "text-blue-600";
       case REACTION_TYPES.LOVE: return "text-red-500";
       case REACTION_TYPES.HAHA: return "text-yellow-500";
-      case REACTION_TYPES.WOW: return "text-purple-500";
+      case REACTION_TYPES.WOW: return "text-teal-500";
       case REACTION_TYPES.SAD: return "text-blue-400";
       case REACTION_TYPES.ANGRY: return "text-red-600";
-      default: return "text-purple-600";
+      default: return "text-teal-600";
     }
   };
 
@@ -89,7 +89,7 @@ const BlogActions: React.FC<BlogActionsProps> = ({
   };
 
   return (
-    <div className="mt-8 pt-8 border-t border-purple-100 flex flex-wrap gap-4 relative">
+    <div className="mt-8 pt-8 border-t border-teal-100 flex flex-wrap gap-4 relative">
       {/* Reaction Button */}
       <div className="relative">
         <button
@@ -97,8 +97,8 @@ const BlogActions: React.FC<BlogActionsProps> = ({
           disabled={isReacting}
           className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
             userReaction
-              ? "bg-gradient-to-r from-purple-600 to-amber-500 text-white shadow-lg"
-              : "bg-purple-50 text-purple-700 hover:bg-purple-100"
+              ? "bg-gradient-to-r from-teal-500 to-blue-600 text-white shadow-lg"
+              : "bg-teal-50 text-teal-700 hover:bg-teal-100"
           }`}
         >
           {isReacting ? (
@@ -142,7 +142,7 @@ const BlogActions: React.FC<BlogActionsProps> = ({
       
       <button
         onClick={onShare}
-        className="flex items-center gap-2 px-6 py-3 bg-white border border-purple-300 text-purple-700 rounded-xl font-medium hover:bg-purple-50 transition-colors"
+        className="flex items-center gap-2 px-6 py-3 bg-white border border-teal-300 text-teal-700 rounded-xl font-medium hover:bg-teal-50 transition-colors"
       >
         <Share2 className="w-5 h-5" />
         Share
@@ -151,8 +151,8 @@ const BlogActions: React.FC<BlogActionsProps> = ({
         onClick={handleBookmarkClick}
         className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-colors ${
           isBookmarked
-            ? "bg-amber-50 text-amber-700 border border-amber-300"
-            : "bg-white border border-purple-300 text-purple-700 hover:bg-purple-50"
+            ? "bg-blue-50 text-blue-700 border border-blue-300"
+            : "bg-white border border-teal-300 text-teal-700 hover:bg-teal-50"
         }`}
         title={isBookmarked ? "Remove from bookmarks" : "Add to bookmarks"}
       >

@@ -4,6 +4,7 @@ import { TourHeroData } from "@/types/hero-section-types";
 import { NUMBER_OF_TOUR_CATEGORIES } from "@/utils/constant";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
+import HeroSectionLoading from "../loading-components/HeroSectionLoading";
 
 const TourHeroSection = () => {
   const [loading, setLoading] = useState(true);
@@ -11,6 +12,7 @@ const TourHeroSection = () => {
   const [heroData, setHeroData] = useState<TourHeroData[]>([]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
   const router = useRouter();
 
   useEffect(() => {
@@ -19,7 +21,8 @@ const TourHeroSection = () => {
         setLoading(true);
         setError(null);
 
-        const { data: items, error } = await HeroSectionService.fetchTourHeroData();
+        const { data: items, error } =
+          await HeroSectionService.fetchTourHeroData();
 
         if (error) {
           setError(error);
@@ -66,32 +69,13 @@ const TourHeroSection = () => {
     setTimeout(() => setIsAutoPlaying(true), 10000);
   };
 
-  const getFallbackImage = (index: number) => {
-    const fallbackImages = [
-      "photo-1507525428034-b723cf961d3e", // Beach sunset
-      "photo-1518837695005-2083093ee35b", // Ocean waves
-      "photo-1505142468610-359e7d316be0", // Mountain lake
-      "photo-1493246507139-91e8fad9978e", // Coastal view
-      "photo-1439066615861-d1af74d74000", // Underwater sea
-      "photo-1469474968028-56623f02e42e", // Mountain panorama
-      "photo-1506905925346-21bda4d32df4", // Blue sea
-      "photo-1501854140801-50d01698950b", // Forest lake
-      "photo-1500673922987-e212871fec22", // Tropical island
-      "photo-1493246507139-91e8fad9978e", // Mountains
-    ];
-    return `https://images.unsplash.com/${fallbackImages[index % fallbackImages.length]}?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80`;
+  const handleImageError = (index: number) => {
+    setFailedImages((prev) => new Set(prev).add(index));
   };
 
   if (loading) {
     return (
-      <div className="relative w-full h-[500px] sm:h-[600px] md:h-[700px] lg:h-[750px] xl:h-[800px] 2xl:h-[850px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900 flex items-center justify-center">
-        <div className="text-center text-white px-4">
-          <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 lg:h-16 lg:w-16 border-b-2 border-sky-400 mx-auto mb-4"></div>
-          <p className="text-sm sm:text-base md:text-lg lg:text-xl">
-            Loading Amazing Tours...
-          </p>
-        </div>
-      </div>
+      <HeroSectionLoading text="Sri Lankan Tours Page hero content loading..." />
     );
   }
 
@@ -131,31 +115,33 @@ const TourHeroSection = () => {
 
   return (
     <div className="relative w-full h-[550px] sm:h-[600px] md:h-[700px] lg:h-[750px] xl:h-[800px] 2xl:h-[850px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
-      {/* Image Slider */}
+      {/* Image Slider - Only show image if available and not failed */}
       <div className="relative w-full h-full">
-        {heroData.map((item, index) => (
-          <div
-            key={item.id || index}
-            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-              index === currentSlide ? "opacity-100" : "opacity-0"
-            }`}
-          >
+        {heroData.map((item, index) => {
+          const hasImage = item.imageUrl && !failedImages.has(index);
+
+          return (
             <div
-              className="w-full h-full bg-cover bg-center bg-no-repeat"
-              style={{
-                backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.6), rgba(8, 145, 178, 0.5)), url('${
-                  item.imageUrl || getFallbackImage(index)
-                }')`,
-              }}
-              onError={(e) => {
-                const target = e.target as HTMLDivElement;
-                target.style.backgroundImage = `linear-gradient(rgba(15, 23, 42, 0.7), rgba(8, 145, 178, 0.6)), url('${getFallbackImage(
-                  index
-                )}')`;
-              }}
-            />
-          </div>
-        ))}
+              key={item.id || index}
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                index === currentSlide ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              {hasImage ? (
+                <div
+                  className="w-full h-full bg-cover bg-center bg-no-repeat"
+                  style={{
+                    backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.6), rgba(8, 145, 178, 0.5)), url('${item.imageUrl}')`,
+                  }}
+                  onError={() => handleImageError(index)}
+                />
+              ) : (
+                // Pure gradient background when no image or image failed
+                <div className="w-full h-full bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900" />
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* Tour Badge */}
@@ -163,7 +149,9 @@ const TourHeroSection = () => {
         <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-sky-500/20 backdrop-blur-sm rounded-full border border-sky-400/30">
           <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-sky-400 rounded-full animate-pulse"></div>
           <span className="text-xs sm:text-sm font-medium text-white">
-            <span className="text-sky-200 font-bold">{NUMBER_OF_TOUR_CATEGORIES}</span>{" "}
+            <span className="text-sky-200 font-bold">
+              {NUMBER_OF_TOUR_CATEGORIES}
+            </span>{" "}
             Tour Categories
           </span>
         </div>
@@ -208,7 +196,7 @@ const TourHeroSection = () => {
                     <button
                       onClick={() =>
                         router.push(
-                          `/sri-lankan-tours?tourType=${currentSlideData.primaryButtonLink}`
+                          `/sri-lankan-tours?tourType=${currentSlideData.primaryButtonLink}`,
                         )
                       }
                       className="w-full sm:w-auto px-5 sm:px-7 md:px-9 py-3 sm:py-4 md:py-5 bg-gradient-to-r from-sky-500 to-teal-500 text-white text-sm sm:text-base font-semibold rounded-xl sm:rounded-2xl hover:from-sky-600 hover:to-teal-600 transform hover:scale-[1.02] transition-all duration-300 shadow-2xl flex items-center justify-center gap-3 sm:gap-4 group"
@@ -235,7 +223,7 @@ const TourHeroSection = () => {
                     <button
                       onClick={() =>
                         router.push(
-                          `/sri-lankan-tours?location=${currentSlideData.secondaryButtonLink}`
+                          `/sri-lankan-tours?location=${currentSlideData.secondaryButtonLink}`,
                         )
                       }
                       className="w-full sm:w-auto px-5 sm:px-7 md:px-9 py-3 sm:py-4 md:py-5 border-2 border-sky-300/50 text-white text-sm sm:text-base font-semibold rounded-xl sm:rounded-2xl hover:bg-sky-50/20 hover:border-sky-200 backdrop-blur-sm transition-all duration-300 flex items-center justify-center gap-3 sm:gap-4 group"
@@ -290,7 +278,9 @@ const TourHeroSection = () => {
                   <p className="text-xs sm:text-sm text-sky-200/90 truncate">
                     Destinations
                   </p>
-                  <p className="text-lg sm:text-xl md:text-2xl font-bold text-white">50+</p>
+                  <p className="text-lg sm:text-xl md:text-2xl font-bold text-white">
+                    50+
+                  </p>
                 </div>
               </div>
               <div className="flex items-center gap-3 sm:gap-4 px-4 sm:px-5 md:px-6 py-3 sm:py-4 bg-white/5 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-teal-500/20 hover:border-teal-400/40 hover:bg-white/10 transition-all duration-300">
@@ -310,8 +300,12 @@ const TourHeroSection = () => {
                   </svg>
                 </div>
                 <div className="min-w-0 text-left">
-                  <p className="text-xs sm:text-sm text-teal-200/90 truncate">Duration</p>
-                  <p className="text-lg sm:text-xl md:text-2xl font-bold text-white">1-14 Days</p>
+                  <p className="text-xs sm:text-sm text-teal-200/90 truncate">
+                    Duration
+                  </p>
+                  <p className="text-lg sm:text-xl md:text-2xl font-bold text-white">
+                    1-14 Days
+                  </p>
                 </div>
               </div>
               <div className="flex items-center gap-3 sm:gap-4 px-4 sm:px-5 md:px-6 py-3 sm:py-4 bg-white/5 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-cyan-500/20 hover:border-cyan-400/40 hover:bg-white/10 transition-all duration-300">
@@ -334,7 +328,9 @@ const TourHeroSection = () => {
                   <p className="text-xs sm:text-sm text-cyan-200/90 truncate">
                     Customer Rating
                   </p>
-                  <p className="text-lg sm:text-xl md:text-2xl font-bold text-white">4.9/5</p>
+                  <p className="text-lg sm:text-xl md:text-2xl font-bold text-white">
+                    4.9/5
+                  </p>
                 </div>
               </div>
             </div>

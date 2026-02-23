@@ -6,6 +6,7 @@ import { UNIQUE_CODE_NAME } from "@/utils/constant";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import UserDetailsLoading from "./UserDetailsLoading";
 
 interface UserProfileContentProps {
   profileData?: UserProfileResponse;
@@ -46,29 +47,7 @@ export default function UserProfileContent({
   }
 
   if (loading) {
-    return (
-      <div className="flex-1 p-4 md:p-6 lg:p-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="animate-pulse space-y-8">
-            {/* Header Skeleton */}
-            <div>
-              <div className="h-8 w-64 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-lg mb-3"></div>
-              <div className="h-4 w-48 bg-gray-200 rounded"></div>
-            </div>
-
-            {/* Grid Skeleton */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="space-y-3">
-                  <div className="h-20 bg-gradient-to-r from-gray-100 to-gray-200 rounded-xl"></div>
-                  <div className="h-20 bg-gradient-to-r from-gray-100 to-gray-200 rounded-xl"></div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <UserDetailsLoading />;
   }
 
   if (!userProfile) {
@@ -241,8 +220,8 @@ export default function UserProfileContent({
 
                 <InfoCard>
                   <InfoField
-                    label="Religion"
-                    value={userProfile.religion || "Not specified"}
+                    label="Nationality"
+                    value={userProfile.countryName || "Not specified"}
                   />
                 </InfoCard>
               </div>

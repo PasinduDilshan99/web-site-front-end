@@ -38,9 +38,12 @@ import {
   Wallet,
   Users,
   Target,
+  Loader,
+  Hourglass,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
+import SideBarLoading from "./SideBarLoading";
 
 // Sea Blue & Sea Green Theme Colors
 const THEME = {
@@ -91,14 +94,30 @@ const getIcon = (itemName: string) => {
   if (name.includes("browsing") && name.includes("history")) return Eye;
   if (name.includes("cancelled") && name.includes("tour")) return X;
   if (name.includes("completed") && name.includes("tour")) return CheckCircle;
+  if (name.includes("pending") && name.includes("tour")) return Hourglass;
   if (name.includes("coupon") || name.includes("offer")) return Ticket;
   if (name.includes("destination") && name.includes("review")) return MapPin;
   if (name.includes("notification")) return Bell;
   if (name.includes("package") && name.includes("review")) return Package;
   if (name.includes("requested") && name.includes("tour")) return Clock;
-  if (name.includes("review") && !name.includes("tour") && !name.includes("destination") && !name.includes("package") && !name.includes("activity")) return Star;
+  if (
+    name.includes("review") &&
+    !name.includes("tour") &&
+    !name.includes("destination") &&
+    !name.includes("package") &&
+    !name.includes("activity")
+  )
+    return Star;
   if (name.includes("tour") && name.includes("review")) return Star;
-  if (name.includes("tour") && !name.includes("upcoming") && !name.includes("completed") && !name.includes("cancelled") && !name.includes("requested")) return MapPin;
+  if (
+    name.includes("tour") &&
+    !name.includes("upcoming") &&
+    !name.includes("completed") &&
+    !name.includes("cancelled") &&
+    !name.includes("requested") &&
+    !name.includes("pending")
+  )
+    return MapPin;
   if (name.includes("upcoming") && name.includes("tour")) return Calendar;
   if (name.includes("user") && name.includes("benefit")) return Gift;
   if (name.includes("wallet")) return Wallet;
@@ -111,7 +130,8 @@ const getIcon = (itemName: string) => {
   if (name.includes("alert")) return AlertCircle;
   if (name.includes("payment") || name.includes("card")) return CreditCard;
   if (name.includes("document") || name.includes("file")) return FileText;
-  if (name.includes("help") || name.includes("support") || name.includes("faq")) return HelpCircle;
+  if (name.includes("help") || name.includes("support") || name.includes("faq"))
+    return HelpCircle;
   if (name.includes("admin") || name.includes("management")) return Shield;
 
   // Default
@@ -144,35 +164,6 @@ export default function Sidebar() {
   // Responsive width handling
   const [windowWidth, setWindowWidth] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
-
-  // Custom hook to manage body scroll lock
-  const useBodyScrollLock = (isLocked: boolean) => {
-    useEffect(() => {
-      if (isLocked && isMobile) {
-        // Store current scroll position
-        const scrollY = window.scrollY;
-        const body = document.body;
-        
-        // Lock body scroll
-        body.style.position = 'fixed';
-        body.style.top = `-${scrollY}px`;
-        body.style.width = '100%';
-        body.style.overflow = 'hidden';
-        
-        return () => {
-          // Restore scroll position
-          body.style.position = '';
-          body.style.top = '';
-          body.style.width = '';
-          body.style.overflow = '';
-          window.scrollTo(0, scrollY);
-        };
-      }
-    }, [isLocked, isMobile]);
-  };
-
-  // Use the scroll lock hook
-  useBodyScrollLock(isMobileOpen);
 
   useEffect(() => {
     const handleResize = () => {
@@ -571,40 +562,16 @@ export default function Sidebar() {
 
   // Loading state
   if (loading) {
-    return (
-      <div
-        className={`hidden md:block fixed md:relative z-40 bg-white border-r border-blue-200 h-screen transition-all duration-300 ${
-          isCollapsed ? "w-20" : "w-64"
-        }`}
-      >
-        <div className="p-4 border-b border-blue-200">
-          <div className="animate-pulse flex items-center space-x-3">
-            <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-200 to-green-200"></div>
-            {!isCollapsed && (
-              <div className="space-y-2">
-                <div className="h-4 w-32 bg-gradient-to-r from-blue-200 to-green-200 rounded"></div>
-                <div className="h-3 w-24 bg-gradient-to-r from-blue-100 to-green-100 rounded"></div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="p-4 space-y-2">
-          {[...Array(6)].map((_, i) => (
-            <div
-              key={i}
-              className="h-12 rounded-lg bg-gradient-to-r from-blue-50 to-green-50 animate-pulse"
-            ></div>
-          ))}
-        </div>
-      </div>
-    );
+    return <SideBarLoading isCollapsed={isCollapsed} />;
   }
 
   // Error state
   if (error) {
     return (
-      <div className="hidden md:block w-64 bg-white border-r border-blue-200 h-screen p-4 fixed md:relative z-40">
+      <div
+        className="hidden md:block w-64 bg-white border-r border-blue-200 p-4 fixed md:sticky md:top-0 z-40"
+        style={{ height: "100vh", maxHeight: "100vh" }}
+      >
         <div className="text-center p-4 space-y-3">
           <div className="h-12 w-12 mx-auto rounded-full bg-gradient-to-r from-red-100 to-pink-100 flex items-center justify-center">
             <X className="text-red-500" size={24} />
@@ -625,9 +592,10 @@ export default function Sidebar() {
   if (filteredSidebarData.length === 0) {
     return (
       <div
-        className={`hidden md:block fixed md:relative z-40 bg-white border-r border-blue-200 h-screen transition-all duration-300 ${
+        className={`hidden md:block fixed md:sticky md:top-0 z-40 bg-white border-r border-blue-200 transition-all duration-300 ${
           isCollapsed ? "w-20" : "w-64"
         }`}
+        style={{ height: "100vh", maxHeight: "100vh" }}
       >
         <div className="h-full flex flex-col items-center justify-center p-4">
           <div className="h-16 w-16 rounded-full bg-gradient-to-r from-gray-100 to-gray-200 flex items-center justify-center mb-4">
@@ -648,33 +616,34 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Mobile Overlay with Backdrop Blur - Fixed scrolling issue */}
+      {/* Mobile arrow button - Always visible */}
+      {isMobile && (
+        <button
+          onClick={() => setIsMobileOpen(!isMobileOpen)}
+          className="fixed top-1/2 left-0 transform -translate-y-1/2 z-50 h-16 w-6 bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-r-lg flex items-center justify-center shadow-lg hover:w-8 transition-all duration-300 group md:hidden"
+          aria-label={isMobileOpen ? "Close sidebar" : "Open sidebar"}
+        >
+          {isMobileOpen ? (
+            <ChevronLeft size={18} className="group-hover:scale-110" />
+          ) : (
+            <ChevronRight size={18} className="group-hover:scale-110" />
+          )}
+        </button>
+      )}
+
+      {/* Mobile Overlay */}
       {isMobileOpen && isMobile && (
         <div
           className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-all duration-300 md:hidden"
           onClick={() => setIsMobileOpen(false)}
-          style={{
-            touchAction: 'none',
-            overscrollBehavior: 'contain',
-            position: 'fixed',
-          }}
         />
       )}
 
-      {/* Swipe indicator for mobile (only visible when sidebar is closed) */}
-      {!isMobileOpen && isMobile && (
-        <div className="fixed left-0 top-1/2 transform -translate-y-1/2 z-30 w-2 h-20 bg-gradient-to-b from-blue-500/50 to-green-500/50 rounded-r-lg animate-pulse md:hidden pointer-events-none">
-          <div className="absolute -right-1 top-1/2 transform -translate-y-1/2">
-            <ChevronRight className="text-blue-500" size={16} />
-          </div>
-        </div>
-      )}
-
-      {/* Sidebar Container - Fixed scrolling */}
+      {/* Sidebar Container - FIXED HEIGHT AND POSITIONING */}
       <aside
         ref={sidebarRef}
         className={`
-          fixed md:relative z-50 min-h-screen bg-white border-r border-blue-200 overflow-hidden
+          fixed md:sticky md:top-0 z-50 bg-white border-r border-blue-200
           transition-all duration-300 ease-out
           ${isMobile ? (isMobileOpen ? "translate-x-0" : "-translate-x-full") : ""}
           ${isMobile ? "w-72" : isCollapsed ? "w-20" : "w-64"}
@@ -685,17 +654,17 @@ export default function Sidebar() {
           transform: isMobile
             ? `translateX(${isMobileOpen ? "0" : "-100%"})`
             : "translateX(0)",
-          height: '100vh',
-          maxHeight: '100vh',
+          height: "100vh",
+          maxHeight: "100vh",
         }}
         onMouseEnter={() => !isMobile && setIsHovered(true)}
         onMouseLeave={() => !isMobile && setIsHovered(false)}
       >
-        {/* Sidebar Header with Close Button for Mobile */}
+        {/* Sidebar Header */}
         <div className="p-4 border-b border-blue-200 bg-gradient-to-r from-blue-50 to-green-50 flex-shrink-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-500 to-green-500 flex items-center justify-center flex-shrink-0 transition-transform duration-300 hover:scale-110">
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-500 to-green-500 flex items-center justify-center flex-shrink-0">
                 <Image
                   alt="profile pic"
                   src={user?.imageUrl || "/images/users/user-1.jpg"}
@@ -706,7 +675,7 @@ export default function Sidebar() {
               </div>
 
               {(!isCollapsed || isMobile) && (
-                <div className="flex-1 min-w-0 transition-all duration-300">
+                <div className="flex-1 min-w-0">
                   <h1 className="text-lg font-bold text-gray-800 truncate">
                     {user?.firstName} {user?.lastName}
                   </h1>
@@ -743,65 +712,34 @@ export default function Sidebar() {
           </div>
         </div>
 
-        {/* Scrollable Content with proper mobile scrolling */}
-        <div 
-          className="flex-1 overflow-y-auto overflow-x-hidden py-4 scroll-smooth"
+        {/* Scrollable Content - PROPERLY CONFIGURED */}
+        <div
+          className="flex-1 overflow-y-auto overflow-x-hidden py-4"
           style={{
-            WebkitOverflowScrolling: 'touch',
-            overscrollBehavior: 'contain',
+            WebkitOverflowScrolling: "touch",
+            scrollbarWidth: "thin",
+            scrollbarColor: "#CBD5E0 transparent",
           }}
         >
+          <style jsx>{`
+            div::-webkit-scrollbar {
+              width: 6px;
+            }
+            div::-webkit-scrollbar-track {
+              background: transparent;
+            }
+            div::-webkit-scrollbar-thumb {
+              background-color: #cbd5e0;
+              border-radius: 3px;
+            }
+            div::-webkit-scrollbar-thumb:hover {
+              background-color: #a0aec0;
+            }
+          `}</style>
           <nav className="space-y-1">
             {filteredSidebarData.map((item) => renderSidebarItem(item))}
           </nav>
         </div>
-
-        {/* Sidebar Footer */}
-        {/* <div className="border-t border-blue-200 p-4 flex-shrink-0">
-          {(!isCollapsed || isMobile) ? (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between text-xs text-gray-500">
-                <span>Accessible Modules</span>
-                <div className="flex items-center space-x-2">
-                  <span className="font-medium text-blue-600">{filteredSidebarData.length}</span>
-                  <span className="text-gray-400">/</span>
-                  <span className="text-gray-400">{sidebarData.length}</span>
-                </div>
-              </div>
-              {!isMobile && (
-                <div className="flex items-center space-x-2 text-xs text-gray-500">
-                  <div className="h-2 w-2 rounded-full bg-blue-500"></div>
-                  <span>Parent items</span>
-                  <div className="h-2 w-2 rounded-full bg-green-500 ml-2"></div>
-                  <span>Child items</span>
-                </div>
-              )}
-              <button
-                className="w-full flex items-center justify-center space-x-2 px-3 py-2 rounded-lg bg-gradient-to-r from-blue-50 to-green-50 text-blue-700 hover:shadow-md transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
-                onClick={() => router.push('/logout')}
-              >
-                <LogOut size={16} />
-                <span className="text-sm font-medium">Sign Out</span>
-              </button>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center space-y-3">
-              <div className="text-center">
-                <div className="text-xs font-medium text-blue-600 bg-blue-100 h-6 w-6 rounded-full flex items-center justify-center mx-auto">
-                  {filteredSidebarData.length}
-                </div>
-                <span className="text-xs text-gray-500 mt-1 block">Modules</span>
-              </div>
-              <button
-                className="p-2 rounded-lg bg-gradient-to-r from-blue-50 to-green-50 text-blue-700 hover:shadow-md transition-all duration-300 hover:scale-110 active:scale-95"
-                onClick={() => router.push('/logout')}
-                aria-label="Sign out"
-              >
-                <LogOut size={18} />
-              </button>
-            </div>
-          )}
-        </div> */}
 
         {/* Expand button for collapsed desktop state */}
         {!isMobile && isCollapsed && (
@@ -819,7 +757,7 @@ export default function Sidebar() {
 
         {/* Swipe hint for mobile */}
         {isMobile && isMobileOpen && (
-          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 animate-pulse">
+          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 animate-pulse pointer-events-none">
             <ChevronLeft size={20} />
           </div>
         )}

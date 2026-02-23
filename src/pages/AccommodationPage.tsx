@@ -1,4 +1,4 @@
-import Footer from "@/app/components/footer/Footer";
+import Footer from "@/components/common-components/footer/Footer";
 import HostelsSection from "@/components/accommodation-components/HostelsSection";
 import HotelsSection from "@/components/accommodation-components/HotelsSection";
 import ResortsSection from "@/components/accommodation-components/ResortsSection";
@@ -10,15 +10,11 @@ import React from "react";
 const AccommodationPage = () => {
   return (
     <div>
-      <NavBar />
-      <div>
-        <HotelsSection />
-        <VillasSection />
-        <ResortsSection />
-        <RestaurantsSection />
-        <HostelsSection />
-      </div>
-      <Footer />
+      <HotelsSection />
+      <VillasSection />
+      <ResortsSection />
+      <RestaurantsSection />
+      <HostelsSection />
     </div>
   );
 };

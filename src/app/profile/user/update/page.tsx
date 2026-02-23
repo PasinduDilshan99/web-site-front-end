@@ -8,6 +8,8 @@ import { UNIQUE_CODE_NAME } from "@/utils/constant";
 import { UserUpdateRequest } from "@/types/user-profile-types";
 import PasswordValidationModal from "@/components/user-profile-components/PasswordValidationModal";
 import Image from "next/image";
+import UpdateUserProfileLoading from "@/components/user-profile-components/Loadings/UpdateUserProfileLoading";
+import { OtherService } from "@/services/otherService";
 
 const UserProfileUpdatePage = () => {
   const router = useRouter();
@@ -20,7 +22,7 @@ const UserProfileUpdatePage = () => {
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+
   // Form state
   const [firstName, setFirstName] = useState("");
   const [middleName, setMiddleName] = useState("");
@@ -34,7 +36,7 @@ const UserProfileUpdatePage = () => {
   const [mobileNumber2, setMobileNumber2] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [gender, setGender] = useState("");
-  const [religion, setReligion] = useState("");
+  const [country, setCountry] = useState("");
   const [addressNumber, setAddressNumber] = useState("");
   const [addressLine1, setAddressLine1] = useState("");
   const [addressLine2, setAddressLine2] = useState("");
@@ -63,7 +65,7 @@ const UserProfileUpdatePage = () => {
       const response = await apiService.getUserProfile();
       const profile = response.data;
       setUserProfile(profile);
-      
+
       // Set form values
       setFirstName(profile.firstName || "");
       setMiddleName(profile.middleName || "");
@@ -72,12 +74,15 @@ const UserProfileUpdatePage = () => {
       setPassportNumber(profile.passportNumber || "");
       setDrivingLicenseNumber(profile.drivingLicenseNumber || "");
       setEmail(profile.email || "");
-    //   setEmail2(profile.email2 || "");
       setMobileNumber1(profile.mobileNumber1 || "");
       setMobileNumber2(profile.mobileNumber2 || "");
-      setDateOfBirth(profile.dateOfBirth ? new Date(profile.dateOfBirth).toISOString().split('T')[0] : "");
+      setDateOfBirth(
+        profile.dateOfBirth
+          ? new Date(profile.dateOfBirth).toISOString().split("T")[0]
+          : "",
+      );
       setGender(profile.gender || "");
-      setReligion(profile.religion || "");
+      setCountry(profile.countryName || "");
       setAddressNumber(profile.addressNumber || "");
       setAddressLine1(profile.addressLine1 || "");
       setAddressLine2(profile.addressLine2 || "");
@@ -90,7 +95,6 @@ const UserProfileUpdatePage = () => {
       if (profile.imageUrl) {
         setPreviewImage(profile.imageUrl);
       }
-      
     } catch (err) {
       console.error("Failed to load user profile:", err);
       setError("Failed to load profile data. Please try again.");
@@ -102,28 +106,20 @@ const UserProfileUpdatePage = () => {
   const handleImageUpload = async (file: File) => {
     try {
       setUploadingImage(true);
-      
-      // In a real application, you would upload the image to a cloud service like Cloudinary, AWS S3, etc.
-      // and get back a URL. For this example, I'll simulate the upload process.
-      
-      // Create a preview URL
+      setError(null);
+
       const previewUrl = URL.createObjectURL(file);
       setPreviewImage(previewUrl);
-      
-      // In a real implementation, you would:
-      // 1. Upload the file to your cloud storage
-      // 2. Get the URL back from the storage service
-      // 3. Set the imageUrl state with the new URL
-      
-      // For now, we'll simulate by setting a placeholder
-      setImageUrl(`https://example.com/uploads/${file.name}`);
-      
-      // Simulate upload delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
+      const result = await OtherService.uploadImage(file);
+      setImageUrl(result.data.secure_url);
+
+      setSuccess("Image uploaded successfully!");
     } catch (err) {
       console.error("Failed to upload image:", err);
       setError("Failed to upload image. Please try again.");
+      setPreviewImage(null);
+      setImageUrl("");
     } finally {
       setUploadingImage(false);
     }
@@ -133,18 +129,18 @@ const UserProfileUpdatePage = () => {
     const file = e.target.files?.[0];
     if (file) {
       // Validate file type
-      const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+      const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
       if (!validTypes.includes(file.type)) {
         setError("Please select a valid image file (JPEG, PNG, GIF, WEBP).");
         return;
       }
-      
+
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         setError("Image size should be less than 5MB.");
         return;
       }
-      
+
       handleImageUpload(file);
     }
   };
@@ -163,27 +159,32 @@ const UserProfileUpdatePage = () => {
       lastName: lastName.trim(),
     };
 
-    // Add optional fields if they have values
     if (middleName.trim()) request.middleName = middleName.trim();
     if (nic.trim()) request.nic = nic.trim();
     if (passportNumber.trim()) request.passportNumber = passportNumber.trim();
-    if (drivingLicenseNumber.trim()) request.drivingLicenseNumber = drivingLicenseNumber.trim();
+    if (drivingLicenseNumber.trim())
+      request.drivingLicenseNumber = drivingLicenseNumber.trim();
     if (email.trim()) request.email = email.trim();
-    if (email2.trim()) request.email2 = email2.trim();
     if (mobileNumber1.trim()) request.mobileNumber1 = mobileNumber1.trim();
     if (mobileNumber2.trim()) request.mobileNumber2 = mobileNumber2.trim();
     if (dateOfBirth.trim()) request.dateOfBirth = dateOfBirth.trim();
     if (imageUrl.trim()) request.imageUrl = imageUrl.trim();
-    
-    // Note: You would need to convert gender, religion, address, etc. to their respective IDs
-    // based on your backend requirements. For now, I'm leaving them as undefined.
-    
+    if (gender.trim()) request.gender = gender.trim();
+    if (country.trim()) request.country = country.trim();
+    if (addressNumber.trim()) request.addressNumber = addressNumber.trim();
+    if (addressLine1.trim()) request.addressLine1 = addressLine1.trim();
+    if (addressLine2.trim()) request.addressLine2 = addressLine2.trim();
+    if (city.trim()) request.city = city.trim();
+    if (district.trim()) request.district = district.trim();
+    if (province.trim()) request.province = province.trim();
+    if (postalCode.trim()) request.postalCode = postalCode.trim();
+
     return request;
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    
+
     if (!firstName.trim() || !lastName.trim()) {
       setError("First name and last name are required.");
       return;
@@ -197,12 +198,13 @@ const UserProfileUpdatePage = () => {
       const updateRequest = prepareUpdateRequest();
       const response = await apiService.updateAccount(updateRequest);
 
-      setSuccess("Profile updated successfully!");
-      
+      if (response.message) {
+        setSuccess("Profile updated successfully!");
+      }
+
       setTimeout(() => {
         loadUserProfile();
       }, 1500);
-
     } catch (err: unknown) {
       console.error("Failed to update profile:", err);
       setError("Failed to update profile. Please try again.");
@@ -225,23 +227,7 @@ const UserProfileUpdatePage = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-sky-50 to-teal-50 p-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="animate-pulse space-y-6">
-            <div className="h-8 bg-sky-200 rounded w-48"></div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[...Array(12)].map((_, i) => (
-                <div key={i} className="space-y-2">
-                  <div className="h-4 bg-sky-200 rounded w-24"></div>
-                  <div className="h-10 bg-sky-200 rounded"></div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <UpdateUserProfileLoading />;
   }
 
   if (!userProfile) {
@@ -250,12 +236,26 @@ const UserProfileUpdatePage = () => {
         <div className="max-w-md w-full">
           <div className="bg-white rounded-lg shadow-md p-8 text-center border border-sky-200">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                className="w-8 h-8 text-red-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold text-sky-800 mb-2">Profile Not Found</h3>
-            <p className="text-sky-600 mb-6">We couldn&apos;t load your profile information.</p>
+            <h3 className="text-xl font-semibold text-sky-800 mb-2">
+              Profile Not Found
+            </h3>
+            <p className="text-sky-600 mb-6">
+              We couldn&apos;t load your profile information.
+            </p>
             <button
               onClick={() => router.push("/profile/user")}
               className="w-full px-4 py-3 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:from-sky-700 hover:to-teal-700 transition-all duration-300 shadow-md"
@@ -293,8 +293,18 @@ const UserProfileUpdatePage = () => {
           {error && (
             <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
               <div className="flex items-center">
-                <svg className="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg
+                  className="w-5 h-5 text-red-500 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
                 <span className="text-red-700">{error}</span>
               </div>
@@ -304,8 +314,18 @@ const UserProfileUpdatePage = () => {
           {success && (
             <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
               <div className="flex items-center">
-                <svg className="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                <svg
+                  className="w-5 h-5 text-green-500 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
                 <span className="text-green-700">{success}</span>
               </div>
@@ -318,13 +338,25 @@ const UserProfileUpdatePage = () => {
           <div className="bg-white rounded-lg shadow-sm border border-sky-200 p-6 mb-6">
             <div className="flex items-center mb-4">
               <div className="w-8 h-8 bg-gradient-to-r from-sky-500 to-teal-500 rounded-lg flex items-center justify-center mr-3">
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                <svg
+                  className="w-4 h-4 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
                 </svg>
               </div>
-              <h2 className="text-lg font-semibold text-sky-800">Profile Picture</h2>
+              <h2 className="text-lg font-semibold text-sky-800">
+                Profile Picture
+              </h2>
             </div>
-            
+
             <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
               {/* Profile Image Preview */}
               <div className="flex flex-col items-center">
@@ -339,8 +371,18 @@ const UserProfileUpdatePage = () => {
                     />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-r from-sky-100 to-teal-100 flex items-center justify-center">
-                      <svg className="w-12 h-12 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      <svg
+                        className="w-12 h-12 text-sky-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                        />
                       </svg>
                     </div>
                   )}
@@ -376,30 +418,66 @@ const UserProfileUpdatePage = () => {
                         htmlFor="profile-image"
                         className="px-4 py-2 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:from-sky-700 hover:to-teal-700 transition-all duration-300 shadow-md cursor-pointer flex items-center justify-center"
                       >
-                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                        <svg
+                          className="w-4 h-4 mr-2"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+                          />
                         </svg>
                         Choose Image
                       </label>
-                      
+
                       {uploadingImage && (
                         <div className="flex items-center text-sky-600">
-                          <svg className="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          <svg
+                            className="animate-spin h-5 w-5 mr-2"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
                           </svg>
                           Uploading...
                         </div>
                       )}
                     </div>
                   </div>
-                  
+
                   <div className="text-sm text-sky-600 bg-sky-50 p-3 rounded-lg border border-sky-200">
                     <p className="flex items-start">
-                      <svg className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      <svg
+                        className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
                       </svg>
-                      Upload a clear profile picture. Supported formats: JPEG, PNG, GIF, WEBP. Max size: 5MB.
+                      Upload a clear profile picture. Supported formats: JPEG,
+                      PNG, GIF, WEBP. Max size: 5MB.
                     </p>
                   </div>
                 </div>
@@ -411,11 +489,23 @@ const UserProfileUpdatePage = () => {
           <div className="bg-white rounded-lg shadow-sm border border-sky-200 p-6 mb-6">
             <div className="flex items-center mb-4">
               <div className="w-8 h-8 bg-gradient-to-r from-sky-500 to-teal-500 rounded-lg flex items-center justify-center mr-3">
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                <svg
+                  className="w-4 h-4 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
                 </svg>
               </div>
-              <h2 className="text-lg font-semibold text-sky-800">Personal Information</h2>
+              <h2 className="text-lg font-semibold text-sky-800">
+                Personal Information
+              </h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-2">
@@ -485,8 +575,8 @@ const UserProfileUpdatePage = () => {
                 </label>
                 <input
                   type="text"
-                  value={religion}
-                  onChange={(e) => setReligion(e.target.value)}
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
                   placeholder="Enter religion"
                   className="w-full px-3 py-2 border border-sky-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all duration-200 text-gray-700"
                 />
@@ -498,11 +588,23 @@ const UserProfileUpdatePage = () => {
           <div className="bg-white rounded-lg shadow-sm border border-sky-200 p-6 mb-6">
             <div className="flex items-center mb-4">
               <div className="w-8 h-8 bg-gradient-to-r from-sky-500 to-teal-500 rounded-lg flex items-center justify-center mr-3">
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                <svg
+                  className="w-4 h-4 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"
+                  />
                 </svg>
               </div>
-              <h2 className="text-lg font-semibold text-sky-800">Identification</h2>
+              <h2 className="text-lg font-semibold text-sky-800">
+                Identification
+              </h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-2">
@@ -548,11 +650,23 @@ const UserProfileUpdatePage = () => {
           <div className="bg-white rounded-lg shadow-sm border border-sky-200 p-6 mb-6">
             <div className="flex items-center mb-4">
               <div className="w-8 h-8 bg-gradient-to-r from-sky-500 to-teal-500 rounded-lg flex items-center justify-center mr-3">
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                <svg
+                  className="w-4 h-4 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
                 </svg>
               </div>
-              <h2 className="text-lg font-semibold text-sky-800">Contact Information</h2>
+              <h2 className="text-lg font-semibold text-sky-800">
+                Contact Information
+              </h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -567,7 +681,7 @@ const UserProfileUpdatePage = () => {
                   className="w-full px-3 py-2 border border-sky-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all duration-200 text-gray-700"
                 />
               </div>
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <label className="block text-sm font-medium text-sky-700">
                   Secondary Email
                 </label>
@@ -578,7 +692,7 @@ const UserProfileUpdatePage = () => {
                   placeholder="Enter secondary email"
                   className="w-full px-3 py-2 border border-sky-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all duration-200 text-gray-700"
                 />
-              </div>
+              </div> */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-sky-700">
                   Primary Mobile
@@ -610,12 +724,29 @@ const UserProfileUpdatePage = () => {
           <div className="bg-white rounded-lg shadow-sm border border-sky-200 p-6 mb-6">
             <div className="flex items-center mb-4">
               <div className="w-8 h-8 bg-gradient-to-r from-sky-500 to-teal-500 rounded-lg flex items-center justify-center mr-3">
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                <svg
+                  className="w-4 h-4 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
                 </svg>
               </div>
-              <h2 className="text-lg font-semibold text-sky-800">Address Information</h2>
+              <h2 className="text-lg font-semibold text-sky-800">
+                Address Information
+              </h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -735,9 +866,24 @@ const UserProfileUpdatePage = () => {
               >
                 {saving ? (
                   <span className="flex items-center">
-                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    <svg
+                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
                     </svg>
                     Saving...
                   </span>
@@ -753,32 +899,59 @@ const UserProfileUpdatePage = () => {
         <div className="bg-gradient-to-r from-sky-50 to-teal-50 border border-sky-200 rounded-lg p-6 mb-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
             <div>
-              <h3 className="text-lg font-semibold text-sky-800 mb-1">Security Questions</h3>
-              <p className="text-sky-600 text-sm">Update your secret questions for enhanced security</p>
+              <h3 className="text-lg font-semibold text-sky-800 mb-1">
+                Security Questions
+              </h3>
+              <p className="text-sky-600 text-sm">
+                Update your secret questions for enhanced security
+              </p>
             </div>
             <button
               onClick={handleUpdateSecretQuestions}
               className="px-4 py-2 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:from-sky-700 hover:to-teal-700 transition-all duration-300 shadow-md flex items-center justify-center"
             >
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              <svg
+                className="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                />
               </svg>
               Update Secret Questions
             </button>
           </div>
           <div className="text-sm text-sky-600 bg-sky-100 p-3 rounded-lg border border-sky-200">
             <p className="flex items-center">
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.928-.833-2.698 0L6.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              <svg
+                className="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.928-.833-2.698 0L6.34 16.5c-.77.833.192 2.5 1.732 2.5z"
+                />
               </svg>
-              You will be asked to re-enter your password for security verification.
+              You will be asked to re-enter your password for security
+              verification.
             </p>
           </div>
         </div>
 
         {/* Helper Text */}
         <div className="text-center text-sm text-sky-500">
-          <p>Note: Some fields may require additional verification after update</p>
+          <p>
+            Note: Some fields may require additional verification after update
+          </p>
         </div>
       </div>
 

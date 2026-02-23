@@ -21,3 +21,19 @@ export interface EmployeeApiResponse {
   data: TourAssignedEmployeeResponse;
   timestamp: string;
 }
+
+export interface CeoDetailsResponse {
+  userId: number;
+  name: string;
+  title: string;
+  speech: string[];
+  imageUrl: string;
+}
+
+export interface CeoDetailsApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: CeoDetailsResponse;
+  timestamp: string;
+}

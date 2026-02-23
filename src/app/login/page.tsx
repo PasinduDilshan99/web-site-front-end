@@ -79,13 +79,14 @@ export default function Page() {
         <div
           className="absolute inset-0 bg-cover bg-center opacity-80"
           style={{
-            backgroundImage: "url('/login-image.webp')",
-            //  backgroundImage: "url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200')",
+            // backgroundImage: "url('/login-image.webp')",
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200')",
           }}
         />
 
         {/* Overlay */}
-        {/* <div className="absolute inset-0 bg-gradient-to-br from-blue-900/70 to-blue-600/60" /> */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/70 to-blue-600/60" />
 
         {/* Content */}
         <div className="relative z-10 flex flex-col justify-center items-start p-16 text-white">
@@ -131,7 +132,7 @@ export default function Page() {
           {/* Welcome Header */}
           <div className="text-center mb-8">
             <h2 className="text-5xl font-bold text-blue-500 mb-2">Welcome</h2>
-            <p className="text-gray-500">Login with Email</p>
+            <p className="text-gray-500">Login with username</p>
           </div>
 
           {error && (
@@ -155,7 +156,7 @@ export default function Page() {
             {/* Email Field */}
             <div>
               <label className="block text-sm font-medium text-blue-500 mb-2">
-                Email Id
+                username
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -177,7 +178,7 @@ export default function Page() {
                   type="text"
                   className="w-full pl-12 pr-4 py-3.5 text-gray-900 bg-white border-2 border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-all"
                   value={username}
-                  placeholder="thisuix@mail.com"
+                  placeholder="username"
                   onChange={(e) => setUsername(e.target.value)}
                   onKeyPress={handleKeyPress}
                   disabled={isLoading}

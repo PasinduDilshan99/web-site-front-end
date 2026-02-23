@@ -1,5 +1,6 @@
 "use client";
 
+import { COMPANY_INFO_EMAIL, COMPANY_NAME } from "@/utils/constant";
 import React, { useState, useEffect } from "react";
 
 interface ConstructionPageProps {
@@ -8,7 +9,7 @@ interface ConstructionPageProps {
 }
 
 export default function UnderConstructionPage({
-  email = "hello@felicita.com",
+  email = COMPANY_INFO_EMAIL,
   launchDate = "Coming Soon",
 }: ConstructionPageProps) {
   const [dots, setDots] = useState("");
@@ -21,12 +22,12 @@ export default function UnderConstructionPage({
   }, []);
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 flex items-center justify-center p-4 sm:p-6 md:p-8 overflow-hidden">
+    <div className="min-h-screen w-full bg-gradient-to-br from-teal-950 via-blue-950 to-teal-950 flex items-center justify-center p-4 sm:p-6 md:p-8 overflow-hidden">
       {/* Animated background orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-10 left-10 w-32 h-32 sm:w-48 sm:h-48 bg-amber-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-        <div className="absolute top-32 right-10 w-32 h-32 sm:w-48 sm:h-48 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-        <div className="absolute bottom-10 left-1/3 w-32 h-32 sm:w-48 sm:h-48 bg-amber-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+        <div className="absolute top-10 left-10 w-32 h-32 sm:w-48 sm:h-48 bg-teal-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+        <div className="absolute top-32 right-10 w-32 h-32 sm:w-48 sm:h-48 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div className="absolute bottom-10 left-1/3 w-32 h-32 sm:w-48 sm:h-48 bg-teal-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
       </div>
 
       {/* Content */}
@@ -34,9 +35,9 @@ export default function UnderConstructionPage({
         {/* Logo/Brand */}
         <div className="mb-8 sm:mb-12 animate-fadeInDown">
           <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-white mb-2">
-            Felicita
+            {COMPANY_NAME}
           </h1>
-          <div className="h-1 w-20 sm:w-24 bg-gradient-to-r from-amber-500 to-purple-500 mx-auto rounded-full"></div>
+          <div className="h-1 w-20 sm:w-24 bg-gradient-to-r from-teal-400 to-blue-500 mx-auto rounded-full"></div>
         </div>
 
         {/* Main heading */}
@@ -45,8 +46,8 @@ export default function UnderConstructionPage({
           style={{ animationDelay: "0.2s" }}
         >
           <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
-            Were Building Something
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-purple-400">
+            We&apos;re Building Something
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-blue-400">
               {" "}
               Special
             </span>
@@ -63,15 +64,15 @@ export default function UnderConstructionPage({
         >
           <div className="flex justify-center gap-2 mb-6">
             <div
-              className="w-3 h-3 sm:w-4 sm:h-4 bg-amber-500 rounded-full animate-bounce"
+              className="w-3 h-3 sm:w-4 sm:h-4 bg-teal-400 rounded-full animate-bounce"
               style={{ animationDelay: "0s" }}
             ></div>
             <div
-              className="w-3 h-3 sm:w-4 sm:h-4 bg-purple-500 rounded-full animate-bounce"
+              className="w-3 h-3 sm:w-4 sm:h-4 bg-blue-500 rounded-full animate-bounce"
               style={{ animationDelay: "0.2s" }}
             ></div>
             <div
-              className="w-3 h-3 sm:w-4 sm:h-4 bg-amber-600 rounded-full animate-bounce"
+              className="w-3 h-3 sm:w-4 sm:h-4 bg-teal-500 rounded-full animate-bounce"
               style={{ animationDelay: "0.4s" }}
             ></div>
           </div>
@@ -102,11 +103,11 @@ export default function UnderConstructionPage({
               name="email"
               placeholder="Enter your email"
               required
-              className="flex-1 px-4 sm:px-6 py-3 rounded-lg bg-white/10 border border-amber-500/30 text-white placeholder-gray-400 focus:outline-none focus:border-amber-400 focus:bg-white/20 transition-all duration-300 text-sm sm:text-base"
+              className="flex-1 px-4 sm:px-6 py-3 rounded-lg bg-white/10 border border-teal-400/30 text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 focus:bg-white/20 transition-all duration-300 text-sm sm:text-base"
             />
             <button
               type="submit"
-              className="px-6 sm:px-8 py-3 bg-gradient-to-r from-amber-500 to-purple-600 text-white font-semibold rounded-lg hover:from-amber-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 active:scale-95 text-sm sm:text-base whitespace-nowrap shadow-lg shadow-amber-500/50"
+              className="px-6 sm:px-8 py-3 bg-gradient-to-r from-teal-500 to-blue-600 text-white font-semibold rounded-lg hover:from-teal-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105 active:scale-95 text-sm sm:text-base whitespace-nowrap shadow-lg shadow-teal-500/50"
             >
               Notify Me
             </button>
@@ -119,7 +120,7 @@ export default function UnderConstructionPage({
             Questions?{" "}
             <a
               href={`mailto:${email}`}
-              className="text-amber-400 hover:text-amber-300 transition-colors underline"
+              className="text-teal-400 hover:text-blue-300 transition-colors underline"
             >
               {email}
             </a>
