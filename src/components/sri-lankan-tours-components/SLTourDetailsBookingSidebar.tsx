@@ -1,4 +1,4 @@
-import { Package, TourDetails } from "@/types/package-types";
+import { Package } from "@/types/package-types";
 import React, { useState } from "react";
 import { SLTourDetailsDetailItem } from "./tour-day-to-day-details-components/SLTourDetailsDetailItem";
 import TourAssignedUser from "./tour-day-to-day-details-components/TourAssignedUser";
@@ -17,6 +17,7 @@ import BookingModal, {
 } from "../booking-components/BookingModal";
 import BookingSuccessMessage from "../booking-components/BookingSuccessMessage";
 import { bookingService } from "@/services/bookingService";
+import { TourDetails } from "@/types/tour-types";
 
 interface SLTourDetailsBookingSidebarProps {
   tour: TourDetails;
@@ -76,8 +77,8 @@ const SLTourDetailsBookingSidebar: React.FC<
 
   return (
     <>
-      {/* Booking Card */}
-      <div className="bg-white rounded-lg sm:rounded-xl lg:rounded-2xl shadow-md sm:shadow-lg p-4 sm:p-5 lg:p-6 top-4 sm:top-6 mt-4">
+      {/* Booking Card - Sticky with 60px offset */}
+      <div className="bg-white rounded-lg sm:rounded-xl lg:rounded-2xl shadow-md sm:shadow-lg p-4 sm:p-5 lg:p-6 sticky top-[80px] mt-4 z-10">
         <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800 mb-3 sm:mb-4">
           Book This Tour
         </h3>
@@ -185,7 +186,7 @@ const SLTourDetailsBookingSidebar: React.FC<
       {/* <div className="bg-white rounded-2xl shadow-lg p-6 mt-6">
       </div> */}
 
-      <TourAssignedUser assignUser={assignUser} />
+      {/* <TourAssignedUser assignUser={assignUser} /> */}
 
       {/* Booking Modal */}
       <BookingModal

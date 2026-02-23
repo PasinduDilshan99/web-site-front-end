@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { TourDetails } from "@/types/package-types";
+import { TourDetails } from "@/types/tour-types";
 
 interface SLTourDetailsHeroSectionProps {
   tour: TourDetails;
@@ -13,6 +13,7 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
   useEffect(() => {
     if (!isAutoPlaying || tour.images.length <= 1) return;
@@ -48,13 +49,55 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
     setFailedImages((prev) => new Set(prev).add(index));
   };
 
+  const truncateDescription = (text: string) => {
+    if (isDescriptionExpanded) return text;
+
+    // Responsive character limits
+    const getLimit = () => {
+      if (typeof window === "undefined") return 75; // Default for SSR
+
+      if (window.innerWidth < 640) return 25; // Mobile
+      if (window.innerWidth < 768) return 35; // Tablet
+      if (window.innerWidth < 1024) return 50; // Laptop
+      return 75; // PC
+    };
+
+    const limit = getLimit();
+
+    if (text.length <= limit) return text;
+    return text.substring(0, limit) + "...";
+  };
+
+  // Add resize listener for responsive truncation
+  useEffect(() => {
+    const handleResize = () => {
+      // Force re-render to update truncation on resize
+      setIsDescriptionExpanded((prev) => prev);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   if (!tour.images.length) {
     return (
       <div className="relative h-96 bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900 flex items-center justify-center">
-        <div className="absolute bottom-0 left-0 right-0 p-6 text-white bg-gradient-to-t from-black/60 to-transparent">
-          <div className="max-w-7xl mx-auto text-center">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="max-w-7xl mx-auto px-4 text-center text-white">
             <h1 className="text-4xl font-bold mb-2">{tour.tourName}</h1>
-            <p className="text-xl opacity-90">{tour.tourDescription}</p>
+            <p className="text-xl opacity-90 max-w-3xl mx-auto">
+              {truncateDescription(tour.tourDescription)}
+              {tour.tourDescription.length > 25 && (
+                <button
+                  onClick={() =>
+                    setIsDescriptionExpanded(!isDescriptionExpanded)
+                  }
+                  className="ml-2 text-sky-300 hover:text-sky-200 underline transition-colors"
+                >
+                  {isDescriptionExpanded ? "Show less" : "Read more"}
+                </button>
+              )}
+            </p>
           </div>
         </div>
       </div>
@@ -106,15 +149,31 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
         {/* Content Overlay - CENTERED */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="container mx-auto px-4 md:px-6 lg:px-8">
-            <div className="max-w-6xl text-white text-center">
-              {/* Tour Category Badge - CENTERED */}
-              <div className="mb-6 flex flex-wrap gap-3 justify-center">
-                <span className="px-4 py-2 bg-sky-500/90 backdrop-blur-sm rounded-full text-sm font-semibold">
-                  {tour.tourCategoryName}
-                </span>
-                <span className="px-4 py-2 bg-teal-500/90 backdrop-blur-sm rounded-full text-sm font-semibold">
-                  {tour.tourTypeName}
-                </span>
+            <div className="max-w-6xl text-white text-center mx-auto">
+              {/* Tour Category & Type Badges - CENTERED */}
+              {/* <div className="mb-6 flex flex-wrap gap-3 justify-center">
+                {tour.tourCategoryDto &&
+                  tour.tourCategoryDto.length > 0 &&
+                  tour.tourCategoryDto.map((category, index) => (
+                    <span
+                      key={category.tourCategoryId || index}
+                      className="px-4 py-2 bg-sky-500/90 backdrop-blur-sm rounded-full text-sm font-semibold"
+                    >
+                      {category.tourCategoryName}
+                    </span>
+                  ))}
+
+                {tour.tourTypeDtos &&
+                  tour.tourTypeDtos.length > 0 &&
+                  tour.tourTypeDtos.map((type, index) => (
+                    <span
+                      key={type.tourTypeId || index}
+                      className="px-4 py-2 bg-teal-500/90 backdrop-blur-sm rounded-full text-sm font-semibold"
+                    >
+                      {type.tourTypeName}
+                    </span>
+                  ))}
+
                 <span className="px-4 py-2 bg-cyan-500/90 backdrop-blur-sm rounded-full text-sm font-semibold flex items-center gap-2">
                   <svg
                     className="w-4 h-4"
@@ -131,7 +190,7 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
                   </svg>
                   {tour.duration} Days
                 </span>
-              </div>
+              </div> */}
 
               {/* Tour Title - CENTERED */}
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
@@ -141,8 +200,54 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
               {/* Description Container - CENTERED */}
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 md:p-8 mx-auto max-w-4xl mb-8">
                 <p className="text-md md:text-lg text-gray-100 leading-relaxed mb-6">
-                  {tour.tourDescription}
+                  {truncateDescription(tour.tourDescription)}
                 </p>
+
+                {/* Read More/Less Button */}
+                {tour.tourDescription.length > 25 && (
+                  <button
+                    onClick={() =>
+                      setIsDescriptionExpanded(!isDescriptionExpanded)
+                    }
+                    className="text-sky-300 hover:text-sky-200 font-medium transition-colors mb-4 inline-flex items-center gap-1"
+                  >
+                    {isDescriptionExpanded ? (
+                      <>
+                        Show less
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M5 15l7-7 7 7"
+                          />
+                        </svg>
+                      </>
+                    ) : (
+                      <>
+                        Read more
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </>
+                    )}
+                  </button>
+                )}
 
                 {/* Tour Info - CENTERED */}
                 <div className="flex flex-wrap gap-4 justify-center text-sm">

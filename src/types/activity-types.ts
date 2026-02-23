@@ -78,6 +78,8 @@ export interface ActiveActivitiesCategoriesType {
   terminatedAt: string | null;
   terminatedBy: number | null;
   numberOfActivities: number;
+  color: string;
+  hoverColor: string;
   images: CategoryImage[];
 }
 
@@ -327,7 +329,7 @@ export interface ActivityData {
   requirements: Requirement[];
   images: ActivityImage[];
   destination_id: number;
-  activities_category: string;
+  activities_category: ActivityCategory[];
   duration_hours: number;
   available_from: string;
   available_to: string;
@@ -339,4 +341,10 @@ export interface ActivityData {
   updated_at: string;
   category_name: string;
   category_description: string;
+}
+
+export interface ActivityCategory {
+  id: number;
+  name: string;
+  description: string;
 }

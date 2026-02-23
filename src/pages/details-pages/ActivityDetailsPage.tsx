@@ -21,6 +21,7 @@ import {
 import { ActivityService } from "@/services/activityService";
 import ActivityDetailsHeroSection from "@/components/activities-components/ActivityDetailsHeroSection";
 import ActivityDetailsLoading from "@/components/activities-components/ActivityDetailsLoading";
+import ActivityCategories from "@/components/activities-components/ActivityCategories";
 
 const ActivityDetailsPage = () => {
   const params = useParams();
@@ -65,9 +66,9 @@ const ActivityDetailsPage = () => {
           setActivity(activityData);
           setLoading(false);
           // Now fetch related data
-        //   fetchActivityReviews(activityData.id);
-        //   fetchActivityHistory(activityData.id);
-        //   fetchActivityHistoryImages(activityData.id);
+          //   fetchActivityReviews(activityData.id);
+          //   fetchActivityHistory(activityData.id);
+          //   fetchActivityHistoryImages(activityData.id);
         } else {
           setError("No activity data received");
           setLoading(false);
@@ -161,81 +162,81 @@ const ActivityDetailsPage = () => {
   }, [activityId]);
 
   // Retry function for activity history
-//   const retryFetchActivityHistory = async () => {
-//     if (activity) {
-//       try {
-//         setHistoryLoading(true);
-//         setHistoryError(null);
+  //   const retryFetchActivityHistory = async () => {
+  //     if (activity) {
+  //       try {
+  //         setHistoryLoading(true);
+  //         setHistoryError(null);
 
-//         const { histories: fetchedHistories, error: historyError } =
-//           await ActivityService.fetchActivityHistoryById(activity.id);
+  //         const { histories: fetchedHistories, error: historyError } =
+  //           await ActivityService.fetchActivityHistoryById(activity.id);
 
-//         if (historyError) {
-//           setHistoryError(historyError);
-//         } else {
-//           setHistories(fetchedHistories);
-//         }
-//       } catch (err) {
-//         setHistoryError(
-//           err instanceof Error
-//             ? err.message
-//             : "Failed to load activity history",
-//         );
-//       } finally {
-//         setHistoryLoading(false);
-//       }
-//     }
-//   };
+  //         if (historyError) {
+  //           setHistoryError(historyError);
+  //         } else {
+  //           setHistories(fetchedHistories);
+  //         }
+  //       } catch (err) {
+  //         setHistoryError(
+  //           err instanceof Error
+  //             ? err.message
+  //             : "Failed to load activity history",
+  //         );
+  //       } finally {
+  //         setHistoryLoading(false);
+  //       }
+  //     }
+  //   };
 
   // Retry function for activity history images
-//   const retryFetchActivityHistoryImages = async () => {
-//     if (activity) {
-//       try {
-//         setHistoryImagesLoading(true);
-//         setHistoryImagesError(null);
+  //   const retryFetchActivityHistoryImages = async () => {
+  //     if (activity) {
+  //       try {
+  //         setHistoryImagesLoading(true);
+  //         setHistoryImagesError(null);
 
-//         const { historyImages: fetchedImages, error: imagesError } =
-//           await ActivityService.fetchActivityHistoryImagesById(activity.id);
+  //         const { historyImages: fetchedImages, error: imagesError } =
+  //           await ActivityService.fetchActivityHistoryImagesById(activity.id);
 
-//         if (imagesError) {
-//           setHistoryImagesError(imagesError);
-//         } else {
-//           setHistoryImages(fetchedImages);
-//         }
-//       } catch (err) {
-//         setHistoryImagesError(
-//           err instanceof Error ? err.message : "Failed to load activity images",
-//         );
-//       } finally {
-//         setHistoryImagesLoading(false);
-//       }
-//     }
-//   };
+  //         if (imagesError) {
+  //           setHistoryImagesError(imagesError);
+  //         } else {
+  //           setHistoryImages(fetchedImages);
+  //         }
+  //       } catch (err) {
+  //         setHistoryImagesError(
+  //           err instanceof Error ? err.message : "Failed to load activity images",
+  //         );
+  //       } finally {
+  //         setHistoryImagesLoading(false);
+  //       }
+  //     }
+  //   };
 
   // Retry function for reviews
-//   const retryFetchReviews = async () => {
-//     if (activity) {
-//       try {
-//         setReviewsLoading(true);
-//         setReviewsError(null);
+  //   const retryFetchReviews = async () => {
+  //     if (activity) {
+  //       try {
+  //         setReviewsLoading(true);
+  //         setReviewsError(null);
 
-//         const { reviews: fetchedReviews, error: reviewsError } =
-//           await ActivityService.fetchActivityReviewsById(activity.id);
+  //         const { reviews: fetchedReviews, error: reviewsError } =
+  //           await ActivityService.fetchActivityReviewsById(activity.id);
 
-//         if (reviewsError) {
-//           setReviewsError(reviewsError);
-//         } else {
-//           setReviews(fetchedReviews);
-//         }
-//       } catch (err) {
-//         setReviewsError(
-//           err instanceof Error ? err.message : "Failed to load reviews",
-//         );
-//       } finally {
-//         setReviewsLoading(false);
-//       }
-//     }
-//   };
+  //         if (reviewsError) {
+  //           setReviewsError(reviewsError);
+  //         } else {
+  //           setReviews(fetchedReviews);
+  //         }
+  //       } catch (err) {
+  //         setReviewsError(
+  //           err instanceof Error ? err.message : "Failed to load reviews",
+  //         );
+  //       } finally {
+  //         setReviewsLoading(false);
+  //       }
+  //     }
+  //   };
 
   // Main retry function for activity data
   const retryFetchActivity = async () => {
@@ -254,9 +255,9 @@ const ActivityDetailsPage = () => {
           setActivity(activityData);
           setLoading(false);
           // Retry all related data
-        //   retryFetchReviews();
-        //   retryFetchActivityHistory();
-        //   retryFetchActivityHistoryImages();
+          //   retryFetchReviews();
+          //   retryFetchActivityHistory();
+          //   retryFetchActivityHistoryImages();
         } else {
           setError("No activity data received");
           setLoading(false);
@@ -326,6 +327,7 @@ const ActivityDetailsPage = () => {
           <div className="space-y-6">
             <ActivityDetails activity={activity} />
             <ActivityKeyInfo activity={activity} />
+            <ActivityCategories activity={activity} />
             <ActivitySeasons season={activity.season} />
             <ActivityRequirements requirements={activity.requirements} />
             {/* <ActivitySchedules schedules={activity.schedules} /> */}

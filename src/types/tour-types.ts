@@ -377,10 +377,8 @@ export interface TourDetails {
   longitude: number;
   startLocation: string;
   endLocation: string;
-  tourTypeName: string;
-  tourTypeDescription: string;
-  tourCategoryName: string;
-  tourCategoryDescription: string;
+  tourTypeDtos: TourTypeDto[];
+  tourCategoryDto: TourCategoryDto[];
   seasonName: string;
   seasonDescription: string;
   statusName: string;
@@ -590,24 +588,4 @@ export interface TourImage {
   imageName: string;
   imageDescription: string;
   imageUrl: string;
-}
-
-export interface TourDetails {
-  tourId: number;
-  tourName: string;
-  tourDescription: string;
-  duration: number;
-  latitude: number;
-  longitude: number;
-  startLocation: string;
-  endLocation: string;
-  tourTypeName: string;
-  tourTypeDescription: string;
-  tourCategoryName: string;
-  tourCategoryDescription: string;
-  seasonName: string;
-  seasonDescription: string;
-  statusName: string;
-  schedules: Schedule[];
-  images: TourImage[];
 }

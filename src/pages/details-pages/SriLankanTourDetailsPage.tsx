@@ -2,19 +2,21 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import ReviewsSection from "@/components/sri-lankan-tours-components/ReviewsSection";
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 
 const TourMapContainer = dynamic(
-  () => import('@/components/sri-lankan-tours-components/tour-map-components/TourMapContainer'),
-  { 
+  () =>
+    import("@/components/sri-lankan-tours-components/tour-map-components/TourMapContainer"),
+  {
     ssr: false,
     loading: () => (
       <div className="w-full h-64 bg-gray-100 animate-pulse rounded-lg flex items-center justify-center">
         <span className="text-gray-500">Loading map...</span>
       </div>
-    )
-  }
-);import Loading from "@/components/common-components/loading/Loading";
+    ),
+  },
+);
+import Loading from "@/components/common-components/loading/Loading";
 import { ErrorState } from "@/components/common-components/error-state/ErrorState";
 import { EmptyState } from "@/components/common-components/empty-state/EmptyState";
 import SLTourDetailsHeroSection from "@/components/sri-lankan-tours-components/SLTourDetailsHeroSection";
@@ -50,7 +52,7 @@ import SriLankanTourDetailsLoading from "@/components/sri-lankan-tours-component
 
 const SriLankanTourDetailsPage = () => {
   const params = useParams();
-  const sriLankanTourId = params?.sriLankanTourId || null;
+  const sriLankanTourId = (params?.sriLankanTourId as string) || null;
   const tourId = sriLankanTourId || "1";
 
   const [tour, setTour] = React.useState<TourDetails | null>(null);
@@ -66,6 +68,10 @@ const SriLankanTourDetailsPage = () => {
   const [galleryLoading, setGalleryLoading] = useState<boolean>(true);
   const [galleryError, setGalleryError] = useState<string | null>(null);
   const [dayDetails, setDayDetails] = React.useState<DayDetails[]>([]);
+  // Add this with your other useState declarations
+  const [distinctDestinations, setDistinctDestinations] = useState<string[]>(
+    [],
+  );
   const [dayDetailsLoading, setDayDetailsLoading] = React.useState(true);
   const [dayDetailsError, setDayDetailsError] = React.useState<string | null>(
     null,
@@ -344,14 +350,24 @@ const SriLankanTourDetailsPage = () => {
 
   // Effect to update day details with accommodations when package changes
   useEffect(() => {
-    if (dayDetails.length > 0 && selectedPackage) {
-      const mergedDayDetails = mergeAccommodationsWithDayDetails(
-        dayDetails,
-        selectedPackage,
-      );
-      setDayDetailsWithAccommodations(mergedDayDetails);
+    if (dayDetails.length > 0) {
+      // Extract distinct destinations
+      const destinations = extractDistinctDestinations(dayDetails);
+      setDistinctDestinations(destinations);
+
+      // Merge with accommodations if package is selected
+      if (selectedPackage) {
+        const mergedDayDetails = mergeAccommodationsWithDayDetails(
+          dayDetails,
+          selectedPackage,
+        );
+        setDayDetailsWithAccommodations(mergedDayDetails);
+      } else {
+        setDayDetailsWithAccommodations(dayDetails);
+      }
     } else {
       setDayDetailsWithAccommodations(dayDetails);
+      setDistinctDestinations([]);
     }
   }, [dayDetails, selectedPackage]);
 
@@ -359,6 +375,30 @@ const SriLankanTourDetailsPage = () => {
   const handlePackageSelect = (pkg: Package) => {
     setSelectedPackage(pkg);
   };
+
+  // Function to extract distinct destination names from day details
+// Function to extract distinct destination names from day details in day order
+const extractDistinctDestinations = (dayDetails: DayDetails[]): string[] => {
+  const destinationsMap = new Map<string, number>(); // Map to store destination and the first day it appears
+  const destinationsInOrder: string[] = [];
+
+  // Sort day details by day number to ensure correct order
+  const sortedDayDetails = [...dayDetails].sort((a, b) => a.dayNumber - b.dayNumber);
+
+  sortedDayDetails.forEach((day) => {
+    day.destinations.forEach((destWithActivities) => {
+      const destinationName = destWithActivities.destination?.destinationName;
+      
+      if (destinationName && !destinationsMap.has(destinationName)) {
+        // If it's a new destination, add to map with current day number
+        destinationsMap.set(destinationName, day.dayNumber);
+        destinationsInOrder.push(destinationName);
+      }
+    });
+  });
+
+  return destinationsInOrder; // Returns destinations in the order they first appear
+};
 
   const handleRetryDayDetails = () => {
     if (sriLankanTourId) {
@@ -698,7 +738,10 @@ const SriLankanTourDetailsPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2">
-            <SLTourDetailsOverview tour={tour} />
+            <SLTourDetailsOverview
+              tour={tour}
+              distinctDestinations={distinctDestinations}
+            />
 
             <div className="text-center mb-8 sm:mb-10 md:mb-12">
               {/* Icon container with responsive sizing */}

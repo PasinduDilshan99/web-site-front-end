@@ -129,52 +129,52 @@ export class TourService {
         season: null,
         location: null,
         pageNumber: 1,
-        pageSize: 100,
+        pageSize: 100, // Increased to get more data for filter options
       };
 
       const result = await this.searchTours(requestBody);
 
-      if (result.code === 200 && result.data) {
-        const types = [
-          ...new Set(
-            result.data.tourResponseDtoList.map((tour) => tour.tourTypeName),
-          ),
-        ];
-        const categories = [
-          ...new Set(
-            result.data.tourResponseDtoList.map(
-              (tour) => tour.tourCategoryName,
-            ),
-          ),
-        ];
+      if (result.code === 200 && result.data?.tourResponseDtoList) {
+        const tours = result.data.tourResponseDtoList;
+
+        // Extract unique seasons
         const seasonsList = [
           ...new Set(
-            result.data.tourResponseDtoList.map((tour) => tour.seasonName),
+            tours
+              .map((tour) => tour.seasonName)
+              .filter((season): season is string => !!season), // Remove null/undefined
           ),
         ];
+
+        // Extract unique locations (start and end locations)
         const locationsList = [
           ...new Set(
-            result.data.tourResponseDtoList.flatMap((tour) => [
-              tour.startLocation,
-              tour.endLocation,
-            ]),
+            tours
+              .flatMap((tour) => [tour.startLocation, tour.endLocation])
+              .filter((location): location is string => !!location), // Remove null/undefined
           ),
         ];
+
+        // Extract unique durations and sort them
         const durationsList = [
           ...new Set(
-            result.data.tourResponseDtoList.map((tour) => tour.duration),
+            tours
+              .map((tour) => tour.duration)
+              .filter((duration): duration is number => duration != null),
           ),
         ].sort((a, b) => a - b);
 
+        // Return only the filter options that aren't coming from context
         return {
-          tourTypes: types,
-          tourCategories: categories,
+          tourTypes: [], // Empty because we're using context
+          tourCategories: [], // Empty because we're using context
           seasons: seasonsList,
           locations: locationsList,
           durations: durationsList,
         };
       }
 
+      // Return empty arrays for all options if no data
       return {
         tourTypes: [],
         tourCategories: [],
@@ -193,7 +193,6 @@ export class TourService {
       };
     }
   }
-
   // Get tour history
   static async getTourHistory(): Promise<TourHistoryResponse> {
     try {
@@ -290,9 +289,7 @@ export class TourService {
     error: string | null;
   }> {
     try {
-      const response = await fetch(
-        `${GET_TOUR_MAP_DETAILS_DATA_FE}/${tourId}`,
-      );
+      const response = await fetch(`${GET_TOUR_MAP_DETAILS_DATA_FE}/${tourId}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
