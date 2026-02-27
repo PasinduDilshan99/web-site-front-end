@@ -50,6 +50,7 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
   };
 
   const truncateDescription = (text: string) => {
+    if (!text) return "";
     if (isDescriptionExpanded) return text;
 
     // Responsive character limits
@@ -79,25 +80,16 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Get current image description
+  const currentImageDescription =
+    tour.images[selectedImageIndex]?.imageDescription || "";
+
   if (!tour.images.length) {
     return (
       <div className="relative h-96 bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900 flex items-center justify-center">
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="max-w-7xl mx-auto px-4 text-center text-white">
             <h1 className="text-4xl font-bold mb-2">{tour.tourName}</h1>
-            <p className="text-xl opacity-90 max-w-3xl mx-auto">
-              {truncateDescription(tour.tourDescription)}
-              {tour.tourDescription.length > 25 && (
-                <button
-                  onClick={() =>
-                    setIsDescriptionExpanded(!isDescriptionExpanded)
-                  }
-                  className="ml-2 text-sky-300 hover:text-sky-200 underline transition-colors"
-                >
-                  {isDescriptionExpanded ? "Show less" : "Read more"}
-                </button>
-              )}
-            </p>
           </div>
         </div>
       </div>
@@ -150,33 +142,71 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="container mx-auto px-4 md:px-6 lg:px-8">
             <div className="max-w-6xl text-white text-center mx-auto">
-              {/* Tour Category & Type Badges - CENTERED */}
-              {/* <div className="mb-6 flex flex-wrap gap-3 justify-center">
-                {tour.tourCategoryDto &&
-                  tour.tourCategoryDto.length > 0 &&
-                  tour.tourCategoryDto.map((category, index) => (
-                    <span
-                      key={category.tourCategoryId || index}
-                      className="px-4 py-2 bg-sky-500/90 backdrop-blur-sm rounded-full text-sm font-semibold"
-                    >
-                      {category.tourCategoryName}
-                    </span>
-                  ))}
+              {/* Tour Title - CENTERED */}
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+                {tour.tourName}
+              </h1>
 
-                {tour.tourTypeDtos &&
-                  tour.tourTypeDtos.length > 0 &&
-                  tour.tourTypeDtos.map((type, index) => (
-                    <span
-                      key={type.tourTypeId || index}
-                      className="px-4 py-2 bg-teal-500/90 backdrop-blur-sm rounded-full text-sm font-semibold"
-                    >
-                      {type.tourTypeName}
-                    </span>
-                  ))}
+              {/* Image Description Container - CENTERED */}
+              {currentImageDescription && (
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 md:p-8 mx-auto max-w-4xl mb-8 animate-fade-in">
+                  <p className="text-md md:text-lg text-gray-100 leading-relaxed mb-4">
+                    {truncateDescription(currentImageDescription)}
+                  </p>
 
-                <span className="px-4 py-2 bg-cyan-500/90 backdrop-blur-sm rounded-full text-sm font-semibold flex items-center gap-2">
+                  {/* Read More/Less Button for Image Description */}
+                  {currentImageDescription.length > 25 && (
+                    <button
+                      onClick={() =>
+                        setIsDescriptionExpanded(!isDescriptionExpanded)
+                      }
+                      className="text-sky-300 hover:text-sky-200 font-medium transition-colors inline-flex items-center gap-1 group"
+                    >
+                      {isDescriptionExpanded ? (
+                        <>
+                          Show less
+                          <svg
+                            className="w-4 h-4 group-hover:translate-y-[-2px] transition-transform"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M5 15l7-7 7 7"
+                            />
+                          </svg>
+                        </>
+                      ) : (
+                        <>
+                          Read more
+                          <svg
+                            className="w-4 h-4 group-hover:translate-y-[2px] transition-transform"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M19 9l-7 7-7-7"
+                            />
+                          </svg>
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* Tour Info - CENTERED */}
+              <div className="flex flex-wrap gap-4 justify-center text-sm">
+                <div className="flex items-center gap-2 px-4 py-2 bg-sky-500/20 rounded-full backdrop-blur-sm">
                   <svg
-                    className="w-4 h-4"
+                    className="w-5 h-5 text-sky-300"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -185,118 +215,40 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth="2"
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                     />
                   </svg>
-                  {tour.duration} Days
-                </span>
-              </div> */}
-
-              {/* Tour Title - CENTERED */}
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
-                {tour.tourName}
-              </h1>
-
-              {/* Description Container - CENTERED */}
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 md:p-8 mx-auto max-w-4xl mb-8">
-                <p className="text-md md:text-lg text-gray-100 leading-relaxed mb-6">
-                  {truncateDescription(tour.tourDescription)}
-                </p>
-
-                {/* Read More/Less Button */}
-                {tour.tourDescription.length > 25 && (
-                  <button
-                    onClick={() =>
-                      setIsDescriptionExpanded(!isDescriptionExpanded)
-                    }
-                    className="text-sky-300 hover:text-sky-200 font-medium transition-colors mb-4 inline-flex items-center gap-1"
+                  <span className="font-medium">
+                    {tour.startLocation} → {tour.endLocation}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2 bg-teal-500/20 rounded-full backdrop-blur-sm">
+                  <svg
+                    className="w-5 h-5 text-teal-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    {isDescriptionExpanded ? (
-                      <>
-                        Show less
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M5 15l7-7 7 7"
-                          />
-                        </svg>
-                      </>
-                    ) : (
-                      <>
-                        Read more
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M19 9l-7 7-7-7"
-                          />
-                        </svg>
-                      </>
-                    )}
-                  </button>
-                )}
-
-                {/* Tour Info - CENTERED */}
-                <div className="flex flex-wrap gap-4 justify-center text-sm">
-                  <div className="flex items-center gap-2 px-4 py-2 bg-sky-500/20 rounded-full">
-                    <svg
-                      className="w-5 h-5 text-sky-300"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                    </svg>
-                    <span className="font-medium">
-                      {tour.startLocation} → {tour.endLocation}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 px-4 py-2 bg-teal-500/20 rounded-full">
-                    <svg
-                      className="w-5 h-5 text-teal-300"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-                      />
-                    </svg>
-                    <span className="font-medium">{tour.seasonName}</span>
-                  </div>
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                    />
+                  </svg>
+                  <span className="font-medium">{tour.seasonName}</span>
                 </div>
               </div>
 
               {/* Image Counter - CENTERED */}
               {tour.images.length > 1 && (
-                <div className="flex items-center gap-2 px-4 py-2 bg-black/40 backdrop-blur-sm rounded-full inline-flex mx-auto">
+                <div className="mt-6 flex items-center gap-2 px-4 py-2 bg-black/40 backdrop-blur-sm rounded-full inline-flex mx-auto">
                   <svg
                     className="w-4 h-4"
                     fill="none"

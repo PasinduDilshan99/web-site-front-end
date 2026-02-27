@@ -377,28 +377,30 @@ const SriLankanTourDetailsPage = () => {
   };
 
   // Function to extract distinct destination names from day details
-// Function to extract distinct destination names from day details in day order
-const extractDistinctDestinations = (dayDetails: DayDetails[]): string[] => {
-  const destinationsMap = new Map<string, number>(); // Map to store destination and the first day it appears
-  const destinationsInOrder: string[] = [];
+  // Function to extract distinct destination names from day details in day order
+  const extractDistinctDestinations = (dayDetails: DayDetails[]): string[] => {
+    const destinationsMap = new Map<string, number>(); // Map to store destination and the first day it appears
+    const destinationsInOrder: string[] = [];
 
-  // Sort day details by day number to ensure correct order
-  const sortedDayDetails = [...dayDetails].sort((a, b) => a.dayNumber - b.dayNumber);
+    // Sort day details by day number to ensure correct order
+    const sortedDayDetails = [...dayDetails].sort(
+      (a, b) => a.dayNumber - b.dayNumber,
+    );
 
-  sortedDayDetails.forEach((day) => {
-    day.destinations.forEach((destWithActivities) => {
-      const destinationName = destWithActivities.destination?.destinationName;
-      
-      if (destinationName && !destinationsMap.has(destinationName)) {
-        // If it's a new destination, add to map with current day number
-        destinationsMap.set(destinationName, day.dayNumber);
-        destinationsInOrder.push(destinationName);
-      }
+    sortedDayDetails.forEach((day) => {
+      day.destinations.forEach((destWithActivities) => {
+        const destinationName = destWithActivities.destination?.destinationName;
+
+        if (destinationName && !destinationsMap.has(destinationName)) {
+          // If it's a new destination, add to map with current day number
+          destinationsMap.set(destinationName, day.dayNumber);
+          destinationsInOrder.push(destinationName);
+        }
+      });
     });
-  });
 
-  return destinationsInOrder; // Returns destinations in the order they first appear
-};
+    return destinationsInOrder; // Returns destinations in the order they first appear
+  };
 
   const handleRetryDayDetails = () => {
     if (sriLankanTourId) {
@@ -625,20 +627,20 @@ const extractDistinctDestinations = (dayDetails: DayDetails[]): string[] => {
                   </div>
                 )}
               </div>
-
               <div className="mb-3 sm:mb-4">
-                <div className="flex items-baseline">
+                <div className="flex items-baseline flex-wrap">
+                  <span className="mr-1 text-gray-800">Starting From</span>
                   <span className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
-                    LKR {pkg.pricePerPerson.toLocaleString()}
+                    USD {pkg?.pricePerPerson?.toLocaleString() ?? "0"}
                   </span>
                   <span className="text-xs sm:text-sm text-gray-500 ml-1 sm:ml-2">
                     per person
                   </span>
                 </div>
-                {pkg.discount > 0 && (
+                {pkg?.discount > 0 && (
                   <div className="flex items-center gap-1 sm:gap-2 mt-1">
                     <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
-                      Save {pkg.discount}%
+                      Save {Math.round(pkg.discount)}%
                     </span>
                   </div>
                 )}

@@ -16,6 +16,7 @@ import {
   MapPin,
   Settings,
   Users,
+  Info,
 } from "lucide-react";
 import { Accommodation } from "@/types/sri-lankan-tour-types";
 import HotelStars from "./HotelStars";
@@ -71,28 +72,42 @@ const AccommodationsSection: React.FC<AccommodationsSectionProps> = ({
 
               {/* Content section */}
               <div className="flex-1 min-w-0">
-                {/* Header with hotel name and rating */}
+                <h4 className="text-lg sm:text-xl font-semibold text-gray-900 ">
+                  Hotel
+                </h4>
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-4 mb-3 sm:mb-4">
-                  <div className="flex-1 min-w-0">
-                    <h4 className="text-base sm:text-lg md:text-xl font-semibold text-gray-900 truncate">
-                      {hotel.hotelName}
-                    </h4>
-
-                    {/* Location and rating - responsive layout */}
-                    <div className="flex flex-col xs:flex-row xs:items-center gap-2 xs:gap-3 mt-1 sm:mt-2">
-                      <div className="flex items-center gap-1 text-xs sm:text-sm text-gray-600">
-                        <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500 flex-shrink-0" />
-                        <span className="truncate">{hotel.location}</span>
-                      </div>
-
-                      <div className="flex items-center gap-1">
-                        <HotelStars rating={hotel.hotelCategory} />
-                        <span className="text-xs sm:text-sm text-gray-600 ml-1">
-                          {hotel.hotelCategory} Star
-                        </span>
+                  {hotel.hotelName === "" ? (
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-col xs:flex-row xs:items-center gap-2 xs:gap-3 mt-1 sm:mt-2">
+                        <div className="flex items-center gap-1">
+                          <HotelStars rating={hotel.hotelCategory} />
+                          <span className="text-xs sm:text-sm text-gray-600 ml-1">
+                            {hotel.hotelCategory} Star
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-base sm:text-lg md:text-xl font-semibold text-gray-900 truncate">
+                        {hotel.hotelName}
+                      </h4>
+
+                      <div className="flex flex-col xs:flex-row xs:items-center gap-2 xs:gap-3 mt-1 sm:mt-2">
+                        <div className="flex items-center gap-1 text-xs sm:text-sm text-gray-600">
+                          <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500 flex-shrink-0" />
+                          <span className="truncate">{hotel.location}</span>
+                        </div>
+
+                        <div className="flex items-center gap-1">
+                          <HotelStars rating={hotel.hotelCategory} />
+                          <span className="text-xs sm:text-sm text-gray-600 ml-1">
+                            {hotel.hotelCategory} Star
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   {/* <button className="hidden sm:inline-flex items-center justify-center px-3 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity duration-200">
                     Book Now
@@ -227,7 +242,7 @@ const AccommodationsSection: React.FC<AccommodationsSectionProps> = ({
 const MealsSection: React.FC<{ accommodations: Accommodation }> = ({
   accommodations,
 }) => {
-  const meals = [
+  const allMeals = [
     {
       key: "breakfast",
       label: "Breakfast",
@@ -265,6 +280,14 @@ const MealsSection: React.FC<{ accommodations: Accommodation }> = ({
     },
   ];
 
+  // Filter to show only available meals
+  const availableMeals = allMeals.filter((meal) => meal.included);
+
+  // If no meals are available, don't render the section
+  if (availableMeals.length === 0) {
+    return null;
+  }
+
   return (
     <div className="bg-gradient-to-br from-white to-green-50/30 rounded-xl border border-green-100 p-4 sm:p-6 transition-all duration-300 hover:shadow-md hover:border-green-200">
       {/* Header with count */}
@@ -278,35 +301,27 @@ const MealsSection: React.FC<{ accommodations: Accommodation }> = ({
               Meals Included
             </h4>
             <p className="text-sm text-gray-600 hidden sm:block">
-              Check what meals are included in your package
+              Meals included in your package
             </p>
           </div>
         </div>
 
         {/* Meal count badge */}
         <div className="bg-green-100 text-green-800 px-3 py-1.5 rounded-full text-sm font-medium">
-          {meals.filter((m) => m.included).length}/{meals.length}
+          {availableMeals.length} {availableMeals.length === 1 ? 'Meal' : 'Meals'}
         </div>
       </div>
 
       {/* Meals grid - Scrollable on mobile */}
       <div className="mb-4 sm:mb-6">
-        <div className="flex overflow-x-auto pb-2 gap-2 sm:grid sm:grid-cols-2  sm:gap-3 scrollbar-hide">
-          {meals.map((meal) => (
+        <div className="flex overflow-x-auto pb-2 gap-2 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:gap-3 scrollbar-hide">
+          {availableMeals.map((meal) => (
             <div
               key={meal.key}
-              className={`flex-shrink-0 w-36 sm:w-auto sm:flex-1 p-3 sm:p-4 rounded-xl border transition-all duration-200 ${
-                meal.included
-                  ? "bg-gradient-to-br from-green-50 to-white border-green-200 hover:shadow-sm"
-                  : "bg-gray-50 border-gray-200"
-              }`}
+              className="flex-shrink-0 w-36 sm:w-auto sm:flex-1 p-3 sm:p-4 rounded-xl border transition-all duration-200 bg-gradient-to-br from-green-50 to-white border-green-200 hover:shadow-sm"
             >
               <div className="flex items-center gap-3 mb-2 sm:mb-3">
-                <div
-                  className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                    meal.included ? "bg-green-100" : "bg-gray-200"
-                  }`}
-                >
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-green-100">
                   <div className="w-5 h-5 text-gray-700">{meal.icon}</div>
                 </div>
                 <div className="flex-1 min-w-0">
@@ -316,28 +331,15 @@ const MealsSection: React.FC<{ accommodations: Accommodation }> = ({
                 </div>
               </div>
 
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5">
-                  {meal.included ? (
-                    <>
-                      <CheckCircle className="w-4 h-4 text-green-500" />
-                      <span className="text-xs sm:text-sm font-medium text-green-700">
-                        Included
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <XCircle className="w-4 h-4 text-gray-400" />
-                      <span className="text-xs sm:text-sm text-gray-500">
-                        Not included
-                      </span>
-                    </>
-                  )}
-                </div>
+              <div className="flex items-center gap-1.5 mb-2">
+                <CheckCircle className="w-4 h-4 text-green-500" />
+                <span className="text-xs sm:text-sm font-medium text-green-700">
+                  Included
+                </span>
               </div>
 
               {/* Description */}
-              {meal.description && meal.included && (
+              {meal.description && (
                 <p className="text-xs text-gray-600 mt-2 sm:mt-3 line-clamp-2">
                   {meal.description}
                 </p>
@@ -346,6 +348,16 @@ const MealsSection: React.FC<{ accommodations: Accommodation }> = ({
           ))}
         </div>
       </div>
+
+      {/* Optional: Add a note if some meals are not included */}
+      {allMeals.length > availableMeals.length && (
+        <div className="mt-2 text-xs text-gray-500 border-t border-gray-100 pt-3">
+          <span className="flex items-center gap-1">
+            <Info className="w-3 h-3" />
+            Other meals are not included in this package
+          </span>
+        </div>
+      )}
     </div>
   );
 };

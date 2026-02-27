@@ -154,7 +154,8 @@ const SLTourDetailsBookingSidebar: React.FC<
             <div className="text-center text-xs sm:text-sm text-gray-600 pt-2 border-t border-gray-100">
               <div className="flex items-center justify-center gap-1 sm:gap-2">
                 <span className="font-medium">
-                  {selectedPackage.packageDayByDayDtoList.length} days
+                  {selectedPackage.packageDayByDayDtoList.length} Night
+                  {selectedPackage.packageDayByDayDtoList.length > 1 ? "s" : ""}
                 </span>
                 <span className="text-gray-400">•</span>
                 <span>Complete itinerary</span>

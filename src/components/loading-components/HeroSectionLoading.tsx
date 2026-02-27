@@ -8,68 +8,96 @@ const HeroSectionLoading: React.FC<HeroSectionLoadingProps> = ({
   text = "Loading hero content...",
 }) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-teal-950 flex items-center justify-center px-4">
-      <div className="text-center text-white w-full max-w-7xl">
+    <div className="relative w-full h-[700px] overflow-hidden bg-gray-900">
+      {/* Background Image Skeleton */}
+      <div className="absolute inset-0 bg-gradient-to-r from-gray-800 to-gray-900 animate-pulse">
+        {/* Overlay gradient similar to actual hero section */}
+        <div className="absolute inset-0 bg-black/40" />
+      </div>
 
-        {/* Top loading badge */}
-        <div className="flex justify-center mb-6 sm:mb-8 md:mb-10 lg:mb-14">
-          <div className="flex items-center space-x-3 px-4 py-2 bg-gray-900/50 backdrop-blur-sm rounded-full border border-teal-500/30">
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-teal-400"></div>
-            <span className="text-teal-300 text-xs sm:text-sm md:text-base">
-              {text}
-            </span>
+      {/* Content Overlay Skeleton */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="text-center text-white px-6 max-w-4xl mx-auto w-full">
+          {/* Title skeleton - matches actual structure with main title and subtitle */}
+          <div className="mb-6 space-y-4">
+            {/* Main title line */}
+            <div className="h-12 md:h-16 bg-gray-700/50 rounded-lg w-3/4 mx-auto animate-pulse" />
+            
+            {/* Subtitle line - matching the gradient text styling */}
+            <div className="h-8 md:h-10 bg-gradient-to-r from-cyan-400/20 to-emerald-500/20 rounded-lg w-2/3 mx-auto animate-pulse" />
+          </div>
+
+          {/* Description skeleton */}
+          <div className="space-y-3 mb-8 max-w-2xl mx-auto">
+            <div className="h-4 bg-gray-700/50 rounded w-full animate-pulse" />
+            <div className="h-4 bg-gray-700/50 rounded w-5/6 mx-auto animate-pulse" />
+            <div className="h-4 bg-gray-700/50 rounded w-4/6 mx-auto animate-pulse" />
+          </div>
+
+          {/* Buttons skeleton - matching actual button styling */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            {/* Primary button skeleton */}
+            <div className="h-14 w-48 bg-gradient-to-r from-blue-600/30 to-emerald-500/30 rounded-full animate-pulse mx-auto sm:mx-0" />
+            
+            {/* Secondary button skeleton */}
+            <div className="h-14 w-48 bg-transparent border-2 border-cyan-300/20 rounded-full animate-pulse mx-auto sm:mx-0" />
           </div>
         </div>
+      </div>
 
-        {/* Title skeleton */}
-        <div className="mb-8 sm:mb-10 md:mb-12 lg:mb-16">
-          <div className="h-3 sm:h-4 bg-gradient-to-r from-gray-700 to-teal-800/50 rounded w-24 sm:w-40 md:w-48 mx-auto mb-3 animate-pulse"></div>
-
-          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-gradient-to-r from-gray-700 to-cyan-800/50 rounded w-40 sm:w-64 md:w-80 lg:w-96 mx-auto mb-3 animate-pulse"></div>
-
-          <div className="h-1 bg-gradient-to-r from-teal-500 to-cyan-500 rounded w-10 sm:w-14 md:w-16 mx-auto animate-pulse"></div>
+      {/* Navigation Arrows Skeleton (only visible on medium screens and up) */}
+      <div className="hidden md:flex">
+        {/* Left arrow */}
+        <div className="absolute left-6 top-1/2 transform -translate-y-1/2">
+          <div className="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full animate-pulse" />
         </div>
 
-        {/* Grid skeleton */}
-        <div className="w-full max-w-full mx-auto space-y-2 sm:space-y-3 md:space-y-4">
-
-          {[...Array(3)].map((_, rowIndex) => (
-            <div
-              key={rowIndex}
-              className="flex gap-2 sm:gap-3 md:gap-4 overflow-hidden justify-center"
-            >
-              {[...Array(6)].map((_, i) => (
-                <div
-                  key={i}
-                  className="
-                    flex-shrink-0
-                    w-16 h-16
-                    sm:w-24 sm:h-24
-                    md:w-32 md:h-32
-                    lg:w-40 lg:h-40
-                    xl:w-48 xl:h-48
-                    2xl:w-56 2xl:h-56
-                    bg-gradient-to-br from-gray-800 to-teal-900/30
-                    rounded-lg animate-pulse
-                    border border-teal-500/10
-                  "
-                  style={{
-                    animationDelay: `${rowIndex * 100 + i * 50}ms`,
-                  }}
-                />
-              ))}
-            </div>
-          ))}
-
+        {/* Right arrow */}
+        <div className="absolute right-6 top-1/2 transform -translate-y-1/2">
+          <div className="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full animate-pulse" />
         </div>
+      </div>
 
-        {/* Button skeleton */}
-        <div className="mt-8 sm:mt-10 md:mt-12 lg:mt-16 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
-          <div className="h-10 sm:h-12 md:h-14 bg-gradient-to-r from-gray-800 to-teal-900/50 rounded-full w-40 sm:w-48 md:w-56 animate-pulse border border-teal-500/20"></div>
+      {/* Slide Indicators Skeleton */}
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3">
+        {[...Array(4)].map((_, index) => (
+          <div
+            key={index}
+            className={`w-3 h-3 rounded-full bg-white/20 animate-pulse ${
+              index === 0 ? "bg-white/40 scale-125" : ""
+            }`}
+            style={{ animationDelay: `${index * 100}ms` }}
+          />
+        ))}
+      </div>
 
-          <div className="h-10 sm:h-12 md:h-14 bg-gradient-to-r from-gray-800 to-cyan-900/50 rounded-full w-40 sm:w-48 md:w-56 animate-pulse border border-cyan-500/20"></div>
+      {/* Progress Bar Skeleton */}
+      <div className="absolute bottom-0 left-0 w-full h-1 bg-white/20">
+        <div
+          className="h-full bg-gradient-to-r from-cyan-400/30 to-emerald-500/30 animate-pulse"
+          style={{ width: "25%" }}
+        />
+      </div>
+
+      {/* Auto-play Indicator Skeleton */}
+      <div className="absolute top-6 right-6 flex items-center space-x-2">
+        <div className="w-2 h-2 rounded-full bg-green-400/30 animate-pulse" />
+        <div className="h-4 w-16 bg-white/20 rounded animate-pulse" />
+      </div>
+
+      {/* Slide Counter Skeleton */}
+      <div className="absolute top-6 left-6">
+        <div className="h-4 w-12 bg-white/20 rounded animate-pulse" />
+      </div>
+
+      {/* Loading Badge - Floating indicator that matches your original design but positioned better */}
+      <div className="absolute top-6 left-1/2 transform -translate-x-1/2 z-10">
+        <div className="flex items-center space-x-3 px-4 py-2 bg-gray-900/50 backdrop-blur-sm rounded-full border border-teal-500/30">
+          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-teal-400"></div>
+          <span className="text-teal-300 text-xs sm:text-sm md:text-base">
+            {text}
+          </span>
         </div>
-
       </div>
     </div>
   );

@@ -81,7 +81,9 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
             <div className="flex items-center gap-2">
               <Users className="w-3 h-3 sm:w-4 sm:h-4 text-teal-600 transition-transform duration-300 group-hover:scale-110 flex-shrink-0" />
               <span className="text-xs sm:text-sm text-gray-700 truncate">
-                {activity.minParticipate}-{activity.maxParticipate} people
+                {activity.maxParticipate === 0
+                  ? "Any people"
+                  : `${activity.minParticipate}-${activity.maxParticipate} people`}
               </span>
             </div>
 
@@ -92,34 +94,24 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
                 {activity.season.split(",").length !== 1 ? "s" : ""}
               </span>
             </div>
+            <div className="flex items-center justify-between xs:justify-end gap-2 w-full xs:w-auto">
+              <div className="flex items-center gap-2">
+                <span className="text-xs sm:text-sm font-medium text-sky-700 transition-colors duration-300 group-hover:text-sky-600 hidden sm:inline">
+                  {isExpanded ? "Show Less" : "Show Details"}
+                </span>
+                <div className="transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 bg-white border border-sky-200 rounded-lg group-hover:border-sky-300">
+                  {isExpanded ? (
+                    <ChevronUp className="w-4 h-4 sm:w-5 sm:h-5 text-sky-500 group-hover:text-sky-600 transition-colors duration-300" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5 text-sky-500 group-hover:text-sky-600 transition-colors duration-300" />
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Right section - Expand/collapse button */}
-        <div className="flex items-center justify-between xs:justify-end gap-2 w-full xs:w-auto">
-          {/* Optional: Mobile-only quick stats */}
-          <div className="flex items-center gap-3 xs:hidden">
-            <div className="text-xs text-sky-600">
-              {activity.durationHours}h
-            </div>
-            <div className="text-xs text-teal-600">
-              {activity.minParticipate}-{activity.maxParticipate}p
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="text-xs sm:text-sm font-medium text-sky-700 transition-colors duration-300 group-hover:text-sky-600 hidden sm:inline">
-              {isExpanded ? "Show Less" : "Show Details"}
-            </span>
-            <div className="transition-all duration-300 transform group-hover:scale-110 flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 bg-white border border-sky-200 rounded-lg group-hover:border-sky-300">
-              {isExpanded ? (
-                <ChevronUp className="w-4 h-4 sm:w-5 sm:h-5 text-sky-500 group-hover:text-sky-600 transition-colors duration-300" />
-              ) : (
-                <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5 text-sky-500 group-hover:text-sky-600 transition-colors duration-300" />
-              )}
-            </div>
-          </div>
-        </div>
       </button>
 
       {/* Activity Details */}
