@@ -145,7 +145,9 @@ const SriLankanTourDetailsPage = () => {
       transport: {
         transportId: packageAccommodation.transportId,
         transportType: packageAccommodation.vehicleTypeName,
+        vehicleTypeId: packageAccommodation.vehicleTypeId,
         vehicleModel: packageAccommodation.vehicleModel,
+        vehicleSpecificationId: packageAccommodation.vehicleSpecificationId,
         seatCount: packageAccommodation.seatCapacity,
         airConditioned: packageAccommodation.airCondition,
         driverIncluded: null,

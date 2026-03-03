@@ -63,6 +63,7 @@ const ACCOUNT_SECURITY = "/account-security";
 const BOOKING = "/booking";
 const BROWSER_HISTORY = "/browser-history";
 const COMMON = "/common";
+const SEASONS = "/seasons";
 
 // Auth
 export const LOGIN = `${BASE_PATH}${API}${VERSION}${AUTH}/login`;
@@ -255,6 +256,15 @@ export const GET_ALL_CATEGORIES_DATA = `${BASE_PATH}${API}${VERSION}${COMMON}/al
 // Others
 export const UPLOAD_IMAGE_TO_CLOUDINARY =
   "https://api.cloudinary.com/v1_1/dtzrivqye/image/upload";
+
+// Vehicles
+export const GET_VEHICLE_SPECIFICATION_DETAILS_BY_ID_DATA = `${BASE_PATH}${API}${VERSION}${VEHICLES}/specification`;
+export const GET_VEHICLE_SPECIFICATION_DETAILS_BY_REQUEST_DATA = `${BASE_PATH}${API}${VERSION}${VEHICLES}/specification`;
+export const GET_VEHICLE_SPECIFICATION_FILTERS_DATA = `${BASE_PATH}${API}${VERSION}${VEHICLES}/specification-filters`;
+
+// Seasons
+export const GET_ACTIVE_SEASONS_BASIC_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${SEASONS}/basic-details`;
+export const GET_SEASONS_DETAILS_BY_SEASON_ID_DATA = `${BASE_PATH}${API}${VERSION}${SEASONS}`;
 
 
   

@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   Clock,
   ThermometerSun,
@@ -9,7 +10,7 @@ import {
   XCircle,
   TrendingUp,
 } from "lucide-react";
-import { Activity } from "@/types/sri-lankan-tour-types";
+import { Activity } from "@/types/tour-types";
 
 interface ActivityDetailsProps {
   activity: Activity;
@@ -22,7 +23,7 @@ interface ActivityDetailsProps {
     description?: string,
     type?: "destination" | "activity",
     allImages?: Array<{ url: string; title: string; description?: string }>,
-    initialIndex?: number
+    initialIndex?: number,
   ) => void;
 }
 
@@ -33,7 +34,16 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = ({
   formatTime,
   openImageModal,
 }) => {
+  const router = useRouter();
+
   if (!isExpanded) return null;
+
+  // Function to handle season click navigation
+  const handleSeasonClick = (seasonId: number, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent event bubbling
+    // Convert season name to ID format (lowercase, replace spaces with hyphens)
+    router.push(`/seasons/${seasonId}`);
+  };
 
   return (
     <div
@@ -72,8 +82,11 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = ({
                     {formatTime(activity.availableTo)}
                   </p>
                 </div>
-                
-                <div className="bg-gradient-to-br from-teal-50 to-emerald-50 p-3 sm:p-4 rounded-lg sm:rounded-xl transition-all duration-300 hover:shadow-sm sm:hover:shadow-md border border-teal-100">
+
+                <div
+                  onClick={(e) => handleSeasonClick(activity.seasonId, e)}
+                  className="bg-gradient-to-br from-teal-50 to-emerald-50 p-3 sm:p-4 rounded-lg sm:rounded-xl transition-all duration-300 hover:shadow-sm sm:hover:shadow-md border border-teal-100 cursor-pointer hover:border-teal-300 hover:from-teal-100 hover:to-emerald-100"
+                >
                   <div className="flex items-center gap-2 mb-2">
                     <ThermometerSun className="w-4 h-4 sm:w-5 sm:h-5 text-teal-600" />
                     <span className="text-sm sm:text-base font-medium text-gray-700">
@@ -84,7 +97,7 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = ({
                     {activity.season.split(",").map((season, index) => (
                       <span
                         key={index}
-                        className="px-1.5 py-0.5 sm:px-2 sm:py-1 bg-white text-xs font-medium text-gray-700 rounded-full border border-sky-200 transition-all duration-300 hover:scale-105 hover:border-sky-300 hover:bg-sky-50"
+                        className="px-1.5 py-0.5 sm:px-2 sm:py-1 bg-white text-xs font-medium text-gray-700 rounded-full border border-sky-200"
                       >
                         {season.trim()}
                       </span>
@@ -151,7 +164,7 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = ({
                         img.description,
                         "activity",
                         images,
-                        imgIdx
+                        imgIdx,
                       );
                     }}
                   >
@@ -181,7 +194,7 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = ({
           )}
         </div>
 
-        {/* Price Comparison */}
+        {/* Price Comparison - Commented out */}
         {/* <div className="mt-6 p-4 bg-gradient-to-r from-sky-50 to-teal-50 rounded-xl border border-sky-200 transition-all duration-300 hover:shadow-md">
           <h6 className="font-semibold text-gray-900 mb-3">Price Information</h6>
           <div className="grid grid-cols-2 gap-4">

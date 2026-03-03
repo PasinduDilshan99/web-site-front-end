@@ -1,3 +1,4 @@
+import { VehicleSpecification } from './vehicle-types';
 export interface Schedule {
   scheduleId: number;
   scheduleName: string;
@@ -486,6 +487,7 @@ export interface Activity {
   minParticipate: number;
   maxParticipate: number;
   season: string;
+  seasonId:number;
   status: string;
   createdAt: string;
   updatedAt: string;
@@ -510,7 +512,9 @@ export interface Hotel {
 export interface Transport {
   transportId: number;
   transportType: string;
+  vehicleTypeId:number;
   vehicleModel: string;
+  vehicleSpecificationId: number;
   seatCount: number;
   airConditioned: boolean;
   driverIncluded: boolean | null;

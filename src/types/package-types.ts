@@ -25,8 +25,10 @@ export interface PackageDayAccommodation {
   hotelLongitude: number;
   transportId: number;
   vehicleRegistrationNumber: string;
+  vehicleTypeId: number;
   vehicleTypeName: string;
   vehicleModel: string;
+  vehicleSpecificationId: number;
   seatCapacity: number;
   airCondition: boolean;
 }

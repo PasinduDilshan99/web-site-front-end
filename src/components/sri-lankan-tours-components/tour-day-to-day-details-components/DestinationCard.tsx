@@ -3,8 +3,8 @@
 import React from "react";
 import Image from "next/image";
 import { MapPin, Maximize2, TrendingUp } from "lucide-react";
-import { DestinationWithActivities } from "@/types/sri-lankan-tour-types";
 import ActivityCard from "./ActivityCard";
+import { DestinationWithActivities } from "@/types/tour-types";
 
 interface DestinationCardProps {
   destinationWithActivities: DestinationWithActivities;

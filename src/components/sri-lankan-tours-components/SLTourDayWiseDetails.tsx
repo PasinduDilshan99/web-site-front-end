@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { DayDetails } from "@/types/sri-lankan-tour-types";
 import {
   Calendar,
   MapPin,
@@ -20,6 +19,7 @@ import ImageModal from "./tour-day-to-day-details-components/ImageModal";
 import DayContent from "./tour-day-to-day-details-components/DayContent";
 import TourExtraDetails from "./tour-day-to-day-details-components/TourExtraDetails";
 import { TourExtraDetails as TourExtraDetailsType } from "@/types/sri-lankan-tour-types";
+import { DayDetails } from "@/types/tour-types";
 
 interface SLTourDayWiseDetailsProps {
   days: DayDetails[];

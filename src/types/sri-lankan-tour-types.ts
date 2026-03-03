@@ -280,6 +280,8 @@ export interface Transport {
   transportId: number;
   transportType: string;
   vehicleModel: string;
+  vehicleTypeId: number;
+  vehicleSpecificationId: number;
   seatCount: number;
   airConditioned: boolean;
   driverIncluded: boolean | null;

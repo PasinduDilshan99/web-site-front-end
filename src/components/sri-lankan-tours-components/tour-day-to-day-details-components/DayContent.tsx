@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import { DayDetails } from "@/types/sri-lankan-tour-types";
 import DestinationCard from "./DestinationCard";
 import AccommodationsSection from "./AccommodationsSection";
+import { DayDetails } from "@/types/tour-types";
 
 interface DayContentProps {
   day: DayDetails;

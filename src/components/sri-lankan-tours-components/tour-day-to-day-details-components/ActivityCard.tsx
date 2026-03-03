@@ -9,8 +9,8 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
-import { Activity } from "@/types/sri-lankan-tour-types";
 import ActivityDetails from "./ActivityDetails";
+import { Activity } from "@/types/tour-types";
 
 interface ActivityCardProps {
   activity: Activity;
