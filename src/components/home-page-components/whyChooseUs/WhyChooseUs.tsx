@@ -8,21 +8,51 @@ import { WhyChooseUsService } from "@/services/whyChooseUsService";
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";
 import { PLACE_HOLDER_IMAGE } from "@/utils/constant";
 
-// Default icon SVG component with Sunset Purple theme
-const DefaultIcon = ({ color = "#A855F7" }: { color?: string }) => (
-  <svg
-    width="32"
-    height="32"
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8"
-  >
-    <circle cx="16" cy="16" r="14" fill={color} fillOpacity="0.1" />
-    <circle cx="16" cy="16" r="10" fill={color} fillOpacity="0.2" />
-    <circle cx="16" cy="16" r="6" fill={color} />
-  </svg>
-);
+// Import Lucide React icons
+import * as LucideIcons from 'lucide-react';
+
+// Default icon component (Clock as fallback)
+const DefaultIcon = ({ color = "#A855F7" }: { color?: string }) => {
+  const ClockIcon = LucideIcons.Clock;
+  return <ClockIcon className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" style={{ color }} />;
+};
+
+// Dynamic Icon Component
+const DynamicIcon = ({ 
+  iconName, 
+  color,
+  className 
+}: { 
+  iconName: string | null; 
+  color?: string;
+  className?: string;
+}) => {
+  const [iconError, setIconError] = useState(false);
+
+  useEffect(() => {
+    setIconError(false);
+  }, [iconName]);
+
+  if (!iconName || iconError) {
+    return <DefaultIcon color={color} />;
+  }
+
+  // Try to get the icon from Lucide icons
+  const IconComponent = (LucideIcons as any)[iconName];
+  
+  if (!IconComponent) {
+    console.warn(`Icon "${iconName}" not found in Lucide React icons, using default`);
+    return <DefaultIcon color={color} />;
+  }
+
+  return (
+    <IconComponent 
+      className={className || "w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8"} 
+      style={{ color }}
+      onError={() => setIconError(true)}
+    />
+  );
+};
 
 // Card Image Component with Error Handling
 const CardImage = React.memo(
@@ -94,56 +124,6 @@ const CardImage = React.memo(
 );
 
 CardImage.displayName = "CardImage";
-
-// Icon Component with Error Handling
-const CardIcon = React.memo(
-  ({
-    iconUrl,
-    title,
-    color,
-    hasError,
-    onError,
-  }: {
-    iconUrl: string | null;
-    title: string;
-    color?: string;
-    hasError: boolean;
-    onError: () => void;
-  }) => {
-    const [imgSrc, setImgSrc] = useState(iconUrl || "");
-    const [imgError, setImgError] = useState(hasError || !iconUrl);
-
-    useEffect(() => {
-      setImgSrc(iconUrl || "");
-      setImgError(!iconUrl);
-    }, [iconUrl]);
-
-    const handleError = () => {
-      if (!imgError && iconUrl) {
-        setImgError(true);
-        onError();
-      }
-    };
-
-    if (imgError || !iconUrl) {
-      return <DefaultIcon color={color || "#A855F7"} />;
-    }
-
-    return (
-      <Image
-        src={imgSrc}
-        alt={`${title} icon`}
-        width={32}
-        height={32}
-        className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8"
-        onError={handleError}
-        unoptimized
-      />
-    );
-  },
-);
-
-CardIcon.displayName = "CardIcon";
 
 const WhyChooseUs = ({ buttonRequired }: { buttonRequired: boolean }) => {
   const router = useRouter();
@@ -264,9 +244,6 @@ const WhyChooseUs = ({ buttonRequired }: { buttonRequired: boolean }) => {
           {cardsData.map((card) => {
             const stats = extractStats(card.cardTitle);
             const hasCardImageError = hasImageError(card.cardImageUrl);
-            const hasCardIconError = card.cardIconUrl
-              ? hasImageError(card.cardIconUrl)
-              : true;
 
             return (
               <div
@@ -285,16 +262,12 @@ const WhyChooseUs = ({ buttonRequired }: { buttonRequired: boolean }) => {
                   {/* Gradient Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent group-hover:from-black/40 transition-all duration-300"></div>
 
-                  {/* Icon Overlay - Responsive Positioning and Size with Error Handling */}
+                  {/* Icon Overlay - Now using Lucide React Icons */}
                   <div className="absolute bottom-2 sm:bottom-3 md:bottom-4 right-2 sm:right-3 md:right-4 bg-white rounded-full p-1.5 sm:p-2 md:p-2.5 lg:p-3 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
-                    <CardIcon
-                      iconUrl={card.cardIconUrl}
-                      title={card.cardTitle}
-                      color={card.cardColor}
-                      hasError={hasCardIconError}
-                      onError={() =>
-                        card.cardIconUrl && handleImageError(card.cardIconUrl)
-                      }
+                    <DynamicIcon
+                      iconName={card.cardIconUrl}
+                      color={card.cardColor || "#A855F7"}
+                      className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8"
                     />
                   </div>
                 </div>

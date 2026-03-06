@@ -3,23 +3,16 @@
 import { useEffect, useRef, useCallback } from "react";
 import L, { Map as LeafletMap, LatLngTuple } from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { createPhotoMarker } from "./map-utils";
+import { createPhotoMarker, createAirportMarker } from "./map-utils";
+import { TourMapLocation } from "@/types/tour-map-types";
 
-type Location = {
-  id: number;
-  name: string;
-  lat: number;
-  lng: number;
-  description?: string;
-  images: Image[];
-};
-
-type Image = {
-  id: number;
-  url: string;
-  name: string;
-  description?: string;
-};
+// Katunayake (Bandaranaike International Airport) coordinates
+const KATUNAYAKE_AIRPORT: Readonly<{ lat: number; lng: number; name: string }> =
+  {
+    lat: 7.1808,
+    lng: 79.8842,
+    name: "Bandaranaike International Airport (Katunayake)",
+  };
 
 const MAP_CONFIG = {
   tileLayer: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -32,17 +25,23 @@ const MAP_CONFIG = {
     opacity: 0.7,
     dashArray: "5, 10",
   },
+  airportRouteStyle: { color: "#8b5cf6", weight: 5, opacity: 0.7 },
+  airportReturnRouteStyle: {
+    color: "#f59e0b",
+    weight: 5,
+    opacity: 0.7,
+    dashArray: "5, 10",
+  },
   boundsPadding: [50, 50] as [number, number],
 };
 
 const ROUTING_API_URL = "https://router.project-osrm.org/route/v1/driving";
 
 interface TestMapProps {
-  locations: Location[];
+  locations: TourMapLocation[];
   returnToStart?: boolean;
 }
 
-// Define proper route style interface
 interface RouteStyle {
   color: string;
   weight: number;
@@ -50,7 +49,6 @@ interface RouteStyle {
   dashArray?: string;
 }
 
-// Type for OSRM API response
 interface OSRMRouteResponse {
   routes: Array<{
     geometry: {
@@ -67,61 +65,72 @@ export default function TestMap({
   const mapRef = useRef<LeafletMap | null>(null);
   const routesRef = useRef<L.Polyline[]>([]);
 
-  const getRoute = useCallback(async (waypoints: L.LatLng[]): Promise<L.LatLng[]> => {
-    if (waypoints.length < 2) return waypoints;
+  const getRoute = useCallback(
+    async (waypoints: L.LatLng[]): Promise<L.LatLng[]> => {
+      if (waypoints.length < 2) return waypoints;
 
-    try {
-      const coordinates = waypoints
-        .map((point) => `${point.lng},${point.lat}`)
-        .join(";");
+      try {
+        const coordinates = waypoints
+          .map((point) => `${point.lng},${point.lat}`)
+          .join(";");
 
-      const response = await fetch(
-        `${ROUTING_API_URL}/${coordinates}?overview=full&geometries=geojson`
-      );
-
-      if (!response.ok) {
-        throw new Error(`Routing API error: ${response.status}`);
-      }
-
-      const data: OSRMRouteResponse = await response.json();
-
-      if (data.routes && data.routes.length > 0) {
-        return data.routes[0].geometry.coordinates.map(
-          ([lng, lat]: [number, number]) => new L.LatLng(lat, lng)
+        const response = await fetch(
+          `${ROUTING_API_URL}/${coordinates}?overview=full&geometries=geojson`
         );
-      } else {
-        throw new Error("No route found");
-      }
-    } catch (error) {
-      console.error("Error fetching route:", error);
-      return waypoints;
-    }
-  }, []);
 
-  const drawRoute = useCallback(async (
-    map: LeafletMap,
-    waypoints: L.LatLng[],
-    style: RouteStyle
-  ) => {
-    try {
-      const routePoints = await getRoute(waypoints);
-      const polyline = L.polyline(routePoints, style).addTo(map);
-      routesRef.current.push(polyline);
-      return polyline;
-    } catch (error) {
-      console.error("Error drawing route:", error);
-      const fallbackStyle = {
-        ...style,
-        dashArray: "5,5",
-      } as L.PolylineOptions;
-      const polyline = L.polyline(waypoints, fallbackStyle).addTo(map);
-      routesRef.current.push(polyline);
-      return polyline;
-    }
-  }, [getRoute]);
+        if (!response.ok) {
+          throw new Error(`Routing API error: ${response.status}`);
+        }
+
+        const data: OSRMRouteResponse = await response.json();
+
+        if (data.routes && data.routes.length > 0) {
+          return data.routes[0].geometry.coordinates.map(
+            ([lng, lat]: [number, number]) => new L.LatLng(lat, lng)
+          );
+        } else {
+          throw new Error("No route found");
+        }
+      } catch (error) {
+        console.error("Error fetching route:", error);
+        return waypoints;
+      }
+    },
+    []
+  );
+
+  const drawRoute = useCallback(
+    async (map: LeafletMap, waypoints: L.LatLng[], style: RouteStyle) => {
+      try {
+        const routePoints = await getRoute(waypoints);
+
+        // Guard: map may have been removed while the async fetch was in flight
+        if (!mapRef.current) return undefined;
+
+        const polyline = L.polyline(routePoints, style).addTo(map);
+        routesRef.current.push(polyline);
+        return polyline;
+      } catch (error) {
+        console.error("Error drawing route:", error);
+
+        if (!mapRef.current) return undefined;
+
+        const fallbackStyle: L.PolylineOptions = {
+          ...style,
+          dashArray: "5,5",
+        };
+        const polyline = L.polyline(waypoints, fallbackStyle).addTo(map);
+        routesRef.current.push(polyline);
+        return polyline;
+      }
+    },
+    [getRoute]
+  );
 
   useEffect(() => {
-    if (!locations || locations.length < 2) return;
+    if (!locations || locations.length < 1) return;
+
+    let isMounted = true;
 
     mapRef.current = L.map("map");
     const map = mapRef.current;
@@ -131,36 +140,53 @@ export default function TestMap({
     }).addTo(map);
 
     const markers: L.Marker[] = [];
+
+    // Add airport marker (start/end)
+    const airportMarker = createAirportMarker(map, KATUNAYAKE_AIRPORT);
+    if (airportMarker) markers.push(airportMarker);
+
+    // Add tour location markers
     locations.forEach((location, index) => {
       const marker = createPhotoMarker(map, location, index, locations.length);
       if (marker) markers.push(marker);
     });
 
-    if (locations.length >= 2) {
-      const waypoints = locations.map((loc) => L.latLng(loc.lat, loc.lng));
-      drawRoute(map, waypoints, MAP_CONFIG.routeStyle);
+    const airportLatLng = L.latLng(
+      KATUNAYAKE_AIRPORT.lat,
+      KATUNAYAKE_AIRPORT.lng
+    );
+
+    if (locations.length >= 1) {
+      const outboundWaypoints: L.LatLng[] = [
+        airportLatLng,
+        ...locations.map((loc) => L.latLng(loc.lat, loc.lng)),
+      ];
+      if (isMounted) drawRoute(map, outboundWaypoints, MAP_CONFIG.routeStyle);
     }
 
-    if (returnToStart && locations.length >= 2) {
-      const returnWaypoints = [
+    if (returnToStart && locations.length >= 1) {
+      const returnWaypoints: L.LatLng[] = [
         L.latLng(
           locations[locations.length - 1].lat,
           locations[locations.length - 1].lng
         ),
-        L.latLng(locations[0].lat, locations[0].lng),
+        airportLatLng,
       ];
-      drawRoute(map, returnWaypoints, MAP_CONFIG.returnRouteStyle);
+      if (isMounted)
+        drawRoute(map, returnWaypoints, MAP_CONFIG.returnRouteStyle);
     }
 
-    // Create a LatLngBounds object from all locations
-    if (locations.length > 0) {
-      const bounds = L.latLngBounds(
-        locations.map(loc => [loc.lat, loc.lng] as LatLngTuple)
-      );
-      map.fitBounds(bounds, { padding: MAP_CONFIG.boundsPadding });
-    }
+    // Fit bounds to include all locations + airport
+    const allPoints: LatLngTuple[] = [
+      [KATUNAYAKE_AIRPORT.lat, KATUNAYAKE_AIRPORT.lng],
+      ...locations.map((loc): LatLngTuple => [loc.lat, loc.lng]),
+    ];
+    const bounds = L.latLngBounds(allPoints);
+    map.fitBounds(bounds, { padding: MAP_CONFIG.boundsPadding });
 
     return () => {
+      isMounted = false;
+
       routesRef.current.forEach((route) => {
         if (map.hasLayer(route)) {
           map.removeLayer(route);
@@ -168,8 +194,7 @@ export default function TestMap({
       });
       routesRef.current = [];
 
-      // Remove markers
-      markers.forEach(marker => {
+      markers.forEach((marker) => {
         if (map.hasLayer(marker)) {
           map.removeLayer(marker);
         }

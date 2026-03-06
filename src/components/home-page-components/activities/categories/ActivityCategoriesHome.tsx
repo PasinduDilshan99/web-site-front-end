@@ -3,29 +3,53 @@ import React, { useEffect, useState, useRef } from "react";
 import AnimatedButton from "../../../common-components/buttons/AnimatedButton";
 import SectionHeader from "../../../common-components/section-header/SectionHeader";
 import Image from "next/image";
-import { ActiveActivitiesCategoriesType } from "@/types/activity-types";
+import { ActiveActivitiesCategoriesType, CategoryImage } from "@/types/activity-types";
 import { ActivityService } from "@/services/activityService";
 import { PLACE_HOLDER_IMAGE } from "@/utils/constant";
 import { useRouter } from "next/navigation";
 
 // Category Image Component with Fallback
-const CategoryImage = React.memo(
+const CategoryImageComponent = React.memo(
   ({
     primaryImage,
     categoryName,
     categoryId,
+    images,
   }: {
     primaryImage: string;
     categoryName: string;
     categoryId: number;
+    images: CategoryImage[];
   }) => {
     const [imgSrc, setImgSrc] = useState(primaryImage);
     const [hasError, setHasError] = useState(false);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [isHovered, setIsHovered] = useState(false);
+    const imageIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
       setImgSrc(primaryImage);
       setHasError(false);
     }, [primaryImage]);
+
+    // Image rotation effect on hover
+    useEffect(() => {
+      if (isHovered && images.length > 1) {
+        imageIntervalRef.current = setInterval(() => {
+          setCurrentImageIndex((prevIndex) => {
+            const nextIndex = (prevIndex + 1) % images.length;
+            setImgSrc(images[nextIndex].imageUrl);
+            return nextIndex;
+          });
+        }, 1500);
+      }
+
+      return () => {
+        if (imageIntervalRef.current) {
+          clearInterval(imageIntervalRef.current);
+        }
+      };
+    }, [isHovered, images]);
 
     const handleError = () => {
       if (!hasError) {
@@ -38,9 +62,17 @@ const CategoryImage = React.memo(
     };
 
     return (
-      <div className="relative h-40 sm:h-48 md:h-56 lg:h-64 overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300">
+      <div 
+        className="relative h-40 sm:h-48 md:h-56 lg:h-64 overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => {
+          setIsHovered(false);
+          setCurrentImageIndex(0);
+          setImgSrc(primaryImage);
+        }}
+      >
         <Image
-          key={`${categoryId}-${hasError}`}
+          key={`${categoryId}-${currentImageIndex}-${hasError}`}
           src={imgSrc}
           alt={categoryName}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
@@ -49,13 +81,30 @@ const CategoryImage = React.memo(
           onError={handleError}
           priority={categoryId < 4}
         />
+        
+        {/* Image indicators for multiple images */}
+        {images.length > 1 && (
+          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1">
+            {images.map((_, index) => (
+              <div
+                key={index}
+                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                  index === currentImageIndex
+                    ? "bg-white w-3"
+                    : "bg-white/50"
+                }`}
+              />
+            ))}
+          </div>
+        )}
+        
         {hasError && <div className="absolute inset-0 bg-black/20" />}
       </div>
     );
   },
 );
 
-CategoryImage.displayName = "CategoryImage";
+CategoryImageComponent.displayName = "CategoryImageComponent";
 
 const ActivityCategoriesHome = () => {
   const [loading, setLoading] = useState(true);
@@ -132,14 +181,24 @@ const ActivityCategoriesHome = () => {
     fetchActivities();
   }, []);
 
-  // Get colors for a category
-  const getCategoryColors = (categoryName: string) => {
-    return ActivityService.getCategoryColors(categoryName);
-  };
-
   // Get primary image for category
   const getPrimaryImage = (category: ActiveActivitiesCategoriesType) => {
-    return ActivityService.getPrimaryImage(category);
+    if (category.images && category.images.length > 0) {
+      // You might want to check for isPrimary flag if available in your data
+      // For now, just use the first image
+      return category.images[0].imageUrl;
+    }
+    return PLACE_HOLDER_IMAGE;
+  };
+
+  const handleCategoryClick = (categoryName: string) => {
+    router.push(`/activities?category=${encodeURIComponent(categoryName)}`);
+  };
+
+  const handleExploreClick = (e: React.MouseEvent, categoryName: string) => {
+    e.stopPropagation(); // Prevent event bubbling
+    e.preventDefault();
+    router.push(`/activities?category=${encodeURIComponent(categoryName)}`);
   };
 
   const handleRetry = () => {
@@ -285,7 +344,6 @@ const ActivityCategoriesHome = () => {
                 }}
               >
                 {activeActivitiesCategories.map((category) => {
-                  const colors = getCategoryColors(category.categoryName);
                   const primaryImage = getPrimaryImage(category);
 
                   return (
@@ -310,13 +368,15 @@ const ActivityCategoriesHome = () => {
                           setHoveredCategory(category.categoryId)
                         }
                         onMouseLeave={() => setHoveredCategory(null)}
+                        onClick={() => handleCategoryClick(category.categoryName)}
                       >
-                        {/* Category Image Container with Cloudinary Placeholder Fallback */}
+                        {/* Category Image Container with Image Rotation */}
                         <div className="relative">
-                          <CategoryImage
+                          <CategoryImageComponent
                             primaryImage={primaryImage}
                             categoryName={category.categoryName}
                             categoryId={category.categoryId}
+                            images={category.images || []}
                           />
 
                           {/* Default Transparent Overlay */}
@@ -324,7 +384,7 @@ const ActivityCategoriesHome = () => {
                             className="absolute inset-0 transition-all duration-300"
                             style={{
                               backgroundColor: ActivityService.hexToRgba(
-                                colors.color,
+                                category.color,
                                 0.15,
                               ),
                             }}
@@ -339,7 +399,7 @@ const ActivityCategoriesHome = () => {
                             }`}
                             style={{
                               backgroundColor: ActivityService.hexToRgba(
-                                colors.hoverColor,
+                                category.hoverColor,
                                 0.25,
                               ),
                             }}
@@ -358,12 +418,12 @@ const ActivityCategoriesHome = () => {
                               className="inline-block px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg backdrop-blur-sm"
                               style={{
                                 backgroundColor: "rgba(255, 255, 255, 0.9)",
-                                border: `2px solid ${ActivityService.hexToRgba(colors.color, 0.2)}`,
+                                border: `2px solid ${ActivityService.hexToRgba(category.color, 0.2)}`,
                               }}
                             >
                               <h3
                                 className="text-base sm:text-lg lg:text-xl font-bold text-center"
-                                style={{ color: colors.color }}
+                                style={{ color: category.color }}
                               >
                                 {category.categoryName}
                               </h3>
@@ -374,8 +434,8 @@ const ActivityCategoriesHome = () => {
                           <div
                             className={`absolute inset-0 flex flex-col justify-center items-center p-3 sm:p-4 lg:p-6 text-center transition-all duration-300 ${
                               hoveredCategory === category.categoryId
-                                ? "opacity-100"
-                                : "opacity-0"
+                                ? "opacity-100 visible"
+                                : "opacity-0 invisible"
                             }`}
                           >
                             <div className="bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 transform transition-transform duration-300 hover:scale-105 max-w-[90%]">
@@ -400,18 +460,19 @@ const ActivityCategoriesHome = () => {
                               <button
                                 className="px-4 sm:px-6 py-1.5 sm:py-2 rounded-lg font-semibold text-white transition-all duration-300 transform hover:scale-105 shadow-lg text-sm sm:text-base"
                                 style={{
-                                  backgroundColor: colors.color,
+                                  backgroundColor: category.color,
                                 }}
                                 onMouseEnter={(e) => {
                                   e.currentTarget.style.backgroundColor =
-                                    colors.hoverColor;
+                                    category.hoverColor;
                                 }}
                                 onMouseLeave={(e) => {
                                   e.currentTarget.style.backgroundColor =
-                                    colors.color;
+                                    category.color;
                                 }}
+                                onClick={(e) => handleExploreClick(e, category.categoryName)}
                               >
-                                Explore
+                                Explore {category.categoryName}
                               </button>
                             </div>
                           </div>
@@ -480,7 +541,7 @@ const ActivityCategoriesHome = () => {
 
         {/* View All Button */}
         {activeActivitiesCategories.length > 0 && (
-          <div className="text-center">
+          <div className="text-center mt-8 sm:mt-10 lg:mt-12">
             <AnimatedButton onClick={() => router.push("/activities")}>
               More Activities
             </AnimatedButton>

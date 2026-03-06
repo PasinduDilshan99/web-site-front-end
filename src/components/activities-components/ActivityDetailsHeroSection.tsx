@@ -109,9 +109,6 @@ const ActivityDetailsHeroSection: React.FC<ActivityDetailsHeroSectionProps> = ({
             <div className="max-w-6xl text-white text-center">
               {/* Activity Category Badges - CENTERED */}
               <div className="mb-6 flex flex-wrap gap-3 justify-center">
-                <span className="px-4 py-2 bg-sky-500/90 backdrop-blur-sm rounded-full text-sm font-semibold">
-                  {activity.category_name}
-                </span>
                 <span className="px-4 py-2 bg-teal-500/90 backdrop-blur-sm rounded-full text-sm font-semibold">
                   {activity.season}
                 </span>

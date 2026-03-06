@@ -44,15 +44,15 @@ const VehicleFilterSection: React.FC<FilterSectionProps> = ({
   };
 
   return (
-    <div className="bg-gradient-to-r from-amber-50 to-purple-50 rounded-2xl p-4 md:p-6 mb-6 border-2 border-amber-200 shadow-lg">
+    <div className="bg-gradient-to-r from-teal-50 to-cyan-50 rounded-2xl p-4 md:p-6 mb-6 border-2 border-teal-200 shadow-lg">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-amber-600 to-purple-600 bg-clip-text text-transparent">
+        <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">
           Filter Vehicles
         </h2>
         <div className="flex gap-3">
           <button
             onClick={onResetFilters}
-            className="px-4 md:px-6 py-2 bg-gradient-to-r from-amber-600 to-purple-600 text-white rounded-lg hover:from-amber-700 hover:to-purple-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg"
+            className="px-4 md:px-6 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg"
           >
             Reset Filters
           </button>
@@ -71,7 +71,7 @@ const VehicleFilterSection: React.FC<FilterSectionProps> = ({
             placeholder="Search vehicles..."
             value={filters.search}
             onChange={(e) => onFilterChange('search', e.target.value)}
-            className="w-full px-3 py-2 border-2 border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500 transition-all text-sm"
+            className="w-full px-3 py-2 border-2 border-teal-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500 transition-all text-sm"
           />
         </div>
 
@@ -83,7 +83,7 @@ const VehicleFilterSection: React.FC<FilterSectionProps> = ({
           <select
             value={filters.make}
             onChange={(e) => onFilterChange('make', e.target.value)}
-            className="w-full px-3 py-2 border-2 border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer text-sm"
+            className="w-full px-3 py-2 border-2 border-teal-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer text-sm"
           >
             <option value="">All Makes</option>
             {makes.map((make) => (
@@ -102,7 +102,7 @@ const VehicleFilterSection: React.FC<FilterSectionProps> = ({
           <select
             value={filters.status}
             onChange={(e) => onFilterChange('status', e.target.value)}
-            className="w-full px-3 py-2 border-2 border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer text-sm"
+            className="w-full px-3 py-2 border-2 border-teal-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer text-sm"
           >
             <option value="">All Status</option>
             {statuses.map((status) => (
@@ -121,7 +121,7 @@ const VehicleFilterSection: React.FC<FilterSectionProps> = ({
           <select
             value={filters.bodyType}
             onChange={(e) => onFilterChange('bodyType', e.target.value)}
-            className="w-full px-3 py-2 border-2 border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer text-sm"
+            className="w-full px-3 py-2 border-2 border-teal-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer text-sm"
           >
             <option value="">All Body Types</option>
             {bodyTypes.map((bodyType) => (
@@ -159,7 +159,7 @@ const VehicleFilterSection: React.FC<FilterSectionProps> = ({
                     parseInt(e.target.value, 10),
                   ])
                 }
-                className="w-full h-2 bg-gradient-to-r from-amber-300 to-purple-300 rounded-lg appearance-none cursor-pointer accent-amber-600"
+                className="w-full h-2 bg-gradient-to-r from-teal-300 to-cyan-300 rounded-lg appearance-none cursor-pointer accent-teal-600"
               />
             </div>
           </div>
@@ -181,7 +181,7 @@ const VehicleFilterSection: React.FC<FilterSectionProps> = ({
                   parseInt(e.target.value, 10),
                 ])
               }
-              className="w-full h-2 bg-gradient-to-r from-amber-300 to-purple-300 rounded-lg appearance-none cursor-pointer accent-purple-600"
+              className="w-full h-2 bg-gradient-to-r from-teal-300 to-cyan-300 rounded-lg appearance-none cursor-pointer accent-cyan-600"
             />
           </div>
 
@@ -193,7 +193,7 @@ const VehicleFilterSection: React.FC<FilterSectionProps> = ({
             <select
               value={filters.engineType}
               onChange={(e) => onFilterChange('engineType', e.target.value)}
-              className="w-full px-3 py-2 border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer text-sm"
+              className="w-full px-3 py-2 border-2 border-cyan-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer text-sm"
             >
               <option value="">All Engine Types</option>
               {engineTypes.map((engineType) => (
@@ -218,7 +218,7 @@ const VehicleFilterSection: React.FC<FilterSectionProps> = ({
               onChange={(e) =>
                 onFilterChange('maxHorsepower', parseInt(e.target.value, 10))
               }
-              className="w-full h-2 bg-gradient-to-r from-amber-300 to-purple-300 rounded-lg appearance-none cursor-pointer accent-amber-600"
+              className="w-full h-2 bg-gradient-to-r from-teal-300 to-cyan-300 rounded-lg appearance-none cursor-pointer accent-teal-600"
             />
           </div>
         </div>
@@ -227,12 +227,12 @@ const VehicleFilterSection: React.FC<FilterSectionProps> = ({
       {/* Separator Line with Advanced Filters Button */}
       <div className={`relative ${showAdvancedFilters ? 'mt-6' : 'mb-4'}`}>
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t-2 border-amber-200"></div>
+          <div className="w-full border-t-2 border-teal-200"></div>
         </div>
         <div className="relative flex justify-center">
           <button
             onClick={toggleAdvancedFilters}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-purple-500 text-white rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
           >
             {showAdvancedFilters ? (
               <>
@@ -391,7 +391,7 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
   };
 
   return (
-    <div className="border-t-2 border-amber-200 pt-4 mt-4">
+    <div className="border-t-2 border-teal-200 pt-4 mt-4">
       <div className="flex items-center gap-2 mb-2">
         <span className="text-sm font-semibold text-gray-800">
           Active Filters:
@@ -402,7 +402,7 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
         {activeFilters.map((filter) => (
           <span
             key={filter.name}
-            className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-amber-100 to-purple-100 text-amber-800 rounded-full text-xs font-medium border border-amber-200 transition-all duration-200 hover:shadow-md"
+            className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-teal-100 to-cyan-100 text-teal-800 rounded-full text-xs font-medium border border-teal-200 transition-all duration-200 hover:shadow-md"
           >
             {filter.label}
             <button

@@ -20,24 +20,6 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
     return `${formattedDays} Days ${formattedNights} Nights`;
   };
 
-  const calculatePrice = () => {
-    const basePrice = 50;
-    let multiplier = 1;
-
-    // Check if there are any categories and use the first one for pricing logic
-    // You might want to adjust this logic based on your business rules
-    if (tour.tourCategoryDtos && tour.tourCategoryDtos.length > 0) {
-      const categoryName = tour.tourCategoryDtos[0].tourCategoryName;
-      if (categoryName === "Luxury") multiplier = 2.5;
-      else if (categoryName === "Family") multiplier = 1.2;
-      else if (categoryName === "Budget") multiplier = 0.8;
-    }
-
-    return Math.round(basePrice * tour.duration * multiplier);
-  };
-
-  const price = calculatePrice();
-
   const handleMoreDetailsClick = async () => {
     if (!user) return;
 
@@ -132,12 +114,12 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
 
       {/* Price and Book Now Button */}
       <div className="flex items-center justify-between mb-3 sm:mb-4">
-        <div className="text-sm sm:text-base text-gray-500">
+        {/* <div className="text-sm sm:text-base text-gray-500">
           Starting From -{" "}
           <span className="text-md lg:text-lg font-bold text-gray-800">
             ${price}
           </span>
-        </div>
+        </div> */}
         <Link
           href={`/sri-lankan-tours/${tour.tourId}`}
           onClick={handleMoreDetailsClick}

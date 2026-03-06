@@ -36,6 +36,9 @@ const BOOKING = "/booking";
 const BROWSER_HISTORY = "/browser-history";
 const OTHERS = "/others";
 const COMMON = "/common";
+const VEHICLES = "/vehicles";
+const SEASONS = "/seasons";
+
 
 // Auth
 export const LOGIN_FE = `${API}${AUTH}/login`;
@@ -226,6 +229,14 @@ export const GET_ALL_CATEGORIES_DATA_FE = `${API}${COMMON}/all-categories`;
 // Others
 export const UPLOAD_IMAGE_TO_CLOUDINARY_FE = `${API}${OTHERS}/save-images`;
 
+// Vehicles
+export const GET_VEHICLE_SPECIFICATION_DETAILS_BY_ID_DATA_FE = `${API}${VEHICLES}/specification`;
+export const GET_VEHICLE_SPECIFICATION_DETAILS_BY_REQUEST_DATA_FE = `${API}${VEHICLES}/specification`;
+export const GET_VEHICLE_SPECIFICATION_FILTERS_DATA_FE = `${API}${VEHICLES}/specification/filters`;
+
+// Seasons
+export const GET_ACTIVE_SEASONS_BASIC_DETAILS_DATA_FE = `${API}${SEASONS}/basic-details`;
+export const GET_SEASONS_DETAILS_BY_SEASON_ID_DATA_FE = `${API}${SEASONS}`;
 
 
 export const GET_TOUR_DETAILS_BY_ID_FE = `${API}${TOUR}/details-by-id`;

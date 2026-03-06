@@ -1,7 +1,5 @@
 "use client";
 
-import Footer from "@/components/common-components/footer/Footer";
-import NavBar from "@/components/common-components/navBar/NavBar";
 import ImagesTab from "@/components/vehicle-components/ImagesTab";
 import OverviewTab from "@/components/vehicle-components/OverviewTab";
 import Pagination from "@/components/vehicle-components/Pagination";
@@ -157,7 +155,10 @@ const VehiclePage: React.FC = () => {
   }, [filteredVehicles, pagination.currentPage, pagination.itemsPerPage]);
 
   // Filter handlers
-  const handleFilterChange = (filterName: keyof VehicleFilters, value: unknown) => {
+  const handleFilterChange = (
+    filterName: keyof VehicleFilters,
+    value: unknown,
+  ) => {
     setFilters((prev) => ({ ...prev, [filterName]: value }));
   };
 
@@ -211,9 +212,9 @@ const VehiclePage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-teal-50 to-cyan-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500 mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading vehicles...</p>
         </div>
       </div>
@@ -222,7 +223,7 @@ const VehiclePage: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-teal-50 to-cyan-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4">😞</div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -235,69 +236,44 @@ const VehiclePage: React.FC = () => {
   }
 
   return (
-    <>
-      <NavBar />
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-purple-50">
-        <div className="container mx-auto px-3 sm:px-4 py-6">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-amber-600 to-purple-600 bg-clip-text text-transparent mb-4">
-              Vehicle Fleet Management
-            </h1>
-            <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">
-              Manage and monitor your vehicle fleet with detailed
-              specifications, usage history, and maintenance tracking.
-            </p>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 to-cyan-50">
+      <div className="container mx-auto px-3 sm:px-4 py-6">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent mb-4">
+            Vehicle Fleet Management
+          </h1>
+          <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">
+            Manage and monitor your vehicle fleet with detailed specifications,
+            usage history, and maintenance tracking.
+          </p>
+        </div>
 
-          {/* Filter Section */}
-          <VehicleFilterSection
-            filters={filters}
-            onFilterChange={handleFilterChange}
-            onResetFilters={handleResetFilters}
-            vehicles={vehicles}
-          />
+        {/* Filter Section */}
+        <VehicleFilterSection
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          onResetFilters={handleResetFilters}
+          vehicles={vehicles}
+        />
 
-          <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-            {/* Vehicle List Sidebar */}
-            <div className="xl:col-span-1">
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold text-gray-900 flex items-center">
-                    <span className="mr-2">🚗</span>
-                    Vehicles ({filteredVehicles.length})
-                  </h2>
-                </div>
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+          {/* Vehicle List Sidebar */}
+          <div className="xl:col-span-1">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+                  <span className="mr-2">🚗</span>
+                  Vehicles ({filteredVehicles.length})
+                </h2>
+              </div>
 
-                {/* Mobile View - Horizontal Scroll */}
-                <div className="xl:hidden">
-                  <div className="flex space-x-3 overflow-x-auto pb-4 -mx-2 px-2">
-                    {currentVehicles.map((vehicle) => (
-                      <div
-                        key={vehicle.vehicleId}
-                        className="flex-shrink-0 w-64"
-                      >
-                        <VehicleCard
-                          vehicle={vehicle}
-                          isSelected={
-                            selectedVehicle?.vehicleId === vehicle.vehicleId
-                          }
-                          onClick={() => {
-                            setSelectedVehicle(vehicle);
-                            setActiveTab("overview");
-                          }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Desktop View - Vertical List */}
-                <div className="hidden xl:block">
-                  <div className="space-y-3 max-h-[600px] overflow-y-auto">
-                    {currentVehicles.map((vehicle) => (
+              {/* Mobile View - Horizontal Scroll */}
+              <div className="xl:hidden">
+                <div className="flex space-x-3 overflow-x-auto pb-4 -mx-2 px-2">
+                  {currentVehicles.map((vehicle) => (
+                    <div key={vehicle.vehicleId} className="flex-shrink-0 w-64">
                       <VehicleCard
-                        key={vehicle.vehicleId}
                         vehicle={vehicle}
                         isSelected={
                           selectedVehicle?.vehicleId === vehicle.vehicleId
@@ -307,83 +283,101 @@ const VehiclePage: React.FC = () => {
                           setActiveTab("overview");
                         }}
                       />
-                    ))}
-                  </div>
-                </div>
-
-                {/* Pagination */}
-                {filteredVehicles.length > 0 && (
-                  <div className="mt-4">
-                    <Pagination
-                      pagination={pagination}
-                      onPageChange={handlePageChange}
-                      onItemsPerPageChange={handleItemsPerPageChange}
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Vehicle Details */}
-            <div className="xl:col-span-3">
-              {selectedVehicle ? (
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                  {/* Vehicle Header */}
-                  <div className="p-4 sm:p-6 border-b border-gray-200">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div>
-                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-                          {selectedVehicle.specification.make}{" "}
-                          {selectedVehicle.specification.model}
-                        </h2>
-                        <p className="text-gray-600 text-sm sm:text-base">
-                          {selectedVehicle.registrationNumber} •{" "}
-                          {selectedVehicle.specification.year} •{" "}
-                          {selectedVehicle.specification.bodyType}
-                        </p>
-                      </div>
-                      <span
-                        className={`px-3 py-1 sm:px-4 sm:py-2 rounded-full font-medium text-sm ${
-                          selectedVehicle.status === "ACTIVE"
-                            ? "bg-green-100 text-green-800"
-                            : selectedVehicle.status === "MAINTENANCE"
-                            ? "bg-amber-100 text-amber-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
-                      >
-                        {selectedVehicle.status}
-                      </span>
                     </div>
-                  </div>
-
-                  {/* Tabs Navigation */}
-                  <div className="px-4 sm:px-6">
-                    <VehicleTabs
-                      activeTab={activeTab}
-                      onTabChange={setActiveTab}
-                    />
-                  </div>
-
-                  {/* Tab Content */}
-                  <div className="p-4 sm:p-6">{renderTabContent()}</div>
+                  ))}
                 </div>
-              ) : (
-                <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-                  <div className="text-6xl mb-4">🚗</div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    No Vehicle Selected
-                  </h3>
-                  <p className="text-gray-600">
-                    Select a vehicle from the list to view details
-                  </p>
+              </div>
+
+              {/* Desktop View - Vertical List */}
+              <div className="hidden xl:block">
+                <div className="space-y-3 max-h-[600px] overflow-y-auto">
+                  {currentVehicles.map((vehicle) => (
+                    <VehicleCard
+                      key={vehicle.vehicleId}
+                      vehicle={vehicle}
+                      isSelected={
+                        selectedVehicle?.vehicleId === vehicle.vehicleId
+                      }
+                      onClick={() => {
+                        setSelectedVehicle(vehicle);
+                        setActiveTab("overview");
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Pagination */}
+              {filteredVehicles.length > 0 && (
+                <div className="mt-4">
+                  <Pagination
+                    pagination={pagination}
+                    onPageChange={handlePageChange}
+                    onItemsPerPageChange={handleItemsPerPageChange}
+                  />
                 </div>
               )}
             </div>
           </div>
+
+          {/* Vehicle Details */}
+          <div className="xl:col-span-3">
+            {selectedVehicle ? (
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+                {/* Vehicle Header */}
+                <div className="p-4 sm:p-6 border-b border-gray-200">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                      <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+                        {selectedVehicle.specification.make}{" "}
+                        {selectedVehicle.specification.model}
+                      </h2>
+                      <p className="text-gray-600 text-sm sm:text-base">
+                        {selectedVehicle.registrationNumber} •{" "}
+                        {selectedVehicle.specification.year} •{" "}
+                        {selectedVehicle.specification.bodyType}
+                      </p>
+                    </div>
+                    <span
+                      className={`px-3 py-1 sm:px-4 sm:py-2 rounded-full font-medium text-sm ${
+                        selectedVehicle.status === "ACTIVE"
+                          ? "bg-green-100 text-green-800"
+                          : selectedVehicle.status === "MAINTENANCE"
+                            ? "bg-amber-100 text-amber-800"
+                            : "bg-red-100 text-red-800"
+                      }`}
+                    >
+                      {selectedVehicle.status}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Tabs Navigation */}
+                <div className="px-4 sm:px-6">
+                  <VehicleTabs
+                    activeTab={activeTab}
+                    onTabChange={setActiveTab}
+                  />
+                </div>
+
+                {/* Tab Content */}
+                <div className="p-4 sm:p-6">{renderTabContent()}</div>
+              </div>
+            ) : (
+              <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
+                <div className="text-6xl mb-4">🚗</div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  No Vehicle Selected
+                </h3>
+                <p className="text-gray-600">
+                  Select a vehicle from the list to view details
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-      <Footer />
-    </>
+    </div>
   );
 };
 

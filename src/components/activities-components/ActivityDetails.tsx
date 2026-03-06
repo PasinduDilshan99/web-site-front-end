@@ -1,4 +1,4 @@
-import { ActivityData } from "@/types/activities-types";
+import { ActivityData } from "@/types/activity-types";
 import React from "react";
 
 interface ActivityDetailsProps {

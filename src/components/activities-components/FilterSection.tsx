@@ -20,7 +20,6 @@ interface FilterSectionProps {
   participantsOptions: number[];
   statuses: string[];
 }
-
 const FilterSection: React.FC<FilterSectionProps> = ({
   filters,
   onFilterChange,
@@ -29,29 +28,31 @@ const FilterSection: React.FC<FilterSectionProps> = ({
   categories,
   seasons,
   durations,
-  participantsOptions,
+  // participantsOptions, // Comment out the prop
   statuses,
 }) => {
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
-  const formatPrice = (price: number): string => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(price);
-  };
+  // Comment out formatPrice function as it's no longer needed
+  // const formatPrice = (price: number): string => {
+  //   return new Intl.NumberFormat("en-US", {
+  //     style: "currency",
+  //     currency: "USD",
+  //   }).format(price);
+  // };
 
   const toggleAdvancedFilters = () => {
     setShowAdvancedFilters(!showAdvancedFilters);
   };
 
-  const handlePriceChange = (minMax: 'min' | 'max', value: number) => {
-    if (minMax === 'min') {
-      onFilterChange("priceRange", [value, filters.priceRange[1]]);
-    } else {
-      onFilterChange("priceRange", [filters.priceRange[0], value]);
-    }
-  };
+  // Comment out handlePriceChange function
+  // const handlePriceChange = (minMax: 'min' | 'max', value: number) => {
+  //   if (minMax === 'min') {
+  //     onFilterChange("priceRange", [value, filters.priceRange[1]]);
+  //   } else {
+  //     onFilterChange("priceRange", [filters.priceRange[0], value]);
+  //   }
+  // };
 
   const handleSearchClick = () => {
     onSearch();
@@ -93,7 +94,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
       </div>
 
       {/* Basic Filters - Always Visible */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         {/* Search */}
         <div className="space-y-2">
           <label className="block text-sm font-semibold text-sky-800">
@@ -106,33 +107,6 @@ const FilterSection: React.FC<FilterSectionProps> = ({
             onChange={(e) => onFilterChange("search", e.target.value)}
             className="text-sm lg:text-md w-full px-4 py-2 border-2 border-sky-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500 transition-all"
           />
-        </div>
-
-        {/* Price Range */}
-        <div className="space-y-2">
-          <label className="block text-sm font-semibold text-sky-800">
-            Price Range ($)
-          </label>
-          <div className="flex gap-4">
-            <input
-              type="number"
-              min="0"
-              max="10000"
-              value={filters.priceRange[0]}
-              onChange={(e) => handlePriceChange('min', parseInt(e.target.value) || 0)}
-              className="w-1/2 px-3 py-1 border border-sky-300 rounded-md text-md lg:text-lg focus:outline-none focus:ring-1 focus:ring-sky-400 text-gray-600"
-              placeholder="Min"
-            />
-            <input
-              type="number"
-              min="0"
-              max="10000"
-              value={filters.priceRange[1]}
-              onChange={(e) => handlePriceChange('max', parseInt(e.target.value) || 10000)}
-              className="w-1/2 px-3 py-1 border border-sky-300 rounded-md text-md lg:text-lg focus:outline-none focus:ring-1 focus:ring-sky-400 text-gray-600"
-              placeholder="Max"
-            />
-          </div>
         </div>
 
         {/* Duration */}
@@ -194,7 +168,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
             : "max-h-0 opacity-0"
         }`}
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Season */}
           <div className="space-y-2">
             <label className="block text-sm font-semibold text-teal-800">
@@ -215,31 +189,6 @@ const FilterSection: React.FC<FilterSectionProps> = ({
               {seasons.map((season) => (
                 <option key={season} value={season}>
                   {season}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Participants */}
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold text-teal-800">
-              Max Participants
-            </label>
-            <select
-              value={filters.participants}
-              onChange={(e) => onFilterChange("participants", e.target.value)}
-              className="text-sm lg:text-md w-full px-4 py-2 border-2 border-teal-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%230d9488' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "right 0.7rem center",
-                paddingRight: "2rem",
-              }}
-            >
-              <option value="">Any Group Size</option>
-              {participantsOptions.map((participants) => (
-                <option key={participants} value={participants}>
-                  Up to {participants} people
                 </option>
               ))}
             </select>
@@ -337,12 +286,13 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
   filters, 
   onFilterChange 
 }) => {
-  const formatPrice = (price: number): string => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(price);
-  };
+  // Comment out formatPrice function
+  // const formatPrice = (price: number): string => {
+  //   return new Intl.NumberFormat("en-US", {
+  //     style: "currency",
+  //     currency: "USD",
+  //   }).format(price);
+  // };
 
   interface ActiveFilter {
     name: keyof ActivityFilters;
@@ -384,13 +334,14 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
     });
   }
   
-  if (filters.participants) {
-    activeFilters.push({
-      name: "participants",
-      label: `Max Participants: ${filters.participants}`,
-      value: filters.participants,
-    });
-  }
+  // Remove participants from active filters
+  // if (filters.participants) {
+  //   activeFilters.push({
+  //     name: "participants",
+  //     label: `Max Participants: ${filters.participants}`,
+  //     value: filters.participants,
+  //   });
+  // }
   
   if (filters.status) {
     activeFilters.push({
@@ -400,13 +351,14 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
     });
   }
   
-  if (filters.priceRange[0] > 0 || filters.priceRange[1] < 10000) {
-    activeFilters.push({
-      name: "priceRange",
-      label: `Price: ${formatPrice(filters.priceRange[0])} - ${formatPrice(filters.priceRange[1])}`,
-      value: filters.priceRange,
-    });
-  }
+  // Remove price range from active filters
+  // if (filters.priceRange[0] > 0 || filters.priceRange[1] < 10000) {
+  //   activeFilters.push({
+  //     name: "priceRange",
+  //     label: `Price: ${formatPrice(filters.priceRange[0])} - ${formatPrice(filters.priceRange[1])}`,
+  //     value: filters.priceRange,
+  //   });
+  // }
 
   if (activeFilters.length === 0) return null;
 
@@ -463,5 +415,6 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
     </div>
   );
 };
+
 
 export default FilterSection;

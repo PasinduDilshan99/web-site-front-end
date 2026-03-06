@@ -12,6 +12,7 @@ import {
   ActiveActivitiesType,
   ActivityCategoriesApiResponse,
   ActivityData,
+  ActivityFilters,
   ActivityHistory,
   ActivityHistoryImage,
   ActivitySearchRequest,
@@ -149,7 +150,6 @@ export class ActivityService {
     );
   }
 
-
   static async fetchFilterOptions(): Promise<{
     categories: string[];
     seasons: string[];
@@ -186,34 +186,34 @@ export class ActivityService {
         const categoriesList = [
           ...new Set(
             result.data.activityResponseDtos.map(
-              (activity) => activity.category_name
-            )
+              (activity) => activity.category_name,
+            ),
           ),
         ];
         const seasonsList = [
           ...new Set(
             result.data.activityResponseDtos.flatMap((activity) =>
-              activity.season.split(",").map((s) => s.trim())
-            )
+              activity.season.split(",").map((s) => s.trim()),
+            ),
           ),
         ];
         const durationsList = [
           ...new Set(
             result.data.activityResponseDtos.map((activity) =>
-              Math.ceil(activity.duration_hours)
-            )
+              Math.ceil(activity.duration_hours),
+            ),
           ),
         ].sort((a, b) => a - b);
         const participantsList = [
           ...new Set(
             result.data.activityResponseDtos.map(
-              (activity) => activity.max_participate
-            )
+              (activity) => activity.max_participate,
+            ),
           ),
         ].sort((a, b) => a - b);
         const statusesList = [
           ...new Set(
-            result.data.activityResponseDtos.map((activity) => activity.status)
+            result.data.activityResponseDtos.map((activity) => activity.status),
           ),
         ];
 
@@ -243,16 +243,33 @@ export class ActivityService {
         durations: [],
         participantsOptions: [],
         statuses: [],
-        error: err instanceof Error ? err.message : "Failed to fetch filter options",
+        error:
+          err instanceof Error ? err.message : "Failed to fetch filter options",
       };
     }
   }
 
   // Fetch activities with filters - main API call function
+  // services/activityService.ts
+
+  static buildSearchRequest(filters: ActivityFilters): ActivitySearchRequest {
+    return {
+      name: filters.search || null,
+      activityCategory: filters.category || null,
+      duration: filters.duration ? Number(filters.duration) : null,
+      season: filters.season || null,
+      status: filters.status || null,
+      minPrice: filters.priceRange[0],
+      maxPrice: filters.priceRange[1],
+      pageSize: 12,
+      pageNumber: 1,
+    };
+  }
+
   static async fetchActivitiesWithFilters(
     filters: ActivitySearchRequest,
     pageSize: number,
-    pageNumber: number
+    pageNumber: number,
   ): Promise<{
     activities: ActiveActivitiesType[];
     totalActivities: number;
@@ -264,14 +281,14 @@ export class ActivityService {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...filters, pageSize, pageNumber }),
+        body: JSON.stringify({
+          ...filters,
+          pageSize,
+          pageNumber,
+        }),
       });
 
       const result: PaginatedActivityResponse = await response.json();
-
-      console.log('====================================');
-      console.log(result);
-      console.log('====================================');
 
       if (result.code === 200) {
         if (result.data) {
@@ -299,7 +316,8 @@ export class ActivityService {
       return {
         activities: [],
         totalActivities: 0,
-        error: err instanceof Error ? err.message : "Failed to fetch activities",
+        error:
+          err instanceof Error ? err.message : "Failed to fetch activities",
       };
     }
   }
@@ -357,7 +375,10 @@ export class ActivityService {
       console.error("Error fetching activity history:", err);
       return {
         histories: [],
-        error: err instanceof Error ? err.message : "Failed to fetch activity history",
+        error:
+          err instanceof Error
+            ? err.message
+            : "Failed to fetch activity history",
       };
     }
   }
@@ -386,47 +407,29 @@ export class ActivityService {
       console.error("Error fetching activity history images:", err);
       return {
         historyImages: [],
-        error: err instanceof Error ? err.message : "Failed to fetch activity history images",
+        error:
+          err instanceof Error
+            ? err.message
+            : "Failed to fetch activity history images",
       };
     }
   }
 
-  // Helper to build ActivitySearchRequest from Filters
-  static buildSearchRequest(filters: {
-    search: string;
-    priceRange: [number, number];
-    duration: string;
-    category: string;
-    season: string;
-    participants: string;
-    status: string;
-  }): ActivitySearchRequest {
-    return {
-      name: filters.search || null,
-      minPrice: filters.priceRange[0] > 0 ? filters.priceRange[0] : null,
-      maxPrice: filters.priceRange[1] < 10000 ? filters.priceRange[1] : null,
-      duration: filters.duration ? parseFloat(filters.duration) : null,
-      activityCategory: filters.category || null,
-      season: filters.season || null,
-      status: filters.status || null,
-      pageSize: 0, // Will be overridden
-      pageNumber: 0, // Will be overridden
-    };
-  }
-
-
-    // Fetch activity details by ID
+  // Fetch activity details by ID
   static async fetchActivityById(activityId: string): Promise<{
     data: ActivityData | null;
     error: string | null;
   }> {
     try {
-      const response = await fetch(`${GET_ACTIVITY_DETAILS_BY_ACTIVITY_ID_DATA_FE}/${activityId}`, {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
+      const response = await fetch(
+        `${GET_ACTIVITY_DETAILS_BY_ACTIVITY_ID_DATA_FE}/${activityId}`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+          },
         },
-      });
+      );
 
       if (!response.ok) {
         return {
@@ -452,7 +455,10 @@ export class ActivityService {
       console.error("Error fetching activity:", err);
       return {
         data: null,
-        error: err instanceof Error ? err.message : "An error occurred while fetching activity details",
+        error:
+          err instanceof Error
+            ? err.message
+            : "An error occurred while fetching activity details",
       };
     }
   }
@@ -463,7 +469,9 @@ export class ActivityService {
     error: string | null;
   }> {
     try {
-      const response = await fetch(`${GET_ACTIVITY_REVIEWS_DETAILS_DATA_FE}/${activityId}`);
+      const response = await fetch(
+        `${GET_ACTIVITY_REVIEWS_DETAILS_DATA_FE}/${activityId}`,
+      );
 
       if (!response.ok) {
         return {
@@ -500,7 +508,9 @@ export class ActivityService {
     error: string | null;
   }> {
     try {
-      const response = await fetch(`${GET_ACTIVITY_HISTORY_DETAILS_DATA_FE}/${activityId}`);
+      const response = await fetch(
+        `${GET_ACTIVITY_HISTORY_DETAILS_DATA_FE}/${activityId}`,
+      );
 
       if (!response.ok) {
         return {
@@ -526,7 +536,10 @@ export class ActivityService {
       console.error("Error fetching activity history:", err);
       return {
         histories: [],
-        error: err instanceof Error ? err.message : "Failed to load activity history",
+        error:
+          err instanceof Error
+            ? err.message
+            : "Failed to load activity history",
       };
     }
   }
@@ -537,7 +550,9 @@ export class ActivityService {
     error: string | null;
   }> {
     try {
-      const response = await fetch(`${GET_ACTIVITY_HISTORY_IMAGES_DETAILS_DATA_FE}/${activityId}`);
+      const response = await fetch(
+        `${GET_ACTIVITY_HISTORY_IMAGES_DETAILS_DATA_FE}/${activityId}`,
+      );
 
       if (!response.ok) {
         return {
@@ -563,10 +578,9 @@ export class ActivityService {
       console.error("Error fetching activity images:", err);
       return {
         historyImages: [],
-        error: err instanceof Error ? err.message : "Failed to load activity images",
+        error:
+          err instanceof Error ? err.message : "Failed to load activity images",
       };
     }
   }
-
-
 }

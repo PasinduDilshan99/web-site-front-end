@@ -1,10 +1,10 @@
 "use client";
 import { HeroSectionService } from "@/services/heroSectionService";
 import { TourHeroData } from "@/types/hero-section-types";
-import { NUMBER_OF_TOUR_CATEGORIES } from "@/utils/constant";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import HeroSectionLoading from "../loading-components/HeroSectionLoading";
+import { useCommon } from "@/context/CommonContext";
 
 const TourHeroSection = () => {
   const [loading, setLoading] = useState(true);
@@ -14,6 +14,7 @@ const TourHeroSection = () => {
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
   const router = useRouter();
+  const {categories} = useCommon()
 
   useEffect(() => {
     const fetchHeroData = async () => {
@@ -150,7 +151,7 @@ const TourHeroSection = () => {
           <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-sky-400 rounded-full animate-pulse"></div>
           <span className="text-xs sm:text-sm font-medium text-white">
             <span className="text-sky-200 font-bold">
-              {NUMBER_OF_TOUR_CATEGORIES}
+              {categories?.tourCategoryList.length}
             </span>{" "}
             Tour Categories
           </span>
@@ -196,7 +197,7 @@ const TourHeroSection = () => {
                     <button
                       onClick={() =>
                         router.push(
-                          `/sri-lankan-tours?tourType=${currentSlideData.primaryButtonLink}`,
+                          `${currentSlideData.primaryButtonLink}`,
                         )
                       }
                       className="w-full sm:w-auto px-5 sm:px-7 md:px-9 py-3 sm:py-4 md:py-5 bg-gradient-to-r from-sky-500 to-teal-500 text-white text-sm sm:text-base font-semibold rounded-xl sm:rounded-2xl hover:from-sky-600 hover:to-teal-600 transform hover:scale-[1.02] transition-all duration-300 shadow-2xl flex items-center justify-center gap-3 sm:gap-4 group"
@@ -223,7 +224,7 @@ const TourHeroSection = () => {
                     <button
                       onClick={() =>
                         router.push(
-                          `/sri-lankan-tours?location=${currentSlideData.secondaryButtonLink}`,
+                          `${currentSlideData.secondaryButtonLink}`,
                         )
                       }
                       className="w-full sm:w-auto px-5 sm:px-7 md:px-9 py-3 sm:py-4 md:py-5 border-2 border-sky-300/50 text-white text-sm sm:text-base font-semibold rounded-xl sm:rounded-2xl hover:bg-sky-50/20 hover:border-sky-200 backdrop-blur-sm transition-all duration-300 flex items-center justify-center gap-3 sm:gap-4 group"

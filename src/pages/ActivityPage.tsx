@@ -1,5 +1,6 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Loading from "@/components/common-components/loading/Loading";
 import { ErrorState } from "@/components/common-components/error-state/ErrorState";
 import ActivitiesGrid from "@/components/activities-components/ActivitiesGrid";
@@ -7,7 +8,6 @@ import FilterSection from "@/components/activities-components/FilterSection";
 import ReviewsSection from "@/components/activities-components/ReviewsSection";
 import ActivityHistorySection from "@/components/activities-components/ActivityHistorySection";
 import ActivityHistoryGallery from "@/components/activities-components/ActivityHistoryGallery";
-import ActivityHeroSection from "@/components/activities-components/ActivityHeroSection";
 import {
   ActiveActivitiesType,
   ActivityFilters,
@@ -18,8 +18,66 @@ import {
 import { ActivityService } from "@/services/activityService";
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";
 import ActivitiesLoading from "@/components/activities-components/ActivitiesLoading";
+import { useCommon } from "@/context/CommonContext";
 
-const ActivityPage: React.FC = () => {
+// Utility functions for URL params management
+const filtersToUrlParams = (
+  filters: ActivityFilters,
+  page: number,
+  pageSize: number,
+): URLSearchParams => {
+  const params = new URLSearchParams();
+
+  if (filters.search) params.set("search", filters.search);
+  if (filters.category) params.set("category", filters.category);
+  if (filters.duration) params.set("duration", filters.duration.toString());
+  if (filters.season) params.set("season", filters.season);
+  if (filters.participants)
+    params.set("participants", filters.participants.toString());
+  if (filters.status) params.set("status", filters.status);
+
+  // Price range - only add if not default values
+  if (filters.priceRange[0] > 0)
+    params.set("minPrice", filters.priceRange[0].toString());
+  if (filters.priceRange[1] < 10000)
+    params.set("maxPrice", filters.priceRange[1].toString());
+
+  // Pagination
+  params.set("page", page.toString());
+  params.set("pageSize", pageSize.toString());
+
+  return params;
+};
+
+const urlParamsToFilters = (params: URLSearchParams): ActivityFilters => {
+  return {
+    search: params.get("search") || "",
+    category: params.get("category") || "",
+    duration: params.get("duration") || "",
+    season: params.get("season") || "",
+    participants: params.get("participants") || "",
+    status: params.get("status") || "",
+    priceRange: [
+      Number(params.get("minPrice")) || 0,
+      Number(params.get("maxPrice")) || 10000,
+    ],
+  };
+};
+
+const urlParamsToPagination = (
+  params: URLSearchParams,
+): { page: number; pageSize: number } => {
+  return {
+    page: Number(params.get("page")) || 1,
+    pageSize: Number(params.get("pageSize")) || 12,
+  };
+};
+
+// Main component wrapped with Suspense for useSearchParams
+const ActivityPageContent: React.FC = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [activities, setActivities] = useState<ActiveActivitiesType[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [histories, setHistories] = useState<ActivityHistory[]>([]);
@@ -38,39 +96,50 @@ const ActivityPage: React.FC = () => {
     null,
   );
 
-  // Filter states
-  const [filters, setFilters] = useState<ActivityFilters>({
-    search: "",
-    priceRange: [0, 10000],
-    duration: "",
-    category: "",
-    season: "",
-    participants: "",
-    status: "",
-  });
+  // Use the common context
+  const { categories, loading: categoriesLoading } = useCommon();
 
-  // Pagination states
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [itemsPerPage, setItemsPerPage] = useState<number>(12);
+  // Initialize filters from URL params
+  const [filters, setFilters] = useState<ActivityFilters>(() =>
+    urlParamsToFilters(new URLSearchParams(searchParams?.toString())),
+  );
+
+  // Pagination states from URL params
+  const [currentPage, setCurrentPage] = useState<number>(
+    () =>
+      urlParamsToPagination(new URLSearchParams(searchParams?.toString())).page,
+  );
+  const [itemsPerPage, setItemsPerPage] = useState<number>(
+    () =>
+      urlParamsToPagination(new URLSearchParams(searchParams?.toString()))
+        .pageSize,
+  );
+
   const [totalActivities, setTotalActivities] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(0);
-
-  // Search button state
-  const [searchTriggered, setSearchTriggered] = useState<boolean>(false);
   const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
 
-  // Filter options from initial data
-  const [categories, setCategories] = useState<string[]>([]);
+  // Filter options from context and service
+  const [activityCategories, setActivityCategories] = useState<string[]>([]);
   const [seasons, setSeasons] = useState<string[]>([]);
   const [durations, setDurations] = useState<number[]>([]);
   const [participantsOptions, setParticipantsOptions] = useState<number[]>([]);
   const [statuses, setStatuses] = useState<string[]>([]);
 
-  // Fetch filter options (initial data)
+  // Transform context data into activity categories
+  useEffect(() => {
+    if (categories) {
+      const categoryNames = categories.activityCategoryList.map(
+        (cat) => cat.activityCategoryName,
+      );
+      setActivityCategories(categoryNames);
+    }
+  }, [categories]);
+
+  // Fetch filter options
   const fetchFilterOptions = useCallback(async (): Promise<void> => {
     try {
       const {
-        categories: categoriesList,
         seasons: seasonsList,
         durations: durationsList,
         participantsOptions: participantsList,
@@ -81,7 +150,6 @@ const ActivityPage: React.FC = () => {
       if (error) {
         console.error("Error fetching filter options:", error);
       } else {
-        setCategories(categoriesList);
         setSeasons(seasonsList);
         setDurations(durationsList);
         setParticipantsOptions(participantsList);
@@ -92,51 +160,70 @@ const ActivityPage: React.FC = () => {
     }
   }, []);
 
+  // Update URL when filters or pagination change
+  const updateUrlParams = useCallback(
+    (newFilters: ActivityFilters, page: number, pageSize: number) => {
+      const params = filtersToUrlParams(newFilters, page, pageSize);
+      router.push(`?${params.toString()}`, { scroll: false });
+    },
+    [router],
+  );
+
   // Fetch activities with filters - main API call function
-  const fetchActivitiesWithFilters = useCallback(async (): Promise<void> => {
-    try {
-      setLoading(true);
+  const fetchActivitiesWithFilters = useCallback(
+    async (
+      filterValues: ActivityFilters,
+      page: number,
+      pageSize: number,
+    ): Promise<void> => {
+      try {
+        setLoading(true);
 
-      // Prepare API request using service helper
-      const requestBody = ActivityService.buildSearchRequest(filters);
+        // Prepare API request using service helper
+        const requestBody = ActivityService.buildSearchRequest(filterValues);
 
-      // USING THE SERVICE INSTEAD OF DIRECT FETCH
-      const {
-        activities: fetchedActivities,
-        totalActivities: total,
-        error,
-      } = await ActivityService.fetchActivitiesWithFilters(
-        requestBody,
-        itemsPerPage,
-        currentPage,
-      );
+        console.log("Request Body:", requestBody); // For debugging
 
-      if (error) {
-        setError(error);
-      } else {
-        setActivities(fetchedActivities);
-        setTotalActivities(total);
-        setTotalPages(Math.ceil(total / itemsPerPage));
-        setError(null);
+        const {
+          activities: fetchedActivities,
+          totalActivities: total,
+          error,
+        } = await ActivityService.fetchActivitiesWithFilters(
+          requestBody,
+          pageSize,
+          page,
+        );
+
+        if (error) {
+          setError(error);
+        } else {
+          setActivities(fetchedActivities);
+          setTotalActivities(total);
+          setTotalPages(Math.ceil(total / pageSize));
+          setError(null);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+      } finally {
+        setLoading(false);
+        setIsInitialLoad(false);
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
-    } finally {
-      setLoading(false);
-      setIsInitialLoad(false);
-    }
-  }, [filters, currentPage, itemsPerPage]);
+    },
+    [],
+  );
 
-  // Initial data fetch - runs only once on mount
+  // Initial data fetch - runs once on mount
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
         setLoading(true);
         await fetchFilterOptions();
-        await fetchActivitiesWithFilters();
-        // fetchReviews();
-        // fetchActivityHistory();
-        // fetchActivityHistoryImages();
+        await fetchActivitiesWithFilters(filters, currentPage, itemsPerPage);
+
+        // Uncomment these if needed
+        // await fetchReviews();
+        // await fetchActivityHistory();
+        // await fetchActivityHistoryImages();
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       }
@@ -145,101 +232,23 @@ const ActivityPage: React.FC = () => {
     fetchInitialData();
   }, []); // Empty dependency array - runs only once on mount
 
-  // Fetch activities when search is triggered
-  useEffect(() => {
-    if (searchTriggered) {
-      setCurrentPage(1); // Reset to first page when search is triggered
-      fetchActivitiesWithFilters();
-      setSearchTriggered(false);
-    }
-  }, [searchTriggered, fetchActivitiesWithFilters]);
-
-  // Fetch activities when page changes
-  useEffect(() => {
-    if (!isInitialLoad && currentPage > 0) {
-      fetchActivitiesWithFilters();
-    }
-  }, [currentPage]); // Only depends on currentPage
-
-  // Fetch activities when items per page changes
+  // Watch for URL params changes and fetch data
   useEffect(() => {
     if (!isInitialLoad) {
-      setCurrentPage(1); // Reset to first page
-      fetchActivitiesWithFilters();
+      const urlFilters = urlParamsToFilters(
+        new URLSearchParams(searchParams?.toString()),
+      );
+      const { page, pageSize } = urlParamsToPagination(
+        new URLSearchParams(searchParams?.toString()),
+      );
+
+      setFilters(urlFilters);
+      setCurrentPage(page);
+      setItemsPerPage(pageSize);
+
+      fetchActivitiesWithFilters(urlFilters, page, pageSize);
     }
-  }, [itemsPerPage]); // Only depends on itemsPerPage
-
-  // const fetchActivityHistoryImages = async (): Promise<void> => {
-  //   try {
-  //     setHistoryImagesLoading(true);
-  //     setHistoryImagesError(null);
-
-  //     // USING THE SERVICE INSTEAD OF DIRECT FETCH
-  //     const { historyImages: fetchedImages, error } =
-  //       await ActivityService.fetchActivityHistoryImages();
-
-  //     if (error) {
-  //       setHistoryImagesError(error);
-  //     } else {
-  //       setHistoryImages(fetchedImages);
-  //       setHistoryImagesError(null);
-  //     }
-  //   } catch (err) {
-  //     setHistoryImagesError(
-  //       err instanceof Error ? err.message : "Failed to load activity images",
-  //     );
-  //   } finally {
-  //     setHistoryImagesLoading(false);
-  //   }
-  // };
-
-  // const fetchReviews = async (): Promise<void> => {
-  //   try {
-  //     setReviewsLoading(true);
-  //     setReviewsError(null);
-
-  //     // USING THE SERVICE INSTEAD OF DIRECT FETCH
-  //     const { reviews: fetchedReviews, error } =
-  //       await ActivityService.fetchReviews();
-
-  //     if (error) {
-  //       setReviewsError(error);
-  //     } else {
-  //       setReviews(fetchedReviews);
-  //       setReviewsError(null);
-  //     }
-  //   } catch (err) {
-  //     setReviewsError(
-  //       err instanceof Error ? err.message : "Failed to load reviews",
-  //     );
-  //   } finally {
-  //     setReviewsLoading(false);
-  //   }
-  // };
-
-  // const fetchActivityHistory = async (): Promise<void> => {
-  //   try {
-  //     setHistoryLoading(true);
-  //     setHistoryError(null);
-
-  //     // USING THE SERVICE INSTEAD OF DIRECT FETCH
-  //     const { histories: fetchedHistories, error } =
-  //       await ActivityService.fetchActivityHistory();
-
-  //     if (error) {
-  //       setHistoryError(error);
-  //     } else {
-  //       setHistories(fetchedHistories);
-  //       setHistoryError(null);
-  //     }
-  //   } catch (err) {
-  //     setHistoryError(
-  //       err instanceof Error ? err.message : "Failed to load activity history",
-  //     );
-  //   } finally {
-  //     setHistoryLoading(false);
-  //   }
-  // };
+  }, [searchParams]); // Only depend on searchParams
 
   const handleFilterChange = (
     filterName: keyof ActivityFilters,
@@ -249,25 +258,27 @@ const ActivityPage: React.FC = () => {
       ...prev,
       [filterName]: value,
     }));
-    // Do NOT trigger API call here - wait for search button click
   };
 
   const handleSearch = (): void => {
-    setSearchTriggered(true);
+    // Reset to page 1 and update URL
+    updateUrlParams(filters, 1, itemsPerPage);
   };
 
   const resetFilters = (): void => {
-    setFilters({
+    const resetFilterValues = {
       search: "",
-      priceRange: [0, 10000],
+      priceRange: [0, 10000] as [number, number], // Explicitly cast as tuple
       duration: "",
       category: "",
       season: "",
       participants: "",
       status: "",
-    });
-    // Trigger search automatically after reset
-    setSearchTriggered(true);
+    };
+
+    setFilters(resetFilterValues);
+    // Update URL with reset filters and page 1
+    updateUrlParams(resetFilterValues, 1, itemsPerPage);
   };
 
   const handleRetry = () => {
@@ -281,10 +292,7 @@ const ActivityPage: React.FC = () => {
     setHistoryImagesLoading(true);
     setIsInitialLoad(true);
     fetchFilterOptions();
-    fetchActivitiesWithFilters();
-    // fetchReviews();
-    // fetchActivityHistory();
-    // fetchActivityHistoryImages();
+    fetchActivitiesWithFilters(filters, currentPage, itemsPerPage);
   };
 
   // Pagination calculations
@@ -292,7 +300,7 @@ const ActivityPage: React.FC = () => {
   const endIndex = startIndex + itemsPerPage;
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+    updateUrlParams(filters, page, itemsPerPage);
     // Scroll to top of results section
     const resultsSection = document.getElementById("results-section");
     if (resultsSection) {
@@ -301,11 +309,10 @@ const ActivityPage: React.FC = () => {
   };
 
   const handleItemsPerPageChange = (value: number) => {
-    setItemsPerPage(value);
-    // API call will be triggered by the useEffect that watches itemsPerPage
+    updateUrlParams(filters, 1, value); // Reset to page 1 when changing items per page
   };
 
-  if (loading) {
+  if (loading || categoriesLoading) {
     return <ActivitiesLoading itemsPerPage={itemsPerPage} />;
   }
 
@@ -328,113 +335,120 @@ const ActivityPage: React.FC = () => {
   }
 
   return (
-      <div className="mx-auto px-4 py-8 bg-gradient-to-br from-blue-50 via-sky-50 to-cyan-50 min-h-screen">
-        {/* Page Header */}
-        <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
-          <SectionHeader
-            subtitle=""
-            title="Adventure Activities"
-            description="Discover exciting activities and experiences for your next adventure"
-            fromColor="#A855F7"
-            toColor="#F59E0B"
-          />
-        </div>
-
-        {/* Filters Section */}
-        <FilterSection
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          onSearch={handleSearch}
-          onResetFilters={resetFilters}
-          categories={categories}
-          seasons={seasons}
-          durations={durations}
-          participantsOptions={participantsOptions}
-          statuses={statuses}
+    <div className="mx-auto px-4 py-8 bg-gradient-to-br from-blue-50 via-sky-50 to-cyan-50 min-h-screen">
+      {/* Page Header */}
+      <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
+        <SectionHeader
+          subtitle=""
+          title="Adventure Activities"
+          description="Discover exciting activities and experiences for your next adventure"
+          fromColor="#A855F7"
+          toColor="#F59E0B"
         />
+      </div>
 
-        {/* Results Section */}
-        <div id="results-section" className="mb-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <h3 className="text-lg lg:text-2xl font-semibold text-sky-900">
-              {totalActivities} Activity
-              {totalActivities !== 1 ? "s" : ""} Found
-            </h3>
+      {/* Filters Section */}
+      <FilterSection
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        onSearch={handleSearch}
+        onResetFilters={resetFilters}
+        categories={activityCategories}
+        seasons={seasons}
+        durations={durations}
+        participantsOptions={participantsOptions}
+        statuses={statuses}
+      />
 
-            {/* Items Per Page Selector */}
-            <div className="flex items-center gap-3 bg-sky-50 rounded-lg px-4 py-2 border border-sky-200">
-              <label
-                htmlFor="itemsPerPage"
-                className="text-sm font-medium text-sky-800 whitespace-nowrap"
-              >
-                Show:
-              </label>
-              <select
-                id="itemsPerPage"
-                value={itemsPerPage}
-                onChange={(e) =>
-                  handleItemsPerPageChange(Number(e.target.value))
-                }
-                className="border border-sky-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-sky-700 transition-all duration-200 hover:border-sky-400"
-              >
-                <option value={6}>6</option>
-                <option value={8}>8</option>
-                <option value={12}>12</option>
-                <option value={16}>16</option>
-                <option value={24}>24</option>
-                <option value={32}>32</option>
-              </select>
-              <span className="text-sm text-sky-600 whitespace-nowrap font-medium">
-                per page
-              </span>
-            </div>
+      {/* Results Section */}
+      <div id="results-section" className="mb-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <h3 className="text-lg lg:text-2xl font-semibold text-sky-900">
+            {totalActivities} Activity
+            {totalActivities !== 1 ? "s" : ""} Found
+          </h3>
+
+          {/* Items Per Page Selector */}
+          <div className="flex items-center gap-3 bg-sky-50 rounded-lg px-4 py-2 border border-sky-200">
+            <label
+              htmlFor="itemsPerPage"
+              className="text-sm font-medium text-sky-800 whitespace-nowrap"
+            >
+              Show:
+            </label>
+            <select
+              id="itemsPerPage"
+              value={itemsPerPage}
+              onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+              className="border border-sky-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-sky-700 transition-all duration-200 hover:border-sky-400"
+            >
+              <option value={6}>6</option>
+              <option value={8}>8</option>
+              <option value={12}>12</option>
+              <option value={16}>16</option>
+              <option value={24}>24</option>
+              <option value={32}>32</option>
+            </select>
+            <span className="text-sm text-sky-600 whitespace-nowrap font-medium">
+              per page
+            </span>
           </div>
-
-          {/* Activities Grid */}
-          {activities.length > 0 ? (
-            <>
-              <ActivitiesGrid
-                activities={activities}
-                displayCount={activities.length}
-              />
-
-              {/* Pagination Controls */}
-              {totalPages > 1 && (
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                  totalItems={totalActivities}
-                  itemsPerPage={itemsPerPage}
-                  startIndex={startIndex}
-                  endIndex={Math.min(endIndex, totalActivities)}
-                />
-              )}
-            </>
-          ) : (
-            <NoResults onResetFilters={resetFilters} />
-          )}
         </div>
 
-        {/* Reviews Section */}
-        {/* <ReviewsSection
-          reviews={reviews}
-          loading={reviewsLoading}
-          error={reviewsError}
-        /> */}
-        {/* <ActivityHistorySection
-          histories={histories}
-          loading={historyLoading}
-          error={historyError}
-          onRetry={fetchActivityHistory}
-        /> */}
-        {/* <ActivityHistoryGallery
-          imagesData={historyImages}
-          loading={historyImagesLoading}
-          error={historyImagesError}
-          onRetry={fetchActivityHistoryImages}
-        /> */}
+        {/* Activities Grid */}
+        {activities.length > 0 ? (
+          <>
+            <ActivitiesGrid
+              activities={activities}
+              displayCount={activities.length}
+            />
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                totalItems={totalActivities}
+                itemsPerPage={itemsPerPage}
+                startIndex={startIndex}
+                endIndex={Math.min(endIndex, totalActivities)}
+              />
+            )}
+          </>
+        ) : (
+          <NoResults onResetFilters={resetFilters} />
+        )}
       </div>
+
+      {/* Optional Sections - Uncomment if needed */}
+      {/* <ReviewsSection
+        reviews={reviews}
+        loading={reviewsLoading}
+        error={reviewsError}
+      /> */}
+      {/* <ActivityHistorySection
+        histories={histories}
+        loading={historyLoading}
+        error={historyError}
+        onRetry={fetchActivityHistory}
+      /> */}
+      {/* <ActivityHistoryGallery
+        imagesData={historyImages}
+        loading={historyImagesLoading}
+        error={historyImagesError}
+        onRetry={fetchActivityHistoryImages}
+      /> */}
+    </div>
+  );
+};
+
+// Wrap with Suspense for useSearchParams
+const ActivityPage: React.FC = () => {
+  return (
+    <Suspense fallback={<ActivitiesLoading itemsPerPage={12} />}>
+      <ActivityPageContent />
+    </Suspense>
   );
 };
 
@@ -478,7 +492,7 @@ const Pagination: React.FC<PaginationProps> = ({
   endIndex,
 }) => {
   const getPageNumbers = () => {
-    const pages = [];
+    const pages: (number | string)[] = [];
     const maxVisiblePages = 5;
 
     if (totalPages <= maxVisiblePages) {
@@ -486,32 +500,52 @@ const Pagination: React.FC<PaginationProps> = ({
         pages.push(i);
       }
     } else {
-      const startPage = Math.max(1, currentPage - 2);
-      const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+      pages.push(1);
+
+      let startPage = Math.max(2, currentPage - 1);
+      let endPage = Math.min(totalPages - 1, currentPage + 1);
+
+      if (currentPage <= 3) {
+        endPage = Math.min(totalPages - 1, 4);
+      }
+
+      if (currentPage >= totalPages - 2) {
+        startPage = Math.max(2, totalPages - 3);
+      }
+
+      if (startPage > 2) {
+        pages.push("...");
+      }
 
       for (let i = startPage; i <= endPage; i++) {
         pages.push(i);
       }
+
+      if (endPage < totalPages - 1) {
+        pages.push("...");
+      }
+
+      pages.push(totalPages);
     }
 
     return pages;
   };
 
+  const pageNumbers = getPageNumbers();
+
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 pt-6 border-t border-sky-200">
-      {/* Results info */}
       <div className="text-sm text-sky-600 font-medium">
         Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of{" "}
         {totalItems} results
       </div>
 
-      {/* Pagination buttons */}
       <div className="flex items-center gap-2">
-        {/* Previous button */}
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
           className="px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+          aria-label="Previous page"
         >
           <svg
             className="w-4 h-4"
@@ -526,33 +560,47 @@ const Pagination: React.FC<PaginationProps> = ({
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          Previous
+          <span className="hidden sm:inline">Previous</span>
         </button>
 
-        {/* Page numbers */}
         <div className="flex gap-1">
-          {getPageNumbers().map((page) => (
-            <button
-              key={page}
-              onClick={() => onPageChange(page)}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
-                currentPage === page
-                  ? "bg-gradient-to-r from-sky-600 to-teal-600 text-white shadow-lg transform scale-105"
-                  : "text-sky-700 bg-white border-2 border-sky-300 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 hover:shadow-md"
-              }`}
-            >
-              {page}
-            </button>
-          ))}
+          {pageNumbers.map((page, index) => {
+            if (page === "...") {
+              return (
+                <span
+                  key={`ellipsis-${index}`}
+                  className="px-4 py-2 text-sm font-medium text-sky-700"
+                >
+                  ...
+                </span>
+              );
+            }
+
+            return (
+              <button
+                key={page}
+                onClick={() => onPageChange(page as number)}
+                className={`min-w-[40px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
+                  currentPage === page
+                    ? "bg-gradient-to-r from-sky-600 to-teal-600 text-white shadow-lg transform scale-105"
+                    : "text-sky-700 bg-white border-2 border-sky-300 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 hover:shadow-md"
+                }`}
+                aria-label={`Page ${page}`}
+                aria-current={currentPage === page ? "page" : undefined}
+              >
+                {page}
+              </button>
+            );
+          })}
         </div>
 
-        {/* Next button */}
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
           className="px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+          aria-label="Next page"
         >
-          Next
+          <span className="hidden sm:inline">Next</span>
           <svg
             className="w-4 h-4"
             fill="none"

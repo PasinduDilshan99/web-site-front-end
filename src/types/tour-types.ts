@@ -1,3 +1,4 @@
+import { VehicleSpecification } from './vehicle-types';
 export interface Schedule {
   scheduleId: number;
   scheduleName: string;
@@ -377,10 +378,8 @@ export interface TourDetails {
   longitude: number;
   startLocation: string;
   endLocation: string;
-  tourTypeName: string;
-  tourTypeDescription: string;
-  tourCategoryName: string;
-  tourCategoryDescription: string;
+  tourTypeDtos: TourTypeDto[];
+  tourCategoryDto: TourCategoryDto[];
   seasonName: string;
   seasonDescription: string;
   statusName: string;
@@ -488,6 +487,7 @@ export interface Activity {
   minParticipate: number;
   maxParticipate: number;
   season: string;
+  seasonId:number;
   status: string;
   createdAt: string;
   updatedAt: string;
@@ -512,7 +512,9 @@ export interface Hotel {
 export interface Transport {
   transportId: number;
   transportType: string;
+  vehicleTypeId:number;
   vehicleModel: string;
+  vehicleSpecificationId: number;
   seatCount: number;
   airConditioned: boolean;
   driverIncluded: boolean | null;
@@ -590,24 +592,4 @@ export interface TourImage {
   imageName: string;
   imageDescription: string;
   imageUrl: string;
-}
-
-export interface TourDetails {
-  tourId: number;
-  tourName: string;
-  tourDescription: string;
-  duration: number;
-  latitude: number;
-  longitude: number;
-  startLocation: string;
-  endLocation: string;
-  tourTypeName: string;
-  tourTypeDescription: string;
-  tourCategoryName: string;
-  tourCategoryDescription: string;
-  seasonName: string;
-  seasonDescription: string;
-  statusName: string;
-  schedules: Schedule[];
-  images: TourImage[];
 }

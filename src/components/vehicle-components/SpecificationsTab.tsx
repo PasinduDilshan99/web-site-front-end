@@ -51,8 +51,8 @@ const SpecificationsTab: React.FC<SpecificationsTabProps> = ({ vehicle }) => {
           key={group.title}
           className={`p-6 rounded-lg border ${
             index % 2 === 0
-              ? 'bg-gradient-to-br from-amber-50 to-white border-amber-100'
-              : 'bg-gradient-to-br from-purple-50 to-white border-purple-100'
+              ? 'bg-gradient-to-br from-teal-50 to-white border-teal-100'
+              : 'bg-gradient-to-br from-cyan-50 to-white border-cyan-100'
           }`}
         >
           <h3 className="font-semibold text-lg mb-4 flex items-center">

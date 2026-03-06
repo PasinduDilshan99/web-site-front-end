@@ -32,6 +32,7 @@ import LinkBar from "@/components/common-components/linkBar/LinkBar";
 import Loading from "@/components/common-components/loading/Loading";
 import { useAuth } from "@/context/AuthContext";
 import { BlogService } from "@/services/blogService";
+import { BLOG_CREATE_PRIVILEGE } from "@/utils/privileges";
 
 interface BlogFormData {
   title: string;
@@ -386,6 +387,11 @@ const CreateBlogPage = () => {
     const code = sessionStorage.getItem("uniqueCode");
     if (!code) {
       router.push("/login");
+    } else if (
+      user &&
+      !user.privileges.includes(BLOG_CREATE_PRIVILEGE)
+    ) {
+      router.back();
     }
   }, [user, router]);
 
