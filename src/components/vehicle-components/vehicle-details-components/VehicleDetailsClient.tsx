@@ -10,8 +10,6 @@ import VehicleDetails from "./VehicleDetails";
 import VehicleAssignments from "./VehicleAssignments";
 import ServiceHistory from "./ServiceHistory";
 import FuelRecords from "./FuelRecords";
-import NavBar from "@/components/common-components/navBar/NavBar";
-import Footer from "@/components/common-components/footer/Footer";
 
 interface VehicleDetailsClientProps {
   vehicle: VehicleById;
@@ -21,52 +19,50 @@ export default function VehicleDetailsClient({
   vehicle,
 }: VehicleDetailsClientProps) {
   return (
-    <>
-      <NavBar />
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-amber-50">
-        <div className="container mx-auto px-4 py-8">
-          {/* Header Section */}
-          <VehicleHeader vehicle={vehicle} />
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 to-cyan-50">
+      <div className="container mx-auto px-4 py-8">
+        {/* Header Section */}
+        <VehicleHeader vehicle={vehicle} />
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-            {/* Left Column */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* Images */}
-              <VehicleImages
-                vehicleImages={vehicle.vehicleImages}
-                specificationImages={vehicle.specificationImages}
-              />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+          {/* Left Column */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Images */}
+            <VehicleImages
+              vehicleImages={vehicle.vehicleImages}
+              specificationImages={vehicle.specificationImages}
+            />
 
-              {/* Specifications */}
-              <VehicleSpecifications specification={vehicle.specification} />
+            {/* Specifications */}
+            <VehicleSpecifications specification={vehicle.specification} />
 
-              {/* Usage Logs */}
+            {/* Usage Logs */}
+            {vehicle.usageLogs && (
               <VehicleUsageLogs usageLogs={vehicle.usageLogs} />
-            </div>
+            )}
+          </div>
 
-            {/* Right Column */}
-            <div className="space-y-6">
-              {/* Vehicle Details */}
-              <VehicleDetails
-                details={vehicle.details}
-                purchaseDate={vehicle.vehiclePurchaseDate}
-                purchasePrice={vehicle.vehiclePurchasePrice}
-                status={vehicle.statusName}
-              />
+          {/* Right Column */}
+          <div className="space-y-6">
+            {/* Vehicle Details */}
+            <VehicleDetails
+              details={vehicle.details}
+              purchaseDate={vehicle.vehiclePurchaseDate}
+              purchasePrice={vehicle.vehiclePurchasePrice}
+              status={vehicle.statusName}
+            />
 
-              {/* Assignments */}
-              <VehicleAssignments assignments={vehicle.assignments} />
+            {/* Assignments */}
+            <VehicleAssignments assignments={vehicle.assignments} />
 
-              {/* Service History */}
-              <ServiceHistory service={vehicle.latestService} />
+            {/* Service History */}
+            <ServiceHistory service={vehicle.latestService} />
 
-              {/* Fuel Records */}
-              <FuelRecords fuelRecord={vehicle.latestFuelRecord} />
-            </div>
+            {/* Fuel Records */}
+            <FuelRecords fuelRecord={vehicle.latestFuelRecord} />
           </div>
         </div>
       </div>
-      <Footer />
-    </>
+    </div>
   );
 }

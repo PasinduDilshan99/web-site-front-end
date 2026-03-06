@@ -18,12 +18,13 @@ import BlogFilter from "@/components/blog-components/BlogFilter";
 import BlogCard from "@/components/blog-components/BlogCard";
 import { BlogService } from "@/services/blogService";
 import BlogPageLoading from "@/components/blog-components/BlogPageLoading";
+import BlogErrorState from "@/components/blog-components/BlogErrorState";
 
 // Utility functions for URL params management
 const filtersToUrlParams = (
   filters: BlogFilters,
   page: number,
-  itemsPerPage: number
+  itemsPerPage: number,
 ): URLSearchParams => {
   const params = new URLSearchParams();
 
@@ -31,7 +32,7 @@ const filtersToUrlParams = (
   if (filters.writer) params.set("writer", filters.writer);
   if (filters.category) params.set("category", filters.category);
   if (filters.sortBy) params.set("sortBy", filters.sortBy);
-  
+
   // Date range
   if (filters.dateRange[0]) params.set("startDate", filters.dateRange[0]);
   if (filters.dateRange[1]) params.set("endDate", filters.dateRange[1]);
@@ -49,15 +50,15 @@ const urlParamsToFilters = (params: URLSearchParams): BlogFilters => {
     writer: params.get("writer") || "",
     category: params.get("category") || "",
     sortBy: (params.get("sortBy") as BlogFilters["sortBy"]) || "recent",
-    dateRange: [
-      params.get("startDate") || "",
-      params.get("endDate") || "",
-    ] as [string, string],
+    dateRange: [params.get("startDate") || "", params.get("endDate") || ""] as [
+      string,
+      string,
+    ],
   };
 };
 
 const urlParamsToPagination = (
-  params: URLSearchParams
+  params: URLSearchParams,
 ): { page: number; itemsPerPage: number } => {
   return {
     page: Number(params.get("page")) || 1,
@@ -78,13 +79,13 @@ const BlogPageContent: React.FC = () => {
 
   // Initialize filters from URL params
   const [filters, setFilters] = useState<BlogFilters>(() =>
-    urlParamsToFilters(new URLSearchParams(searchParams?.toString()))
+    urlParamsToFilters(new URLSearchParams(searchParams?.toString())),
   );
 
   // Pagination state from URL params
   const [pagination, setPagination] = useState<PaginationState>(() => {
     const { page, itemsPerPage } = urlParamsToPagination(
-      new URLSearchParams(searchParams?.toString())
+      new URLSearchParams(searchParams?.toString()),
     );
     return {
       currentPage: page,
@@ -162,7 +163,10 @@ const BlogPageContent: React.FC = () => {
   );
 
   // Fetch blogs using the service
-  const fetchBlogs = async (writer?: string, search?: string): Promise<void> => {
+  const fetchBlogs = async (
+    writer?: string,
+    search?: string,
+  ): Promise<void> => {
     try {
       setLoading(true);
       setError(null);
@@ -182,21 +186,24 @@ const BlogPageContent: React.FC = () => {
       }
 
       // Enhance the data with calculated properties
-      const enhancedBlogs = result.data.map(enhanceBlogData);
+      if (result.message != "DATA_NOT_FOUND") {
+        const enhancedBlogs = result.data.map(enhanceBlogData);
 
-      // Extract unique categories from blogs
-      const uniqueCategories = [
-        ...new Set(
-          result.data
-            .map((blog: BlogDetailsData) => blog.blogCategory)
-            .filter(
-              (category: string | null) => category && category.trim() !== "",
-            ),
-        ),
-      ] as string[];
+        // Extract unique categories from blogs
+        const uniqueCategories = [
+          ...new Set(
+            result.data
+              .map((blog: BlogDetailsData) => blog.blogCategory)
+              .filter(
+                (category: string | null) => category && category.trim() !== "",
+              ),
+          ),
+        ] as string[];
 
-      setBlogs(enhancedBlogs);
-      setCategories(uniqueCategories.sort());
+        setBlogs(enhancedBlogs);
+        setCategories(uniqueCategories.sort());
+      }
+
       setError(null);
     } catch (err) {
       console.error("Error fetching blogs:", err);
@@ -302,7 +309,7 @@ const BlogPageContent: React.FC = () => {
     });
 
     setFilteredBlogs(filtered);
-    
+
     // Reset to page 1 when filters change
     if (pagination.currentPage !== 1) {
       handlePageChange(1);
@@ -349,7 +356,10 @@ const BlogPageContent: React.FC = () => {
       }
 
       // Only update if different from current and no URL param
-      if (newItemsPerPage !== pagination.itemsPerPage && !searchParams?.get("itemsPerPage")) {
+      if (
+        newItemsPerPage !== pagination.itemsPerPage &&
+        !searchParams?.get("itemsPerPage")
+      ) {
         updateUrlParams(filters, pagination.currentPage, newItemsPerPage);
       }
     };
@@ -357,7 +367,13 @@ const BlogPageContent: React.FC = () => {
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [filters, pagination.currentPage, pagination.itemsPerPage, searchParams, updateUrlParams]);
+  }, [
+    filters,
+    pagination.currentPage,
+    pagination.itemsPerPage,
+    searchParams,
+    updateUrlParams,
+  ]);
 
   const handleFilterChange = (
     filterName: keyof BlogFilters,
@@ -392,7 +408,7 @@ const BlogPageContent: React.FC = () => {
   const handlePageChange = (page: number): void => {
     setPagination((prev) => ({ ...prev, currentPage: page }));
     updateUrlParams(filters, page, pagination.itemsPerPage);
-    
+
     // Scroll to top of results section
     const resultsSection = document.getElementById("results-section");
     if (resultsSection) {
@@ -419,7 +435,8 @@ const BlogPageContent: React.FC = () => {
   };
 
   // Determine if we should show full filters based on URL parameters
-  const hasUrlParams = searchParams?.get("writer") || searchParams?.get("search");
+  const hasUrlParams =
+    searchParams?.get("writer") || searchParams?.get("search");
 
   if (loading) {
     return <BlogPageLoading />;
@@ -427,19 +444,11 @@ const BlogPageContent: React.FC = () => {
 
   if (error) {
     return (
-      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <ErrorState
-            title="Failed to Load blogs"
-            message={error}
-            icon="alert"
-            variant="error"
-            size="md"
-            actionLabel="Try Again"
-            onAction={handleRetry}
-          />
-        </div>
-      </section>
+      <BlogErrorState
+        error={error}
+        onRetry={handleRetry}
+        title="Oops! Unable to Load Blogs"
+      />
     );
   }
 

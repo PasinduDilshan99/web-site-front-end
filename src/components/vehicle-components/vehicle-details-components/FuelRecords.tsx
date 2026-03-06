@@ -8,9 +8,9 @@ interface FuelRecordsProps {
 export default function FuelRecords({ fuelRecord }: FuelRecordsProps) {
   if (!fuelRecord) {
     return (
-      <div className="bg-white rounded-2xl shadow-lg p-6 border border-purple-100">
+      <div className="bg-white rounded-2xl shadow-lg p-6 border border-teal-100">
         <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-          <span className="w-2 h-6 bg-purple-600 rounded-full mr-3"></span>
+          <span className="w-2 h-6 bg-cyan-600 rounded-full mr-3"></span>
           Fuel Records
         </h2>
         <p className="text-gray-500 text-center py-4">No fuel records found</p>
@@ -27,9 +27,9 @@ export default function FuelRecords({ fuelRecord }: FuelRecordsProps) {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 border border-purple-100">
+    <div className="bg-white rounded-2xl shadow-lg p-6 border border-teal-100">
       <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-        <span className="w-2 h-6 bg-purple-600 rounded-full mr-3"></span>
+        <span className="w-2 h-6 bg-cyan-600 rounded-full mr-3"></span>
         Latest Fuel Record
       </h2>
       

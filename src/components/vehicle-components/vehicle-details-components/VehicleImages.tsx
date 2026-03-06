@@ -28,7 +28,7 @@ export default function VehicleImages({ vehicleImages, specificationImages }: Ve
 
   if (allImages.length === 0) {
     return (
-      <div className="bg-white rounded-2xl shadow-lg p-6 border border-purple-100">
+      <div className="bg-white rounded-2xl shadow-lg p-6 border border-teal-100">
         <h2 className="text-xl font-bold text-gray-900 mb-4">Vehicle Images</h2>
         <div className="flex items-center justify-center h-48 bg-gray-100 rounded-lg">
           <span className="text-gray-500">No images available</span>
@@ -38,9 +38,9 @@ export default function VehicleImages({ vehicleImages, specificationImages }: Ve
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 border border-purple-100">
+    <div className="bg-white rounded-2xl shadow-lg p-6 border border-teal-100">
       <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-        <span className="w-2 h-6 bg-purple-600 rounded-full mr-3"></span>
+        <span className="w-2 h-6 bg-cyan-600 rounded-full mr-3"></span>
         Vehicle Images
       </h2>
       
@@ -68,7 +68,7 @@ export default function VehicleImages({ vehicleImages, specificationImages }: Ve
             key={index}
             onClick={() => setSelectedImage(image.url)}
             className={`aspect-square bg-gray-100 rounded-lg overflow-hidden border-2 ${
-              selectedImage === image.url ? 'border-amber-500' : 'border-transparent'
+              selectedImage === image.url ? 'border-teal-500' : 'border-transparent'
             }`}
           >
             <img 

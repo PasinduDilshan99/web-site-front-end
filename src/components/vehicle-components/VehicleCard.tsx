@@ -14,8 +14,8 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, isSelected, onClick 
     <div
       className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-300 ${
         isSelected
-          ? 'border-amber-500 bg-amber-50 shadow-lg'
-          : 'border-gray-200 bg-white hover:border-purple-300 hover:shadow-md'
+          ? 'border-teal-500 bg-teal-50 shadow-lg'
+          : 'border-gray-200 bg-white hover:border-cyan-300 hover:shadow-md'
       }`}
       onClick={onClick}
     >

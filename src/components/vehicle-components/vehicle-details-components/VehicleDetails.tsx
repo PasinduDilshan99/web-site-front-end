@@ -10,7 +10,7 @@ interface VehicleDetailsProps {
 
 export default function VehicleDetails({ details, purchaseDate, purchasePrice, status }: VehicleDetailsProps) {
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString)?.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
@@ -29,13 +29,13 @@ export default function VehicleDetails({ details, purchaseDate, purchasePrice, s
     { label: 'Warranty Expiry', value: formatDate(details.warrantyExpiryDate) },
     { label: 'GPS Tracking ID', value: details.gpsTrackingId },
     { label: 'Purchase Date', value: formatDate(purchaseDate) },
-    { label: 'Purchase Price', value: `$${purchasePrice.toLocaleString()}` },
+    { label: 'Purchase Price', value: `$${purchasePrice?.toLocaleString()}` },
   ];
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 border border-purple-100">
+    <div className="bg-white rounded-2xl shadow-lg p-6 border border-teal-100">
       <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-        <span className="w-2 h-6 bg-amber-500 rounded-full mr-3"></span>
+        <span className="w-2 h-6 bg-teal-600 rounded-full mr-3"></span>
         Vehicle Details
       </h2>
       
