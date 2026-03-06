@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { WishListService } from "@/services/wishListService";
 import { useAuth } from "@/context/AuthContext";
 import { addBrowserHistory } from "@/services/browserHistoryService";
+import { ACTIVITY_BROWSER_HISTORY_TYPE } from "@/utils/constant";
+import { ACTIVITIES_PAGE_PATH } from "@/utils/urls";
 
 interface ActivityCardProps {
   activity: ActiveActivitiesType;
@@ -16,7 +18,6 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
   const [isWishlisted, setIsWishlisted] = useState(activity.wish);
   const [loadingWishlist, setLoadingWishlist] = useState(false);
   const { user } = useAuth();
-
   // Format date
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -40,11 +41,11 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
     );
   };
 
-  const handleBookNow = async () => {
+  const handleMoreDetails = async () => {
     if (user) {
       try {
         await addBrowserHistory({
-          type: "ACTIVITIES",
+          type: ACTIVITY_BROWSER_HISTORY_TYPE,
           dataId: activity.id,
         });
       } catch (err) {
@@ -52,7 +53,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
       }
     }
 
-    router.push(`/activities/${activity.id}`);
+    router.push(`${ACTIVITIES_PAGE_PATH}/${activity.id}?name=${activity.name}`);
   };
 
   // Parse seasons
@@ -89,7 +90,11 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
 
         {/* Category Badge */}
         <div className="absolute top-2 sm:top-3 left-2 sm:left-3 bg-sky-600/90 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
-          {activity.category_name}
+          {activity.activities_category
+            .filter((category) => category.is_primary)
+            .map((category) => (
+              <div key={category.id}>{category.name}</div>
+            ))}
         </div>
 
         {/* Wishlist Heart Icon */}
@@ -98,7 +103,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
             onClick={handleWishlistToggle}
             disabled={loadingWishlist}
             className={`
-      absolute top-2 sm:top-3 right-2 sm:right-3 
+      cursor-pointer absolute top-2 sm:top-3 right-2 sm:right-3 
       p-2 sm:p-2.5 
       rounded-full
       bg-white/90 backdrop-blur-sm
@@ -380,8 +385,8 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
 
         {/* Action Button */}
         <button
-          onClick={handleBookNow}
-          className="w-full bg-gradient-to-r from-sky-600 to-teal-600 text-white py-2 sm:py-3 rounded-lg sm:rounded-xl font-semibold hover:from-sky-700 hover:to-teal-700 transition-all duration-300 transform hover:scale-105 text-sm sm:text-base shadow-md hover:shadow-lg"
+          onClick={handleMoreDetails}
+          className="cursor-pointer w-full bg-gradient-to-r from-sky-600 to-teal-600 text-white py-2 sm:py-3 rounded-lg sm:rounded-xl font-semibold hover:from-sky-700 hover:to-teal-700 transition-all duration-300 transform hover:scale-105 text-sm sm:text-base shadow-md hover:shadow-lg"
         >
           More Details
         </button>

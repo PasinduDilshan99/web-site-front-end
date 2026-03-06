@@ -27,6 +27,13 @@ export interface ActivityImage {
   image_url: string;
 }
 
+export interface ActivityCategoryWithPrimary {
+  id: number;
+  name: string;
+  description: string;
+  is_primary: boolean;
+}
+
 export interface ActiveActivitiesType {
   id: number;
   name: string;
@@ -37,7 +44,7 @@ export interface ActiveActivitiesType {
   requirements: Requirement[];
   images: ActivityImage[];
   destination_id: number;
-  activities_category: string;
+  activities_category: ActivityCategoryWithPrimary[];
   duration_hours: number;
   available_from: string;
   available_to: string;
@@ -47,8 +54,8 @@ export interface ActiveActivitiesType {
   max_participate: number;
   created_at: string;
   updated_at: string;
-  category_name: string;
-  category_description: string;
+  // category_name: string;
+  // category_description: string;
   wish: boolean;
 }
 
@@ -324,6 +331,7 @@ export interface ActivityData {
   name: string;
   description: string;
   season: string;
+  seasonId: number;
   status: string;
   schedules: Schedule[];
   requirements: Requirement[];
@@ -347,4 +355,5 @@ export interface ActivityCategory {
   id: number;
   name: string;
   description: string;
+  is_primary: boolean;
 }

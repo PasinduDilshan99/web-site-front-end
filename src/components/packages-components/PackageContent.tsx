@@ -1,6 +1,8 @@
 import { useAuth } from "@/context/AuthContext";
 import { addBrowserHistory } from "@/services/browserHistoryService";
 import { ActivePackagesForFilters } from "@/types/packages-types";
+import { PACKAGE_BROWSER_HISTORY_TYPE } from "@/utils/constant";
+import { PACKAGE_DETAILS_PAGE_PATH } from "@/utils/urls";
 import { useRouter } from "next/navigation";
 import React from "react";
 
@@ -19,7 +21,7 @@ const PackageContent: React.FC<PackageContentProps> = ({
   const formatPrice = (price: number): string => {
     return new Intl.NumberFormat("en-LK", {
       style: "currency",
-      currency: "LKR",
+      currency: "USD",
     }).format(price);
   };
 
@@ -31,7 +33,7 @@ const PackageContent: React.FC<PackageContentProps> = ({
     if (user) {
       try {
         await addBrowserHistory({
-          type: "PACKAGE",
+          type: PACKAGE_BROWSER_HISTORY_TYPE,
           dataId: pkg.packageId,
         });
       } catch (err) {
@@ -39,7 +41,9 @@ const PackageContent: React.FC<PackageContentProps> = ({
       }
     }
 
-    router.push(`/packages/${pkg.packageId}`);
+    router.push(
+      `${PACKAGE_DETAILS_PAGE_PATH}/${pkg.packageId}?${pkg.packageName}`,
+    );
   };
 
   return (
@@ -75,7 +79,11 @@ const PackageContent: React.FC<PackageContentProps> = ({
         <div className="flex justify-between text-sm">
           <span className="font-medium text-sky-700">Group Size:</span>
           <span className="text-gray-900">
-            {pkg.minPersonCount}-{pkg.maxPersonCount} people
+            {pkg.maxPersonCount === 0
+              ? "any participants"
+              : pkg.minPersonCount === pkg.maxPersonCount
+                ? `${pkg.minPersonCount} people`
+                : `${pkg.minPersonCount}-${pkg.maxPersonCount} people`}
           </span>
         </div>
       </div>
@@ -110,7 +118,7 @@ const PackageContent: React.FC<PackageContentProps> = ({
               {formatPrice(pkg.pricePerPerson)}
             </span>
           )}
-          <span className="text-sm text-sky-600 ml-1">per person</span>
+          <span className="text-sm text-sky-600 ml-1"> per person</span>
         </div>
       </div>
 
@@ -118,7 +126,7 @@ const PackageContent: React.FC<PackageContentProps> = ({
       {showViewDetails ? (
         <button
           onClick={handleButtonClick}
-          className="w-full py-3 px-4 bg-gradient-to-r from-sky-600 to-teal-600 text-white font-semibold rounded-lg hover:from-sky-700 hover:to-teal-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+          className="cursor-pointer w-full py-3 px-4 bg-gradient-to-r from-sky-600 to-teal-600 text-white font-semibold rounded-lg hover:from-sky-700 hover:to-teal-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
         >
           See Details
         </button>

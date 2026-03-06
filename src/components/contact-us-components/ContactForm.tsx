@@ -972,7 +972,7 @@ const ContactForm = () => {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className={`w-full md:w-auto px-8 py-4 bg-gradient-to-r from-teal-500 to-blue-500 text-white font-semibold rounded-lg hover:from-teal-600 hover:to-blue-600 transform hover:scale-105 transition-all duration-300 shadow-lg flex items-center justify-center gap-3 ${
+                      className={`cursor-pointer w-full md:w-auto px-8 py-4 bg-gradient-to-r from-teal-500 to-blue-500 text-white font-semibold rounded-lg hover:from-teal-600 hover:to-blue-600 transform hover:scale-105 transition-all duration-300 shadow-lg flex items-center justify-center gap-3 ${
                         isSubmitting ? "opacity-75 cursor-not-allowed" : ""
                       }`}
                     >

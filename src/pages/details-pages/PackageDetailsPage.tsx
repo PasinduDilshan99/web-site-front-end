@@ -16,7 +16,6 @@ import TravelTips from "@/components/packages-components/TravelTips";
 import DayByDayItinerary from "@/components/packages-components/DayByDayItinerary";
 import {
   Destination,
-  TourDetails,
   ActivePackagesType,
   ExtendedActivity,
   PackageReview,
@@ -29,12 +28,11 @@ import { DestinationService } from "@/services/destinationService";
 import { PackageService } from "@/services/packageService";
 import { TourService } from "@/services/tourService";
 import PackageDetailsHeroSection from "@/components/packages-components/PackageDetailsHeroSection";
-import { Metadata } from "next";
 import PackageDetailsLoading from "@/components/packages-components/PackageDetailsLoading";
+import { TourDetails } from "@/types/tour-types";
+import PackageDetailsLoadingError from "@/components/packages-components/PackageDetailsLoadingError";
 
-export const metadata: Metadata = {
-  title: "Packages",
-};
+
 const PackageDetailsPage = () => {
   const params = useParams();
   const packageId = params?.packageId || "1";
@@ -237,19 +235,10 @@ const PackageDetailsPage = () => {
 
   if (error) {
     return (
-      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <ErrorState
-            title="Failed to Load package details"
-            message={error}
-            icon="alert"
-            variant="error"
-            size="md"
-            actionLabel="Try Again"
-            onAction={handleRetry}
-          />
-        </div>
-      </section>
+      <PackageDetailsLoadingError
+        onRetry={handleRetry}
+        message="Couldn't fetch the complete package information."
+      />
     );
   }
 

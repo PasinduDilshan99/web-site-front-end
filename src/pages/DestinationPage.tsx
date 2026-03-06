@@ -22,6 +22,7 @@ import DestinationHeroSection from "@/components/destinations-components/Destina
 import { DestinationService } from "@/services/destinationService";
 import DestinationsLoading from "@/components/destinations-components/DestinationsLoading";
 import { useCommon } from "@/context/CommonContext";
+import DestinationsLoadingError from "@/components/destinations-components/DestinationsLoadingError";
 
 // Utility functions for URL params management
 const filtersToUrlParams = (
@@ -120,7 +121,9 @@ const DestinationPageContent: React.FC = () => {
   const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
 
   // Filter options from context and service
-  const [destinationCategories, setDestinationCategories] = useState<string[]>([]);
+  const [destinationCategories, setDestinationCategories] = useState<string[]>(
+    [],
+  );
   const [locations, setLocations] = useState<string[]>([]);
   const [durations, setDurations] = useState<number[]>([]);
 
@@ -130,32 +133,41 @@ const DestinationPageContent: React.FC = () => {
   useEffect(() => {
     if (categories) {
       const categoryNames = categories.destinationCategoryList.map(
-        cat => cat.destinationCategoryName
+        (cat) => cat.destinationCategoryName,
       );
       setDestinationCategories(categoryNames);
     }
   }, [categories]);
 
   // Build search request from filters
-  const buildSearchRequest = useCallback((
-    filterValues: Filters,
-    page: number,
-    pageSize: number
-  ): DestinationSearchRequest => {
-    return {
-      name: filterValues.search || null,
-      minPrice: filterValues.priceRange[0] > 0 ? filterValues.priceRange[0] : null,
-      maxPrice: filterValues.priceRange[1] < 10000 ? filterValues.priceRange[1] : null,
-      duration: filterValues.duration ? parseFloat(filterValues.duration) : null,
-      destinationCategory: filterValues.category || null,
-      // location: filterValues.location || null,
-      // minRating: filterValues.rating > 0 ? filterValues.rating : null,
-      season: null,
-      status: null,
-      pageSize: pageSize,
-      pageNumber: page,
-    };
-  }, []);
+  const buildSearchRequest = useCallback(
+    (
+      filterValues: Filters,
+      page: number,
+      pageSize: number,
+    ): DestinationSearchRequest => {
+      return {
+        name: filterValues.search || null,
+        minPrice:
+          filterValues.priceRange[0] > 0 ? filterValues.priceRange[0] : null,
+        maxPrice:
+          filterValues.priceRange[1] < 10000
+            ? filterValues.priceRange[1]
+            : null,
+        duration: filterValues.duration
+          ? parseFloat(filterValues.duration)
+          : null,
+        destinationCategory: filterValues.category || null,
+        // location: filterValues.location || null,
+        // minRating: filterValues.rating > 0 ? filterValues.rating : null,
+        season: null,
+        status: null,
+        pageSize: pageSize,
+        pageNumber: page,
+      };
+    },
+    [],
+  );
 
   // Fetch filter options (locations and durations)
   const fetchFilterOptions = useCallback(async (): Promise<void> => {
@@ -238,7 +250,7 @@ const DestinationPageContent: React.FC = () => {
         setLoading(true);
         await fetchFilterOptions();
         await fetchDestinationsWithFilters(filters, currentPage, itemsPerPage);
-        
+
         // Uncomment these if needed
         // await fetchReviews();
         // await fetchHistory();
@@ -336,19 +348,10 @@ const DestinationPageContent: React.FC = () => {
 
   if (error) {
     return (
-      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <ErrorState
-            title="Failed to Load destinations"
-            message={error}
-            icon="alert"
-            variant="error"
-            size="md"
-            actionLabel="Try Again"
-            onAction={handleRetry}
-          />
-        </div>
-      </section>
+      <DestinationsLoadingError
+        onRetry={handleRetry}
+        message="Couldn't fetch destinations."
+      />
     );
   }
 
@@ -395,10 +398,8 @@ const DestinationPageContent: React.FC = () => {
             <select
               id="itemsPerPage"
               value={itemsPerPage}
-              onChange={(e) =>
-                handleItemsPerPageChange(Number(e.target.value))
-              }
-              className="border border-sky-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-sky-700 transition-all duration-200 hover:border-sky-400"
+              onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+              className="cursor-pointer border border-sky-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-sky-700 transition-all duration-200 hover:border-sky-400"
             >
               <option value={4}>4 per page</option>
               <option value={6}>6 per page</option>
@@ -480,7 +481,7 @@ const NoResults: React.FC<{ onResetFilters: () => void }> = ({
     </div>
     <button
       onClick={onResetFilters}
-      className="px-6 py-2 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:from-sky-700 hover:to-teal-700 transition-all duration-300 shadow-md hover:shadow-lg"
+      className="cursor-pointer px-6 py-2 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:from-sky-700 hover:to-teal-700 transition-all duration-300 shadow-md hover:shadow-lg"
     >
       Reset Filters
     </button>
@@ -565,7 +566,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+          className="cursor-pointer px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
           aria-label="Previous page"
         >
           <svg
@@ -601,7 +602,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
               <button
                 key={page}
                 onClick={() => onPageChange(page as number)}
-                className={`min-w-[40px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
+                className={`cursor-pointer min-w-[40px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
                   currentPage === page
                     ? "bg-gradient-to-r from-sky-600 to-teal-600 text-white shadow-lg transform scale-105"
                     : "text-sky-700 bg-white border-2 border-sky-300 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 hover:shadow-md"
@@ -618,7 +619,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+          className="cursor-pointer px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
           aria-label="Next page"
         >
           <span className="hidden sm:inline">Next</span>

@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Loading from "@/components/common-components/loading/Loading";
 import { ErrorState } from "@/components/common-components/error-state/ErrorState";
 import ActivitiesGrid from "@/components/activities-components/ActivitiesGrid";
 import FilterSection from "@/components/activities-components/FilterSection";
@@ -19,6 +18,7 @@ import { ActivityService } from "@/services/activityService";
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";
 import ActivitiesLoading from "@/components/activities-components/ActivitiesLoading";
 import { useCommon } from "@/context/CommonContext";
+import ActivitiesLoadingError from "@/components/activities-components/ActivitiesLoadingError";
 
 // Utility functions for URL params management
 const filtersToUrlParams = (
@@ -182,8 +182,6 @@ const ActivityPageContent: React.FC = () => {
         // Prepare API request using service helper
         const requestBody = ActivityService.buildSearchRequest(filterValues);
 
-        console.log("Request Body:", requestBody); // For debugging
-
         const {
           activities: fetchedActivities,
           totalActivities: total,
@@ -318,19 +316,10 @@ const ActivityPageContent: React.FC = () => {
 
   if (error) {
     return (
-      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <ErrorState
-            title="Failed to Load activities"
-            message={error}
-            icon="alert"
-            variant="error"
-            size="md"
-            actionLabel="Try Again"
-            onAction={handleRetry}
-          />
-        </div>
-      </section>
+      <ActivitiesLoadingError
+        onRetry={handleRetry}
+        message="Couldn't fetch activities."
+      />
     );
   }
 
@@ -340,7 +329,7 @@ const ActivityPageContent: React.FC = () => {
       <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
         <SectionHeader
           subtitle=""
-          title="Adventure Activities"
+          title="Activities"
           description="Discover exciting activities and experiences for your next adventure"
           fromColor="#A855F7"
           toColor="#F59E0B"
@@ -380,7 +369,7 @@ const ActivityPageContent: React.FC = () => {
               id="itemsPerPage"
               value={itemsPerPage}
               onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
-              className="border border-sky-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-sky-700 transition-all duration-200 hover:border-sky-400"
+              className="cursor-pointer border border-sky-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-sky-700 transition-all duration-200 hover:border-sky-400"
             >
               <option value={6}>6</option>
               <option value={8}>8</option>
@@ -464,7 +453,7 @@ const NoResults: React.FC<{ onResetFilters: () => void }> = ({
     </div>
     <button
       onClick={onResetFilters}
-      className="px-6 py-2 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:from-sky-700 hover:to-teal-700 transition-all duration-300 shadow-md hover:shadow-lg"
+      className="cursor-pointer px-6 py-2 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:from-sky-700 hover:to-teal-700 transition-all duration-300 shadow-md hover:shadow-lg"
     >
       Reset Filters
     </button>
@@ -544,7 +533,7 @@ const Pagination: React.FC<PaginationProps> = ({
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+          className="cursor-pointer px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
           aria-label="Previous page"
         >
           <svg
@@ -580,7 +569,7 @@ const Pagination: React.FC<PaginationProps> = ({
               <button
                 key={page}
                 onClick={() => onPageChange(page as number)}
-                className={`min-w-[40px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
+                className={`cursor-pointer min-w-[40px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
                   currentPage === page
                     ? "bg-gradient-to-r from-sky-600 to-teal-600 text-white shadow-lg transform scale-105"
                     : "text-sky-700 bg-white border-2 border-sky-300 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 hover:shadow-md"
@@ -597,7 +586,7 @@ const Pagination: React.FC<PaginationProps> = ({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+          className="cursor-pointer px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
           aria-label="Next page"
         >
           <span className="hidden sm:inline">Next</span>

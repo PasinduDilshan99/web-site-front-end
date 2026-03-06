@@ -40,7 +40,7 @@ const InclusionsExclusions: React.FC<InclusionsExclusionsProps> = ({ packageData
       <div className="flex border-b border-sky-200 mb-4 sm:mb-6 overflow-x-auto">
         <button
           onClick={() => setActiveTab('inclusions')}
-          className={`px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base font-medium border-b-2 transition-colors whitespace-nowrap ${
+          className={`cursor-pointer px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base font-medium border-b-2 transition-colors whitespace-nowrap ${
             activeTab === 'inclusions'
               ? 'border-sky-600 text-sky-600 bg-sky-50'
               : 'border-transparent text-sky-700 hover:text-sky-800 hover:border-sky-300 hover:bg-sky-50/50'
@@ -50,7 +50,7 @@ const InclusionsExclusions: React.FC<InclusionsExclusionsProps> = ({ packageData
         </button>
         <button
           onClick={() => setActiveTab('exclusions')}
-          className={`px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base font-medium border-b-2 transition-colors whitespace-nowrap ${
+          className={`cursor-pointer px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base font-medium border-b-2 transition-colors whitespace-nowrap ${
             activeTab === 'exclusions'
               ? 'border-teal-600 text-teal-600 bg-teal-50'
               : 'border-transparent text-teal-700 hover:text-teal-800 hover:border-teal-300 hover:bg-teal-50/50'
@@ -60,7 +60,7 @@ const InclusionsExclusions: React.FC<InclusionsExclusionsProps> = ({ packageData
         </button>
         <button
           onClick={() => setActiveTab('conditions')}
-          className={`px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base font-medium border-b-2 transition-colors whitespace-nowrap ${
+          className={`cursor-pointer px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base font-medium border-b-2 transition-colors whitespace-nowrap ${
             activeTab === 'conditions'
               ? 'border-cyan-600 text-cyan-600 bg-cyan-50'
               : 'border-transparent text-cyan-700 hover:text-cyan-800 hover:border-cyan-300 hover:bg-cyan-50/50'

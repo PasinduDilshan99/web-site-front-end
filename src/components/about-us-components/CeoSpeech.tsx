@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Quote } from "lucide-react";
 import { EmployeeService } from "@/services/employeeService";
 import CeoSpeechLoading from "./CeoSpeechLoading";
+import Image from "next/image";
 
 interface CeoData {
   name: string;
@@ -97,7 +98,7 @@ const CeoSpeech: React.FC = () => {
 
             <div className="space-y-4 text-gray-700 text-base md:text-lg lg:text-xl">
               {ceoData.speech.slice(0, -1).map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
+                <p key={index + 1}>{paragraph}</p>
               ))}
 
               <p className="font-semibold text-blue-800">
@@ -130,9 +131,11 @@ const CeoSpeech: React.FC = () => {
               <div className="absolute -inset-4 bg-gradient-to-br from-blue-400 to-teal-400 rounded-full opacity-20 blur-2xl"></div>
 
               <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[420px] lg:h-[420px]">
-                <img
+                <Image
                   src={ceoData.imageUrl}
                   alt={ceoData.name}
+                  width={2000}
+                  height={2000}
                   className="w-full h-full rounded-3xl object-cover shadow-2xl"
                 />
               </div>
@@ -164,7 +167,7 @@ const CeoSpeech: React.FC = () => {
 
             <div className="space-y-4 text-gray-700 text-base md:text-lg lg:text-xl">
               {ceoData.speech.slice(0, -1).map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
+                <p key={index + 1}>{paragraph}</p>
               ))}
 
               <p className="font-semibold text-blue-800">

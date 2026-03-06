@@ -19,6 +19,7 @@ import PackageHeroSection from "@/components/packages-components/PackageHeroSect
 import { PackageService } from "@/services/packageService";
 import { ActivePackagesForFilters } from "@/types/package-types";
 import PackagesLoading from "@/components/packages-components/PackagesLoading";
+import PackagesLoadingError from "@/components/packages-components/PackagesLoadingError";
 
 // Define API response interface for packages
 interface PackageListResponse {
@@ -46,8 +47,10 @@ const filtersToUrlParams = (
   if (filters.packageType) params.set("packageType", filters.packageType);
   if (filters.duration) params.set("duration", filters.duration.toString());
   if (filters.location) params.set("location", filters.location);
-  if (filters.minPersons) params.set("minPersons", filters.minPersons.toString());
-  if (filters.maxPersons) params.set("maxPersons", filters.maxPersons.toString());
+  if (filters.minPersons)
+    params.set("minPersons", filters.minPersons.toString());
+  if (filters.maxPersons)
+    params.set("maxPersons", filters.maxPersons.toString());
   if (filters.startDate) params.set("startDate", filters.startDate);
   if (filters.endDate) params.set("endDate", filters.endDate);
 
@@ -137,26 +140,35 @@ const PackagePageContent: React.FC = () => {
   const [durations, setDurations] = useState<number[]>([]);
 
   // Build search request from filters - UPDATED to match PackageSearchRequest type
-  const buildSearchRequest = useCallback((
-    filterValues: Filters,
-    page: number,
-    pageSize: number
-  ) => {
-    return {
-      name: filterValues.search || null,
-      minPrice: filterValues.priceRange[0] > 0 ? filterValues.priceRange[0] : null,
-      maxPrice: filterValues.priceRange[1] < 100000 ? filterValues.priceRange[1] : null,
-      duration: filterValues.duration ? parseInt(filterValues.duration) : null,
-      packageType: filterValues.packageType || null,
-      location: filterValues.location || null,
-      minGroupSize: filterValues.minPersons ? parseInt(filterValues.minPersons) : null, // Changed from minPersons
-      maxGroupSize: filterValues.maxPersons ? parseInt(filterValues.maxPersons) : null, // Changed from maxPersons
-      fromDate: filterValues.startDate || null, // Changed from startDate
-      toDate: filterValues.endDate || null, // Changed from endDate
-      pageNumber: page,
-      pageSize: pageSize,
-    };
-  }, []);
+  const buildSearchRequest = useCallback(
+    (filterValues: Filters, page: number, pageSize: number) => {
+      return {
+        name: filterValues.search || null,
+        minPrice:
+          filterValues.priceRange[0] > 0 ? filterValues.priceRange[0] : null,
+        maxPrice:
+          filterValues.priceRange[1] < 100000
+            ? filterValues.priceRange[1]
+            : null,
+        duration: filterValues.duration
+          ? parseInt(filterValues.duration)
+          : null,
+        packageType: filterValues.packageType || null,
+        location: filterValues.location || null,
+        minGroupSize: filterValues.minPersons
+          ? parseInt(filterValues.minPersons)
+          : null, // Changed from minPersons
+        maxGroupSize: filterValues.maxPersons
+          ? parseInt(filterValues.maxPersons)
+          : null, // Changed from maxPersons
+        fromDate: filterValues.startDate || null, // Changed from startDate
+        toDate: filterValues.endDate || null, // Changed from endDate
+        pageNumber: page,
+        pageSize: pageSize,
+      };
+    },
+    [],
+  );
 
   // Fetch filter options (initial data)
   const fetchFilterOptions = useCallback(async (): Promise<void> => {
@@ -235,7 +247,7 @@ const PackagePageContent: React.FC = () => {
         setLoading(true);
         await fetchFilterOptions();
         await fetchPackagesWithFilters(filters, currentPage, itemsPerPage);
-        
+
         // Uncomment these if needed
         // await fetchReviews();
         // await fetchHistory();
@@ -342,19 +354,10 @@ const PackagePageContent: React.FC = () => {
 
   if (error) {
     return (
-      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <ErrorState
-            title="Failed to Load packages details"
-            message={error}
-            icon="alert"
-            variant="error"
-            size="md"
-            actionLabel="Try Again"
-            onAction={handleRetry}
-          />
-        </div>
-      </section>
+      <PackagesLoadingError
+        onRetry={handleRetry}
+        message="Couldn't load our exclusive tour packages."
+      />
     );
   }
 
@@ -432,10 +435,8 @@ const PackagePageContent: React.FC = () => {
             <select
               id="itemsPerPage"
               value={itemsPerPage}
-              onChange={(e) =>
-                handleItemsPerPageChange(Number(e.target.value))
-              }
-              className="px-3 py-2 border border-sky-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm text-sky-900 bg-white transition-all duration-200 hover:border-sky-400"
+              onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+              className="cursor-pointer px-3 py-2 border border-sky-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm text-sky-900 bg-white transition-all duration-200 hover:border-sky-400"
             >
               <option value={4}>4 per page</option>
               <option value={6}>6 per page</option>
@@ -579,7 +580,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+          className="cursor-pointer px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
           aria-label="Previous page"
         >
           <svg
@@ -615,7 +616,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
               <button
                 key={page}
                 onClick={() => onPageChange(page as number)}
-                className={`min-w-[40px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
+                className={`cursor-pointer min-w-[40px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
                   currentPage === page
                     ? "bg-gradient-to-r from-sky-600 to-teal-600 text-white shadow-lg transform scale-105"
                     : "text-sky-700 bg-white border-2 border-sky-300 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 hover:shadow-md"
@@ -632,7 +633,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+          className="cursor-pointer px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
           aria-label="Next page"
         >
           <span className="hidden sm:inline">Next</span>

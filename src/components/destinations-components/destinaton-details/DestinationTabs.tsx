@@ -42,7 +42,7 @@ const DestinationTabs: React.FC<DestinationTabsProps> = ({
         <button
           key={tab.id}
           onClick={() => onTabChange(tab.id)}
-          className={`flex-1 py-4 px-6 text-center font-medium text-sm transition-all duration-200 ${
+          className={`cursor-pointer flex-1 py-4 px-6 text-center font-medium text-sm transition-all duration-200 ${
             activeTab === tab.id
               ? "text-sky-600 border-b-2 border-gradient-to-r from-sky-500 to-teal-500 font-semibold bg-gradient-to-b from-sky-50/30 to-transparent"
               : "text-sky-800/70 hover:text-sky-600 hover:border-b-2 hover:border-sky-300 hover:bg-sky-50/20"

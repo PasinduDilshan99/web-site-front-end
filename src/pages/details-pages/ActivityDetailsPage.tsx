@@ -22,6 +22,7 @@ import { ActivityService } from "@/services/activityService";
 import ActivityDetailsHeroSection from "@/components/activities-components/ActivityDetailsHeroSection";
 import ActivityDetailsLoading from "@/components/activities-components/ActivityDetailsLoading";
 import ActivityCategories from "@/components/activities-components/ActivityCategories";
+import ActivityDetailsLoadingError from "@/components/activities-components/ActivityDetailsLoadingError";
 
 const ActivityDetailsPage = () => {
   const params = useParams();
@@ -279,21 +280,10 @@ const ActivityDetailsPage = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-purple-50 flex items-center justify-center">
-        <div className="text-center p-8 max-w-md">
-          <div className="text-red-500 text-6xl mb-4">⚠️</div>
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">
-            Failed to Load Activity
-          </h1>
-          <p className="text-gray-600 mb-6">{error}</p>
-          <button
-            onClick={retryFetchActivity}
-            className="bg-gradient-to-r from-purple-600 to-amber-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-amber-700 transition-all duration-300"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
+      <ActivityDetailsLoadingError
+        onRetry={retryFetchActivity}
+        message="Couldn't fetch activity information."
+      />
     );
   }
 
@@ -328,7 +318,10 @@ const ActivityDetailsPage = () => {
             <ActivityDetails activity={activity} />
             <ActivityKeyInfo activity={activity} />
             <ActivityCategories activity={activity} />
-            <ActivitySeasons season={activity.season} />
+            <ActivitySeasons
+              season={activity.season}
+              seasonId={activity.seasonId}
+            />
             <ActivityRequirements requirements={activity.requirements} />
             {/* <ActivitySchedules schedules={activity.schedules} /> */}
           </div>

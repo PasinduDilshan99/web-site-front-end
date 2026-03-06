@@ -8,22 +8,41 @@ import { WhyChooseUsService } from "@/services/whyChooseUsService";
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";
 import { PLACE_HOLDER_IMAGE } from "@/utils/constant";
 
-// Import Lucide React icons
-import * as LucideIcons from 'lucide-react';
+// Import Lucide React icons specifically
+import {
+  Clock,
+  Users,
+  Briefcase,
+  Star,
+  ThumbsUp,
+  ArrowUp,
+  LucideIcon,
+} from "lucide-react";
+import { ABOUT_US_PAGE_PATH } from "@/utils/urls";
+import WhyChooseUsLoading from "./WhyChooseUsLoading";
 
-// Default icon component (Clock as fallback)
-const DefaultIcon = ({ color = "#A855F7" }: { color?: string }) => {
-  const ClockIcon = LucideIcons.Clock;
-  return <ClockIcon className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" style={{ color }} />;
+// Icon mapping object
+const iconMap: Record<string, LucideIcon> = {
+  Clock: Clock,
+  Users: Users,
+  Briefcase: Briefcase,
+  Star: Star,
+  ThumbsUp: ThumbsUp,
+  ArrowUp: ArrowUp,
 };
 
-// Dynamic Icon Component
-const DynamicIcon = ({ 
-  iconName, 
+// Default icon component
+const DefaultIcon = ({ color = "#A855F7" }: { color?: string }) => (
+  <Clock className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" style={{ color }} />
+);
+
+// Dynamic Icon Component with proper typing
+const DynamicIcon = ({
+  iconName,
   color,
-  className 
-}: { 
-  iconName: string | null; 
+  className,
+}: {
+  iconName: string | null;
   color?: string;
   className?: string;
 }) => {
@@ -37,19 +56,18 @@ const DynamicIcon = ({
     return <DefaultIcon color={color} />;
   }
 
-  // Try to get the icon from Lucide icons
-  const IconComponent = (LucideIcons as any)[iconName];
-  
+  // Get icon from map
+  const IconComponent = iconMap[iconName];
+
   if (!IconComponent) {
-    console.warn(`Icon "${iconName}" not found in Lucide React icons, using default`);
+    console.warn(`Icon "${iconName}" not found in icon map, using default`);
     return <DefaultIcon color={color} />;
   }
 
   return (
-    <IconComponent 
-      className={className || "w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8"} 
+    <IconComponent
+      className={className || "w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8"}
       style={{ color }}
-      onError={() => setIconError(true)}
     />
   );
 };
@@ -169,7 +187,7 @@ const WhyChooseUs = ({ buttonRequired }: { buttonRequired: boolean }) => {
 
   // Handle Learn More button click - navigate to about-us page
   const handleLearnMoreClick = () => {
-    router.push("/about-us");
+    router.push(ABOUT_US_PAGE_PATH);
   };
 
   // Extract stats from title (e.g., "50+", "100%", "10+", "98%")
@@ -180,39 +198,7 @@ const WhyChooseUs = ({ buttonRequired }: { buttonRequired: boolean }) => {
 
   // Loading state
   if (loading) {
-    return (
-      <div className="min-h-[400px] bg-gradient-to-br from-slate-900 via-gray-900 to-teal-950 flex items-center justify-center p-8">
-        <div className="w-full mx-auto">
-          {/* Simple loading header */}
-          <div className="flex justify-center mb-8">
-            <div className="flex items-center space-x-3 px-4 py-2 bg-gray-900/50 backdrop-blur-sm rounded-full border border-teal-500/30">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-teal-400"></div>
-              <span className="text-teal-300 text-sm">
-                Loading why choose us...
-              </span>
-            </div>
-          </div>
-
-          {/* Why Choose Us Cards - 3 cards layout */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[...Array(3)].map((_, index) => (
-              <div
-                key={index}
-                className="bg-gradient-to-br from-gray-800/80 to-teal-900/30 rounded-xl p-6 border border-teal-500/20 animate-pulse"
-                style={{ animationDelay: `${index * 150}ms` }}
-              >
-                <div className="w-14 h-14 bg-gradient-to-br from-gray-700 to-teal-800/50 rounded-lg mb-4 mx-auto"></div>
-                <div className="h-5 bg-gradient-to-r from-gray-700 to-teal-800/50 rounded w-32 mx-auto mb-3"></div>
-                <div className="space-y-2">
-                  <div className="h-3 bg-gradient-to-r from-gray-700 to-cyan-800/40 rounded w-full"></div>
-                  <div className="h-3 bg-gradient-to-r from-gray-700 to-cyan-800/40 rounded w-5/6 mx-auto"></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
+    return <WhyChooseUsLoading />;
   }
 
   // Error state

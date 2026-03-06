@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { X, CheckCircle, Loader2, User, LogIn, UserPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { LOGIN_PAGE_PATH, SIGNUP_PAGE_PATH } from "@/utils/urls";
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -102,9 +103,9 @@ const BookingModal: React.FC<BookingModalProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
         <button
           onClick={() => {
-            router.push("/signup");
+            router.push(SIGNUP_PAGE_PATH);
           }}
-          className="group relative p-6 border-2 border-sky-100 rounded-2xl hover:border-sky-500 hover:bg-gradient-to-br hover:from-sky-50 hover:to-white transition-all duration-300 hover:shadow-lg hover:-translate-y-1 text-center"
+          className="cursor-pointer group relative p-6 border-2 border-sky-100 rounded-2xl hover:border-sky-500 hover:bg-gradient-to-br hover:from-sky-50 hover:to-white transition-all duration-300 hover:shadow-lg hover:-translate-y-1 text-center"
         >
           <div className="mb-4 flex justify-center">
             <div className="p-3 bg-sky-100 rounded-full group-hover:bg-sky-200 transition-colors">
@@ -119,9 +120,9 @@ const BookingModal: React.FC<BookingModalProps> = ({
 
         <button
           onClick={() => {
-            router.push("/login");
+            router.push(LOGIN_PAGE_PATH);
           }}
-          className="group relative p-6 border-2 border-teal-100 rounded-2xl hover:border-teal-500 hover:bg-gradient-to-br hover:from-teal-50 hover:to-white transition-all duration-300 hover:shadow-lg hover:-translate-y-1 text-center"
+          className="cursor-pointer group relative p-6 border-2 border-teal-100 rounded-2xl hover:border-teal-500 hover:bg-gradient-to-br hover:from-teal-50 hover:to-white transition-all duration-300 hover:shadow-lg hover:-translate-y-1 text-center"
         >
           <div className="mb-4 flex justify-center">
             <div className="p-3 bg-teal-100 rounded-full group-hover:bg-teal-200 transition-colors">
@@ -136,7 +137,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
 
         <button
           onClick={() => setMode("guest")}
-          className="group relative p-6 border-2 border-gray-100 rounded-2xl hover:border-gray-400 hover:bg-gradient-to-br hover:from-gray-50 hover:to-white transition-all duration-300 hover:shadow-lg hover:-translate-y-1 text-center"
+          className="cursor-pointer group relative p-6 border-2 border-gray-100 rounded-2xl hover:border-gray-400 hover:bg-gradient-to-br hover:from-gray-50 hover:to-white transition-all duration-300 hover:shadow-lg hover:-translate-y-1 text-center"
         >
           <div className="mb-4 flex justify-center">
             <div className="p-3 bg-gray-100 rounded-full group-hover:bg-gray-200 transition-colors">
@@ -344,7 +345,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
               </h2>
               <button
                 onClick={onClose}
-                className="text-white hover:text-gray-200 transition-colors p-2 hover:bg-white/10 rounded-full"
+                className="cursor-pointer text-white hover:text-red-600 transition-colors p-2 hover:bg-red-600/10 rounded-full"
                 disabled={loading}
               >
                 <X className="w-6 h-6" />
@@ -392,7 +393,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex-1 px-6 py-4 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-all duration-200 text-lg"
+                  className="cursor-pointer flex-1 px-6 py-4 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-all duration-200 text-lg"
                   disabled={loading}
                 >
                   Cancel
@@ -400,7 +401,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
                 <button
                   type="submit"
                   disabled={loading || !formData.agreeTerms}
-                  className="flex-1 px-6 py-4 bg-gradient-to-r from-sky-600 to-teal-600 hover:from-sky-700 hover:to-teal-700 text-white font-bold rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-lg shadow-lg hover:shadow-xl"
+                  className="cursor-pointer flex-1 px-6 py-4 bg-gradient-to-r from-sky-600 to-teal-600 hover:from-sky-700 hover:to-teal-700 text-white font-bold rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-lg shadow-lg hover:shadow-xl"
                 >
                   {loading ? (
                     <>

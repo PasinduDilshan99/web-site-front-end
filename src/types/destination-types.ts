@@ -33,7 +33,7 @@ export interface ActivityData {
   activityId: number;
   activityName: string;
   activityDescription: string;
-  activitiesCategory: string;
+  activityCategories: string[];
   durationHours: number;
   availableFrom: string;
   availableTo: string;
@@ -55,14 +55,20 @@ export interface DestinationData {
   destinationId: number;
   destinationName: string;
   destinationDescription: string;
+  destinationCategoryDetailsDtos: destinationCategoryDetails[];
   location: string;
   latitude: number;
   longitude: number;
-  categoryName: string;
-  categoryDescription: string;
+  wish: boolean;
   statusName: string;
   activities: ActivityData[];
   images: DestinationImage[];
+}
+export interface destinationCategoryDetails {
+  id: number;
+  name: string;
+  description: string;
+  isPrimary: boolean;
 }
 
 export interface DestinationApiResponse {

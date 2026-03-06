@@ -17,11 +17,6 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
   const [loadingWishlist, setLoadingWishlist] = useState(false);
   const router = useRouter();
 
-  const discount = getDiscountPercentage(destination.destinationId);
-  const duration = getTourDuration(destination.destinationId);
-  const currentPrice = getPrice(destination.popularity, destination.rating);
-  const originalPrice = getOriginalPrice(currentPrice, discount);
-
   const handleImageSwitch = (imageIndex: number) => {
     setActiveImageIndex(imageIndex);
   };
@@ -85,19 +80,12 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
           </div>
         )}
 
-        {/* Discount Badge */}
-        {discount > 0 && (
-          <div className="absolute top-3 left-3 bg-gradient-to-r from-sky-500 to-teal-500 text-white px-3 py-1 rounded-full text-sm font-semibold z-10 shadow-md">
-            {discount}% Off
-          </div>
-        )}
-
         {/* Wishlist Heart Icon */}
         {user && (
           <button
             onClick={handleWishlistToggle}
             disabled={loadingWishlist}
-            className={`
+            className={`cursor-pointer 
       absolute top-3 right-3 
       w-8 h-8 sm:w-9 sm:h-9
       flex items-center justify-center
@@ -204,23 +192,9 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
       <div className="p-5 flex-1 flex flex-col">
         {/* Duration and Rating */}
         <div className="flex justify-between items-center mb-3">
-          <div className="flex items-center text-sky-600 text-sm font-medium">
-            <svg
-              className="w-4 h-4 mr-1"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            {duration} days
-          </div>
-
+          <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2 leading-tight">
+            {destination.destinationName}
+          </h3>
           <div className="flex items-center">
             {[...Array(5)].map((_, i) => (
               <svg
@@ -243,9 +217,7 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
         </div>
 
         {/* Title */}
-        <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2 leading-tight">
-          {destination.destinationName}
-        </h3>
+
         <p className="text-md text-gray-900 mb-2 line-clamp-2 leading-tight">
           {destination.destinationDescription}
         </p>
@@ -305,7 +277,7 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
 
           <button
             onClick={handleExploreClick}
-            className="bg-gradient-to-r from-sky-500 to-teal-500 hover:from-sky-600 hover:to-teal-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 shadow-md hover:shadow-lg"
+            className="cursor-pointer bg-gradient-to-r from-sky-500 to-teal-500 hover:from-sky-600 hover:to-teal-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 shadow-md hover:shadow-lg"
           >
             Explore
           </button>
@@ -313,26 +285,6 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
       </div>
     </div>
   );
-};
-
-// Utility functions
-const getDiscountPercentage = (destinationId: number): number => {
-  const discounts = [10, 15, 20, 25, 30, 40];
-  return discounts[destinationId % discounts.length];
-};
-
-const getTourDuration = (destinationId: number): number => {
-  const durations = [3, 5, 7, 10, 14, 15];
-  return durations[destinationId % durations.length];
-};
-
-const getPrice = (popularity: number, rating: number): number => {
-  const basePrice = popularity * rating * 10;
-  return Math.round(basePrice);
-};
-
-const getOriginalPrice = (currentPrice: number, discount: number): number => {
-  return Math.round(currentPrice / (1 - discount / 100));
 };
 
 export default DestinationCard;

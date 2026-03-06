@@ -141,8 +141,12 @@ const PackageDetailsHeroSection: React.FC<PackageHeaderProps> = ({
                   />
                 </svg>
                 <span className="text-xs sm:text-sm md:text-base">
-                  {packageData.minPersonCount}-{packageData.maxPersonCount}{" "}
-                  People
+                  {packageData.maxPersonCount === 0 ||
+                  packageData.maxPersonCount === null
+                    ? "any participants"
+                    : packageData.minPersonCount === packageData.maxPersonCount
+                      ? `${packageData.minPersonCount} People`
+                      : `${packageData.minPersonCount}-${packageData.maxPersonCount} People`}
                 </span>
               </div>
 
@@ -173,7 +177,7 @@ const PackageDetailsHeroSection: React.FC<PackageHeaderProps> = ({
         <>
           <button
             onClick={prevSlide}
-            className="hidden sm:flex absolute left-3 sm:left-4 md:left-5 lg:left-7 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 sm:p-3.5 md:p-4 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group z-10 shadow-lg"
+            className="cursor-pointer hidden sm:flex absolute left-3 sm:left-4 md:left-5 lg:left-7 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 sm:p-3.5 md:p-4 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group z-10 shadow-lg"
             aria-label="Previous slide"
           >
             <svg
@@ -193,7 +197,7 @@ const PackageDetailsHeroSection: React.FC<PackageHeaderProps> = ({
 
           <button
             onClick={nextSlide}
-            className="hidden sm:flex absolute right-3 sm:right-4 md:right-5 lg:right-7 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 sm:p-3.5 md:p-4 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group z-10 shadow-lg"
+            className="cursor-pointer hidden sm:flex absolute right-3 sm:right-4 md:right-5 lg:right-7 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 sm:p-3.5 md:p-4 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group z-10 shadow-lg"
             aria-label="Next slide"
           >
             <svg
@@ -217,7 +221,7 @@ const PackageDetailsHeroSection: React.FC<PackageHeaderProps> = ({
               <button
                 key={index}
                 onClick={() => goToSlide(index)}
-                className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-all duration-300 ${
+                className={`cursor-pointer w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-all duration-300 ${
                   index === currentSlide
                     ? "bg-gradient-to-r from-sky-400 to-teal-400 scale-125 shadow-lg"
                     : "bg-white/40 hover:bg-white/60"

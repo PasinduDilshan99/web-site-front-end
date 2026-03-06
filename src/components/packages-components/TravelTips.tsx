@@ -6,49 +6,106 @@ interface TravelTipsProps {
 }
 
 const TravelTips: React.FC<TravelTipsProps> = ({ travelTips }) => {
-  const activeTips = travelTips.filter(tip => tip.status === 'ACTIVE');
+  const [openCategories, setOpenCategories] = useState<Set<string>>(new Set());
 
-  if (activeTips.length === 0) {
-    return null;
-  }
+  const activeTips = travelTips.filter(tip => tip.status === 'ACTIVE');
+  if (activeTips.length === 0) return null;
 
   const groupedTips = activeTips.reduce((acc, tip) => {
     const category = tip.title || 'General';
-    if (!acc[category]) {
-      acc[category] = [];
-    }
+    if (!acc[category]) acc[category] = [];
     acc[category].push(tip);
     return acc;
   }, {} as Record<string, TravelTipItem[]>);
 
+  const toggleCategory = (category: string) => {
+    setOpenCategories(prev => {
+      const next = new Set(prev);
+      next.has(category) ? next.delete(category) : next.add(category);
+      return next;
+    });
+  };
+
   return (
     <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 border border-sky-100">
-      <h2 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-sky-600 to-teal-600 bg-clip-text text-transparent mb-4 sm:mb-6">Travel Tips</h2>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-        {Object.entries(groupedTips).map(([category, tips]) => (
-          <div
-            key={category}
-            className="border border-sky-200 rounded-lg sm:rounded-xl p-3 sm:p-4 hover:border-sky-400 hover:shadow-lg transition-all duration-300 bg-gradient-to-b from-white to-sky-50/30"
-          >
-            <h3 className="text-base sm:text-lg font-semibold text-sky-800 mb-2 sm:mb-3 flex items-center gap-2">
-              <svg className="w-4 h-4 sm:w-5 sm:h-5 text-sky-600" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-              </svg>
-              {category}
-            </h3>
-            <ul className="space-y-1.5 sm:space-y-2">
-              {tips.map((tip) => (
-                <li key={tip.id} className="flex items-start gap-2">
-                  <svg className="w-3 h-3 sm:w-4 sm:h-4 text-teal-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+      <h2 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-sky-600 to-teal-600 bg-clip-text text-transparent mb-4 sm:mb-6">
+        Travel Tips
+      </h2>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
+        {Object.entries(groupedTips).map(([category, tips]) => {
+          const isOpen = openCategories.has(category);
+          return (
+            <div
+              key={category}
+              className="border border-sky-200 rounded-lg sm:rounded-xl overflow-hidden hover:border-sky-400 hover:shadow-md transition-all duration-300 bg-gradient-to-b from-white to-sky-50/30"
+            >
+              {/* Header / Toggle Button */}
+              <button
+                onClick={() => toggleCategory(category)}
+                className="cursor-pointer w-full flex items-center justify-between p-3 sm:p-4 text-left group"
+              >
+                <span className="flex items-center gap-2">
+                  <svg
+                    className="w-4 h-4 sm:w-5 sm:h-5 text-sky-600 flex-shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                      clipRule="evenodd"
+                    />
                   </svg>
-                  <span className="text-sky-700 text-xs sm:text-sm">{tip.description}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+                  <span className="text-sm sm:text-base font-semibold text-sky-800">
+                    {category}
+                  </span>
+                  <span className="text-xs text-sky-400 font-normal">
+                    ({tips.length})
+                  </span>
+                </span>
+
+                {/* Arrow icon */}
+                <svg
+                  className={`w-4 h-4 text-sky-500 flex-shrink-0 transition-transform duration-300 ease-in-out ${
+                    isOpen ? "rotate-180" : "rotate-0"
+                  }`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {/* Expandable content with smooth animation */}
+              <div
+                className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                  isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+                }`}
+              >
+                <ul className="px-3 sm:px-4 pb-3 sm:pb-4 space-y-1.5 sm:space-y-2 border-t border-sky-100 pt-2 sm:pt-3">
+                  {tips.map((tip) => (
+                    <li key={tip.id} className="flex items-start gap-2">
+                      <svg
+                        className="w-3 h-3 sm:w-4 sm:h-4 text-teal-500 flex-shrink-0 mt-0.5"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      <span className="text-sky-700 text-xs sm:text-sm">{tip.description}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

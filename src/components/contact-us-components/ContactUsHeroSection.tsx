@@ -1,7 +1,11 @@
 "use client";
 import { HeroSectionService } from "@/services/heroSectionService";
 import { ContactUsHeroData } from "@/types/hero-section-types";
-import { COMPANY_EMERGENCY_CONTACT_NUMBER } from "@/utils/constant";
+import {
+  COMPANY_CONTACT_NUMBER,
+  COMPANY_CONTACT_NUMBER_LINK,
+  COMPANY_EMERGENCY_CONTACT_NUMBER,
+} from "@/utils/constant";
 import React, { useState, useEffect } from "react";
 import HeroSectionLoading from "../loading-components/HeroSectionLoading";
 
@@ -18,7 +22,8 @@ const ContactUsHeroSection = () => {
         setLoading(true);
         setError(null);
 
-        const { data: items, error } = await HeroSectionService.fetchContactUsHeroData();
+        const { data: items, error } =
+          await HeroSectionService.fetchContactUsHeroData();
 
         if (error) {
           setError(error);
@@ -65,27 +70,15 @@ const ContactUsHeroSection = () => {
     setTimeout(() => setIsAutoPlaying(true), 10000);
   };
 
-  const getFallbackImage = (index: number) => {
-    const fallbackImages = [
-      "1551632811-561732d1e306", // Beach contact image
-      "1556761175-5973dc0f32e7", // Office meeting
-      "1517248135467-4c7edcad34c4", // Travel office
-      "1521791136064-7986c2920216", // Customer service
-    ];
-    return `https://images.unsplash.com/photo-${
-      fallbackImages[index % fallbackImages.length]
-    }?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80`;
-  };
-
   const handleButtonClick = (link?: string) => {
     if (link) {
-      if (link.startsWith('http')) {
-        window.open(link, '_blank');
-      } else if (link.startsWith('#')) {
+      if (link.startsWith("http")) {
+        window.open(link, "_blank");
+      } else if (link.startsWith("#")) {
         // Handle anchor links for in-page navigation
         const element = document.querySelector(link);
         if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
+          element.scrollIntoView({ behavior: "smooth" });
         }
       } else {
         window.location.href = link;
@@ -94,7 +87,7 @@ const ContactUsHeroSection = () => {
   };
 
   if (loading) {
-    return <HeroSectionLoading  text = "Loading contact us hero content..."/>
+    return <HeroSectionLoading text="Loading contact us hero content..." />;
   }
 
   if (error || heroData.length === 0) {
@@ -116,10 +109,10 @@ const ContactUsHeroSection = () => {
               Retry
             </button>
             <a
-              href="tel:+94112345678"
+              href={COMPANY_CONTACT_NUMBER_LINK}
               className="px-6 py-3 border-2 border-white text-white rounded-lg hover:bg-white hover:text-gray-900 transition-all duration-300"
             >
-              Call Us: +94 11 234 5678
+              Call Us: {COMPANY_CONTACT_NUMBER}
             </a>
           </div>
         </div>
@@ -140,20 +133,26 @@ const ContactUsHeroSection = () => {
               index === currentSlide ? "opacity-100" : "opacity-0"
             }`}
           >
-            <div
-              className="w-full h-full bg-cover bg-center bg-no-repeat"
-              style={{
-                backgroundImage: `linear-gradient(rgba(0, 40, 85, 0.7), rgba(0, 60, 95, 0.7)), url('${
-                  item.imageUrl || getFallbackImage(index)
-                }')`,
-              }}
-              onError={(e) => {
-                const target = e.target as HTMLDivElement;
-                target.style.backgroundImage = `linear-gradient(rgba(0, 40, 85, 0.7), rgba(0, 60, 95, 0.7)), url('${getFallbackImage(
-                  index
-                )}')`;
-              }}
-            />
+            {item.imageUrl ? (
+              <div
+                className="w-full h-full bg-cover bg-center bg-no-repeat"
+                style={{
+                  backgroundImage: `linear-gradient(rgba(0, 40, 85, 0.7), rgba(0, 60, 95, 0.7)), url('${item.imageUrl}')`,
+                }}
+                onError={(e) => {
+                  const target = e.target as HTMLDivElement;
+                  target.style.backgroundImage = "none";
+                  target.style.background = `linear-gradient(135deg, #0B4F6C, #0A7A6F)`;
+                }}
+              />
+            ) : (
+              <div
+                className="w-full h-full"
+                style={{
+                  background: `linear-gradient(135deg, #0B4F6C, #0A7A6F)`,
+                }}
+              />
+            )}
           </div>
         ))}
       </div>
@@ -168,39 +167,36 @@ const ContactUsHeroSection = () => {
                 {currentSlideData.subtitle || "Your Journey Starts Here"}
               </span>
             </h1>
-            
+
             <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-teal-400 mx-auto rounded-full mb-6"></div>
           </div>
 
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 md:p-8 max-w-3xl mx-auto mb-8">
             <p className="text-md md:text-lg lg:text-xl  mb-6 text-gray-100 leading-relaxed">
-              {currentSlideData.description || 
+              {currentSlideData.description ||
                 "Get in touch with our travel experts to plan your perfect journey in Sri Lanka. We're just a message away."}
             </p>
-            
-            {(currentSlideData.primaryButtonText || currentSlideData.secondaryButtonText) && (
+
+            {(currentSlideData.primaryButtonText ||
+              currentSlideData.secondaryButtonText) && (
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 {currentSlideData.primaryButtonText && (
                   <button
-                    onClick={() => handleButtonClick(currentSlideData.primaryButtonLink)}
-                    className="text-sm md:text-lg px-8 py-4 bg-gradient-to-r from-blue-600 to-teal-500 text-white font-semibold rounded-full hover:from-blue-700 hover:to-teal-600 transform hover:scale-105 transition-all duration-300 shadow-lg flex items-center justify-center gap-2"
+                    onClick={() =>
+                      handleButtonClick(currentSlideData.primaryButtonLink)
+                    }
+                    className="cursor-pointer text-sm md:text-lg px-8 py-4 bg-gradient-to-r from-blue-600 to-teal-500 text-white font-semibold rounded-full hover:from-blue-700 hover:to-teal-600 transform hover:scale-105 transition-all duration-300 shadow-lg flex items-center justify-center gap-2"
                   >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
-                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                    </svg>
                     {currentSlideData.primaryButtonText}
                   </button>
                 )}
                 {currentSlideData.secondaryButtonText && (
                   <button
-                    onClick={() => handleButtonClick(currentSlideData.secondaryButtonLink)}
-                    className="text-sm md:text-lg px-8 py-4 border-2 border-blue-300 text-white font-semibold rounded-full hover:bg-blue-500 hover:border-blue-500 hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
+                    onClick={() =>
+                      handleButtonClick(currentSlideData.secondaryButtonLink)
+                    }
+                    className="cursor-pointer text-sm md:text-lg px-8 py-4 border-2 border-blue-300 text-white font-semibold rounded-full hover:bg-blue-500 hover:border-blue-500 hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
                   >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
-                        d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
                     {currentSlideData.secondaryButtonText}
                   </button>
                 )}
@@ -211,15 +207,40 @@ const ContactUsHeroSection = () => {
           {/* Quick Contact Info - Centered */}
           <div className="hidden lg:flex flex-wrap gap-4 justify-center">
             <div className="flex items-center gap-2 px-5 py-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
-              <svg className="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                className="w-5 h-5 text-blue-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
               <span className="text-sm font-medium">Mon-Sat: 9AM-6PM</span>
             </div>
             <div className="flex items-center gap-2 px-5 py-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
-              <svg className="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              <svg
+                className="w-5 h-5 text-blue-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                />
               </svg>
               <span className="text-sm font-medium">Colombo, Sri Lanka</span>
             </div>
@@ -232,7 +253,7 @@ const ContactUsHeroSection = () => {
         <div className="hidden md:flex">
           <button
             onClick={prevSlide}
-            className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group border border-blue-300/30"
+            className="cursor-pointer absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group border border-blue-300/30"
             aria-label="Previous slide"
           >
             <svg
@@ -252,7 +273,7 @@ const ContactUsHeroSection = () => {
 
           <button
             onClick={nextSlide}
-            className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group border border-blue-300/30"
+            className="cursor-pointer absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group border border-blue-300/30"
             aria-label="Next slide"
           >
             <svg
@@ -279,7 +300,7 @@ const ContactUsHeroSection = () => {
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              className={`cursor-pointer w-3 h-3 rounded-full transition-all duration-300 ${
                 index === currentSlide
                   ? "bg-blue-400 scale-125 shadow-lg shadow-blue-500/50"
                   : "bg-white/50 hover:bg-blue-300"
@@ -311,10 +332,13 @@ const ContactUsHeroSection = () => {
 
       {/* Emergency Contact Badge */}
       <div className="hidden lg:flex absolute top-6 right-6">
-        <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600/30 to-cyan-600/30 backdrop-blur-sm rounded-full border border-blue-400/30">
-          <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+        <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600/30 to-cyan-600/30 backdrop-blur-sm rounded-full border border-blue-400/30 group">
+          <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse group-hover:bg-red-500 transition-colors duration-300"></div>
           <span className="text-sm font-medium text-white">
-            <a href="tel:+94771234567" className="hover:text-blue-200 transition-colors">
+            <a
+              href={COMPANY_CONTACT_NUMBER_LINK}
+              className="hover:text-blue-200 transition-colors"
+            >
               Emergency: {COMPANY_EMERGENCY_CONTACT_NUMBER}
             </a>
           </span>

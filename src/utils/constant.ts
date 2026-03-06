@@ -3,6 +3,9 @@ export const COMPANY_OWNER = "Nipunika Sathsarani";
 export const COMPANY_NAME = "Felicita Trips";
 export const COMPANY_INFO_EMAIL = "felicitatrips@gmail.com";
 export const COMPANY_CONTACT_NUMBER = "+94 70 7076 052";
+export const COMPANY_CONTACT_NUMBER_LINK = "tel:+94707076052";
+export const COMPANY_SMS_CONTACT_NUMBER_LINK = "sms:+94707076052";
+export const COMPANY_WHATSAPP_CONTACT_NUMBER_LINK = "https://wa.me/94707076052";
 export const COMPANY_EMERGENCY_CONTACT_NUMBER = "+94 70 7076 052";
 export const COMPANY_LOCATION = "Colombo, Sri Lanka";
 export const COMPANY_LONGITUDE = 79.9771391;
@@ -40,3 +43,8 @@ export const NUMBER_OF_TOUR_CATEGORIES = 5;
 
 export const PLACE_HOLDER_IMAGE =
   "https://res.cloudinary.com/dtzrivqye/image/upload/v1770879098/vyfco5fuhatkl95w0l65.avif";
+
+
+// Browser History types
+export const ACTIVITY_BROWSER_HISTORY_TYPE = "ACTIVITIES"
+export const PACKAGE_BROWSER_HISTORY_TYPE = "PACKAGE"

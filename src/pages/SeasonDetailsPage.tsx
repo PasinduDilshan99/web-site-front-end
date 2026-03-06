@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import { SeasonDetails, SeasonImage } from "@/types/season-types";
-import { ActivityService } from "@/services/activityService";
 import { SeasonService } from "@/services/seasonService";
 import SeasonDetailsLoading from "@/components/season-components/SeasonDetailsLoading";
 
@@ -220,7 +219,7 @@ const SeasonDetailsPage = () => {
           <>
             <button
               onClick={prevSlide}
-              className="absolute left-4 md:left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-2 md:p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
+              className="cursor-pointer absolute left-4 md:left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-2 md:p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
               aria-label="Previous image"
             >
               <svg
@@ -239,7 +238,7 @@ const SeasonDetailsPage = () => {
             </button>
             <button
               onClick={nextSlide}
-              className="absolute right-4 md:right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-2 md:p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
+              className="cursor-pointer absolute right-4 md:right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-2 md:p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
               aria-label="Next image"
             >
               <svg
@@ -274,7 +273,7 @@ const SeasonDetailsPage = () => {
               {season.standardName}
             </h1>
             <p className="text-lg md:text-xl lg:text-2xl text-teal-100 mb-4">
-              {season.localName}
+              {season.name}
             </p>
 
             {/* Month Range */}
@@ -461,7 +460,7 @@ const SeasonDetailsPage = () => {
             </div>
 
             {/* Quick Facts Card */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-5 md:p-6">
+            {/* <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-5 md:p-6">
               <h3 className="text-lg md:text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
                 <svg
                   className="w-5 h-5 text-cyan-500"
@@ -506,7 +505,7 @@ const SeasonDetailsPage = () => {
                   </span>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Season Images Gallery */}
             {images.length > 0 && (

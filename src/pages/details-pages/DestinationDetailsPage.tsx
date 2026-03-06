@@ -10,7 +10,12 @@ import DestinationDetailsMain from "@/components/destinations-components/destina
 import DestinationDetailsSidebar from "@/components/destinations-components/destinaton-details/DestinationDetailsSidebar";
 import DestinationHistory from "@/components/destinations-components/DestinationHistory";
 import DestinationHistoryGallery from "@/components/destinations-components/DestinationHistoryGallery";
-import { DestinationHistoryImage, DestinationHistoryType,Review,DestinationData } from "@/types/destination-types";
+import {
+  DestinationHistoryImage,
+  DestinationHistoryType,
+  Review,
+  DestinationData,
+} from "@/types/destination-types";
 import { DestinationService } from "@/services/destinationService";
 import DestinationDetailsHeroSection from "@/components/destinations-components/DestinationDetailsHeroSection";
 
@@ -21,7 +26,9 @@ const DestinationDetailsPage = () => {
   const [destination, setDestination] = useState<DestinationData | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [history, setHistory] = useState<DestinationHistoryType[]>([]);
-  const [historyImages, setHistoryImages] = useState<DestinationHistoryImage[]>([]);
+  const [historyImages, setHistoryImages] = useState<DestinationHistoryImage[]>(
+    [],
+  );
   const [loading, setLoading] = useState(true);
   const [reviewsLoading, setReviewsLoading] = useState(true);
   const [historyLoading, setHistoryLoading] = useState(true);
@@ -29,7 +36,9 @@ const DestinationDetailsPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [reviewsError, setReviewsError] = useState<string | null>(null);
   const [historyError, setHistoryError] = useState<string | null>(null);
-  const [historyImagesError, setHistoryImagesError] = useState<string | null>(null);
+  const [historyImagesError, setHistoryImagesError] = useState<string | null>(
+    null,
+  );
 
   const destinationService = new DestinationService();
 
@@ -37,13 +46,15 @@ const DestinationDetailsPage = () => {
     try {
       setLoading(true);
       setError(null);
-      
-      const { data, error } = await destinationService.fetchDestination(destinationId as string);
-      
+
+      const { data, error } = await destinationService.fetchDestination(
+        destinationId as string,
+      );
+
       if (error) {
         throw new Error(error);
       }
-      
+
       setDestination(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -52,69 +63,69 @@ const DestinationDetailsPage = () => {
     }
   };
 
-//   const fetchDestinationReviews = async () => {
-//     try {
-//       setReviewsLoading(true);
-//       setReviewsError(null);
-      
-//       const { data, error } = await destinationService.fetchDestinationReviews(destinationId as string);
-      
-//       if (error) {
-//         throw new Error(error);
-//       }
-      
-//       setReviews(data);
-//     } catch (err) {
-//       setReviewsError(err instanceof Error ? err.message : "Failed to load reviews");
-//     } finally {
-//       setReviewsLoading(false);
-//     }
-//   };
+  //   const fetchDestinationReviews = async () => {
+  //     try {
+  //       setReviewsLoading(true);
+  //       setReviewsError(null);
 
-//   const fetchDestinationHistory = async () => {
-//     try {
-//       setHistoryLoading(true);
-//       setHistoryError(null);
-      
-//       const { data, error } = await destinationService.fetchDestinationHistory(destinationId as string);
-      
-//       if (error) {
-//         throw new Error(error);
-//       }
-      
-//       setHistory(data);
-//     } catch (err) {
-//       setHistoryError(err instanceof Error ? err.message : "Failed to load destination history");
-//     } finally {
-//       setHistoryLoading(false);
-//     }
-//   };
+  //       const { data, error } = await destinationService.fetchDestinationReviews(destinationId as string);
 
-//   const fetchDestinationHistoryImages = async () => {
-//     try {
-//       setHistoryImagesLoading(true);
-//       setHistoryImagesError(null);
-      
-//       const { data, error } = await destinationService.fetchDestinationHistoryImages(destinationId as string);
-      
-//       if (error) {
-//         throw new Error(error);
-//       }
-      
-//       setHistoryImages(data);
-//     } catch (err) {
-//       setHistoryImagesError(err instanceof Error ? err.message : "Failed to load destination history images");
-//     } finally {
-//       setHistoryImagesLoading(false);
-//     }
-//   };
+  //       if (error) {
+  //         throw new Error(error);
+  //       }
+
+  //       setReviews(data);
+  //     } catch (err) {
+  //       setReviewsError(err instanceof Error ? err.message : "Failed to load reviews");
+  //     } finally {
+  //       setReviewsLoading(false);
+  //     }
+  //   };
+
+  //   const fetchDestinationHistory = async () => {
+  //     try {
+  //       setHistoryLoading(true);
+  //       setHistoryError(null);
+
+  //       const { data, error } = await destinationService.fetchDestinationHistory(destinationId as string);
+
+  //       if (error) {
+  //         throw new Error(error);
+  //       }
+
+  //       setHistory(data);
+  //     } catch (err) {
+  //       setHistoryError(err instanceof Error ? err.message : "Failed to load destination history");
+  //     } finally {
+  //       setHistoryLoading(false);
+  //     }
+  //   };
+
+  //   const fetchDestinationHistoryImages = async () => {
+  //     try {
+  //       setHistoryImagesLoading(true);
+  //       setHistoryImagesError(null);
+
+  //       const { data, error } = await destinationService.fetchDestinationHistoryImages(destinationId as string);
+
+  //       if (error) {
+  //         throw new Error(error);
+  //       }
+
+  //       setHistoryImages(data);
+  //     } catch (err) {
+  //       setHistoryImagesError(err instanceof Error ? err.message : "Failed to load destination history images");
+  //     } finally {
+  //       setHistoryImagesLoading(false);
+  //     }
+  //   };
 
   useEffect(() => {
     if (destinationId) {
       fetchDestination();
-    //   fetchDestinationReviews();
-    //   fetchDestinationHistory();
-    //   fetchDestinationHistoryImages();
+      //   fetchDestinationReviews();
+      //   fetchDestinationHistory();
+      //   fetchDestinationHistoryImages();
     }
   }, [destinationId]);
 
@@ -135,29 +146,28 @@ const DestinationDetailsPage = () => {
   }
 
   return (
-    <>
-      <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-sky-50">
-        <DestinationDetailsHeroSection destination={destination} />
+    <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-sky-50">
+      <DestinationDetailsHeroSection destination={destination} />
 
-        <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
-              <DestinationDetailsMain
-                destination={destination}
-                reviewsLoading={reviewsLoading}
-                reviewsError={reviewsError}
-                reviews={reviews}
-                // onRetryReviews={fetchDestinationReviews}
-              />
-            </div>
-
-            <div className="space-y-6">
-              <DestinationDetailsSidebar destination={destination} />
-            </div>
+      <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2">
+            <DestinationDetailsMain
+              destination={destination}
+              reviewsLoading={reviewsLoading}
+              reviewsError={reviewsError}
+              reviews={reviews}
+              // onRetryReviews={fetchDestinationReviews}
+            />
           </div>
 
-          {/* Destination History Section */}
-          {/* <div className="mt-12">
+          <div className="space-y-6">
+            <DestinationDetailsSidebar destination={destination} />
+          </div>
+        </div>
+
+        {/* Destination History Section */}
+        {/* <div className="mt-12">
             <DestinationHistory
               historyData={history}
               // loading={historyLoading}
@@ -168,8 +178,8 @@ const DestinationDetailsPage = () => {
             />
           </div> */}
 
-          {/* Reviews Section */}
-          {/* <div className="mt-12">
+        {/* Reviews Section */}
+        {/* <div className="mt-12">
             {reviewsLoading ? (
               <div className="bg-white rounded-2xl shadow-lg p-8">
                 <div className="flex justify-center items-center py-8">
@@ -216,8 +226,8 @@ const DestinationDetailsPage = () => {
             )}
           </div> */}
 
-          {/* Destination History Gallery Section */}
-          {/* <div className="mt-12">
+        {/* Destination History Gallery Section */}
+        {/* <div className="mt-12">
             <DestinationHistoryGallery
               imagesData={historyImages}
               // loading={historyImagesLoading}
@@ -227,9 +237,8 @@ const DestinationDetailsPage = () => {
               // onRetry={handleRetryHistoryImages}
             />
           </div> */}
-        </div>
       </div>
-    </>
+    </div>
   );
 };
 

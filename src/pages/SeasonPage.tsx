@@ -9,6 +9,8 @@ import { SeasonBasic } from "@/types/season-types";
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";
 import SeasonsLoading from "@/components/season-components/SeasonsLoading";
 import SeasonHeroSection from "@/components/season-components/SeasonHeroSection";
+import { SEASON_PAGE_PATH } from "@/utils/urls";
+import { PLACE_HOLDER_IMAGE } from "@/utils/constant";
 
 // Utility functions for URL params management
 const filtersToUrlParams = (
@@ -297,7 +299,7 @@ const SeasonsPageContent: React.FC = () => {
             <p className="text-gray-600 mb-6">{error}</p>
             <button
               onClick={handleRetry}
-              className="px-6 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all duration-300 shadow-md hover:shadow-lg"
+              className="cursor-pointer px-6 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all duration-300 shadow-md hover:shadow-lg"
             >
               Try Again
             </button>
@@ -327,7 +329,7 @@ const SeasonsPageContent: React.FC = () => {
                     onChange={(e) =>
                       handleItemsPerPageChange(Number(e.target.value))
                     }
-                    className="border border-teal-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white text-teal-700 transition-all duration-200 hover:border-teal-400"
+                    className="cursor-pointer border border-teal-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white text-teal-700 transition-all duration-200 hover:border-teal-400"
                   >
                     <option value={6}>6</option>
                     <option value={8}>8</option>
@@ -350,7 +352,7 @@ const SeasonsPageContent: React.FC = () => {
                   {currentSeasons.map((season) => (
                     <Link
                       key={season.id}
-                      href={`/seasons/${season.id}`}
+                      href={`${SEASON_PAGE_PATH}/${season.id}?name=${season.name}`}
                       className="group block"
                     >
                       <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-teal-100 hover:border-teal-300 h-full">
@@ -361,7 +363,7 @@ const SeasonsPageContent: React.FC = () => {
                             <Image
                               src={
                                 season.seasonImages[0].imageUrl ||
-                                "/placeholder-season.jpg"
+                                PLACE_HOLDER_IMAGE
                               }
                               alt={season.standardName}
                               className="object-cover group-hover:scale-110 transition-transform duration-500"
@@ -392,7 +394,7 @@ const SeasonsPageContent: React.FC = () => {
                             {season.standardName}
                           </h4>
                           <p className="text-cyan-600 text-sm mb-3">
-                            {season.localName}
+                            {season.name}
                           </p>
 
                           {/* Month Range */}
@@ -509,13 +511,13 @@ const SeasonFilterSection: React.FC<SeasonFilterSectionProps> = ({
         <div className="flex gap-3">
           <button
             onClick={onResetFilters}
-            className="px-4 lg:px-6 py-1 lg:py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg"
+            className="cursor-pointer px-4 lg:px-6 py-1 lg:py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg"
           >
             Reset Filters
           </button>
           <button
             onClick={onSearch}
-            className="px-6 py-2 bg-gradient-to-r from-cyan-600 to-teal-600 text-white rounded-lg hover:from-cyan-700 hover:to-teal-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg flex items-center gap-2"
+            className="cursor-pointer px-6 py-2 bg-gradient-to-r from-cyan-600 to-teal-600 text-white rounded-lg hover:from-cyan-700 hover:to-teal-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg flex items-center gap-2"
           >
             <svg
               className="w-4 h-4"
@@ -653,7 +655,7 @@ const SeasonFilterSection: React.FC<SeasonFilterSectionProps> = ({
         <div className="relative flex justify-center">
           <button
             onClick={toggleAdvancedFilters}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+            className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
           >
             {showAdvancedFilters ? (
               <>
@@ -796,7 +798,7 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
             {filter.label}
             <button
               onClick={() => removeFilter(filter.name)}
-              className="hover:text-red-600 transition-colors duration-200 ml-1"
+              className="cursor-pointer hover:text-red-600 transition-colors duration-200 ml-1"
             >
               <svg
                 className="w-3 h-3"
@@ -831,7 +833,7 @@ const NoResults: React.FC<{ onResetFilters: () => void }> = ({
     </p>
     <button
       onClick={onResetFilters}
-      className="px-6 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all duration-300 shadow-md hover:shadow-lg"
+      className="cursor-pointer px-6 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all duration-300 shadow-md hover:shadow-lg"
     >
       Reset Filters
     </button>
@@ -910,7 +912,7 @@ const Pagination: React.FC<PaginationProps> = ({
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-4 py-2 text-sm font-medium text-teal-700 bg-white border-2 border-teal-300 rounded-lg hover:bg-teal-50 hover:text-teal-800 hover:border-teal-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+          className="cursor-pointer px-4 py-2 text-sm font-medium text-teal-700 bg-white border-2 border-teal-300 rounded-lg hover:bg-teal-50 hover:text-teal-800 hover:border-teal-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
           aria-label="Previous page"
         >
           <svg
@@ -946,7 +948,7 @@ const Pagination: React.FC<PaginationProps> = ({
               <button
                 key={page}
                 onClick={() => onPageChange(page as number)}
-                className={`min-w-[40px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
+                className={`cursor-pointer min-w-[40px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
                   currentPage === page
                     ? "bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-lg transform scale-105"
                     : "text-teal-700 bg-white border-2 border-teal-300 hover:bg-teal-50 hover:text-teal-800 hover:border-teal-400 hover:shadow-md"
@@ -963,7 +965,7 @@ const Pagination: React.FC<PaginationProps> = ({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="px-4 py-2 text-sm font-medium text-teal-700 bg-white border-2 border-teal-300 rounded-lg hover:bg-teal-50 hover:text-teal-800 hover:border-teal-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+          className="cursor-pointer px-4 py-2 text-sm font-medium text-teal-700 bg-white border-2 border-teal-300 rounded-lg hover:bg-teal-50 hover:text-teal-800 hover:border-teal-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
           aria-label="Next page"
         >
           <span className="hidden sm:inline">Next</span>

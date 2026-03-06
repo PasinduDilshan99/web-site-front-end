@@ -6,6 +6,7 @@ import BookingModal, {
 import BookingSuccessMessage from "../booking-components/BookingSuccessMessage";
 import { bookingService } from "@/services/bookingService";
 import { useAuth } from "@/context/AuthContext";
+import { WishListService } from "@/services/wishListService";
 
 interface BookingSectionProps {
   packageData: ActivePackagesType;
@@ -17,6 +18,8 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useAuth();
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [loadingWishlist, setLoadingWishlist] = useState(false);
 
   const handleSubmitBooking = async (formData: BookingFormData) => {
     setIsSubmitting(true);
@@ -41,10 +44,27 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
     }
   };
 
+  const handleWishlistToggle = async (event: React.MouseEvent) => {
+    event.stopPropagation();
+    if (loadingWishlist) return;
+    setLoadingWishlist(true);
+    try {
+      await WishListService.addPackageWishList({
+        packageId: packageData.packageId,
+      });
+      setIsWishlisted((prev) => !prev);
+    } catch (err) {
+      console.error("Failed to update wishlist", err);
+      alert("Failed to update wishlist. Try again.");
+    } finally {
+      setLoadingWishlist(false);
+    }
+  };
+
   const formatPrice = (price: number): string => {
     return new Intl.NumberFormat("en-LK", {
       style: "currency",
-      currency: "LKR",
+      currency: "USD",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(price);
@@ -69,6 +89,44 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
       month: "short",
       day: "numeric",
     });
+  };
+  const handleShare = async () => {
+    const shareData = {
+      title: "Check out this amazing package!", // Customize this
+      text: "I found this great travel package you might like", // Customize this
+      url: window.location.href, // Current page URL
+    };
+
+    // Check if Web Share API is supported
+    if (navigator.share && navigator.canShare?.(shareData)) {
+      try {
+        await navigator.share(shareData);
+        console.log("Shared successfully");
+      } catch (error) {
+        if (error instanceof Error && error.name !== "AbortError") {
+          // User cancelled share
+          console.error("Error sharing:", error);
+          // Fallback to clipboard
+          fallbackShare();
+        }
+      }
+    } else {
+      // Fallback for browsers that don't support Web Share API
+      fallbackShare();
+    }
+  };
+
+  const fallbackShare = () => {
+    // Copy to clipboard
+    navigator.clipboard
+      .writeText(window.location.href)
+      .then(() => {
+        // Show toast or alert
+        alert("Link copied to clipboard!");
+      })
+      .catch(() => {
+        alert("URL: " + window.location.href);
+      });
   };
 
   return (
@@ -97,7 +155,7 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
           </div>
         )}
         <div className="text-xs sm:text-sm text-sky-700 text-center mt-1 sm:mt-2">
-          per package
+          per person
         </div>
       </div>
 
@@ -202,17 +260,28 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
       {/* Book Now Button */}
       <button
         onClick={handleBookNow}
-        className="w-full py-2.5 sm:py-3 md:py-4 bg-gradient-to-r from-sky-600 to-teal-600 text-white font-semibold rounded-lg sm:rounded-xl hover:from-sky-700 hover:to-teal-700 transition-all duration-300 shadow-lg hover:shadow-xl text-sm sm:text-base"
+        className="cursor-pointer w-full py-2.5 sm:py-3 md:py-4 bg-gradient-to-r from-sky-600 to-teal-600 text-white font-semibold rounded-lg sm:rounded-xl hover:from-sky-700 hover:to-teal-700 transition-all duration-300 shadow-lg hover:shadow-xl text-sm sm:text-base"
       >
         Book Now
       </button>
 
       {/* Quick Actions */}
       <div className="flex gap-2 sm:gap-3 mt-3 sm:mt-4">
-        <button className="flex-1 py-1.5 sm:py-2 border border-sky-300 text-sky-700 rounded-lg hover:border-sky-400 hover:bg-sky-50 transition-colors text-xs sm:text-sm">
-          Save for Later
+        <button
+          onClick={handleWishlistToggle}
+          disabled={!user}
+          className={`cursor-pointer flex-1 py-1.5 sm:py-2 border rounded-lg transition-colors text-xs sm:text-sm ${
+            user
+              ? "border-sky-300 text-sky-700 hover:border-sky-400 hover:bg-sky-50"
+              : "border-gray-200 text-gray-400 bg-gray-50 cursor-not-allowed"
+          }`}
+        >
+          {user ? "Save for Later" : "Login to Save"}
         </button>
-        <button className="flex-1 py-1.5 sm:py-2 border border-sky-300 text-sky-700 rounded-lg hover:border-sky-400 hover:bg-sky-50 transition-colors text-xs sm:text-sm">
+        <button
+          onClick={handleShare}
+          className="cursor-pointer flex-1 py-1.5 sm:py-2 border border-sky-300 text-sky-700 rounded-lg hover:border-sky-400 hover:bg-sky-50 transition-colors text-xs sm:text-sm"
+        >
           Share
         </button>
       </div>

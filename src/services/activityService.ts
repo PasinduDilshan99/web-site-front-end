@@ -151,7 +151,7 @@ export class ActivityService {
   }
 
   static async fetchFilterOptions(): Promise<{
-    categories: string[];
+    // categories: string[];
     seasons: string[];
     durations: number[];
     participantsOptions: number[];
@@ -183,13 +183,13 @@ export class ActivityService {
 
       if (result.code === 200 && result.data) {
         // Extract unique values for filters
-        const categoriesList = [
-          ...new Set(
-            result.data.activityResponseDtos.map(
-              (activity) => activity.category_name,
-            ),
-          ),
-        ];
+        // const categoriesList = [
+        //   ...new Set(
+        //     result.data.activityResponseDtos.map(
+        //       (activity) => activity.category_name,
+        //     ),
+        //   ),
+        // ];
         const seasonsList = [
           ...new Set(
             result.data.activityResponseDtos.flatMap((activity) =>
@@ -218,7 +218,7 @@ export class ActivityService {
         ];
 
         return {
-          categories: categoriesList,
+          // categories: categoriesList,
           seasons: seasonsList,
           durations: durationsList,
           participantsOptions: participantsList,
@@ -227,7 +227,7 @@ export class ActivityService {
         };
       } else {
         return {
-          categories: [],
+          // categories: [],
           seasons: [],
           durations: [],
           participantsOptions: [],
@@ -238,7 +238,7 @@ export class ActivityService {
     } catch (err) {
       console.error("Error fetching filter options:", err);
       return {
-        categories: [],
+        // categories: [],
         seasons: [],
         durations: [],
         participantsOptions: [],

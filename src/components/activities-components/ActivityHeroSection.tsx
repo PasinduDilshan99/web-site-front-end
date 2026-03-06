@@ -197,10 +197,6 @@ const ActivityHeroSection = () => {
     );
   }
 
-  // Get current activity category and difficulty
-  const currentCategory = getActivityCategory(currentSlideData);
-  const currentDifficulty = getActivityDifficulty(currentSlideData);
-
   return (
     <div className="relative w-full h-[650px] lg:h-[800px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
       {/* Image Slider - Only show image if available and not failed */}
@@ -243,104 +239,6 @@ const ActivityHeroSection = () => {
       <div className="absolute inset-0 flex items-center justify-center pt-12 lg:pt-20">
         <div className="container mx-auto px-4 md:px-6 lg:px-8">
           <div className="max-w-5xl text-white mx-auto text-center">
-            {/* Activity Info Badge */}
-            <div className="hidden lg:flex gap-3 mb-6 flex-wrap justify-center">
-              <div className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 flex items-center gap-2">
-                <svg
-                  className={`w-4 h-4 ${
-                    currentCategory === "adventure"
-                      ? "text-red-300"
-                      : currentCategory === "wildlife"
-                        ? "text-green-300"
-                        : currentCategory === "cultural"
-                          ? "text-yellow-300"
-                          : currentCategory === "water"
-                            ? "text-blue-300"
-                            : currentCategory === "heritage"
-                              ? "text-amber-300"
-                              : "text-sky-300"
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  {currentCategory === "adventure" && (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M13 10V3L4 14h7v7l9-11h-7z"
-                    />
-                  )}
-                  {currentCategory === "wildlife" && (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                    />
-                  )}
-                  {currentCategory === "cultural" && (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
-                    />
-                  )}
-                  {currentCategory === "water" && (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4 4 0 003 15z"
-                    />
-                  )}
-                  {currentCategory === "heritage" && (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                    />
-                  )}
-                  {currentCategory === "leisure" && (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
-                    />
-                  )}
-                </svg>
-                <span className="font-semibold capitalize">
-                  {currentCategory}
-                </span>
-              </div>
-              <div
-                className={`px-4 py-2 backdrop-blur-sm rounded-full border flex items-center gap-2 ${
-                  currentDifficulty === "easy"
-                    ? "border-green-500/30 bg-green-500/20"
-                    : currentDifficulty === "moderate"
-                      ? "border-yellow-500/30 bg-yellow-500/20"
-                      : "border-red-500/30 bg-red-500/20"
-                }`}
-              >
-                <div
-                  className={`w-2 h-2 rounded-full ${
-                    currentDifficulty === "easy"
-                      ? "bg-green-400"
-                      : currentDifficulty === "moderate"
-                        ? "bg-yellow-400"
-                        : "bg-red-400"
-                  }`}
-                ></div>
-                <span className="font-semibold capitalize">
-                  {currentDifficulty}
-                </span>
-              </div>
-            </div>
-
             <div className="mb-8">
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight tracking-tight">
                 {currentSlideData.title || "Experience Sri Lanka"}
@@ -370,7 +268,7 @@ const ActivityHeroSection = () => {
                       onClick={() =>
                         handleButtonClick(currentSlideData.primaryButtonLink)
                       }
-                      className="px-8 py-4 bg-gradient-to-r from-sky-500 to-teal-500 text-white font-semibold rounded-xl hover:from-sky-600 hover:to-teal-600 transform hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-3 group"
+                      className="cursor-pointer px-8 py-4 bg-gradient-to-r from-sky-500 to-teal-500 text-white font-semibold rounded-xl hover:from-sky-600 hover:to-teal-600 transform hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-3 group"
                     >
                       <svg
                         className="w-6 h-6 group-hover:rotate-12 transition-transform duration-300"
@@ -393,7 +291,7 @@ const ActivityHeroSection = () => {
                       onClick={() =>
                         handleButtonClick(currentSlideData.secondaryButtonLink)
                       }
-                      className="px-8 py-4 border-2 border-sky-300/50 text-white font-semibold rounded-xl hover:bg-sky-50/20 hover:border-sky-200 backdrop-blur-sm transition-all duration-300 flex items-center gap-3 group"
+                      className="cursor-pointer px-8 py-4 border-2 border-sky-300/50 text-white font-semibold rounded-xl hover:bg-sky-50/20 hover:border-sky-200 backdrop-blur-sm transition-all duration-300 flex items-center gap-3 group"
                     >
                       <svg
                         className="w-6 h-6 group-hover:scale-110 transition-transform duration-300"
@@ -500,7 +398,7 @@ const ActivityHeroSection = () => {
             aria-label="Previous slide"
           >
             <svg
-              className="w-5 h-5 md:w-6 md:h-6 group-hover:scale-110 transition-transform duration-200"
+              className="cursor-pointer w-5 h-5 md:w-6 md:h-6 group-hover:scale-110 transition-transform duration-200"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -520,7 +418,7 @@ const ActivityHeroSection = () => {
             aria-label="Next slide"
           >
             <svg
-              className="w-5 h-5 md:w-6 md:h-6 group-hover:scale-110 transition-transform duration-200"
+              className="cursor-pointer w-5 h-5 md:w-6 md:h-6 group-hover:scale-110 transition-transform duration-200"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -541,9 +439,9 @@ const ActivityHeroSection = () => {
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
           {filteredActivities.map((_, index) => (
             <button
-              key={index}
+              key={index + 1}
               onClick={() => goToSlide(index)}
-              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+              className={`cursor-pointer w-2.5 h-2.5 rounded-full transition-all duration-300 ${
                 index === currentSlide
                   ? "bg-gradient-to-r from-sky-400 to-teal-400 scale-125 shadow-lg"
                   : "bg-white/40 hover:bg-white/60"

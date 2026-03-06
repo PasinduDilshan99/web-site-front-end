@@ -82,38 +82,6 @@ export default function UnderConstructionPage({
           </p>
         </div>
 
-        {/* Newsletter signup */}
-        <div
-          className="mb-10 sm:mb-14 animate-fadeInUp"
-          style={{ animationDelay: "0.6s" }}
-        >
-          <p className="text-sm sm:text-base text-gray-300 mb-4">
-            Get notified when we launch
-          </p>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.currentTarget);
-              console.log("Email:", formData.get("email"));
-            }}
-            className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
-          >
-            <input
-              type="email"
-              name="email"
-              placeholder="Enter your email"
-              required
-              className="flex-1 px-4 sm:px-6 py-3 rounded-lg bg-white/10 border border-teal-400/30 text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 focus:bg-white/20 transition-all duration-300 text-sm sm:text-base"
-            />
-            <button
-              type="submit"
-              className="px-6 sm:px-8 py-3 bg-gradient-to-r from-teal-500 to-blue-600 text-white font-semibold rounded-lg hover:from-teal-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105 active:scale-95 text-sm sm:text-base whitespace-nowrap shadow-lg shadow-teal-500/50"
-            >
-              Notify Me
-            </button>
-          </form>
-        </div>
-
         {/* Footer contact */}
         <div className="animate-fadeInUp" style={{ animationDelay: "0.8s" }}>
           <p className="text-gray-400 text-xs sm:text-sm">

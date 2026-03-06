@@ -48,8 +48,8 @@ const ActivityKeyInfo: React.FC<ActivityKeyInfoProps> = ({ activity }) => {
 
             <p className="font-semibold text-gray-900">
               {activity.max_participate === 0
-                ? "Unlimited people"
-                : `${activity.min_participate}-${activity.max_participate} people`}
+                ? "Any Participants"
+                : `${activity.min_participate}-${activity.max_participate} Participants`}
             </p>
           </div>
         </div>

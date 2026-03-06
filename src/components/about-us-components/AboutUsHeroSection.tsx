@@ -64,17 +64,6 @@ const AboutUsHeroSection = () => {
     setTimeout(() => setIsAutoPlaying(true), 10000);
   };
 
-  const getFallbackImage = (index: number) => {
-    const fallbackImages = [
-      "1551632811-561732d1e306",
-      "1563492065599-3520f775eeed",
-      "1520250497591-112f2f40a3f4",
-    ];
-    return `https://images.unsplash.com/photo-${
-      fallbackImages[index % fallbackImages.length]
-    }?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80`;
-  };
-
   const handleButtonClick = (link?: string) => {
     if (link) {
       if (link.startsWith("http")) {
@@ -120,20 +109,26 @@ const AboutUsHeroSection = () => {
               index === currentSlide ? "opacity-100" : "opacity-0"
             }`}
           >
-            <div
-              className="w-full h-full bg-cover bg-center bg-no-repeat"
-              style={{
-                backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('${
-                  item.imageUrl || getFallbackImage(index)
-                }')`,
-              }}
-              onError={(e) => {
-                const target = e.target as HTMLDivElement;
-                target.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('${getFallbackImage(
-                  index,
-                )}')`;
-              }}
-            />
+            {item.imageUrl ? (
+              <div
+                className="w-full h-full bg-cover bg-center bg-no-repeat"
+                style={{
+                  backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('${item.imageUrl}')`,
+                }}
+                onError={(e) => {
+                  const target = e.target as HTMLDivElement;
+                  target.style.backgroundImage = "none";
+                  target.style.background = `linear-gradient(135deg, #0B4F6C, #0A7A6F)`;
+                }}
+              />
+            ) : (
+              <div 
+                className="w-full h-full"
+                style={{
+                  background: `linear-gradient(135deg, #0B4F6C, #0A7A6F)`,
+                }}
+              />
+            )}
           </div>
         ))}
       </div>
@@ -168,7 +163,7 @@ const AboutUsHeroSection = () => {
                     onClick={() =>
                       handleButtonClick(currentSlideData.primaryButtonLink)
                     }
-                    className="text-sm md:text-lg px-6 py-3 bg-gradient-to-r from-blue-500 to-teal-400 text-white font-semibold rounded-full hover:from-blue-600 hover:to-teal-500 transform hover:scale-105 transition-all duration-300 shadow-lg"
+                    className="cursor-pointer text-sm md:text-lg px-6 py-3 bg-gradient-to-r from-blue-500 to-teal-400 text-white font-semibold rounded-full hover:from-blue-600 hover:to-teal-500 transform hover:scale-105 transition-all duration-300 shadow-lg"
                   >
                     {currentSlideData.primaryButtonText}
                   </button>
@@ -178,7 +173,7 @@ const AboutUsHeroSection = () => {
                     onClick={() =>
                       handleButtonClick(currentSlideData.secondaryButtonLink)
                     }
-                    className="text-sm md:text-lg px-6 py-3 border-2 border-cyan-300 text-white font-semibold rounded-full hover:bg-cyan-500 hover:border-cyan-500 hover:text-white transition-all duration-300"
+                    className="cursor-pointer text-sm md:text-lg px-6 py-3 border-2 border-cyan-300 text-white font-semibold rounded-full hover:bg-cyan-500 hover:border-cyan-500 hover:text-white transition-all duration-300"
                   >
                     {currentSlideData.secondaryButtonText}
                   </button>
@@ -207,7 +202,7 @@ const AboutUsHeroSection = () => {
         <div className="hidden md:flex">
           <button
             onClick={prevSlide}
-            className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
+            className="cursor-pointer absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
             aria-label="Previous slide"
           >
             <svg
@@ -227,7 +222,7 @@ const AboutUsHeroSection = () => {
 
           <button
             onClick={nextSlide}
-            className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
+            className="cursor-pointer absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
             aria-label="Next slide"
           >
             <svg
@@ -254,7 +249,7 @@ const AboutUsHeroSection = () => {
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              className={`cursor-pointer w-3 h-3 rounded-full transition-all duration-300 ${
                 index === currentSlide
                   ? "bg-cyan-500 scale-125"
                   : "bg-white/50 hover:bg-white/75"

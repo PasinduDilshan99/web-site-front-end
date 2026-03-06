@@ -409,25 +409,7 @@ export interface TourImage {
   imageUrl: string;
 }
 
-export interface TourDetails {
-  tourId: number;
-  tourName: string;
-  tourDescription: string;
-  duration: number;
-  latitude: number;
-  longitude: number;
-  startLocation: string;
-  endLocation: string;
-  tourTypeName: string;
-  tourTypeDescription: string;
-  tourCategoryName: string;
-  tourCategoryDescription: string;
-  seasonName: string;
-  seasonDescription: string;
-  statusName: string;
-  schedules: Schedule[];
-  images: TourImage[];
-}
+
 
 export interface PackageHistoryImagesResponse {
   code: number;
@@ -448,7 +430,6 @@ export interface TourImage {
   imageDescription: string;
   imageUrl: string;
 }
-
 export interface TourDetails {
   tourId: number;
   tourName: string;
@@ -468,7 +449,6 @@ export interface TourDetails {
   schedules: Schedule[];
   images: TourImage[];
 }
-
 export interface Activity {
   activityId: number;
   activityName: string;

@@ -530,7 +530,7 @@ const ActivityCategoriesHome = () => {
               <div className="flex justify-center mt-4">
                 <button
                   onClick={() => setIsAutoPlaying(!isAutoPlaying)}
-                  className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                  className="text-sm text-gray-600 hover:text-gray-900 hover-text-bold transition-colors cursor-pointer"
                 >
                   {isAutoPlaying ? "Pause" : "Play"} Auto-scroll
                 </button>
@@ -541,7 +541,7 @@ const ActivityCategoriesHome = () => {
 
         {/* View All Button */}
         {activeActivitiesCategories.length > 0 && (
-          <div className="text-center mt-8 sm:mt-10 lg:mt-12">
+          <div className="text-center mt-6 sm:mt-8 lg:mt-10">
             <AnimatedButton onClick={() => router.push("/activities")}>
               More Activities
             </AnimatedButton>

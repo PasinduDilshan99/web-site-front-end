@@ -7,12 +7,11 @@ import {
 } from "@/types/accommodations-types/hotel-types";
 import { GET_HOTEL_DETAILS_SECTION_FE } from "@/utils/frontEndConstant";
 import HotelSectionCard from "./hotels-components/HotelSectionCard";
-import Loading from "../common-components/loading/Loading";
-import { ErrorState } from "../common-components/error-state/ErrorState";
 import SectionHeader from "../common-components/section-header/SectionHeader";
 import AnimatedButton from "../common-components/buttons/AnimatedButton";
 import { useRouter } from "next/navigation";
 import HotelsSectionLoading from "./loadings/HotelsSectionLoading";
+import HotelSectionLoadingError from "./HotelSectionLoadingError";
 
 const HotelsSection = () => {
   const [hotels, setHotels] = useState<HotelSectionHotel[]>([]);
@@ -81,23 +80,9 @@ const HotelsSection = () => {
   if (loading) {
     return <HotelsSectionLoading visibleCount={visibleCount} />;
   }
-
+  // In HotelsSection.tsx, replace the error handling section
   if (error) {
-    return (
-      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-br from-[#2A6F97] via-[#3F8AB2] to-[#54A5CC]">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <ErrorState
-            title="Failed to Load activities"
-            message={error}
-            icon="alert"
-            variant="error"
-            size="md"
-            actionLabel="Try Again"
-            onAction={handleRetry}
-          />
-        </div>
-      </section>
-    );
+    return <HotelSectionLoadingError onRetry={handleRetry} />;
   }
 
   return (
