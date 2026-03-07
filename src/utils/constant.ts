@@ -48,3 +48,4 @@ export const PLACE_HOLDER_IMAGE =
 // Browser History types
 export const ACTIVITY_BROWSER_HISTORY_TYPE = "ACTIVITIES"
 export const PACKAGE_BROWSER_HISTORY_TYPE = "PACKAGE"
+export const TOUR_BROWSER_HISTORY_TYPE = "TOUR"

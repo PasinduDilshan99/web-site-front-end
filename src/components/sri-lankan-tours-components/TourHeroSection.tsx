@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import HeroSectionLoading from "../loading-components/HeroSectionLoading";
 import { useCommon } from "@/context/CommonContext";
+import { SRI_LANKAN_TOUR_PAGE_PATH } from "@/utils/urls";
 
 const TourHeroSection = () => {
   const [loading, setLoading] = useState(true);
@@ -101,7 +102,7 @@ const TourHeroSection = () => {
               Retry
             </button>
             <a
-              href="/tours/all"
+              href={SRI_LANKAN_TOUR_PAGE_PATH}
               className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 border-2 border-sky-300 text-white text-sm sm:text-base rounded-lg hover:bg-sky-50 hover:text-slate-900 transition-all duration-300 text-center"
             >
               View All Tours
@@ -200,7 +201,7 @@ const TourHeroSection = () => {
                           `${currentSlideData.primaryButtonLink}`,
                         )
                       }
-                      className="w-full sm:w-auto px-5 sm:px-7 md:px-9 py-3 sm:py-4 md:py-5 bg-gradient-to-r from-sky-500 to-teal-500 text-white text-sm sm:text-base font-semibold rounded-xl sm:rounded-2xl hover:from-sky-600 hover:to-teal-600 transform hover:scale-[1.02] transition-all duration-300 shadow-2xl flex items-center justify-center gap-3 sm:gap-4 group"
+                      className="cursor-pointer w-full sm:w-auto px-5 sm:px-7 md:px-9 py-3 sm:py-4 md:py-5 bg-gradient-to-r from-sky-500 to-teal-500 text-white text-sm sm:text-base font-semibold rounded-xl sm:rounded-2xl hover:from-sky-600 hover:to-teal-600 transform hover:scale-[1.02] transition-all duration-300 shadow-2xl flex items-center justify-center gap-3 sm:gap-4 group"
                     >
                       <svg
                         className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 group-hover:rotate-12 transition-transform duration-300"
@@ -227,7 +228,7 @@ const TourHeroSection = () => {
                           `${currentSlideData.secondaryButtonLink}`,
                         )
                       }
-                      className="w-full sm:w-auto px-5 sm:px-7 md:px-9 py-3 sm:py-4 md:py-5 border-2 border-sky-300/50 text-white text-sm sm:text-base font-semibold rounded-xl sm:rounded-2xl hover:bg-sky-50/20 hover:border-sky-200 backdrop-blur-sm transition-all duration-300 flex items-center justify-center gap-3 sm:gap-4 group"
+                      className="cursor-pointer w-full sm:w-auto px-5 sm:px-7 md:px-9 py-3 sm:py-4 md:py-5 border-2 border-sky-300/50 text-white text-sm sm:text-base font-semibold rounded-xl sm:rounded-2xl hover:bg-sky-50/20 hover:border-sky-200 backdrop-blur-sm transition-all duration-300 flex items-center justify-center gap-3 sm:gap-4 group"
                     >
                       <svg
                         className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 group-hover:scale-110 transition-transform duration-300"
@@ -280,7 +281,7 @@ const TourHeroSection = () => {
                     Destinations
                   </p>
                   <p className="text-lg sm:text-xl md:text-2xl font-bold text-white">
-                    50+
+                    35+
                   </p>
                 </div>
               </div>
@@ -344,7 +345,7 @@ const TourHeroSection = () => {
         <>
           <button
             onClick={prevSlide}
-            className="hidden lg:flex absolute left-3 sm:left-4 md:left-5 lg:left-7 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 sm:p-3.5 md:p-4 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group z-10 shadow-lg"
+            className="cursor-pointer hidden lg:flex absolute left-3 sm:left-4 md:left-5 lg:left-7 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 sm:p-3.5 md:p-4 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group z-10 shadow-lg"
             aria-label="Previous slide"
           >
             <svg
@@ -364,7 +365,7 @@ const TourHeroSection = () => {
 
           <button
             onClick={nextSlide}
-            className="hidden lg:flex absolute right-3 sm:right-4 md:right-5 lg:right-7 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 sm:p-3.5 md:p-4 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group z-10 shadow-lg"
+            className="cursor-pointer hidden lg:flex absolute right-3 sm:right-4 md:right-5 lg:right-7 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 sm:p-3.5 md:p-4 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group z-10 shadow-lg"
             aria-label="Next slide"
           >
             <svg
@@ -391,7 +392,7 @@ const TourHeroSection = () => {
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 rounded-full transition-all duration-300 ${
+              className={`cursor-pointer w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 rounded-full transition-all duration-300 ${
                 index === currentSlide
                   ? "bg-gradient-to-r from-sky-400 to-teal-400 scale-125 shadow-lg"
                   : "bg-white/40 hover:bg-white/60"

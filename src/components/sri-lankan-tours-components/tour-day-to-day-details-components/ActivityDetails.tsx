@@ -11,6 +11,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { Activity } from "@/types/tour-types";
+import { SEASON_DETAILS_PAGE_PATH } from "@/utils/urls";
 
 interface ActivityDetailsProps {
   activity: Activity;
@@ -39,10 +40,10 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = ({
   if (!isExpanded) return null;
 
   // Function to handle season click navigation
-  const handleSeasonClick = (seasonId: number, e: React.MouseEvent) => {
+  const handleSeasonClick = (seasonId: number, season:string,e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent event bubbling
     // Convert season name to ID format (lowercase, replace spaces with hyphens)
-    router.push(`/seasons/${seasonId}`);
+    router.push(`${SEASON_DETAILS_PAGE_PATH}/${seasonId}?name=${season}`);
   };
 
   return (
@@ -84,7 +85,7 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = ({
                 </div>
 
                 <div
-                  onClick={(e) => handleSeasonClick(activity.seasonId, e)}
+                  onClick={(e) => handleSeasonClick(activity.seasonId, activity.season, e)}
                   className="bg-gradient-to-br from-teal-50 to-emerald-50 p-3 sm:p-4 rounded-lg sm:rounded-xl transition-all duration-300 hover:shadow-sm sm:hover:shadow-md border border-teal-100 cursor-pointer hover:border-teal-300 hover:from-teal-100 hover:to-emerald-100"
                 >
                   <div className="flex items-center gap-2 mb-2">

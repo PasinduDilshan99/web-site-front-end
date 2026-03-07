@@ -24,19 +24,26 @@ export default function LoginPage() {
     setUniqueCode(sessionStorage.getItem(UNIQUE_CODE_NAME));
   }, []);
 
-  const handleLogin = async () => {
-    try {
-      setError(null);
-      setIsLoading(true);
-      await login(username, password);
-      router.back();
-    } catch (err: unknown) {
-      console.log(err);
-      setError("Invalid username or password. Please try again.");
-    } finally {
-      setIsLoading(false);
+const handleLogin = async () => {
+  try {
+    setError(null);
+    setIsLoading(true);
+    await login(username, password);
+    
+    // Check if the previous page was signup
+    if (document.referrer.includes('/signup')) {
+      router.back(); // Go back to signup
+      router.back(); // Then go back again
+    } else {
+      router.back(); // Normal back navigation
     }
-  };
+  } catch (err: unknown) {
+    console.log(err);
+    setError("Invalid username or password. Please try again.");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
@@ -126,7 +133,7 @@ export default function LoginPage() {
         }
       `}</style>
 
-      <div className="min-h-[75vh] flex">
+      <div className="min-h-[90vh] flex">
         {/* Left Side - Travel Image & Branding */}
         <div
           className="hidden lg:flex lg:w-1/2 relative overflow-hidden"

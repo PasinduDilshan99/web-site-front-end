@@ -21,6 +21,7 @@ import {
 import HotelStars from "./HotelStars";
 import { useRouter } from "next/navigation";
 import { Accommodation } from "@/types/tour-types";
+import { VEHICLE_SPECIFICATION_DETAILS_PATH, VEHICLE_TYPE_DETAILS_PATH } from "@/utils/urls";
 
 interface AccommodationsSectionProps {
   accommodations: Accommodation;
@@ -32,13 +33,13 @@ const AccommodationsSection: React.FC<AccommodationsSectionProps> = ({
   const router = useRouter();
   const handleVehicleModelClick = (specificationId?: number) => {
     if (specificationId) {
-      router.push(`/vehicles/specification/${specificationId}`);
+      router.push(`${VEHICLE_SPECIFICATION_DETAILS_PATH}/${specificationId}`);
     }
   };
 
-  const handleVehicleTypeClick = (vehicleTypeId?: number) => {
+  const handleVehicleTypeClick = (vehicleTypeId?: number, vehicleModel?: string) => {
     if (vehicleTypeId) {
-      router.push(`/vehicles/types/${vehicleTypeId}`);
+      router.push(`${VEHICLE_TYPE_DETAILS_PATH}/${vehicleTypeId}?model=${vehicleModel}`);
     }
   };
 
@@ -174,7 +175,7 @@ const AccommodationsSection: React.FC<AccommodationsSectionProps> = ({
                   {transport.vehicleTypeId && (
                     <div
                       onClick={() =>
-                        handleVehicleTypeClick(transport.vehicleTypeId)
+                        handleVehicleTypeClick(transport.vehicleTypeId, transport.vehicleModel)
                       }
                       className="bg-white p-2.5 sm:p-3 rounded-lg border border-gray-200 transition-all duration-300 hover:shadow-md hover:border-blue-300 hover:scale-[1.02] cursor-pointer"
                     >

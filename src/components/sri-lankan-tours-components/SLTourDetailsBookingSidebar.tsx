@@ -85,26 +85,29 @@ const SLTourDetailsBookingSidebar: React.FC<
 
         {/* Package Info if selected */}
         {selectedPackage && (
-          <div className="mb-3 sm:mb-4 p-2.5 sm:p-3 bg-gradient-to-r from-sky-50 to-teal-50 rounded-lg border border-sky-100">
-            <div className="flex items-start sm:items-center justify-between gap-2 mb-1.5 sm:mb-2">
+          <div className="mb-3 sm:mb-4 p-3 sm:p-4 bg-gradient-to-r from-sky-50 to-teal-50 rounded-lg border border-sky-100">
+            <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0">
-                <span className="text-xs sm:text-sm font-medium text-gray-600">
-                  Selected Package:
-                </span>
-                <h4 className="text-base sm:text-lg font-bold text-sky-700 truncate">
-                  {selectedPackage.packageName}
-                </h4>
+                <div className="flex items-center gap-2 mb-1 justify-between">
+                  <span className="text-xs sm:text-sm font-medium text-gray-600 whitespace-nowrap">
+                    Selected Package:
+                  </span>
+                  <h4 className="text-base sm:text-lg font-bold text-sky-700 truncate">
+                    {selectedPackage.packageName}
+                  </h4>
+                </div>
+                <p className="text-xs sm:text-sm text-gray-600 line-clamp-2">
+                  {selectedPackage.packageDescription}
+                </p>
               </div>
               {selectedPackage.color && (
                 <div
-                  className="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 border-white shadow-sm flex-shrink-0"
+                  className="w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 border-white shadow-sm flex-shrink-0 mt-0.5"
                   style={{ backgroundColor: selectedPackage.color }}
+                  aria-label="Package color indicator"
                 />
               )}
             </div>
-            <p className="text-xs sm:text-sm text-gray-600 line-clamp-2">
-              {selectedPackage.packageDescription}
-            </p>
           </div>
         )}
 
@@ -139,7 +142,7 @@ const SLTourDetailsBookingSidebar: React.FC<
           {/* Book Now Button */}
           <button
             onClick={handleBookNow}
-            className="w-full bg-gradient-to-r from-sky-600 to-teal-600 hover:from-sky-700 hover:to-teal-700 text-white py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold text-base sm:text-lg transition-all duration-200 transform hover:scale-[1.02] sm:hover:scale-105 shadow-md hover:shadow-lg active:scale-95"
+            className="cursor-pointer w-full bg-gradient-to-r from-sky-600 to-teal-600 hover:from-sky-700 hover:to-teal-700 text-white py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold text-base sm:text-lg transition-all duration-200 transform hover:scale-[1.02] sm:hover:scale-105 shadow-md hover:shadow-lg active:scale-95"
           >
             {selectedPackage ? "Book This Package" : "Book Now"}
           </button>

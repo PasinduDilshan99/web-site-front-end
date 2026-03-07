@@ -465,6 +465,11 @@ export interface Destination {
   updaterImageUrl: string | null;
   images: DestinationImage[];
 }
+
+export interface DestinationWithId {
+  destinationId: number;
+  destinationName: string;
+}
 export interface ActivityImage {
   id: number;
   name: string;

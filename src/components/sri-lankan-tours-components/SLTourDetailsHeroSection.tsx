@@ -160,7 +160,7 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
                       onClick={() =>
                         setIsDescriptionExpanded(!isDescriptionExpanded)
                       }
-                      className="text-sky-300 hover:text-sky-200 font-medium transition-colors inline-flex items-center gap-1 group"
+                      className="cursor-pointer text-sky-300 hover:text-sky-200 font-medium transition-colors inline-flex items-center gap-1 group"
                     >
                       {isDescriptionExpanded ? (
                         <>
@@ -276,7 +276,7 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
           <div className="hidden md:flex">
             <button
               onClick={prevSlide}
-              className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
+              className="cursor-pointer absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
               aria-label="Previous image"
             >
               <svg
@@ -296,7 +296,7 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
 
             <button
               onClick={nextSlide}
-              className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
+              className="cursor-pointer absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
               aria-label="Next image"
             >
               <svg
@@ -323,7 +323,7 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
               <button
                 key={index}
                 onClick={() => goToSlide(index)}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                className={`cursor-pointer w-3 h-3 rounded-full transition-all duration-300 ${
                   index === selectedImageIndex
                     ? "bg-gradient-to-r from-sky-400 to-teal-400 scale-125 shadow-lg"
                     : "bg-white/50 hover:bg-white/75"
@@ -358,16 +358,18 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
                 <button
                   key={image.imageId}
                   onClick={() => goToSlide(index)}
-                  className={`relative flex-shrink-0 w-28 h-28 rounded-lg overflow-hidden border-2 transition-all duration-300 ${
+                  className={`cursor-pointer relative flex-shrink-0 w-28 h-28 rounded-lg overflow-hidden border-2 transition-all duration-300 ${
                     selectedImageIndex === index
                       ? "border-sky-500 ring-4 ring-sky-200 scale-105"
                       : "border-gray-300 hover:border-teal-400 hover:scale-105"
                   }`}
                 >
                   {hasImage ? (
-                    <img
+                    <Image
                       src={image.imageUrl}
                       alt={image.imageName || `Tour thumbnail ${index + 1}`}
+                      width={2000}
+                      height={2000}
                       className="w-full h-full object-cover"
                       onError={() => handleImageError(index)}
                     />

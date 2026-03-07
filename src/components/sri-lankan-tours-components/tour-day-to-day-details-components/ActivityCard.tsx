@@ -47,7 +47,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
       {/* Activity Header - Collapsible */}
       <button
         onClick={() => onToggle(key)}
-        className="w-full p-3 sm:p-4 flex flex-col xs:flex-row xs:justify-between xs:items-center bg-gradient-to-r from-sky-50 to-white hover:from-sky-100 transition-all duration-300 group rounded-lg sm:rounded-xl"
+        className="cursor-pointer w-full p-3 sm:p-4 flex flex-col xs:flex-row xs:justify-between xs:items-center bg-gradient-to-r from-sky-50 to-white hover:from-sky-100 transition-all duration-300 group rounded-lg sm:rounded-xl"
       >
         {/* Left section - Activity info */}
         <div className="flex-1 text-left w-full xs:w-auto mb-3 xs:mb-0">

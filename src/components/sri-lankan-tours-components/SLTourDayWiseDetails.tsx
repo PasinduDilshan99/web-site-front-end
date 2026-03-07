@@ -20,6 +20,7 @@ import DayContent from "./tour-day-to-day-details-components/DayContent";
 import TourExtraDetails from "./tour-day-to-day-details-components/TourExtraDetails";
 import { TourExtraDetails as TourExtraDetailsType } from "@/types/sri-lankan-tour-types";
 import { DayDetails } from "@/types/tour-types";
+import DayWiseDetailsLoadingError from "./tour-day-to-day-details-components/DayWiseDetailsLoadingError";
 
 interface SLTourDayWiseDetailsProps {
   days: DayDetails[];
@@ -166,7 +167,7 @@ const SLTourDayWiseDetails: React.FC<SLTourDayWiseDetailsProps> = ({
   };
 
   const formatCurrency = (amount: number): string => {
-    return `LKR ${amount.toLocaleString()}`;
+    return `USD ${amount.toLocaleString()}`;
   };
 
   // Helper function to check if activity is expanded
@@ -195,8 +196,8 @@ const SLTourDayWiseDetails: React.FC<SLTourDayWiseDetailsProps> = ({
       <div className="py-12">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-100 to-amber-100 rounded-full mb-4 animate-pulse">
-              <Calendar className="w-8 h-8 text-purple-600" />
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-cyan-100 to-blue-100 rounded-full mb-4 animate-pulse">
+              <Calendar className="w-8 h-8 text-cyan-600" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
               Loading Itinerary
@@ -211,29 +212,10 @@ const SLTourDayWiseDetails: React.FC<SLTourDayWiseDetailsProps> = ({
   // Error State
   if (error) {
     return (
-      <div className="py-12">
-        <div className="max-w-3xl mx-auto px-4">
-          <div className="bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-2xl p-8">
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-red-100 to-orange-100 rounded-full mb-4">
-                <Shield className="w-8 h-8 text-red-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                Unable to Load Itinerary
-              </h3>
-              <p className="text-gray-600 mb-6 max-w-md mx-auto">{error}</p>
-              {onRetry && (
-                <button
-                  onClick={onRetry}
-                  className="px-6 py-3 bg-gradient-to-r from-purple-600 to-amber-600 text-white font-medium rounded-lg hover:opacity-90 transition-opacity shadow-md"
-                >
-                  Try Again
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
+      <DayWiseDetailsLoadingError
+        onRetry={onRetry}
+        message="Couldn't load the day-by-day itinerary."
+      />
     );
   }
 
@@ -274,7 +256,7 @@ const SLTourDayWiseDetails: React.FC<SLTourDayWiseDetailsProps> = ({
                   <button
                     key={day.dayNumber}
                     onClick={() => toggleDay(day.dayNumber)}
-                    className={`flex-shrink-0 px-4 py-2.5 sm:px-5 sm:py-3 md:px-6 md:py-3 rounded-lg sm:rounded-xl font-medium transition-all duration-300 whitespace-nowrap ${
+                    className={`cursor-pointer flex-shrink-0 px-4 py-2.5 sm:px-5 sm:py-3 md:px-6 md:py-3 rounded-lg sm:rounded-xl font-medium transition-all duration-300 whitespace-nowrap ${
                       expandedDays.includes(day.dayNumber)
                         ? "bg-gradient-to-r from-sky-600 to-teal-600 text-white shadow-md sm:shadow-lg transform scale-[1.02] sm:scale-105"
                         : "bg-white text-gray-700 border border-gray-200 hover:border-sky-300 hover:shadow-sm sm:hover:shadow-md"

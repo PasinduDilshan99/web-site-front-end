@@ -257,7 +257,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
               value={formData.name}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              className="text-gray-700 w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
               placeholder="John Doe"
             />
           </div>
@@ -271,7 +271,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              className="text-gray-700 w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
               placeholder="john@example.com"
             />
           </div>
@@ -285,7 +285,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
               value={formData.contactNumber}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              className="text-gray-700 w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
               placeholder="+1 234 567 8900"
             />
           </div>
@@ -299,7 +299,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
               value={formData.country}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
+              className="text-gray-700 w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-200"
               placeholder="United States"
             />
           </div>
@@ -374,10 +374,10 @@ const BookingModal: React.FC<BookingModalProps> = ({
                     name="agreeTerms"
                     checked={formData.agreeTerms}
                     onChange={handleChange}
-                    className="mt-1 w-5 h-5 text-sky-600 border-gray-300 rounded focus:ring-sky-500"
+                    className="cursor-pointer mt-1 w-5 h-5 text-sky-600 border-gray-300 rounded focus:ring-sky-500"
                     required
                   />
-                  <label htmlFor="agreeTerms" className="text-sm text-gray-700">
+                  <label htmlFor="agreeTerms" className="cursor-pointer text-sm text-gray-700">
                     I agree to the terms and conditions and confirm that the
                     information provided is accurate. By submitting this form, I
                     understand that our team will contact me within 24 hours to

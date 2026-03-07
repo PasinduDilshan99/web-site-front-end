@@ -385,7 +385,7 @@ const SriLankanTourPageContent: React.FC = () => {
               id="itemsPerPage"
               value={itemsPerPage}
               onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
-              className="border text-sky-700 border-sky-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white transition-all duration-200 hover:border-sky-400"
+              className="cursor-pointer border text-sky-700 border-sky-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white transition-all duration-200 hover:border-sky-400"
             >
               <option value={6}>6</option>
               <option value={8}>8</option>
@@ -468,7 +468,7 @@ const NoResults: React.FC<{ onResetFilters: () => void }> = ({
     </div>
     <button
       onClick={onResetFilters}
-      className="px-6 py-2 bg-gradient-to-r from-cyan-500 to-teal-500 text-white rounded-lg hover:from-cyan-600 hover:to-teal-600 transition-colors"
+      className="cursor-pointer px-6 py-2 bg-gradient-to-r from-cyan-500 to-teal-500 text-white rounded-lg hover:from-cyan-600 hover:to-teal-600 transition-colors"
     >
       Reset Filters
     </button>
@@ -550,7 +550,7 @@ const Pagination: React.FC<PaginationProps> = ({
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+          className="cursor-pointer px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
         >
           <svg
             className="w-4 h-4"
@@ -586,7 +586,7 @@ const Pagination: React.FC<PaginationProps> = ({
               <button
                 key={page}
                 onClick={() => onPageChange(page as number)}
-                className={`min-w-[40px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
+                className={`cursor-pointer min-w-[40px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
                   currentPage === page
                     ? "bg-gradient-to-r from-sky-600 to-teal-600 text-white shadow-lg transform scale-105"
                     : "text-sky-700 bg-white border-2 border-sky-300 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 hover:shadow-md"
@@ -604,7 +604,7 @@ const Pagination: React.FC<PaginationProps> = ({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+          className="cursor-pointer px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
         >
           <span className="hidden sm:inline">Next</span>
           <svg

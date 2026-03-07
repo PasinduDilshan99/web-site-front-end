@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
+import { LOGIN_PAGE_PATH, PRIVACY_POLICY_PAGE_PATH, TERMS_AND_CONDITIONS_PAGE_PATH } from "@/utils/urls";
+import { COMPANY_NAME } from "@/utils/constant";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -40,7 +42,7 @@ export default function SignupPage() {
         mobileNumber2: formData.mobileNumber2 || undefined,
       };
       await signup(submitData);
-      router.push("/login");
+      router.push(LOGIN_PAGE_PATH);
     } catch (err: unknown) {
       if (err instanceof Error) setError(err.message);
       else setError("An unknown error occurred during signup");
@@ -115,7 +117,7 @@ export default function SignupPage() {
         }
       `}</style>
 
-      <div className="min-h-screen flex">
+      <div className="min-h-[90vh] flex">
         {/* Left Side */}
         <div
           className="hidden lg:flex lg:w-1/2 relative overflow-hidden"
@@ -140,7 +142,7 @@ export default function SignupPage() {
 
           <div className="relative z-10 flex flex-col justify-center items-start p-16 text-white">
             <h1 className="font-serif text-6xl mb-6" style={{ fontFamily: "'Dancing Script', cursive" }}>
-              Felicita Trips
+              {COMPANY_NAME}
             </h1>
             <p className="text-xl max-w-md leading-relaxed mb-8" style={{ color: "#b3e8e4" }}>
               Travel is the only purchase that enriches you in ways beyond material wealth
@@ -323,7 +325,7 @@ export default function SignupPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                    className="cursor-pointer absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
                     disabled={loading}
                   >
                     {showPassword ? (
@@ -390,22 +392,22 @@ export default function SignupPage() {
                   type="checkbox"
                   id="terms"
                   required
-                  className="sea-checkbox h-4 w-4 mt-0.5 rounded border-gray-300"
+                  className="cursor-pointer sea-checkbox h-4 w-4 mt-0.5 rounded border-gray-300"
                 />
                 <label htmlFor="terms" className="text-sm text-gray-600 leading-relaxed">
                   I agree to the{" "}
                   <Link
-                    href="/terms"
+                    href={TERMS_AND_CONDITIONS_PAGE_PATH}
                     className="font-semibold transition-colors"
                     style={{ color: "var(--sea-blue)" }}
                     onMouseEnter={(e) => (e.currentTarget.style.color = "var(--sea-green)")}
                     onMouseLeave={(e) => (e.currentTarget.style.color = "var(--sea-blue)")}
                   >
-                    Terms of Service
+                    Terms And Conditions
                   </Link>{" "}
                   and{" "}
                   <Link
-                    href="/privacy"
+                    href={PRIVACY_POLICY_PAGE_PATH}
                     className="font-semibold transition-colors"
                     style={{ color: "var(--sea-blue)" }}
                     onMouseEnter={(e) => (e.currentTarget.style.color = "var(--sea-green)")}
@@ -420,7 +422,7 @@ export default function SignupPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="sea-btn w-full text-white font-semibold py-4 px-6 rounded-xl focus:outline-none shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className="cursor-pointer sea-btn w-full text-white font-semibold py-4 px-6 rounded-xl focus:outline-none shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <span className="flex items-center justify-center">
@@ -441,7 +443,7 @@ export default function SignupPage() {
               <p className="text-sm text-gray-600">
                 Already have an account?{" "}
                 <Link
-                  href="/login"
+                  href={LOGIN_PAGE_PATH}
                   className="font-semibold transition-colors"
                   style={{ color: "var(--sea-green)" }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = "var(--sea-green-dark)")}

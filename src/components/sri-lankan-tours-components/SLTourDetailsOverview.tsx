@@ -1,10 +1,12 @@
-import { TourDetails } from "@/types/tour-types";
+import { DestinationWithId, TourDetails } from "@/types/tour-types";
+import { DESTINATIONS_PAGE_PATH, SRI_LANKAN_TOUR_CATEGORY_PATH, SRI_LANKAN_TOUR_TYPE_PATH } from "@/utils/urls";
+import Link from "next/link";
 import React from "react";
 import ReactMarkdown from "react-markdown";
 
 interface SLTourDetailsOverviewProps {
   tour: TourDetails;
-  distinctDestinations: string[];
+  distinctDestinations: DestinationWithId[];
 }
 
 const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
@@ -23,7 +25,7 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
       </h2>
 
       {/* Professional Stats Grid - Now with 4 cards on large screens */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6 sm:mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-4 mb-6 sm:mb-8">
         {/* Duration Card */}
         <div className="bg-gradient-to-br from-sky-50 to-blue-50 rounded-xl p-4 sm:p-5 border border-sky-100 hover:shadow-md transition-all duration-300">
           <div className="flex items-start gap-2 sm:gap-3">
@@ -170,12 +172,14 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
             </div>
             <div className="flex flex-wrap gap-1.5 sm:gap-2">
               {tour.tourCategoryDto.map((category, index) => (
-                <span
+                <Link
                   key={category.tourCategoryId || index}
-                  className="inline-flex items-center px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium bg-white text-teal-700 border border-teal-300 shadow-sm hover:shadow-md transition-shadow duration-200"
+                  href={`${SRI_LANKAN_TOUR_CATEGORY_PATH}${encodeURIComponent(category.tourCategoryName)}`}
                 >
-                  {category.tourCategoryName}
-                </span>
+                  <span className="inline-flex items-center px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium bg-white text-teal-700 border border-teal-300 shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer hover:bg-teal-50">
+                    {category.tourCategoryName}
+                  </span>
+                </Link>
               ))}
             </div>
           </div>
@@ -204,12 +208,14 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
             </div>
             <div className="flex flex-wrap gap-1.5 sm:gap-2">
               {tour.tourTypeDtos.map((type, index) => (
-                <span
+                <Link
                   key={type.tourTypeId || index}
-                  className="inline-flex items-center px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium bg-white text-sky-700 border border-sky-300 shadow-sm hover:shadow-md transition-shadow duration-200"
+                  href={`${SRI_LANKAN_TOUR_TYPE_PATH}${encodeURIComponent(type.tourTypeName)}`}
                 >
-                  {type.tourTypeName}
-                </span>
+                  <span className="inline-flex items-center px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium bg-white text-sky-700 border border-sky-300 shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer hover:bg-sky-50">
+                    {type.tourTypeName}
+                  </span>
+                </Link>
               ))}
             </div>
           </div>
@@ -237,26 +243,28 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
               Destinations ({distinctDestinations.length})
             </h3>
           </div>
-          
+
           <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-4 sm:p-5 lg:p-6 border border-amber-200">
             <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               {distinctDestinations.map((destination, index) => (
                 <React.Fragment key={index}>
-                  <span className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium bg-white text-amber-700 border border-amber-300 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105">
-                    <svg
-                      className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-1 sm:mr-1.5 text-amber-500"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    {destination}
-                  </span>
-                  
+                  <Link href={`${DESTINATIONS_PAGE_PATH}/${destination.destinationId}`}>
+                    <span className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium bg-white text-amber-700 border border-amber-300 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 cursor-pointer hover:bg-amber-50">
+                      <svg
+                        className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-1 sm:mr-1.5 text-amber-500"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      {destination.destinationName}
+                    </span>
+                  </Link>
+
                   {index < distinctDestinations.length - 1 && (
                     <svg
                       className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400 flex-shrink-0"
@@ -275,7 +283,7 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
                 </React.Fragment>
               ))}
             </div>
-            
+
             {/* {distinctDestinations.length > 5 && (
               <div className="mt-2 sm:mt-3 text-xs text-amber-600 flex items-center gap-1">
                 <svg

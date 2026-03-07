@@ -33,6 +33,7 @@ import { EmployeeService } from "@/services/employeeService"; // Import employee
 import {
   Accommodation,
   DayDetails,
+  DestinationWithId,
   TourDetails,
   TourExtraDetails,
   TourHistory,
@@ -49,6 +50,8 @@ import {
 import { TourAssignedEmployeeResponse } from "@/types/employee-types"; // Import employee types
 import { TourService } from "@/services/tourService";
 import SriLankanTourDetailsLoading from "@/components/sri-lankan-tours-components/SriLankanTourDetailsLoading";
+import PackageLoadingError from "@/components/sri-lankan-tours-components/tour-day-to-day-details-components/PackageLoadingError";
+import { PACKAGE_COMPARE_PAGE_PATH, PACKAGE_DETAILS_PAGE_PATH } from "@/utils/urls";
 
 const SriLankanTourDetailsPage = () => {
   const params = useParams();
@@ -69,9 +72,9 @@ const SriLankanTourDetailsPage = () => {
   const [galleryError, setGalleryError] = useState<string | null>(null);
   const [dayDetails, setDayDetails] = React.useState<DayDetails[]>([]);
   // Add this with your other useState declarations
-  const [distinctDestinations, setDistinctDestinations] = useState<string[]>(
-    [],
-  );
+  const [distinctDestinations, setDistinctDestinations] = useState<
+    DestinationWithId[]
+  >([]);
   const [dayDetailsLoading, setDayDetailsLoading] = React.useState(true);
   const [dayDetailsError, setDayDetailsError] = React.useState<string | null>(
     null,
@@ -378,11 +381,13 @@ const SriLankanTourDetailsPage = () => {
     setSelectedPackage(pkg);
   };
 
-  // Function to extract distinct destination names from day details
   // Function to extract distinct destination names from day details in day order
-  const extractDistinctDestinations = (dayDetails: DayDetails[]): string[] => {
-    const destinationsMap = new Map<string, number>(); // Map to store destination and the first day it appears
-    const destinationsInOrder: string[] = [];
+
+  const extractDistinctDestinations = (
+    dayDetails: DayDetails[],
+  ): DestinationWithId[] => {
+    const destinationsMap = new Map<string, DestinationWithId>(); // Map to store destination and the first day it appears
+    const destinationsInOrder: DestinationWithId[] = [];
 
     // Sort day details by day number to ensure correct order
     const sortedDayDetails = [...dayDetails].sort(
@@ -392,16 +397,26 @@ const SriLankanTourDetailsPage = () => {
     sortedDayDetails.forEach((day) => {
       day.destinations.forEach((destWithActivities) => {
         const destinationName = destWithActivities.destination?.destinationName;
+        const destinationId = destWithActivities.destination?.destinationId;
 
-        if (destinationName && !destinationsMap.has(destinationName)) {
+        if (
+          destinationName &&
+          destinationId &&
+          !destinationsMap.has(destinationName)
+        ) {
+          const destination: DestinationWithId = {
+            destinationId: destinationId,
+            destinationName: destinationName,
+          };
+
           // If it's a new destination, add to map with current day number
-          destinationsMap.set(destinationName, day.dayNumber);
-          destinationsInOrder.push(destinationName);
+          destinationsMap.set(destinationName, destination);
+          destinationsInOrder.push(destination);
         }
       });
     });
 
-    return destinationsInOrder; // Returns destinations in the order they first appear
+    return destinationsInOrder; // Returns destinations in the order they first appear with both id and name
   };
 
   const handleRetryDayDetails = () => {
@@ -534,19 +549,10 @@ const SriLankanTourDetailsPage = () => {
 
     if (packagesError) {
       return (
-        <div className="mb-6 sm:mb-8 p-3 sm:p-4 bg-gradient-to-r from-red-50 to-orange-50 rounded-lg sm:rounded-xl border border-red-200">
-          <div className="text-center">
-            <p className="text-red-600 mb-2 text-sm sm:text-base">
-              Failed to load packages
-            </p>
-            <button
-              onClick={handleRetryPackages}
-              className="px-3 py-2 sm:px-4 sm:py-2 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:opacity-90 text-sm sm:text-base"
-            >
-              Retry
-            </button>
-          </div>
-        </div>
+        <PackageLoadingError
+          onRetry={handleRetryPackages}
+          message="Couldn't load the selected package."
+        />
       );
     }
 
@@ -568,10 +574,10 @@ const SriLankanTourDetailsPage = () => {
           </div>
           <div className="flex-shrink-0">
             <button
-              className="group flex items-center justify-center gap-2 px-4 py-2 sm:px-5 sm:py-3 md:px-6 md:py-3 text-sky-600 font-medium border-2 border-sky-200 rounded-lg sm:rounded-xl hover:border-sky-600 hover:bg-sky-600 hover:text-white transition-all duration-300 shadow-sm hover:shadow-md w-full md:w-auto text-sm sm:text-base"
+              className="cursor-pointer group flex items-center justify-center gap-2 px-4 py-2 sm:px-5 sm:py-3 md:px-6 md:py-3 text-sky-600 font-medium border-2 border-sky-200 rounded-lg sm:rounded-xl hover:border-sky-600 hover:bg-sky-600 hover:text-white transition-all duration-300 shadow-sm hover:shadow-md w-full md:w-auto text-sm sm:text-base"
               onClick={() =>
                 router.push(
-                  `/packages/packages-compare?tour-name=${
+                  `${PACKAGE_COMPARE_PAGE_PATH}${
                     tour?.tourName || "name"
                   }&tour-id=${sriLankanTourId}`,
                 )
@@ -596,70 +602,158 @@ const SriLankanTourDetailsPage = () => {
         </div>
 
         {/* Packages grid - responsive columns */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
-          {packages.map((pkg) => (
-            <div
-              key={pkg.packageId}
-              onClick={() => handlePackageSelect(pkg)}
-              className={`p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl border-2 cursor-pointer transition-all duration-300 hover:shadow-md lg:hover:shadow-lg ${
-                selectedPackage?.packageId === pkg.packageId
-                  ? "border-sky-600 bg-white transform sm:scale-[1.02]"
-                  : "border-gray-200 bg-white hover:border-sky-300"
-              }`}
-              style={{
-                borderLeftColor:
-                  selectedPackage?.packageId === pkg.packageId
-                    ? pkg.color
-                    : undefined,
-                borderLeftWidth: "4px",
-              }}
-            >
-              <div className="flex justify-between items-start mb-2 sm:mb-3">
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-base sm:text-lg font-bold text-gray-900 truncate">
-                    {pkg.packageName}
-                  </h4>
-                  <p className="text-xs sm:text-sm text-gray-600 mt-1 line-clamp-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+          {packages.map((pkg) => {
+            const isSelected = selectedPackage?.packageId === pkg.packageId;
+
+            return (
+              <div
+                key={pkg.packageId}
+                onClick={() => handlePackageSelect(pkg)}
+                className={`relative flex flex-col rounded-2xl cursor-pointer transition-all duration-300 overflow-hidden ${
+                  isSelected
+                    ? "shadow-lg shadow-[#0B7EA8]/20 scale-[1.02]"
+                    : "shadow-sm hover:shadow-md hover:-translate-y-0.5"
+                }`}
+                style={{
+                  border: isSelected
+                    ? "2px solid #0B7EA8"
+                    : "2px solid #e5e7eb",
+                  background: "#fff",
+                }}
+              >
+                {/* ── Colored top accent bar ── */}
+                <div
+                  className="h-1 w-full flex-shrink-0"
+                  style={{
+                    background: isSelected
+                      ? "linear-gradient(90deg, #0B7EA8, #0E9E8E)"
+                      : pkg.color || "#e5e7eb",
+                  }}
+                />
+
+                {/* ── Card body ── */}
+                <div className="flex flex-col flex-1 p-4 sm:p-5">
+                  {/* Header: name + selected indicator */}
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <h4 className="text-base sm:text-lg font-bold text-gray-900 leading-snug line-clamp-2 flex-1">
+                      {pkg.packageName}
+                    </h4>
+
+                    {/* Selected radio indicator */}
+                    <div
+                      className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 transition-all duration-200"
+                      style={{
+                        border: isSelected ? "none" : "2px solid #d1d5db",
+                        background: isSelected
+                          ? "linear-gradient(135deg, #0B7EA8, #0E9E8E)"
+                          : "transparent",
+                      }}
+                    >
+                      {isSelected && (
+                        <div className="w-2 h-2 bg-white rounded-full" />
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-xs sm:text-sm text-gray-500 leading-relaxed line-clamp-2 mb-4 flex-1">
                     {pkg.packageDescription}
                   </p>
-                </div>
-                {selectedPackage?.packageId === pkg.packageId && (
-                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-sky-600 rounded-full flex items-center justify-center flex-shrink-0 ml-2">
-                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-white rounded-full"></div>
+
+                  {/* ── Price block ── */}
+                  <div
+                    className="rounded-xl px-3 py-2.5 mb-4"
+                    style={{
+                      background: isSelected
+                        ? "linear-gradient(135deg, rgba(11,126,168,0.07), rgba(14,158,142,0.07))"
+                        : "rgba(249,250,251,1)",
+                      border: isSelected
+                        ? "1px solid #b3e0f2"
+                        : "1px solid #f3f4f6",
+                    }}
+                  >
+                    <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-0.5">
+                      Starting From
+                    </p>
+                    <div className="flex items-baseline gap-1 flex-wrap">
+                      <span
+                        className="text-xl sm:text-2xl font-extrabold"
+                        style={{ color: isSelected ? "#0B7EA8" : "#111827" }}
+                      >
+                        USD {pkg?.pricePerPerson?.toLocaleString() ?? "0"}
+                      </span>
+                      <span className="text-xs text-gray-400 font-medium">
+                        / person
+                      </span>
+                    </div>
+
+                    {pkg?.discount > 0 && (
+                      <div className="flex items-center gap-1.5 mt-1.5">
+                        <span
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold"
+                          style={{
+                            background: "rgba(14,158,142,0.12)",
+                            color: "#0b7d70",
+                          }}
+                        >
+                          <svg
+                            className="w-2.5 h-2.5"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          Save {Math.round(pkg.discount)}%
+                        </span>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-              <div className="mb-3 sm:mb-4">
-                <div className="flex items-baseline flex-wrap">
-                  <span className="mr-1 text-gray-800">Starting From</span>
-                  <span className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
-                    USD {pkg?.pricePerPerson?.toLocaleString() ?? "0"}
-                  </span>
-                  <span className="text-xs sm:text-sm text-gray-500 ml-1 sm:ml-2">
-                    per person
-                  </span>
+
+                  {/* ── CTA button ── */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(`${PACKAGE_DETAILS_PAGE_PATH}/${selectedPackage?.packageId}?name=${selectedPackage?.packageName}`);
+                    }}
+                    className="cursor-pointer w-full py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 hover:shadow-md hover:-translate-y-px active:scale-95 flex items-center justify-center gap-1.5"
+                    style={
+                      isSelected
+                        ? {
+                            background:
+                              "linear-gradient(135deg, #0B7EA8, #0E9E8E)",
+                            color: "#fff",
+                          }
+                        : {
+                            background: "transparent",
+                            color: "#0B7EA8",
+                            border: "1.5px solid #b3e0f2",
+                          }
+                    }
+                  >
+                    Show All Details
+                    <svg
+                      className="w-3.5 h-3.5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2.5}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </button>
                 </div>
-                {pkg?.discount > 0 && (
-                  <div className="flex items-center gap-1 sm:gap-2 mt-1">
-                    <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
-                      Save {Math.round(pkg.discount)}%
-                    </span>
-                  </div>
-                )}
               </div>
-              <div>
-                <button
-                  className="px-4 py-2 sm:px-5 sm:py-2.5 lg:px-6 lg:py-3 bg-white text-sky-600 font-medium rounded-lg border border-sky-200 hover:border-sky-300 hover:bg-sky-50 transition-all duration-200 hover:shadow-sm w-full text-xs sm:text-sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push(`/packages/${selectedPackage?.packageId}`);
-                  }}
-                >
-                  Show All Details
-                </button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {selectedPackage && (
@@ -681,7 +775,7 @@ const SriLankanTourDetailsPage = () => {
               </div>
               <div className="text-right sm:text-left">
                 <div className="text-base sm:text-lg font-bold text-sky-600">
-                  LKR {selectedPackage.pricePerPerson.toLocaleString()}
+                  USD {selectedPackage.pricePerPerson.toLocaleString()}
                 </div>
                 <div className="text-xs sm:text-sm text-gray-500">
                   per person

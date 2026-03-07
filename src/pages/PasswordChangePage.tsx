@@ -150,7 +150,7 @@ export default function PasswordChangePage() {
         }
       `}</style>
 
-      <div className="min-h-[75vh] flex">
+      <div className="min-h-[90vh] flex">
         {/* Left Side */}
         <div
           className="hidden lg:flex lg:w-1/2 relative overflow-hidden"
