@@ -1,4 +1,4 @@
-import { GET_ACTIVE_ACTIVITY_HERO_SECTION_DATA_FE, GET_ACTIVE_DESTINATION_HERO_SECTION_DATA_FE, GET_ACTIVE_PACKAGE_HERO_SECTION_DATA_FE, GET_ACTIVE_TOUR_HERO_SECTION_DATA_FE } from './../utils/frontEndConstant';
+import { GET_ACTIVE_ACTIVITY_HERO_SECTION_DATA_FE, GET_ACTIVE_DESTINATION_HERO_SECTION_DATA_FE, GET_ACTIVE_PACKAGE_HERO_SECTION_DATA_FE, GET_ACTIVE_SEASONS_BASIC_DETAILS_DATA_FE, GET_ACTIVE_SEASONS_HERO_SECTION_DATA_FE, GET_ACTIVE_TOUR_HERO_SECTION_DATA_FE, GET_ACTIVE_VEHICLE_HERO_SECTION_DATA_FE, GET_ACTIVE_VEHICLE_SPECIFICATION_HERO_SECTION_DATA_FE, GET_ACTIVE_VEHICLE_TYPES_HERO_SECTION_DATA_FE } from './../utils/frontEndConstant';
 import {
   GET_ACTIVE_ABOUT_US_HERO_SECTION_DATA_FE,
   GET_ACTIVE_BLOG_HERO_SECTION_DATA_FE,
@@ -458,7 +458,7 @@ export class HeroSectionService {
     error: string | null;
   }> {
     try {
-      const response = await fetch(GET_ACTIVE_ACTIVITY_HERO_SECTION_DATA_FE, {
+      const response = await fetch(GET_ACTIVE_VEHICLE_HERO_SECTION_DATA_FE, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -505,7 +505,7 @@ export class HeroSectionService {
     error: string | null;
   }> {
     try {
-      const response = await fetch(GET_ACTIVE_ACTIVITY_HERO_SECTION_DATA_FE, {
+      const response = await fetch(GET_ACTIVE_VEHICLE_SPECIFICATION_HERO_SECTION_DATA_FE, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -552,7 +552,7 @@ export class HeroSectionService {
     error: string | null;
   }> {
     try {
-      const response = await fetch(GET_ACTIVE_ACTIVITY_HERO_SECTION_DATA_FE, {
+      const response = await fetch(GET_ACTIVE_VEHICLE_TYPES_HERO_SECTION_DATA_FE, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -599,7 +599,7 @@ export class HeroSectionService {
     error: string | null;
   }> {
     try {
-      const response = await fetch(GET_ACTIVE_ACTIVITY_HERO_SECTION_DATA_FE, {
+      const response = await fetch(GET_ACTIVE_SEASONS_HERO_SECTION_DATA_FE, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

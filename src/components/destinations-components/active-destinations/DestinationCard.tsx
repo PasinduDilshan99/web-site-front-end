@@ -4,7 +4,11 @@ import { useRouter } from "next/navigation";
 import { WishListService } from "@/services/wishListService";
 import { useAuth } from "@/context/AuthContext";
 import { addBrowserHistory } from "@/services/browserHistoryService";
-import { PLACE_HOLDER_IMAGE } from "@/utils/constant";
+import {
+  DESTINATION_BROWSER_HISTORY_TYPE,
+  PLACE_HOLDER_IMAGE,
+} from "@/utils/constant";
+import { DESTINATIONS_PAGE_PATH } from "@/utils/urls";
 
 interface DestinationCardProps {
   destination: EnhancedDestination;
@@ -25,15 +29,16 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
     if (user) {
       try {
         await addBrowserHistory({
-          type: "DESTINATIONS",
+          type: DESTINATION_BROWSER_HISTORY_TYPE,
           dataId: destination.destinationId,
+          name: destination.destinationName,
         });
       } catch (err) {
         console.error("Failed to record browser history:", err);
       }
     }
 
-    router.push(`/destinations/${destination.destinationId}`);
+    router.push(`${DESTINATIONS_PAGE_PATH}/${destination.destinationId}`);
   };
 
   // Handle wishlist toggle

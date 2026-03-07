@@ -5,6 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 import { UserProfileAPIService } from "@/services/userProfileAPIService";
 import { UserBenefitsData } from "@/types/user-benefits";
 import { USER_PROFILE_USER_BENEFITS_VIEW_PRIVILEGE } from "@/utils/privileges";
+import { USER_PROFILE_PAGE_PATH } from "@/utils/urls";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
@@ -27,7 +28,7 @@ export default function UserBenefitsPage() {
       user &&
       !user.privileges.includes(USER_PROFILE_USER_BENEFITS_VIEW_PRIVILEGE)
     ) {
-      router.push("/profile");
+      router.push(USER_PROFILE_PAGE_PATH);
     }
   }, [user, router]);
 

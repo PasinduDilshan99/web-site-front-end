@@ -27,7 +27,7 @@ export interface UpcomingActivity {
   bookingId: number;
   activityName: string;
   activityDescription: string;
-  activityCategory: string | null;
+  // activityCategory: string | null;
   activityDate: string;
   startTime: string;
   endTime: string;
@@ -90,8 +90,10 @@ export interface UpcomingTour {
   tourDuration: number;
   startLocation: string;
   endLocation: string;
-  tourType: string;
-  tourCategory: string;
+  assignTo: number;
+  assignToName: string;
+  // tourType: string;
+  // tourCategory: string;
   packageName: string;
   packageDescription: string;
   packageTotalPrice: number;

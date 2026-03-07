@@ -6,8 +6,8 @@ import Sidebar from "@/components/user-profile-components/Sidebar";
 import { UNIQUE_CODE_NAME } from "@/utils/constant";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import Loading from "@/components/common-components/loading/Loading";
 import ProfileLayoutLoading from "@/components/user-profile-components/ProfileLayoutLoading";
+import { LOGIN_PAGE_PATH } from "@/utils/urls";
 
 export default function ProfileLayout({
   children,
@@ -25,11 +25,11 @@ export default function ProfileLayout({
   useEffect(() => {
     if (isClient) {
       const uniqueCode = sessionStorage.getItem(UNIQUE_CODE_NAME);
-      if (!uniqueCode) {
-        router.push("/login");
+      if (!uniqueCode && user) {
+        router.push(LOGIN_PAGE_PATH);
       }
     }
-  }, [isClient, router]);
+  }, [isClient, router, user]);
 
   if (!isClient || authLoading) {
     return <ProfileLayoutLoading />;

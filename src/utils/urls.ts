@@ -30,3 +30,12 @@ export const SIGNUP_PAGE_PATH = "/signup"
 export const LOGIN_PAGE_PATH = "/login"
 
 export const USER_PROFILE_PAGE_PATH = "/profile"
+export const USER_PROFILE_USER_PAGE_PATH = "/profile/user"
+export const USER_PROFILE_TOURS_PAGE_PATH = "/profile/tours"
+export const USER_PROFILE_PENDING_TOURS_PAGE_PATH = "/profile/pending-tours"
+export const USER_PROFILE_REQUESTED_TOURS_PAGE_PATH = "/profile/requested-tours"
+export const USER_PROFILE_UPCOMING_TOURS_PAGE_PATH = "/profile/upcoming-tours"
+export const USER_PROFILE_COMPLETED_TOURS_PAGE_PATH = "/profile/completed-tours"
+export const USER_PROFILE_CANCELLED_TOURS_PAGE_PATH = "/profile/cancelled-tours"
+
+export const EMPLOYEE_PAGE_PATH = "/employee"

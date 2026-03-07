@@ -14,6 +14,15 @@ import { useState, useEffect } from "react";
 import { WishListService } from "@/services/wishListService";
 import { InsertWishListRequest } from "@/types/wish-list-types";
 import UserProfileWishListLoading from "@/components/user-profile-components/Loadings/UserProfileWishListLoading";
+import {
+  ACTIVITIES_PAGE_PATH,
+  DESTINATIONS_PAGE_PATH,
+  PACKAGE_DETAILS_PAGE_PATH,
+  SRI_LANKAN_TOUR_PAGE_PATH,
+  USER_PROFILE_PAGE_PATH,
+} from "@/utils/urls";
+import Image from "next/image";
+import { PLACE_HOLDER_IMAGE } from "@/utils/constant";
 
 export default function WishListPage() {
   const [wishListData, setWishListData] = useState<{
@@ -46,7 +55,7 @@ export default function WishListPage() {
       user &&
       !user.privileges.includes(USER_PROFILE_WISH_LIST_VIEW_PRIVILEGE)
     ) {
-      router.push("/profile");
+      router.push(USER_PROFILE_PAGE_PATH);
     }
   }, [user, router]);
 
@@ -161,7 +170,7 @@ export default function WishListPage() {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-LK", {
       style: "currency",
-      currency: "LKR",
+      currency: "USD",
       minimumFractionDigits: 0,
     }).format(amount);
   };
@@ -242,7 +251,7 @@ export default function WishListPage() {
     onClick?: (e: React.MouseEvent) => void;
   }) => (
     <div
-      className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group transform hover:translate-y-[-4px] relative"
+      className="cursor-pointer bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group transform hover:translate-y-[-4px] relative"
       onClick={onClick}
     >
       {children}
@@ -256,12 +265,18 @@ export default function WishListPage() {
     return (
       <CardContainer
         category="packages"
-        onClick={() => handleItemClick(`/packages/${item.packageId}`)}
+        onClick={() =>
+          handleItemClick(
+            `${PACKAGE_DETAILS_PAGE_PATH}/${item.packageId}?name=${item.packageName}`,
+          )
+        }
       >
         <div className="relative h-52 md:h-56 overflow-hidden">
-          <img
-            src={item.packageImages[0] || "/images/placeholder.jpg"}
+          <Image
+            src={item.packageImages[0] || PLACE_HOLDER_IMAGE}
             alt={item.packageName}
+            width={1000}
+            height={1000}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             loading="lazy"
           />
@@ -350,12 +365,18 @@ export default function WishListPage() {
     return (
       <CardContainer
         category="tours"
-        onClick={() => handleItemClick(`/tours/${item.tourId}`)}
+        onClick={() =>
+          handleItemClick(
+            `${SRI_LANKAN_TOUR_PAGE_PATH}/${item.tourId}?name=${item.tourName}`,
+          )
+        }
       >
         <div className="relative h-52 md:h-56 overflow-hidden">
-          <img
-            src={item.tourImages[0] || "/images/placeholder.jpg"}
+          <Image
+            src={item.tourImages[0] || PLACE_HOLDER_IMAGE}
             alt={item.tourName}
+            width={1000}
+            height={1000}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             loading="lazy"
           />
@@ -453,12 +474,18 @@ export default function WishListPage() {
     return (
       <CardContainer
         category="destinations"
-        onClick={() => handleItemClick(`/destinations/${item.destinationId}`)}
+        onClick={() =>
+          handleItemClick(
+            `${DESTINATIONS_PAGE_PATH}/${item.destinationId}?name=${item.destinationName}`,
+          )
+        }
       >
         <div className="relative h-52 md:h-56 overflow-hidden">
-          <img
+          <Image
             src={item.destinationImages[0] || "/images/placeholder.jpg"}
             alt={item.destinationName}
+            width={1000}
+            height={1000}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             loading="lazy"
           />
@@ -469,9 +496,9 @@ export default function WishListPage() {
             isRemoving={isRemoving}
           />
 
-          <div className="absolute bottom-3 left-3 bg-gradient-to-r from-emerald-600/90 to-teal-600/90 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">
+          {/* <div className="absolute bottom-3 left-3 bg-gradient-to-r from-emerald-600/90 to-teal-600/90 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">
             {item.destinationCategory}
-          </div>
+          </div> */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
 
@@ -555,12 +582,18 @@ export default function WishListPage() {
     return (
       <CardContainer
         category="activities"
-        onClick={() => handleItemClick(`/activities/${item.activityId}`)}
+        onClick={() =>
+          handleItemClick(
+            `${ACTIVITIES_PAGE_PATH}/${item.activityId}?name=${item.activityName}`,
+          )
+        }
       >
         <div className="relative h-52 md:h-56 overflow-hidden">
-          <img
+          <Image
             src={item.activityImages[0] || "/images/placeholder.jpg"}
             alt={item.activityName}
+            width={1000}
+            height={1000}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             loading="lazy"
           />
@@ -591,7 +624,7 @@ export default function WishListPage() {
             {item.activityDescription}
           </p>
 
-          <div className="flex items-center space-x-2 mb-4">
+          {/* <div className="flex items-center space-x-2 mb-4">
             <svg
               className="w-4 h-4 text-purple-500 flex-shrink-0"
               fill="none"
@@ -608,7 +641,7 @@ export default function WishListPage() {
             <span className="text-purple-600 text-sm font-medium">
               {item.activitiesCategory}
             </span>
-          </div>
+          </div> */}
 
           <div className="flex items-center justify-between text-sm text-gray-500 border-t border-gray-100 pt-4">
             <div className="flex items-center space-x-4">
@@ -756,7 +789,7 @@ export default function WishListPage() {
             <button
               key={key}
               onClick={() => setActiveTab(key)}
-              className={`flex items-center space-x-3 px-5 py-3 rounded-xl transition-all duration-300 whitespace-nowrap ${
+              className={`cursor-pointer flex items-center space-x-3 px-5 py-3 rounded-xl transition-all duration-300 whitespace-nowrap ${
                 activeTab === key
                   ? "bg-gradient-to-r from-sky-600 to-teal-600 text-white shadow-lg scale-[1.02]"
                   : "bg-white text-gray-700 border border-gray-300 hover:border-sky-300 hover:shadow-md"

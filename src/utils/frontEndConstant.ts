@@ -87,6 +87,7 @@ export const GET_REQUESTED_BOOKINGS_DETAILS_DATA_FE = `${API}${BOOKING}/requeste
 export const GET_CANCELLED_BOOKINGS_DETAILS_DATA_FE = `${API}${BOOKING}/cancelled`;
 export const GET_PENDING_BOOKINGS_DETAILS_DATA_FE = `${API}${BOOKING}/pending`;
 export const INSERT_BOOKINGS_INQUIRY_DETAILS_DATA_FE = `${API}${BOOKING}/insert-booking-inquiry`;
+export const CANCELLED_PENDING_BOOKINGS_DETAILS_DATA_FE = `${API}${BOOKING}/pending/cancelled`;
 
 // User Benefits
 export const GET_ALL_ACTIVE_USER_BENEFITS_FE = `${API}${USER_BENEFITS}`;
@@ -110,6 +111,10 @@ export const GET_ACTIVE_DESTINATION_HERO_SECTION_DATA_FE = `${API}${HERO_SECTION
 export const GET_ACTIVE_ACTIVITY_HERO_SECTION_DATA_FE = `${API}${HERO_SECTION}/activity`;
 export const GET_ACTIVE_PACKAGE_SCHEDULE_HERO_SECTION_DATA_FE = `${API}${HERO_SECTION}/package-schedule`;
 export const GET_ACTIVE_BOOKED_TOUR_HERO_SECTION_DATA_FE = `${API}${HERO_SECTION}/booked-tour`;
+export const GET_ACTIVE_VEHICLE_HERO_SECTION_DATA_FE = `${API}${HERO_SECTION}/vehicle`;
+export const GET_ACTIVE_VEHICLE_SPECIFICATION_HERO_SECTION_DATA_FE = `${API}${HERO_SECTION}/vehicle-specification`;
+export const GET_ACTIVE_VEHICLE_TYPES_HERO_SECTION_DATA_FE = `${API}${HERO_SECTION}/vehicle-types`;
+export const GET_ACTIVE_SEASONS_HERO_SECTION_DATA_FE = `${API}${HERO_SECTION}/seasons`;
 
 // Why Choose Us
 export const GET_ACTIVE_WHY_CHOOSE_US_DATA_FE = `${API}${WHY_CHOOSE_US}`;
@@ -214,10 +219,10 @@ export const GET_FAQ_OPTIONS_DATA_FE = `${API}${FAQ}/options`;
 export const ADD_FAQ_REQUEST_DATA_FE = `${API}${FAQ}/insert-faq-request`;
 
 // Wish List
-export const ADD_ACTIVITY_WISH_LIST_DATA = `${API}${WISH_LIST}/insert-activity-wish-list`;
-export const ADD_DESTINATION_WISH_LIST_DATA = `${API}${WISH_LIST}/insert-destination-wish-list`;
-export const ADD_TOUR_WISH_LIST_DATA = `${API}${WISH_LIST}/insert-tour-wish-list`;
-export const ADD_PACKAGE_WISH_LIST_DATA = `${API}${WISH_LIST}/insert-package-wish-list`;
+export const ADD_ACTIVITY_WISH_LIST_DATA_FE = `${API}${WISH_LIST}/insert-activity-wish-list`;
+export const ADD_DESTINATION_WISH_LIST_DATA_FE = `${API}${WISH_LIST}/insert-destination-wish-list`;
+export const ADD_TOUR_WISH_LIST_DATA_FE = `${API}${WISH_LIST}/insert-tour-wish-list`;
+export const ADD_PACKAGE_WISH_LIST_DATA_FE = `${API}${WISH_LIST}/insert-package-wish-list`;
 export const GET_WIS_LIST_DETAILS_DATA_FE = `${API}${WISH_LIST}/details`;
 
 // Browser History
@@ -233,6 +238,8 @@ export const UPLOAD_IMAGE_TO_CLOUDINARY_FE = `${API}${OTHERS}/save-images`;
 export const GET_VEHICLE_SPECIFICATION_DETAILS_BY_ID_DATA_FE = `${API}${VEHICLES}/specification`;
 export const GET_VEHICLE_SPECIFICATION_DETAILS_BY_REQUEST_DATA_FE = `${API}${VEHICLES}/specification`;
 export const GET_VEHICLE_SPECIFICATION_FILTERS_DATA_FE = `${API}${VEHICLES}/specification/filters`;
+export const GET_VEHICLE_TYPES_DETAILS_DATA_FE = `${API}${VEHICLES}/types`;
+export const GET_VEHICLE_TYPES_DETAILS_BY_ID_DATA_FE = `${API}${VEHICLES}/types`;
 
 // Seasons
 export const GET_ACTIVE_SEASONS_BASIC_DETAILS_DATA_FE = `${API}${SEASONS}/basic-details`;

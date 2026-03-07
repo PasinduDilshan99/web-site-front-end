@@ -47,6 +47,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
         await addBrowserHistory({
           type: ACTIVITY_BROWSER_HISTORY_TYPE,
           dataId: activity.id,
+          name: activity.name,
         });
       } catch (err) {
         console.error("Failed to record browser history:", err);

@@ -4,7 +4,20 @@ import UserProfileBrowserHistoryLoading from "@/components/user-profile-componen
 import { useAuth } from "@/context/AuthContext";
 import { UserProfileAPIService } from "@/services/userProfileAPIService";
 import { BrowsingHistoryRequest, HistoryItem } from "@/types/user-profile";
+import {
+  ACTIVITY_BROWSER_HISTORY_TYPE,
+  DESTINATION_BROWSER_HISTORY_TYPE,
+  PACKAGE_BROWSER_HISTORY_TYPE,
+  TOUR_BROWSER_HISTORY_TYPE,
+} from "@/utils/constant";
 import { USER_PROFILE_BROWSER_HISTORY_VIEW_PRIVILEGE } from "@/utils/privileges";
+import {
+  ACTIVITIES_PAGE_PATH,
+  DESTINATIONS_PAGE_PATH,
+  PACKAGE_DETAILS_PAGE_PATH,
+  SRI_LANKAN_TOUR_PAGE_PATH,
+  USER_PROFILE_PAGE_PATH,
+} from "@/utils/urls";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
@@ -36,7 +49,7 @@ export default function BrowsingHistoryPage() {
       user &&
       !user.privileges.includes(USER_PROFILE_BROWSER_HISTORY_VIEW_PRIVILEGE)
     ) {
-      router.push("/profile");
+      router.push(USER_PROFILE_PAGE_PATH);
     }
   }, [user, router]);
 
@@ -158,17 +171,17 @@ export default function BrowsingHistoryPage() {
     let route = "";
 
     switch (item.type) {
-      case "TOUR":
-        route = `/sri-lankan-tours/${item.dataId}`;
+      case TOUR_BROWSER_HISTORY_TYPE:
+        route = `${SRI_LANKAN_TOUR_PAGE_PATH}/${item.dataId}?name=${item.name}`;
         break;
-      case "PACKAGE":
-        route = `/packages/${item.dataId}`;
+      case PACKAGE_BROWSER_HISTORY_TYPE:
+        route = `${PACKAGE_DETAILS_PAGE_PATH}/${item.dataId}?name=${item.name}`;
         break;
-      case "DESTINATIONS":
-        route = `/destinations/${item.dataId}`;
+      case DESTINATION_BROWSER_HISTORY_TYPE:
+        route = `${DESTINATIONS_PAGE_PATH}/${item.dataId}?name=${item.name}`;
         break;
-      case "ACTIVITIES":
-        route = `/activities/${item.dataId}`;
+      case ACTIVITY_BROWSER_HISTORY_TYPE:
+        route = `${ACTIVITIES_PAGE_PATH}/${item.dataId}?name=${item.name}`;
         break;
       default:
         return;
@@ -333,7 +346,7 @@ export default function BrowsingHistoryPage() {
               <div className="flex items-center space-x-3">
                 <button
                   onClick={() => setShowFilters(!showFilters)}
-                  className="px-4 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-300 flex items-center gap-2"
+                  className="cursor-pointer px-4 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-300 flex items-center gap-2"
                 >
                   <svg
                     className="w-4 h-4"
@@ -430,7 +443,7 @@ export default function BrowsingHistoryPage() {
                   <div className="flex bg-gray-100 rounded-lg p-1">
                     <button
                       onClick={() => setViewMode("list")}
-                      className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                      className={`cursor-pointer px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
                         viewMode === "list"
                           ? "bg-white text-sky-600 shadow-sm border border-sky-200"
                           : "text-slate-600 hover:text-slate-800"
@@ -440,7 +453,7 @@ export default function BrowsingHistoryPage() {
                     </button>
                     <button
                       onClick={() => setViewMode("grid")}
-                      className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                      className={`cursor-pointer px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
                         viewMode === "grid"
                           ? "bg-white text-sky-600 shadow-sm border border-sky-200"
                           : "text-slate-600 hover:text-slate-800"
@@ -535,7 +548,7 @@ export default function BrowsingHistoryPage() {
                   setPageSize(Number(e.target.value));
                   setPageNumber(0);
                 }}
-                className="text-gray-600 px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none"
+                className="cursor-pointer text-gray-600 px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none"
               >
                 <option value={6}>6</option>
                 <option value={12}>12</option>
@@ -596,7 +609,7 @@ export default function BrowsingHistoryPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-2">
                           <h3 className="font-semibold text-slate-800 truncate group-hover:text-sky-600 transition-colors">
-                            {getTypeName(item.type)} #{item.dataId}
+                            {getTypeName(item.type)} - {item.name}
                           </h3>
                           <div className="flex items-center gap-2">
                             <span
@@ -604,7 +617,7 @@ export default function BrowsingHistoryPage() {
                             >
                               {getTypeName(item.type)}
                             </span>
-                            <span
+                            {/* <span
                               className={`px-3 py-1 rounded-lg text-xs font-semibold ${
                                 item.statusName === "ACTIVE"
                                   ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
@@ -612,7 +625,7 @@ export default function BrowsingHistoryPage() {
                               } whitespace-nowrap`}
                             >
                               {item.statusName}
-                            </span>
+                            </span> */}
                           </div>
                         </div>
                         <p className="text-slate-600 text-sm">
@@ -671,7 +684,7 @@ export default function BrowsingHistoryPage() {
 
                   <div className="flex-1">
                     <h3 className="font-semibold text-slate-800 mb-2 group-hover:text-sky-600 line-clamp-1">
-                      {getTypeName(item.type)} #{item.dataId}
+                      {getTypeName(item.type)} - {item.name}
                     </h3>
 
                     <p className="text-slate-600 text-sm mb-3 line-clamp-2">
@@ -679,7 +692,7 @@ export default function BrowsingHistoryPage() {
                     </p>
 
                     <div className="flex items-center justify-between mt-4">
-                      <span
+                      {/* <span
                         className={`px-2 py-1 rounded text-xs font-semibold ${
                           item.statusName === "ACTIVE"
                             ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
@@ -687,7 +700,7 @@ export default function BrowsingHistoryPage() {
                         }`}
                       >
                         {item.statusName}
-                      </span>
+                      </span> */}
                       <svg
                         className="w-4 h-4 text-sky-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                         fill="none"
@@ -727,7 +740,7 @@ export default function BrowsingHistoryPage() {
               <button
                 onClick={() => handlePageChange(pageNumber - 1)}
                 disabled={pageNumber === 0}
-                className={`px-4 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 ${
+                className={`cursor-pointer px-4 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 ${
                   pageNumber === 0
                     ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                     : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-sky-300"
@@ -771,7 +784,7 @@ export default function BrowsingHistoryPage() {
                       <button
                         key={pageIndex}
                         onClick={() => handlePageChange(pageIndex)}
-                        className={`w-10 h-10 rounded-lg font-medium transition-all ${
+                        className={`cursor-pointer w-10 h-10 rounded-lg font-medium transition-all ${
                           pageNumber === pageIndex
                             ? "bg-sky-600 text-white shadow-sm"
                             : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-sky-300"
@@ -787,7 +800,7 @@ export default function BrowsingHistoryPage() {
               <button
                 onClick={() => handlePageChange(pageNumber + 1)}
                 disabled={pageNumber >= Math.ceil(totalCount / pageSize) - 1}
-                className={`px-4 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 ${
+                className={`cursor-pointer px-4 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 ${
                   pageNumber >= Math.ceil(totalCount / pageSize) - 1
                     ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                     : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-sky-300"

@@ -32,7 +32,7 @@ export interface DestinationWishItem {
   destinationName: string;
   destinationDescription: string;
   destinationLocation: string;
-  destinationCategory: string;
+  // destinationCategory: string;
   destinationImages: string[];
   destinationUrl: string;
   status: string;
@@ -43,7 +43,7 @@ export interface ActivityWishItem {
   activityId: number;
   activityName: string;
   activityDescription: string;
-  activitiesCategory: string;
+  // activitiesCategory: string;
   season: string;
   activityImages: string[];
   activityUrl: string;

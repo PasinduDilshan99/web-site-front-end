@@ -35,6 +35,7 @@ const PackageContent: React.FC<PackageContentProps> = ({
         await addBrowserHistory({
           type: PACKAGE_BROWSER_HISTORY_TYPE,
           dataId: pkg.packageId,
+          name: pkg.packageName,
         });
       } catch (err) {
         console.error("Failed to record browser history:", err);

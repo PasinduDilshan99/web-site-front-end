@@ -86,7 +86,6 @@ export interface TourReviewAPIResponse {
   timestamp: string;
 }
 
-
 export interface ActivityReview {
   reviewId: number;
   activityScheduleId: number;
@@ -224,9 +223,6 @@ export interface ReviewReaction {
   reactedByUsername: string;
 }
 
-
-
-
 // types/wallet.ts
 export interface WalletData {
   userId: number;
@@ -254,8 +250,9 @@ export interface WalletResponse {
 // types/history.ts
 export interface HistoryItem {
   id: number;
-  type: 'ACTIVITIES' | 'DESTINATIONS' | 'PACKAGE' | 'TOUR';
+  type: "ACTIVITIES" | "DESTINATIONS" | "PACKAGE" | "TOUR";
   dataId: number;
+  name: string;
   userId: number;
   createdAt: string;
   statusName: string;
@@ -275,9 +272,9 @@ export interface HistoryResponse {
 }
 
 export interface BrowsingHistoryRequest {
-  historyType?: 'ACTIVITIES' | 'DESTINATIONS' | 'PACKAGE' | 'TOUR';
+  historyType?: "ACTIVITIES" | "DESTINATIONS" | "PACKAGE" | "TOUR";
   from?: string; // ISO date string
-  to?: string;   // ISO date string
+  to?: string; // ISO date string
   noOfLastDays?: number;
   pageSize?: number;
   pageNumber?: number;
