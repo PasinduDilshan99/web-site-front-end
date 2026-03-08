@@ -354,11 +354,11 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
         </div>
 
         {/* CTA */}
-        <div className="flex justify-end mt-1">
+        <div className="flex mt-1">
           <Link
             href={`${SRI_LANKAN_TOUR_PAGE_PATH}/${tour.tourId}?name=${tour.tourName}`}
             onClick={handleMoreDetailsClick}
-            className="group inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-white flex-shrink-0 relative overflow-hidden"
+            className="w-full group inline-flex justify-center items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-white flex-shrink-0 relative overflow-hidden"
             style={{ background: "linear-gradient(135deg, #0B7EA8, #0E9E8E)" }}
           >
             {/* Shimmer sweep on hover */}
@@ -376,7 +376,7 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
               style={{ boxShadow: "0 0 0 3px rgba(14,158,142,0.3)" }}
             />
 
-            <span className="relative flex items-center gap-1.5 transition-transform duration-200 group-hover:-translate-y-px group-active:translate-y-0 group-active:scale-95">
+            <span className="relative flex content-center text-center justify-center items-center gap-1.5 transition-transform duration-200 group-hover:-translate-y-px group-active:translate-y-0 group-active:scale-95">
               More Details
               {/* Arrow slides right on hover */}
               <svg

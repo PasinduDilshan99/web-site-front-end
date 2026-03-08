@@ -372,7 +372,7 @@ export default function UnderConstructionPage({
             className="text-xs sm:text-sm mb-2"
             style={{ color: "rgba(167,243,208,0.4)" }}
           >
-            Questions? We're here to help
+            Questions? We&apos;re here to help
           </p>
           <a
             href={`mailto:${email}`}

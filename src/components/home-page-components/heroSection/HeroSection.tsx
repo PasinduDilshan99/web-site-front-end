@@ -3,6 +3,7 @@ import HeroSectionLoading from "@/components/loading-components/HeroSectionLoadi
 import { HeroSectionService } from "@/services/heroSectionService";
 import { HeroSlideData } from "@/types/hero-section-types";
 import React, { useState, useEffect } from "react";
+import HeroSectionError from "./HeroSectionError";
 
 const HeroSection = () => {
   const [loading, setLoading] = useState(true);
@@ -71,16 +72,20 @@ const HeroSection = () => {
     }
   };
 
-  // Get fallback image URL
-  const getFallbackImage = (index: number) => {
-    const fallbackImages = [
-      "1506905925346-21bea83d5653",
-      "1469474968028-56623f02e42e",
-      "1506197603052-3cc9c3a201bd",
+  // Get fallback gradient style
+  const getFallbackGradientStyle = (index: number) => {
+    // Array of beautiful sea blue and green gradients
+    const gradients = [
+      "linear-gradient(135deg, #006994 0%, #2E8B57 100%)", // Deep sea blue to sea green
+      "linear-gradient(135deg, #1E4D6E 0%, #3CB371 100%)", // Ocean blue to medium sea green
+      "linear-gradient(135deg, #0A4D68 0%, #50C878 100%)", // Dark cyan to emerald green
+      "linear-gradient(135deg, #2C5F8A 0%, #4AA3A2 100%)", // Steel blue to teal
+      "linear-gradient(135deg, #1A5F7A 0%, #159895 100%)", // Deep ocean to turquoise
+      "linear-gradient(135deg, #0B4F6C 0%, #20B2AA 100%)", // Dark blue to light sea green
     ];
-    return `https://images.unsplash.com/photo-${
-      fallbackImages[index % fallbackImages.length]
-    }?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80`;
+
+    // Use index to cycle through gradients, or default to first if index out of bounds
+    return gradients[index % gradients.length];
   };
 
   // Loading state
@@ -89,52 +94,13 @@ const HeroSection = () => {
   }
   // Error state
   if (error || heroData.length === 0) {
-    return (
-      <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-gray-900 to-teal-950 flex items-center justify-center">
-        {/* Animated wave effect in background */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-teal-500/20 to-transparent animate-pulse"></div>
-          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-cyan-500/20 to-transparent animate-pulse [animation-delay:1s]"></div>
-        </div>
-
-        <div className="text-center text-white relative z-10 p-8 rounded-2xl bg-gray-900/50 backdrop-blur-sm border border-teal-500/30 shadow-2xl shadow-teal-500/10">
-          <div className="mb-6">
-            {/* Ocean wave icon */}
-            <svg
-              className="w-16 h-16 mx-auto text-teal-400 mb-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M20 12.5c-1.5 0-2.5-1-4-1s-2.5 1-4 1-2.5-1-4-1-2.5 1-4 1-2.5-1-4-1M20 16.5c-1.5 0-2.5-1-4-1s-2.5 1-4 1-2.5-1-4-1-2.5 1-4 1-2.5-1-4-1"
-              />
-            </svg>
-            <p className="text-xl text-teal-300 mb-2 font-light">
-              {error || "No sea treasures found"}
-            </p>
-            <p className="text-sm text-cyan-300/70 mb-6">
-              The ocean depths are quiet...
-            </p>
-          </div>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-8 py-3 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-full hover:from-teal-500 hover:to-cyan-500 transition-all duration-300 shadow-lg shadow-teal-600/30 hover:shadow-xl hover:shadow-teal-600/40 transform hover:scale-105 font-medium"
-          >
-            Dive Again
-          </button>
-        </div>
-      </div>
-    );
+    return <HeroSectionError />;
   }
 
   const currentSlideData = heroData[currentSlide];
 
   return (
-    <div className="relative w-full h-[700] overflow-hidden bg-gray-900">
+    <div className="relative w-full h-[600] lg:h-[700] overflow-hidden bg-gray-900">
       {/* Image Slider */}
       <div className="relative w-full h-full">
         {heroData.map((item, index) => (
@@ -147,16 +113,13 @@ const HeroSection = () => {
             <div
               className="w-full h-full bg-cover bg-center bg-no-repeat"
               style={{
-                backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('${
-                  item.imageUrl || getFallbackImage(index)
-                }')`,
+                backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('${item.imageUrl}')`,
               }}
               onError={(e) => {
-                // Fallback to placeholder image if original fails
+                // Fallback to sea blue-green gradient if image fails
                 const target = e.target as HTMLDivElement;
-                target.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('${getFallbackImage(
-                  index,
-                )}')`;
+                target.style.backgroundImage = "none";
+                target.style.background = getFallbackGradientStyle(index);
               }}
             />
           </div>
@@ -166,13 +129,13 @@ const HeroSection = () => {
       {/* Content Overlay */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="text-center text-white px-6 max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+          <h1 className="text-3xl md:text-5xl font-bold mb-6 leading-tight">
             {currentSlideData.imageTitle}
             <span className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl block bg-gradient-to-r from-cyan-400 to-emerald-500 bg-clip-text text-transparent">
               {currentSlideData.imageSubTitle}
             </span>
           </h1>
-          <p className="text-xl md:text-2xl mb-8 text-gray-200 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-md md:text-xl lg:text-2xl mb-8 text-gray-200 max-w-2xl mx-auto leading-relaxed">
             {currentSlideData.imageDescription ||
               "Discover amazing experiences with us"}
           </p>
@@ -182,7 +145,7 @@ const HeroSection = () => {
                 onClick={() =>
                   handleButtonClick(currentSlideData.imagePrimaryButtonLink)
                 }
-                className="px-8 py-4 bg-gradient-to-r from-blue-600 to-emerald-500 text-white font-semibold rounded-full hover:from-cyan-600 hover:to-emerald-600 transform hover:scale-105 transition-all duration-300 shadow-lg"
+                className="cursor-pointer px-8 py-4 bg-gradient-to-r from-blue-600 to-emerald-500 text-white font-semibold rounded-full hover:from-cyan-600 hover:to-emerald-600 transform hover:scale-105 transition-all duration-300 shadow-lg"
               >
                 {currentSlideData.imagePrimaryButtonText}
               </button>
@@ -192,7 +155,7 @@ const HeroSection = () => {
                 onClick={() =>
                   handleButtonClick(currentSlideData.imageSecondaryButtonLink)
                 }
-                className="px-8 py-4 border-2 border-cyan-300 text-white font-semibold rounded-full hover:bg-cyan-500 hover:border-cyan-500 hover:text-white transition-all duration-300"
+                className="cursor-pointer px-8 py-4 border-2 border-cyan-300 text-white font-semibold rounded-full hover:bg-cyan-500 hover:border-cyan-500 hover:text-white transition-all duration-300"
               >
                 {currentSlideData.imageSecondaryButtonText}
               </button>
@@ -206,7 +169,7 @@ const HeroSection = () => {
         <div className="hidden md:flex">
           <button
             onClick={prevSlide}
-            className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/30 transition-all duration-300 group"
+            className="cursor-pointer absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/30 transition-all duration-300 group"
           >
             <svg
               className="w-6 h-6 group-hover:scale-110 transition-transform duration-200"
@@ -225,7 +188,7 @@ const HeroSection = () => {
 
           <button
             onClick={nextSlide}
-            className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/30 transition-all duration-300 group"
+            className="cursor-pointer absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/30 transition-all duration-300 group"
           >
             <svg
               className="w-6 h-6 group-hover:scale-110 transition-transform duration-200"
@@ -251,7 +214,7 @@ const HeroSection = () => {
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              className={`cursor-pointer w-3 h-3 rounded-full transition-all duration-300 ${
                 index === currentSlide
                   ? "bg-white scale-125"
                   : "bg-white/50 hover:bg-white/75"

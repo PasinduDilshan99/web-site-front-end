@@ -71,6 +71,7 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
 
   // Sea green and sea blue theme classes
   const smoothTransitionClasses = `
+  cursor-pointer
     bg-gradient-to-r ${gradientFrom} ${gradientTo}
     text-white font-semibold rounded-full
     relative overflow-hidden
@@ -96,7 +97,7 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
     .trim();
 
   return (
-    <div className="pt-8 md:pt-10 lg:pt-12 xl:pt-14">
+    <div className=" pt-8 md:pt-10 lg:pt-12 xl:pt-14">
       <button
         type={type}
         onClick={onClick}
