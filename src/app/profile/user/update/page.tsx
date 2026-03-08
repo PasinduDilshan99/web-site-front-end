@@ -10,6 +10,7 @@ import PasswordValidationModal from "@/components/user-profile-components/Passwo
 import Image from "next/image";
 import UpdateUserProfileLoading from "@/components/user-profile-components/Loadings/UpdateUserProfileLoading";
 import { OtherService } from "@/services/otherService";
+import { SECRET_QUESTIONS_CHANGE_PAGE_PATH, USER_PROFILE_USER_PAGE_PATH } from "@/utils/urls";
 
 const UserProfileUpdatePage = () => {
   const router = useRouter();
@@ -214,7 +215,7 @@ const UserProfileUpdatePage = () => {
   };
 
   const handleCancel = () => {
-    router.push("/profile/user");
+    router.push(USER_PROFILE_USER_PAGE_PATH);
   };
 
   const handleUpdateSecretQuestions = () => {
@@ -223,7 +224,7 @@ const UserProfileUpdatePage = () => {
 
   const handlePasswordValidationSuccess = () => {
     setShowPasswordModal(false);
-    router.push("/profile/user/update/secret-questions");
+    router.push(SECRET_QUESTIONS_CHANGE_PAGE_PATH);
   };
 
   if (loading) {
@@ -855,14 +856,14 @@ const UserProfileUpdatePage = () => {
                 type="button"
                 onClick={handleCancel}
                 disabled={saving}
-                className="px-6 py-2 border border-sky-300 text-sky-700 rounded-lg hover:bg-sky-50 disabled:opacity-50 transition-all duration-200"
+                className="cursor-pointer px-6 py-2 border border-sky-300 text-sky-700 rounded-lg hover:bg-sky-50 disabled:opacity-50 transition-all duration-200"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={saving}
-                className="px-6 py-2 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:from-sky-700 hover:to-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-md"
+                className="cursor-pointer px-6 py-2 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:from-sky-700 hover:to-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-md"
               >
                 {saving ? (
                   <span className="flex items-center">
@@ -908,7 +909,7 @@ const UserProfileUpdatePage = () => {
             </div>
             <button
               onClick={handleUpdateSecretQuestions}
-              className="px-4 py-2 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:from-sky-700 hover:to-teal-700 transition-all duration-300 shadow-md flex items-center justify-center"
+              className="cursor-pointer px-4 py-2 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:from-sky-700 hover:to-teal-700 transition-all duration-300 shadow-md flex items-center justify-center"
             >
               <svg
                 className="w-4 h-4 mr-2"

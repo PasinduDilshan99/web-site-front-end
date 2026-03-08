@@ -101,13 +101,7 @@ const Footer = () => {
   }
 
   if (error || !footerData) {
-    return (
-      <footer className="bg-gradient-to-b from-slate-900 to-gray-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
-          <p className="text-red-400">Failed to load footer data</p>
-        </div>
-      </footer>
-    );
+    return;
   }
 
   return (

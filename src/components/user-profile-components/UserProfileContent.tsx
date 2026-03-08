@@ -7,6 +7,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import UserDetailsLoading from "./UserDetailsLoading";
+import {
+  LOGIN_PAGE_PATH,
+  PASSWORD_CHANGE_PAGE_PATH,
+  USER_PROFILE_UPDATE_PAGE_PATH,
+} from "@/utils/urls";
 
 interface UserProfileContentProps {
   profileData?: UserProfileResponse;
@@ -43,7 +48,7 @@ export default function UserProfileContent({
   };
 
   if (!uniqueCode) {
-    router.push("/login");
+    router.push(LOGIN_PAGE_PATH);
   }
 
   if (loading) {
@@ -344,7 +349,7 @@ export default function UserProfileContent({
             </div>
 
             {/* Benefits & Stats */}
-            <div className="bg-gradient-to-br from-sky-50 to-white rounded-2xl shadow-lg border border-sky-200 p-6">
+            {/* <div className="bg-gradient-to-br from-sky-50 to-white rounded-2xl shadow-lg border border-sky-200 p-6">
               <SectionHeader title="Benefits" icon="💰" />
 
               <div className="space-y-6">
@@ -378,7 +383,7 @@ export default function UserProfileContent({
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Account Status */}
             <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
@@ -435,7 +440,7 @@ export default function UserProfileContent({
               </h3>
               <div className="space-y-3">
                 <Link
-                  href="/profile/user/update"
+                  href={USER_PROFILE_UPDATE_PAGE_PATH}
                   className="block w-full px-4 py-3 bg-white text-sky-700 rounded-lg border border-sky-200 hover:bg-sky-50 hover:border-sky-300 transition-all duration-200 text-sm font-medium flex items-center justify-center"
                 >
                   <svg
@@ -454,7 +459,7 @@ export default function UserProfileContent({
                   Update Profile
                 </Link>
                 <Link
-                  href="/password-change"
+                  href={PASSWORD_CHANGE_PAGE_PATH}
                   className="w-full px-4 py-3 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:shadow-lg transition-all duration-200 text-sm font-medium flex items-center justify-center"
                 >
                   <svg

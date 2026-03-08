@@ -225,7 +225,7 @@ const SecretQuestionUpdatePage = () => {
               </span>
               <button
                 onClick={handleCancel}
-                className="px-4 py-2 border border-sky-300 text-sky-700 rounded-lg hover:bg-sky-50 transition-colors"
+                className="cursor-pointer px-4 py-2 border border-sky-300 text-sky-700 rounded-lg hover:bg-sky-50 transition-colors"
               >
                 Back
               </button>
@@ -328,7 +328,7 @@ const SecretQuestionUpdatePage = () => {
                     <button
                       type="button"
                       onClick={() => handleRemoveQuestion(index)}
-                      className="text-red-500 hover:text-red-700"
+                      className="cursor-pointer text-red-500 hover:text-red-700"
                     >
                       <svg
                         className="w-5 h-5"
@@ -438,7 +438,7 @@ const SecretQuestionUpdatePage = () => {
                       !newQuestionId ||
                       !newAnswer.trim()
                     }
-                    className="w-full px-4 py-2 bg-gradient-to-r from-sky-500 to-teal-500 text-white rounded-lg hover:from-sky-600 hover:to-teal-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
+                    className="cursor-pointer w-full px-4 py-2 bg-gradient-to-r from-sky-500 to-teal-500 text-white rounded-lg hover:from-sky-600 hover:to-teal-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
                   >
                     Add Question
                   </button>
@@ -497,7 +497,7 @@ const SecretQuestionUpdatePage = () => {
               <button
                 type="button"
                 onClick={handleCancel}
-                className="px-6 py-2 border border-sky-300 text-sky-700 rounded-lg hover:bg-sky-50 disabled:opacity-50 transition-colors"
+                className="cursor-pointer px-6 py-2 border border-sky-300 text-sky-700 rounded-lg hover:bg-sky-50 disabled:opacity-50 transition-colors"
                 disabled={saving}
               >
                 Cancel
@@ -505,7 +505,7 @@ const SecretQuestionUpdatePage = () => {
               <button
                 type="submit"
                 disabled={saving || questions.length !== 3}
-                className={`px-6 py-2 rounded-lg font-medium transition-all duration-300 ${
+                className={`cursor-pointer px-6 py-2 rounded-lg font-medium transition-all duration-300 ${
                   saving || questions.length !== 3
                     ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                     : "bg-gradient-to-r from-sky-500 to-teal-500 text-white hover:from-sky-600 hover:to-teal-600 shadow-sm hover:shadow-md"

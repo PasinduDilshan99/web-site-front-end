@@ -8,6 +8,7 @@ import ToursGrid from "@/components/sri-lankan-tours-components/ToursGrid";
 import { useRouter } from "next/navigation";
 import { TourService } from "@/services/tourService"; // Import service
 import BasicCycleLoading from "@/components/common-components/basic-loading/BasicCycleLoading";
+import { SRI_LANKAN_TOUR_PAGE_PATH } from "@/utils/urls";
 
 const ActiveToursHomeGrid = () => {
   const [loading, setLoading] = useState(true);
@@ -17,7 +18,7 @@ const ActiveToursHomeGrid = () => {
   const router = useRouter();
 
   const handleMoreToursClick = () => {
-    router.push("/sri-lankan-tours");
+    router.push(SRI_LANKAN_TOUR_PAGE_PATH);
   };
 
   // Update display count based on screen size

@@ -155,7 +155,7 @@ const PasswordValidationModal: React.FC<PasswordValidationModalProps> = ({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex-1 px-4 py-3 border border-sky-300 text-sky-700 rounded-lg hover:bg-sky-50 transition-colors duration-200 font-medium"
+                  className="cursor-pointer flex-1 px-4 py-3 border border-sky-300 text-sky-700 rounded-lg hover:bg-sky-50 transition-colors duration-200 font-medium"
                   disabled={loading}
                 >
                   Cancel
@@ -163,7 +163,7 @@ const PasswordValidationModal: React.FC<PasswordValidationModalProps> = ({
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 px-4 py-3 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:shadow-lg hover:shadow-sky-200 transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="cursor-pointer flex-1 px-4 py-3 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:shadow-lg hover:shadow-sky-200 transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <span className="flex items-center justify-center">

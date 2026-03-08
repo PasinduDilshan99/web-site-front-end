@@ -29,6 +29,7 @@ export interface UserDetails {
   username: string;
   firstName: string;
   lastName: string;
+  createdAt: Date;
   benefitsPointsCount: number;
 }
 

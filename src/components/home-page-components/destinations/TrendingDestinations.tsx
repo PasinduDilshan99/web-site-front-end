@@ -10,6 +10,7 @@ import {
   PLACE_HOLDER_IMAGE,
 } from "@/utils/constant";
 import { useRouter } from "next/navigation";
+import { DESTINATIONS_PAGE_PATH } from "@/utils/urls";
 // Destination Image Component with Error Handling
 const DestinationImage = React.memo(
   ({
@@ -177,7 +178,7 @@ const TrendingDestinations = () => {
     destinationId: number,
     destinationName: string,
   ) => {
-    window.location.href = `/destinations/${destinationId}?name=${encodeURIComponent(
+    window.location.href = `${DESTINATIONS_PAGE_PATH}/${destinationId}?name=${encodeURIComponent(
       destinationName,
     )}`;
   };
