@@ -21,6 +21,7 @@ import {
 import { TourService } from "@/services/tourService";
 import ToursLoading from "@/components/sri-lankan-tours-components/ToursLoading";
 import { useCommon } from "@/context/CommonContext";
+import SLTourDetailsLoadingError from "@/components/sri-lankan-tours-components/SLTourDetailsLoadingError";
 
 // Utility functions for URL params management
 const filtersToUrlParams = (
@@ -126,40 +127,51 @@ const SriLankanTourPageContent: React.FC = () => {
   useEffect(() => {
     if (categories) {
       // Extract tour type names
-      const typeNames = categories.tourTypeList.map(type => type.tourTypeName);
+      const typeNames = categories.tourTypeList.map(
+        (type) => type.tourTypeName,
+      );
       setTourTypes(typeNames);
 
       // Extract tour category names
-      const categoryNames = categories.tourCategoryList.map(cat => cat.tourCategoryName);
+      const categoryNames = categories.tourCategoryList.map(
+        (cat) => cat.tourCategoryName,
+      );
       setTourCategories(categoryNames);
     }
   }, [categories]);
 
   // Build search request from filters
-  const buildSearchRequest = useCallback((
-    filterValues: TourFilters,
-    page: number,
-    pageSize: number
-  ): TourSearchRequest => {
-    return {
-      name: filterValues.search || null,
-      minPrice: filterValues.priceRange[0] > 0 ? filterValues.priceRange[0] : null,
-      maxPrice: filterValues.priceRange[1] < 5000 ? filterValues.priceRange[1] : null,
-      duration: filterValues.duration ? parseInt(filterValues.duration) : null,
-      tourType: filterValues.tourType || null,
-      tourCategory: filterValues.tourCategory || null,
-      season: filterValues.season || null,
-      location: filterValues.location || null,
-      pageNumber: page,
-      pageSize: pageSize,
-    };
-  }, []);
+  const buildSearchRequest = useCallback(
+    (
+      filterValues: TourFilters,
+      page: number,
+      pageSize: number,
+    ): TourSearchRequest => {
+      return {
+        name: filterValues.search || null,
+        minPrice:
+          filterValues.priceRange[0] > 0 ? filterValues.priceRange[0] : null,
+        maxPrice:
+          filterValues.priceRange[1] < 5000 ? filterValues.priceRange[1] : null,
+        duration: filterValues.duration
+          ? parseInt(filterValues.duration)
+          : null,
+        tourType: filterValues.tourType || null,
+        tourCategory: filterValues.tourCategory || null,
+        season: filterValues.season || null,
+        location: filterValues.location || null,
+        pageNumber: page,
+        pageSize: pageSize,
+      };
+    },
+    [],
+  );
 
   // Fetch other filter options (seasons, locations, durations)
   const fetchFilterOptions = useCallback(async (): Promise<void> => {
     try {
       const options = await TourService.getFilterOptions();
-      
+
       setSeasons(options.seasons);
       setLocations(options.locations);
       setDurations(options.durations);
@@ -225,7 +237,7 @@ const SriLankanTourPageContent: React.FC = () => {
         setLoading(true);
         await fetchFilterOptions();
         await fetchToursWithFilters(filters, currentPage, itemsPerPage);
-        
+
         // Uncomment these if needed
         // await fetchReviews();
         // await fetchTourHistory();
@@ -324,19 +336,10 @@ const SriLankanTourPageContent: React.FC = () => {
 
   if (error) {
     return (
-      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <ErrorState
-            title="Failed to Load tours"
-            message={error}
-            icon="alert"
-            variant="error"
-            size="md"
-            actionLabel="Try Again"
-            onAction={handleRetry}
-          />
-        </div>
-      </section>
+      <SLTourDetailsLoadingError
+        onRetry={handleRetry}
+        message="Couldn't load the Sri Lanka tour information."
+      />
     );
   }
 

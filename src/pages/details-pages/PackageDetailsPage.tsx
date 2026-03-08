@@ -32,10 +32,9 @@ import PackageDetailsLoading from "@/components/packages-components/PackageDetai
 import { TourDetails } from "@/types/tour-types";
 import PackageDetailsLoadingError from "@/components/packages-components/PackageDetailsLoadingError";
 
-
 const PackageDetailsPage = () => {
   const params = useParams();
-  const packageId = params?.packageId || "1";
+  const packageId = (params?.packageId as string) || 1;
   const [packageData, setPackageData] = useState<ActivePackagesType | null>(
     null,
   );
@@ -76,7 +75,7 @@ const PackageDetailsPage = () => {
 
       // USING THE SERVICE INSTEAD OF DIRECT FETCH
       const { data: fetchedPackage, error: packageError } =
-        await PackageService.fetchPackageAllDetails(packageId[0]);
+        await PackageService.fetchPackageAllDetails(packageId);
 
       if (packageError) {
         throw new Error(packageError);

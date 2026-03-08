@@ -1,5 +1,6 @@
 // components/TourDetails.tsx
-import React from "react";
+"use client";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { addBrowserHistory } from "@/services/browserHistoryService";
@@ -11,6 +12,158 @@ interface TourDetailsProps {
   tour: ActiveToursType;
 }
 
+// ── Reusable animated tag group ──────────────────────────────────────────────
+interface TagGroupProps {
+  items: { id?: number; name: string }[];
+  colorScheme: "teal" | "green";
+  maxVisible?: number;
+}
+
+const TagGroup: React.FC<TagGroupProps> = ({
+  items,
+  colorScheme,
+  maxVisible = 3,
+}) => {
+  const [expanded, setExpanded] = useState(false);
+  const overflowRef = useRef<HTMLDivElement>(null);
+  const [overflowHeight, setOverflowHeight] = useState(0);
+
+  const hidden = items.slice(maxVisible);
+  const visible = items.slice(0, maxVisible);
+  const hasMore = hidden.length > 0;
+
+  // Measure the overflow area whenever it mounts / items change
+  useEffect(() => {
+    if (overflowRef.current) {
+      setOverflowHeight(overflowRef.current.scrollHeight);
+    }
+  }, [items]);
+
+  const tealStyle = {
+    background:
+      "linear-gradient(135deg, rgba(11,126,168,0.08), rgba(14,158,142,0.08))",
+    borderColor: "#40E0D0",
+    color: "#095f82",
+  };
+
+  const greenStyle = {
+    background:
+      "linear-gradient(135deg, rgba(34,139,34,0.08), rgba(60,179,113,0.08))",
+    borderColor: "#228B22",
+    color: "#006400",
+  };
+
+  const tagStyle = colorScheme === "teal" ? tealStyle : greenStyle;
+
+  const moreButtonStyle =
+    colorScheme === "teal"
+      ? {
+          background:
+            "linear-gradient(135deg, rgba(11,126,168,0.12), rgba(14,158,142,0.12))",
+          borderColor: "#40E0D0",
+          color: "#095f82",
+        }
+      : {
+          background:
+            "linear-gradient(135deg, rgba(34,139,34,0.12), rgba(60,179,113,0.12))",
+          borderColor: "#228B22",
+          color: "#006400",
+        };
+
+  if (!items || items.length === 0) {
+    return (
+      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-500 border border-gray-200">
+        General
+      </span>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-1.5">
+      {/* Always-visible tags */}
+      <div className="flex gap-1.5 flex-wrap">
+        {visible.map((item, index) => (
+          <span
+            key={item.id ?? index}
+            className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border transition-all duration-200"
+            style={tagStyle}
+          >
+            {item.name}
+          </span>
+        ))}
+
+        {hasMore && (
+          <button
+            onClick={() => setExpanded((prev) => !prev)}
+            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold border cursor-pointer transition-all duration-200 hover:shadow-sm active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+            style={moreButtonStyle}
+            aria-expanded={expanded}
+            aria-label={
+              expanded ? "Show fewer tags" : `Show ${hidden.length} more tags`
+            }
+          >
+            {expanded ? (
+              <>
+                <svg
+                  className="w-3 h-3 transition-transform duration-200"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2.5}
+                    d="M5 15l7-7 7 7"
+                  />
+                </svg>
+                Less
+              </>
+            ) : (
+              <>+{hidden.length} more</>
+            )}
+          </button>
+        )}
+      </div>
+
+      {/* Animated overflow tags */}
+      {hasMore && (
+        <div
+          ref={overflowRef}
+          className="flex gap-1.5 flex-wrap overflow-hidden"
+          style={{
+            maxHeight: expanded ? overflowHeight + 8 : 0,
+            opacity: expanded ? 1 : 0,
+            transition:
+              "max-height 320ms cubic-bezier(0.4,0,0.2,1), opacity 240ms ease",
+            // small top padding only when open, to avoid flash
+            paddingTop: expanded ? 2 : 0,
+          }}
+          aria-hidden={!expanded}
+        >
+          {hidden.map((item, index) => (
+            <span
+              key={item.id ?? index + maxVisible}
+              className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border"
+              style={{
+                ...tagStyle,
+                // stagger reveal
+                transitionDelay: expanded ? `${index * 30}ms` : "0ms",
+                transform: expanded ? "translateY(0)" : "translateY(-4px)",
+                transition: "transform 200ms ease, opacity 200ms ease",
+                opacity: expanded ? 1 : 0,
+              }}
+            >
+              {item.name}
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ── Main component ────────────────────────────────────────────────────────────
 const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
   const { user } = useAuth();
 
@@ -37,6 +190,17 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
 
   const { days, nights } = formatDuration(tour.duration);
 
+  // Normalise to the shape TagGroup expects
+  const typeItems = (tour.tourTypeDtos ?? []).map((t) => ({
+    id: t.tourTypeId,
+    name: t.tourTypeName,
+  }));
+
+  const categoryItems = (tour.tourCategoryDto ?? []).map((c) => ({
+    id: c.tourCategoryId,
+    name: c.tourCategoryName,
+  }));
+
   return (
     <div className="p-4 sm:p-5 md:p-6 flex-1 flex flex-col gap-3 sm:gap-4">
       {/* ── Tour Name ── */}
@@ -49,7 +213,6 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
 
       {/* ── Duration Badge ── */}
       <div className="inline-flex items-stretch rounded-xl overflow-hidden border border-[#b3e0f2] shadow-sm text-xs font-semibold tracking-wide self-start">
-        {/* Days */}
         <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0B7EA8] text-white">
           <svg
             className="w-3.5 h-3.5 opacity-90"
@@ -66,7 +229,6 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
           <span className="font-normal opacity-80">Days</span>
         </div>
         <div className="w-px bg-white/30" />
-        {/* Nights */}
         <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0E9E8E] text-white">
           <svg
             className="w-3.5 h-3.5 opacity-90"
@@ -82,7 +244,6 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
 
       {/* ── Locations ── */}
       <div className="flex flex-col gap-1.5">
-        {/* Start */}
         <div className="flex items-center gap-2 text-sm text-gray-600">
           <span
             className="inline-flex w-5 h-5 rounded-full items-center justify-center flex-shrink-0"
@@ -110,8 +271,6 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
             </span>
           </span>
         </div>
-
-        {/* Connector line */}
         <div className="flex items-center gap-2 ml-2.5">
           <div
             className="w-px h-3 ml-[7px] rounded-full"
@@ -120,8 +279,6 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
             }}
           />
         </div>
-
-        {/* End */}
         <div className="flex items-center gap-2 text-sm text-gray-600">
           <span
             className="inline-flex w-5 h-5 rounded-full items-center justify-center flex-shrink-0"
@@ -156,54 +313,88 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
         {tour.tourDescription}
       </p>
 
-      {/* ── Footer: Tour Types + CTA ── */}
-      <div className="flex items-center justify-between pt-3 border-t border-gray-100 gap-2 flex-wrap">
-        {/* Tour Type Badges */}
-        <div className="flex gap-1.5 flex-wrap">
-          {tour.tourTypeDtos && tour.tourTypeDtos.length > 0 ? (
-            tour.tourTypeDtos.map((type, index) => (
-              <span
-                key={type.tourTypeId || index}
-                className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border"
-                style={{
-                  background:
-                    "linear-gradient(135deg, rgba(11,126,168,0.08), rgba(14,158,142,0.08))",
-                  borderColor: "#b3e0f2",
-                  color: "#095f82",
-                }}
-              >
-                {type.tourTypeName}
-              </span>
-            ))
-          ) : (
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-500 border border-gray-200">
-              General
+      {/* ── Footer: Tags + CTA ── */}
+      <div className="pt-3 border-t border-gray-100 flex flex-col gap-2">
+        {/* Tour Types */}
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center gap-1.5">
+            <span
+              className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-widest"
+              style={{ color: "#0B7EA8" }}
+            >
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+              </svg>
+              Tour Types
             </span>
-          )}
+            <div className="flex-1 h-px bg-gradient-to-r from-[#40E0D0]/30 to-transparent" />
+          </div>
+          <TagGroup items={typeItems} colorScheme="teal" maxVisible={3} />
         </div>
 
-        {/* More Details CTA */}
-        <Link
-          href={`${SRI_LANKAN_TOUR_PAGE_PATH}/${tour.tourId}?name=${tour.tourName}`}
-          onClick={handleMoreDetailsClick}
-          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-px active:scale-95 flex-shrink-0"
-          style={{ background: "linear-gradient(135deg, #0B7EA8, #0E9E8E)" }}
-        >
-          More Details
-          <svg
-            className="w-3.5 h-3.5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+        {/* Tour Categories */}
+        <div className="flex flex-col gap-1.5 mt-1">
+          <div className="flex items-center gap-1.5">
+            <span
+              className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-widest"
+              style={{ color: "#228B22" }}
+            >
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fillRule="evenodd"
+                  d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              Tour Categories
+            </span>
+            <div className="flex-1 h-px bg-gradient-to-r from-[#228B22]/30 to-transparent" />
+          </div>
+          <TagGroup items={categoryItems} colorScheme="green" maxVisible={3} />
+        </div>
+
+        {/* CTA */}
+        <div className="flex justify-end mt-1">
+          <Link
+            href={`${SRI_LANKAN_TOUR_PAGE_PATH}/${tour.tourId}?name=${tour.tourName}`}
+            onClick={handleMoreDetailsClick}
+            className="group inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-white flex-shrink-0 relative overflow-hidden"
+            style={{ background: "linear-gradient(135deg, #0B7EA8, #0E9E8E)" }}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2.5}
-              d="M9 5l7 7-7 7"
+            {/* Shimmer sweep on hover */}
+            <span
+              className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"
+              style={{
+                background:
+                  "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)",
+              }}
             />
-          </svg>
-        </Link>
+
+            {/* Shadow pulse ring */}
+            <span
+              className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              style={{ boxShadow: "0 0 0 3px rgba(14,158,142,0.3)" }}
+            />
+
+            <span className="relative flex items-center gap-1.5 transition-transform duration-200 group-hover:-translate-y-px group-active:translate-y-0 group-active:scale-95">
+              More Details
+              {/* Arrow slides right on hover */}
+              <svg
+                className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2.5}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </span>
+          </Link>
+        </div>
       </div>
     </div>
   );

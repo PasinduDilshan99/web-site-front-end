@@ -7,9 +7,9 @@ interface VehicleSpecificationHeroSectionProps {
   vehicleSpec: VehicleSpecificationDetails;
 }
 
-const VehicleSpecificationHeroSection: React.FC<VehicleSpecificationHeroSectionProps> = ({
-  vehicleSpec,
-}) => {
+const VehicleSpecificationHeroSection: React.FC<
+  VehicleSpecificationHeroSectionProps
+> = ({ vehicleSpec }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
@@ -39,7 +39,8 @@ const VehicleSpecificationHeroSection: React.FC<VehicleSpecificationHeroSectionP
 
   const prevSlide = () => {
     setSelectedImageIndex(
-      (prev) => (prev - 1 + vehicleSpec.images.length) % vehicleSpec.images.length,
+      (prev) =>
+        (prev - 1 + vehicleSpec.images.length) % vehicleSpec.images.length,
     );
     setIsAutoPlaying(false);
     setTimeout(() => setIsAutoPlaying(true), 10000);
@@ -75,8 +76,18 @@ const VehicleSpecificationHeroSection: React.FC<VehicleSpecificationHeroSectionP
         {vehicleSpec.year}
       </span>
       <span className="px-4 py-2 bg-cyan-500/90 backdrop-blur-sm rounded-full text-sm font-semibold text-white flex items-center gap-2">
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
         </svg>
         ${vehicleSpec.price.toLocaleString()}
       </span>
@@ -94,11 +105,15 @@ const VehicleSpecificationHeroSection: React.FC<VehicleSpecificationHeroSectionP
     <div className="grid grid-cols-2 gap-2 sm:hidden mt-4">
       <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2 text-center">
         <p className="text-xs text-teal-200">Horsepower</p>
-        <p className="text-sm font-bold text-white">{vehicleSpec.horsepowerHp} HP</p>
+        <p className="text-sm font-bold text-white">
+          {vehicleSpec.horsepowerHp} HP
+        </p>
       </div>
       <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2 text-center">
         <p className="text-xs text-cyan-200">0-100 km/h</p>
-        <p className="text-sm font-bold text-white">{vehicleSpec.acceleration0To100}s</p>
+        <p className="text-sm font-bold text-white">
+          {vehicleSpec.acceleration0To100}s
+        </p>
       </div>
     </div>
   );
@@ -108,8 +123,12 @@ const VehicleSpecificationHeroSection: React.FC<VehicleSpecificationHeroSectionP
       <div className="relative h-64 sm:h-96 lg:h-[500px] bg-gradient-to-br from-teal-900 via-cyan-900 to-blue-900 flex items-center justify-center">
         <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 text-white bg-gradient-to-t from-black/60 to-transparent">
           <div className="max-w-7xl mx-auto text-center">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">{fullVehicleName}</h1>
-            <p className="text-base sm:text-lg opacity-90">{vehicleSpec.bodyType}</p>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">
+              {fullVehicleName}
+            </h1>
+            <p className="text-base sm:text-lg opacity-90">
+              {vehicleSpec.bodyType}
+            </p>
           </div>
         </div>
       </div>
@@ -161,8 +180,8 @@ const VehicleSpecificationHeroSection: React.FC<VehicleSpecificationHeroSectionP
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-6xl text-white text-center">
               {/* Badges - Responsive */}
-              <MobileBadges />
-              <DesktopBadges />
+              {/* <MobileBadges />
+              <DesktopBadges /> */}
 
               {/* Vehicle Title - Responsive font sizes */}
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 sm:mb-6 leading-tight px-2">
@@ -172,30 +191,68 @@ const VehicleSpecificationHeroSection: React.FC<VehicleSpecificationHeroSectionP
               {/* Description Container */}
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 sm:p-6 lg:p-8 mx-auto max-w-4xl">
                 <p className="text-sm sm:text-base lg:text-lg xl:text-xl text-gray-100 leading-relaxed mb-4 sm:mb-6">
-                  {vehicleSpec.engineType} • {vehicleSpec.engineCapacity || "N/A"} • {vehicleSpec.drivetrain}
+                  {vehicleSpec.engineType} •{" "}
+                  {vehicleSpec.engineCapacity || "N/A"} •{" "}
+                  {vehicleSpec.drivetrain}
                 </p>
 
                 {/* Quick Specs - Hidden on mobile (shown in separate component) */}
                 <div className="hidden sm:flex flex-wrap gap-3 lg:gap-4 justify-center text-xs lg:text-sm">
                   <div className="flex items-center gap-1 lg:gap-2 px-3 lg:px-4 py-1.5 lg:py-2 bg-teal-500/20 rounded-full">
-                    <svg className="w-4 h-4 lg:w-5 lg:h-5 text-teal-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    <svg
+                      className="w-4 h-4 lg:w-5 lg:h-5 text-teal-300"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M13 10V3L4 14h7v7l9-11h-7z"
+                      />
                     </svg>
-                    <span className="font-medium">{vehicleSpec.horsepowerHp} HP</span>
+                    <span className="font-medium">
+                      {vehicleSpec.horsepowerHp} HP
+                    </span>
                   </div>
 
                   <div className="flex items-center gap-1 lg:gap-2 px-3 lg:px-4 py-1.5 lg:py-2 bg-cyan-500/20 rounded-full">
-                    <svg className="w-4 h-4 lg:w-5 lg:h-5 text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <svg
+                      className="w-4 h-4 lg:w-5 lg:h-5 text-cyan-300"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
                     </svg>
-                    <span className="font-medium">0-100: {vehicleSpec.acceleration0To100}s</span>
+                    <span className="font-medium">
+                      0-100: {vehicleSpec.acceleration0To100}s
+                    </span>
                   </div>
 
                   <div className="flex items-center gap-1 lg:gap-2 px-3 lg:px-4 py-1.5 lg:py-2 bg-blue-500/20 rounded-full">
-                    <svg className="w-4 h-4 lg:w-5 lg:h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                    <svg
+                      className="w-4 h-4 lg:w-5 lg:h-5 text-blue-300"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
-                    <span className="font-medium">{vehicleSpec.fuelType.fuelTypeName}</span>
+                    <span className="font-medium">
+                      {vehicleSpec.fuelType.fuelTypeName}
+                    </span>
                   </div>
                 </div>
 
@@ -207,8 +264,18 @@ const VehicleSpecificationHeroSection: React.FC<VehicleSpecificationHeroSectionP
               {vehicleSpec.images.length > 1 && (
                 <div className="mt-4 sm:mt-6 flex items-center justify-center">
                   <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-black/40 backdrop-blur-sm rounded-full">
-                    <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    <svg
+                      className="w-3 h-3 sm:w-4 sm:h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
                     </svg>
                     <span className="text-xs sm:text-sm font-medium">
                       {selectedImageIndex + 1} / {vehicleSpec.images.length}
@@ -225,21 +292,41 @@ const VehicleSpecificationHeroSection: React.FC<VehicleSpecificationHeroSectionP
           <>
             <button
               onClick={prevSlide}
-              className="hidden sm:block absolute left-4 lg:left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-2 lg:p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
+              className="cursor-pointer hidden sm:block absolute left-4 lg:left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-2 lg:p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
               aria-label="Previous image"
             >
-              <svg className="w-5 h-5 lg:w-6 lg:h-6 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              <svg
+                className="w-5 h-5 lg:w-6 lg:h-6 group-hover:scale-110 transition-transform duration-200"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
               </svg>
             </button>
 
             <button
               onClick={nextSlide}
-              className="hidden sm:block absolute right-4 lg:right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-2 lg:p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
+              className="cursor-pointer hidden sm:block absolute right-4 lg:right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-2 lg:p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
               aria-label="Next image"
             >
-              <svg className="w-5 h-5 lg:w-6 lg:h-6 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className="w-5 h-5 lg:w-6 lg:h-6 group-hover:scale-110 transition-transform duration-200"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </button>
           </>
@@ -252,7 +339,7 @@ const VehicleSpecificationHeroSection: React.FC<VehicleSpecificationHeroSectionP
               <button
                 key={index}
                 onClick={() => goToSlide(index)}
-                className={`rounded-full transition-all duration-300 ${
+                className={`cursor-pointer rounded-full transition-all duration-300 ${
                   index === selectedImageIndex
                     ? "w-4 sm:w-5 lg:w-6 h-2 sm:h-2.5 lg:h-3 bg-gradient-to-r from-teal-400 to-cyan-400 shadow-lg"
                     : "w-2 sm:w-2.5 lg:w-3 h-2 sm:h-2.5 lg:h-3 bg-white/50 hover:bg-white/75"

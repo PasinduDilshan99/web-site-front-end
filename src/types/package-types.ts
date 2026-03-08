@@ -169,6 +169,7 @@ export interface ActivePackagesType {
   packageName: string;
   packageDescription: string;
   totalPrice: number;
+  isWished: boolean;
   discountPercentage: number;
   startDate: string;
   endDate: string;
@@ -408,8 +409,6 @@ export interface TourImage {
   imageDescription: string;
   imageUrl: string;
 }
-
-
 
 export interface PackageHistoryImagesResponse {
   code: number;

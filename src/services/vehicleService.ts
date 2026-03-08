@@ -110,122 +110,117 @@ class VehicleService {
   }
 
   filterVehicles(
-    vehicles: Vehicle[],
-    filters: VehicleFilters,
-    page: number,
-    pageSize: number,
-  ): {
-    filteredVehicles: Vehicle[];
-    totalFiltered: number;
-    totalPages: number;
-  } {
-    let filtered = [...vehicles];
+  vehicles: Vehicle[],
+  filters: VehicleFilters,
+  page: number,
+  pageSize: number,
+): {
+  filteredVehicles: Vehicle[];
+  totalFiltered: number;
+  totalPages: number;
+} {
+  let filtered = [...vehicles];
 
-    // Search filter (search in make, model, registration number)
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      filtered = filtered.filter(
-        (v) =>
-          v.specification.make.toLowerCase().includes(searchLower) ||
-          v.specification.model.toLowerCase().includes(searchLower) ||
-          v.registrationNumber.toLowerCase().includes(searchLower),
-      );
-    }
-
-    // Make filter
-    if (filters.make) {
-      filtered = filtered.filter((v) => v.specification.make === filters.make);
-    }
-
-    // Body type filter
-    if (filters.bodyType) {
-      filtered = filtered.filter(
-        (v) => v.specification.bodyType === filters.bodyType,
-      );
-    }
-
-    // Year range filter
-    if (filters.yearRange[0] > 0 || filters.yearRange[1] < 2030) {
-      filtered = filtered.filter(
-        (v) =>
-          v.specification.year >= filters.yearRange[0] &&
-          v.specification.year <= filters.yearRange[1],
-      );
-    }
-
-    // Engine type filter
-    if (filters.engineType) {
-      filtered = filtered.filter(
-        (v) => v.specification.engineType === filters.engineType,
-      );
-    }
-
-    // Transmission filter (convert transmissionTypeId to string for filter)
-    if (filters.transmission) {
-      filtered = filtered.filter((v) => {
-        const transmissionMap: Record<number, string> = {
-          1: "Manual",
-          2: "Automatic",
-          3: "CVT",
-          4: "DCT",
-        };
-        return (
-          transmissionMap[v.specification.transmissionTypeId] ===
-          filters.transmission
-        );
-      });
-    }
-
-    // Fuel type filter (convert fuelTypeId to string for filter)
-    if (filters.fuelType) {
-      filtered = filtered.filter((v) => {
-        const fuelMap: Record<number, string> = {
-          1: "Petrol",
-          2: "Diesel",
-          3: "Electric",
-          4: "Hybrid",
-          5: "Plugin Hybrid",
-        };
-        return fuelMap[v.specification.fuelTypeId] === filters.fuelType;
-      });
-    }
-
-    // Horsepower range filter
-    if (filters.horsepowerRange[0] > 0 || filters.horsepowerRange[1] < 1000) {
-      filtered = filtered.filter(
-        (v) =>
-          v.specification.horsepowerHp >= filters.horsepowerRange[0] &&
-          v.specification.horsepowerHp <= filters.horsepowerRange[1],
-      );
-    }
-
-    // Seat capacity filter
-    if (filters.seatCapacity) {
-      const seats = parseInt(filters.seatCapacity);
-      filtered = filtered.filter((v) => v.specification.seatCapacity === seats);
-    }
-
-    // Price range filter
-    if (filters.priceRange[0] > 0 || filters.priceRange[1] < 100000) {
-      filtered = filtered.filter(
-        (v) =>
-          v.specification.price >= filters.priceRange[0] &&
-          v.specification.price <= filters.priceRange[1],
-      );
-    }
-
-    // Calculate pagination
-    const totalFiltered = filtered.length;
-    const totalPages = Math.ceil(totalFiltered / pageSize);
-    const startIndex = (page - 1) * pageSize;
-    const paginatedVehicles = filtered.slice(startIndex, startIndex + pageSize);
-
-    return {
-      filteredVehicles: paginatedVehicles,
-      totalFiltered,
-      totalPages,
-    };
+  // Search filter (search in make, model, registration number)
+  if (filters.search && filters.search.trim() !== "") {
+    const searchLower = filters.search.toLowerCase().trim();
+    filtered = filtered.filter(
+      (v) =>
+        (v.specification.make?.toLowerCase().includes(searchLower) || false) ||
+        (v.specification.model?.toLowerCase().includes(searchLower) || false) ||
+        (v.registrationNumber?.toLowerCase().includes(searchLower) || false),
+    );
   }
+
+  // Make filter
+  if (filters.make) {
+    filtered = filtered.filter(
+      (v) => v.specification.make === filters.make
+    );
+  }
+
+  // Body type filter
+  if (filters.bodyType) {
+    filtered = filtered.filter(
+      (v) => v.specification.bodyType === filters.bodyType,
+    );
+  }
+
+  // Year range filter
+  if (filters.yearRange[0] > 0 || filters.yearRange[1] < 2030) {
+    filtered = filtered.filter(
+      (v) =>
+        v.specification.year >= filters.yearRange[0] &&
+        v.specification.year <= filters.yearRange[1],
+    );
+  }
+
+  // Engine type filter
+  if (filters.engineType) {
+    filtered = filtered.filter(
+      (v) => v.specification.engineType === filters.engineType,
+    );
+  }
+
+  // Transmission filter (convert transmissionTypeId to string for filter)
+  if (filters.transmission) {
+    filtered = filtered.filter((v) => {
+      const transmissionMap: Record<number, string> = {
+        1: "Manual",
+        2: "Automatic",
+        3: "CVT",
+        4: "DCT",
+      };
+      return (
+        transmissionMap[v.specification.transmissionTypeId] ===
+        filters.transmission
+      );
+    });
+  }
+
+  // Fuel type filter (convert fuelTypeId to string for filter)
+  if (filters.fuelType) {
+    filtered = filtered.filter((v) => {
+      const fuelMap: Record<number, string> = {
+        1: "Petrol",
+        2: "Diesel",
+        3: "Electric",
+        4: "Hybrid",
+        5: "Plugin Hybrid",
+      };
+      return fuelMap[v.specification.fuelTypeId] === filters.fuelType;
+    });
+  }
+
+  // Horsepower range filter
+  if (filters.horsepowerRange[0] > 0 || filters.horsepowerRange[1] < 1000) {
+    filtered = filtered.filter(
+      (v) =>
+        v.specification.horsepowerHp >= filters.horsepowerRange[0] &&
+        v.specification.horsepowerHp <= filters.horsepowerRange[1],
+    );
+  }
+
+  // Seat capacity filter
+  if (filters.seatCapacity) {
+    const seats = parseInt(filters.seatCapacity);
+    filtered = filtered.filter(
+      (v) => v.specification.seatCapacity === seats
+    );
+  }
+
+  // Calculate pagination
+  const totalFiltered = filtered.length;
+  const totalPages = Math.ceil(totalFiltered / pageSize);
+  const startIndex = (page - 1) * pageSize;
+  const paginatedVehicles = filtered.slice(startIndex, startIndex + pageSize);
+
+  return {
+    filteredVehicles: paginatedVehicles,
+    totalFiltered,
+    totalPages,
+  };
+}
 
   extractFilterOptions(vehicles: Vehicle[]): {
     makes: string[];
@@ -238,8 +233,6 @@ class VehicleService {
     maxYear: number;
     minHorsepower: number;
     maxHorsepower: number;
-    minPrice: number;
-    maxPrice: number;
   } {
     const makes = new Set<string>();
     const bodyTypes = new Set<string>();
@@ -252,8 +245,6 @@ class VehicleService {
     let maxYear = -Infinity;
     let minHorsepower = Infinity;
     let maxHorsepower = -Infinity;
-    let minPrice = Infinity;
-    let maxPrice = -Infinity;
 
     vehicles.forEach((v) => {
       makes.add(v.specification.make);
@@ -289,8 +280,6 @@ class VehicleService {
       maxYear = Math.max(maxYear, v.specification.year);
       minHorsepower = Math.min(minHorsepower, v.specification.horsepowerHp);
       maxHorsepower = Math.max(maxHorsepower, v.specification.horsepowerHp);
-      minPrice = Math.min(minPrice, v.specification.price);
-      maxPrice = Math.max(maxPrice, v.specification.price);
     });
 
     return {
@@ -304,8 +293,6 @@ class VehicleService {
       maxYear: maxYear !== -Infinity ? maxYear : 2024,
       minHorsepower: minHorsepower !== Infinity ? minHorsepower : 0,
       maxHorsepower: maxHorsepower !== -Infinity ? maxHorsepower : 1000,
-      minPrice: minPrice !== Infinity ? minPrice : 0,
-      maxPrice: maxPrice !== -Infinity ? maxPrice : 100000,
     };
   }
 

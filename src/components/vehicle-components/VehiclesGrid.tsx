@@ -1,4 +1,4 @@
-// components/vehicles-components/VehiclesGrid.tsx
+// components/vehicle-components/VehiclesGrid.tsx
 "use client";
 import React from "react";
 import VehicleCard from "./VehicleCard";

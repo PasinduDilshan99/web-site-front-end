@@ -99,7 +99,7 @@ export interface ActiveToursType {
   startLocation: string;
   endLocation: string;
   tourTypeDtos: TourTypeDto[];
-  tourCategoryDtos: TourCategoryDto[];
+  tourCategoryDto: TourCategoryDto[];
   tourCategoryDescription: string;
   seasonName: string;
   seasonDescription: string;

@@ -1,4 +1,4 @@
-// components/vehicles-components/VehicleHeroSection.tsx
+// components/vehicle-components/VehicleHeroSection.tsx
 "use client";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
@@ -93,13 +93,13 @@ const VehicleHeroSection = () => {
 
   if (error || heroData.length === 0) {
     return (
-      <div className="relative w-full h-[600px] md:h-[700px] overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center">
+      <div className="relative w-full h-[600px] md:h-[700px] overflow-hidden bg-gradient-to-br from-teal-900 via-cyan-900 to-seaBlue-900 flex items-center justify-center">
         <div className="text-center text-white px-4">
           <div className="mb-6">
             <h1 className="text-4xl md:text-5xl font-bold mb-3">
               Sri Lanka Vehicles
             </h1>
-            <div className="w-32 h-1 bg-gradient-to-r from-blue-400 to-indigo-400 mx-auto rounded-full"></div>
+            <div className="w-32 h-1 bg-gradient-to-r from-teal-400 to-cyan-400 mx-auto rounded-full"></div>
           </div>
           <p className="text-xl text-red-300 mb-6">
             {error || "No vehicles content available"}
@@ -107,13 +107,13 @@ const VehicleHeroSection = () => {
           <div className="space-y-4">
             <button
               onClick={() => window.location.reload()}
-              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 mr-4 shadow-md"
+              className="px-6 py-3 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all duration-300 mr-4 shadow-md"
             >
               Retry
             </button>
             <Link
               href="/vehicles/all"
-              className="px-6 py-3 border-2 border-blue-300 text-white rounded-lg hover:bg-blue-50 hover:text-slate-900 transition-all duration-300"
+              className="px-6 py-3 border-2 border-teal-300 text-white rounded-lg hover:bg-teal-50 hover:text-slate-900 transition-all duration-300"
             >
               View All Vehicles
             </Link>
@@ -126,7 +126,7 @@ const VehicleHeroSection = () => {
   const currentSlideData = heroData[currentSlide] || {};
 
   return (
-    <div className="relative w-full h-[650px] lg:h-[800px] overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
+    <div className="relative w-full h-[650px] lg:h-[800px] overflow-hidden bg-gradient-to-br from-teal-900 via-cyan-900 to-seaBlue-900">
       {/* Image Slider */}
       <div className="relative w-full h-full">
         {heroData.map((item, index) => {
@@ -143,12 +143,12 @@ const VehicleHeroSection = () => {
                 <div
                   className="w-full h-full bg-cover bg-center bg-no-repeat"
                   style={{
-                    backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.6), rgba(37, 99, 235, 0.5)), url('${item.imageUrl}')`,
+                    backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.6), rgba(20, 140, 140, 0.5)), url('${item.imageUrl}')`,
                   }}
                   onError={() => handleImageError(index)}
                 />
               ) : (
-                <div className="w-full h-full bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900" />
+                <div className="w-full h-full bg-gradient-to-br from-teal-900 via-cyan-900 to-seaBlue-900" />
               )}
             </div>
           );
@@ -173,10 +173,10 @@ const VehicleHeroSection = () => {
 
               {currentSlideData.subtitle && (
                 <div className="mb-6">
-                  <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold mb-3 text-blue-100">
+                  <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold mb-3 text-teal-100">
                     {currentSlideData.subtitle}
                   </h2>
-                  <div className="w-20 h-1 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full mx-auto shadow-lg"></div>
+                  <div className="w-20 h-1 bg-gradient-to-r from-teal-400 to-cyan-400 rounded-full mx-auto shadow-lg"></div>
                 </div>
               )}
             </div>
@@ -195,7 +195,7 @@ const VehicleHeroSection = () => {
                       onClick={() =>
                         handleButtonClick(currentSlideData.primaryButtonLink)
                       }
-                      className="cursor-pointer px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-indigo-600 transform hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-3 group"
+                      className="cursor-pointer px-8 py-4 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-teal-600 hover:to-cyan-600 transform hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-3 group"
                     >
                       <svg
                         className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300"
@@ -218,7 +218,7 @@ const VehicleHeroSection = () => {
                       onClick={() =>
                         handleButtonClick(currentSlideData.secondaryButtonLink)
                       }
-                      className="cursor-pointer px-8 py-4 border-2 border-blue-300/50 text-white font-semibold rounded-xl hover:bg-blue-50/20 hover:border-blue-200 backdrop-blur-sm transition-all duration-300 flex items-center gap-3 group"
+                      className="cursor-pointer px-8 py-4 border-2 border-teal-300/50 text-white font-semibold rounded-xl hover:bg-teal-50/20 hover:border-teal-200 backdrop-blur-sm transition-all duration-300 flex items-center gap-3 group"
                     >
                       <svg
                         className="w-6 h-6 group-hover:scale-110 transition-transform duration-300"
@@ -242,10 +242,10 @@ const VehicleHeroSection = () => {
 
             {/* Vehicle Features */}
             <div className="lg:grid grid-cols-1 md:grid-cols-3 gap-4 hidden mx-auto max-w-4xl">
-              <div className="flex items-center gap-3 px-5 py-4 bg-white/5 backdrop-blur-sm rounded-xl border border-blue-500/20 hover:border-blue-400/40 hover:bg-white/10 transition-all duration-300">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/20 to-blue-600/20 flex items-center justify-center">
+              <div className="flex items-center gap-3 px-5 py-4 bg-white/5 backdrop-blur-sm rounded-xl border border-teal-500/20 hover:border-teal-400/40 hover:bg-white/10 transition-all duration-300">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-teal-500/20 to-teal-600/20 flex items-center justify-center">
                   <svg
-                    className="w-6 h-6 text-blue-300"
+                    className="w-6 h-6 text-teal-300"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -259,16 +259,16 @@ const VehicleHeroSection = () => {
                   </svg>
                 </div>
                 <div className="text-left">
-                  <p className="text-sm text-blue-200/90">24/7 Support</p>
+                  <p className="text-sm text-teal-200/90">24/7 Support</p>
                   <p className="text-base font-bold text-white">
                     Always Available
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 px-5 py-4 bg-white/5 backdrop-blur-sm rounded-xl border border-indigo-500/20 hover:border-indigo-400/40 hover:bg-white/10 transition-all duration-300">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500/20 to-indigo-600/20 flex items-center justify-center">
+              <div className="flex items-center gap-3 px-5 py-4 bg-white/5 backdrop-blur-sm rounded-xl border border-cyan-500/20 hover:border-cyan-400/40 hover:bg-white/10 transition-all duration-300">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500/20 to-cyan-600/20 flex items-center justify-center">
                   <svg
-                    className="w-6 h-6 text-indigo-300"
+                    className="w-6 h-6 text-cyan-300"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -282,16 +282,16 @@ const VehicleHeroSection = () => {
                   </svg>
                 </div>
                 <div className="text-left">
-                  <p className="text-sm text-indigo-200/90">Fully Insured</p>
+                  <p className="text-sm text-cyan-200/90">Fully Insured</p>
                   <p className="text-base font-bold text-white">
                     Peace of Mind
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 px-5 py-4 bg-white/5 backdrop-blur-sm rounded-xl border border-purple-500/20 hover:border-purple-400/40 hover:bg-white/10 transition-all duration-300">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500/20 to-purple-600/20 flex items-center justify-center">
+              <div className="flex items-center gap-3 px-5 py-4 bg-white/5 backdrop-blur-sm rounded-xl border border-seaBlue-500/20 hover:border-seaBlue-400/40 hover:bg-white/10 transition-all duration-300">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-seaBlue-500/20 to-seaBlue-600/20 flex items-center justify-center">
                   <svg
-                    className="w-6 h-6 text-purple-300"
+                    className="w-6 h-6 text-seaBlue-300"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -311,7 +311,7 @@ const VehicleHeroSection = () => {
                   </svg>
                 </div>
                 <div className="text-left">
-                  <p className="text-sm text-purple-200/90">Free Delivery</p>
+                  <p className="text-sm text-seaBlue-200/90">Free Delivery</p>
                   <p className="text-base font-bold text-white">
                     Anywhere in Sri Lanka
                   </p>
@@ -376,7 +376,7 @@ const VehicleHeroSection = () => {
               onClick={() => goToSlide(index)}
               className={`cursor-pointer w-2.5 h-2.5 rounded-full transition-all duration-300 ${
                 index === currentSlide
-                  ? "bg-gradient-to-r from-blue-400 to-indigo-400 scale-125 shadow-lg"
+                  ? "bg-gradient-to-r from-teal-400 to-cyan-400 scale-125 shadow-lg"
                   : "bg-white/40 hover:bg-white/60"
               }`}
               aria-label={`Go to slide ${index + 1}`}
@@ -389,7 +389,7 @@ const VehicleHeroSection = () => {
       {heroData.length > 1 && (
         <div className="absolute bottom-0 left-0 w-full h-1.5 bg-white/10">
           <div
-            className="h-full bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 transition-all duration-500"
+            className="h-full bg-gradient-to-r from-teal-400 via-cyan-400 to-seaBlue-400 transition-all duration-500"
             style={{
               width: `${((currentSlide + 1) / heroData.length) * 100}%`,
             }}

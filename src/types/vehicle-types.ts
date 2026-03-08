@@ -17,7 +17,7 @@ export interface VehicleFilters {
   fuelType: string;
   horsepowerRange: [number, number];
   seatCapacity: string;
-  priceRange: [number, number];
+  // priceRange: [number, number];
   // Remove these if they're not needed:
   // status: string;
   // model: string;
@@ -398,7 +398,7 @@ export interface VehicleBasicDetails {
   seatCapacity: number;
   sunroofType: string;
   acTypeName: string;
-  mainImageUrl: string;
+  imageUrl: string;
 }
 
 // Vehicle Filter Types

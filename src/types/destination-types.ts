@@ -428,6 +428,7 @@ export interface PopularDestinationsDetailsType {
   location: string;
   latitude: number;
   longitude: number;
+  ratings: number;
   categoryName: string;
   categoryDescription: string;
   statusName: string;

@@ -240,6 +240,7 @@ export const GET_VEHICLE_SPECIFICATION_DETAILS_BY_REQUEST_DATA_FE = `${API}${VEH
 export const GET_VEHICLE_SPECIFICATION_FILTERS_DATA_FE = `${API}${VEHICLES}/specification/filters`;
 export const GET_VEHICLE_TYPES_DETAILS_DATA_FE = `${API}${VEHICLES}/types`;
 export const GET_VEHICLE_TYPES_DETAILS_BY_ID_DATA_FE = `${API}${VEHICLES}/types`;
+export const GET_VEHICLE_DETAILS_BY_ID_DATA_FE = `${API}${VEHICLES}/vehicle-details-by-id`;
 
 // Seasons
 export const GET_ACTIVE_SEASONS_BASIC_DETAILS_DATA_FE = `${API}${SEASONS}/basic-details`;

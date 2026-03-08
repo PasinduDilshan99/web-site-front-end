@@ -39,7 +39,8 @@ const VehicleTypeHeroSection: React.FC<VehicleTypeHeroSectionProps> = ({
 
   const prevSlide = () => {
     setSelectedImageIndex(
-      (prev) => (prev - 1 + vehicleType.images.length) % vehicleType.images.length
+      (prev) =>
+        (prev - 1 + vehicleType.images.length) % vehicleType.images.length,
     );
     setIsAutoPlaying(false);
     setTimeout(() => setIsAutoPlaying(true), 10000);
@@ -66,7 +67,9 @@ const VehicleTypeHeroSection: React.FC<VehicleTypeHeroSectionProps> = ({
   // Mobile badge component
   const MobileBadges = () => (
     <div className="flex flex-wrap gap-2 justify-center sm:hidden mb-4">
-      <span className={`px-3 py-1.5 ${getStatusColor(vehicleType.status)} backdrop-blur-sm rounded-full text-xs font-semibold text-white`}>
+      <span
+        className={`px-3 py-1.5 ${getStatusColor(vehicleType.status)} backdrop-blur-sm rounded-full text-xs font-semibold text-white`}
+      >
         {vehicleType.status}
       </span>
       <span className="px-3 py-1.5 bg-gradient-to-r from-teal-500 to-cyan-500 backdrop-blur-sm rounded-full text-xs font-semibold text-white">
@@ -78,12 +81,24 @@ const VehicleTypeHeroSection: React.FC<VehicleTypeHeroSectionProps> = ({
   // Desktop badges
   const DesktopBadges = () => (
     <div className="hidden sm:flex flex-wrap gap-3 justify-center mb-6">
-      <span className={`px-4 py-2 ${getStatusColor(vehicleType.status)} backdrop-blur-sm rounded-full text-sm font-semibold text-white`}>
+      <span
+        className={`px-4 py-2 ${getStatusColor(vehicleType.status)} backdrop-blur-sm rounded-full text-sm font-semibold text-white`}
+      >
         {vehicleType.status}
       </span>
       <span className="px-4 py-2 bg-gradient-to-r from-teal-500 to-cyan-500 backdrop-blur-sm rounded-full text-sm font-semibold text-white flex items-center gap-2">
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"
+          />
         </svg>
         Type {vehicleType.vehicleTypeId}
       </span>
@@ -95,8 +110,12 @@ const VehicleTypeHeroSection: React.FC<VehicleTypeHeroSectionProps> = ({
       <div className="relative h-64 sm:h-96 lg:h-[500px] bg-gradient-to-br from-teal-900 via-cyan-900 to-blue-900 flex items-center justify-center">
         <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 text-white bg-gradient-to-t from-black/60 to-transparent">
           <div className="max-w-7xl mx-auto text-center">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">{vehicleType.name}</h1>
-            <p className="text-base sm:text-lg opacity-90">{vehicleType.description}</p>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">
+              {vehicleType.name}
+            </h1>
+            <p className="text-base sm:text-lg opacity-90">
+              {vehicleType.description}
+            </p>
           </div>
         </div>
       </div>
@@ -121,7 +140,10 @@ const VehicleTypeHeroSection: React.FC<VehicleTypeHeroSectionProps> = ({
                 <>
                   <Image
                     src={image.imageUrl}
-                    alt={image.imageName || `${vehicleType.name} image ${index + 1}`}
+                    alt={
+                      image.imageName ||
+                      `${vehicleType.name} image ${index + 1}`
+                    }
                     className="w-full h-full object-cover"
                     width={2000}
                     height={1200}
@@ -145,8 +167,8 @@ const VehicleTypeHeroSection: React.FC<VehicleTypeHeroSectionProps> = ({
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl text-white text-center">
             {/* Badges */}
-            <MobileBadges />
-            <DesktopBadges />
+            {/* <MobileBadges />
+            <DesktopBadges /> */}
 
             {/* Title */}
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 sm:mb-6 leading-tight px-2">
@@ -164,8 +186,18 @@ const VehicleTypeHeroSection: React.FC<VehicleTypeHeroSectionProps> = ({
             {vehicleType.images.length > 1 && (
               <div className="mt-4 sm:mt-6 flex items-center justify-center">
                 <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-black/40 backdrop-blur-sm rounded-full">
-                  <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  <svg
+                    className="w-3 h-3 sm:w-4 sm:h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
                   </svg>
                   <span className="text-xs sm:text-sm font-medium">
                     {selectedImageIndex + 1} / {vehicleType.images.length}
@@ -182,21 +214,41 @@ const VehicleTypeHeroSection: React.FC<VehicleTypeHeroSectionProps> = ({
         <>
           <button
             onClick={prevSlide}
-            className="hidden sm:block absolute left-4 lg:left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-2 lg:p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
+            className="cursor-pointer hidden sm:block absolute left-4 lg:left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-2 lg:p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
             aria-label="Previous image"
           >
-            <svg className="w-5 h-5 lg:w-6 lg:h-6 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <svg
+              className="w-5 h-5 lg:w-6 lg:h-6 group-hover:scale-110 transition-transform duration-200"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
           </button>
 
           <button
             onClick={nextSlide}
-            className="hidden sm:block absolute right-4 lg:right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-2 lg:p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
+            className="cursor-pointer hidden sm:block absolute right-4 lg:right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-2 lg:p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
             aria-label="Next image"
           >
-            <svg className="w-5 h-5 lg:w-6 lg:h-6 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            <svg
+              className="w-5 h-5 lg:w-6 lg:h-6 group-hover:scale-110 transition-transform duration-200"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
             </svg>
           </button>
         </>
@@ -209,7 +261,7 @@ const VehicleTypeHeroSection: React.FC<VehicleTypeHeroSectionProps> = ({
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`rounded-full transition-all duration-300 ${
+              className={`cursor-pointer rounded-full transition-all duration-300 ${
                 index === selectedImageIndex
                   ? "w-4 sm:w-5 lg:w-6 h-2 sm:h-2.5 lg:h-3 bg-gradient-to-r from-teal-400 to-cyan-400 shadow-lg"
                   : "w-2 sm:w-2.5 lg:w-3 h-2 sm:h-2.5 lg:h-3 bg-white/50 hover:bg-white/75"

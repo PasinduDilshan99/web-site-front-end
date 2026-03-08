@@ -1,4 +1,4 @@
-// components/vehicles-components/VehicleFilterSection.tsx
+// components/vehicle-components/VehicleFilterSection.tsx (updated - removed price range)
 "use client";
 import { VehicleFilters } from "@/types/vehicle-types";
 import React, { useState } from "react";
@@ -21,8 +21,6 @@ interface VehicleFilterSectionProps {
     maxYear: number;
     minHorsepower: number;
     maxHorsepower: number;
-    minPrice: number;
-    maxPrice: number;
   };
 }
 
@@ -37,15 +35,6 @@ const VehicleFilterSection: React.FC<VehicleFilterSectionProps> = ({
 
   const toggleAdvancedFilters = () => {
     setShowAdvancedFilters(!showAdvancedFilters);
-  };
-
-  const formatCurrency = (value: number): string => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
   };
 
   const handleSearchClick = () => {
@@ -72,32 +61,22 @@ const VehicleFilterSection: React.FC<VehicleFilterSectionProps> = ({
     onFilterChange("horsepowerRange", newRange);
   };
 
-  const handlePriceRangeChange = (minMax: "min" | "max", value: number) => {
-    const newRange: [number, number] = [...filters.priceRange] as [number, number];
-    if (minMax === "min") {
-      newRange[0] = value;
-    } else {
-      newRange[1] = value;
-    }
-    onFilterChange("priceRange", newRange);
-  };
-
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 md:p-8 mb-8 border-2 border-blue-200 shadow-lg">
+    <div className="bg-gradient-to-r from-teal-50 to-cyan-50 rounded-2xl p-6 md:p-8 mb-8 border-2 border-teal-200 shadow-lg">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-        <h2 className="text-xl lg:text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+        <h2 className="text-xl lg:text-3xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">
           Filter Vehicles
         </h2>
         <div className="flex gap-3">
           <button
             onClick={onResetFilters}
-            className="cursor-pointer px-4 lg:px-6 py-1 lg:py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg"
+            className="cursor-pointer px-4 lg:px-6 py-1 lg:py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg"
           >
             Reset Filters
           </button>
           <button
             onClick={handleSearchClick}
-            className="cursor-pointer px-6 py-2 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-lg hover:from-indigo-700 hover:to-blue-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg flex items-center gap-2"
+            className="cursor-pointer px-6 py-2 bg-gradient-to-r from-cyan-600 to-teal-600 text-white rounded-lg hover:from-cyan-700 hover:to-teal-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg flex items-center gap-2"
           >
             <svg
               className="w-4 h-4"
@@ -121,7 +100,7 @@ const VehicleFilterSection: React.FC<VehicleFilterSectionProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         {/* Search */}
         <div className="space-y-2">
-          <label className="block text-sm font-semibold text-blue-800">
+          <label className="block text-sm font-semibold text-teal-800">
             Search
           </label>
           <input
@@ -129,21 +108,21 @@ const VehicleFilterSection: React.FC<VehicleFilterSectionProps> = ({
             placeholder="Search by make, model, reg no..."
             value={filters.search}
             onChange={(e) => onFilterChange("search", e.target.value)}
-            className="text-sm lg:text-md w-full px-4 py-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500 transition-all"
+            className="text-sm lg:text-md w-full px-4 py-2 border-2 border-teal-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500 transition-all"
           />
         </div>
 
         {/* Make */}
         <div className="space-y-2">
-          <label className="block text-sm font-semibold text-blue-800">
+          <label className="block text-sm font-semibold text-teal-800">
             Make
           </label>
           <select
             value={filters.make}
             onChange={(e) => onFilterChange("make", e.target.value)}
-            className="text-sm lg:text-md w-full px-4 py-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
+            className="text-sm lg:text-md w-full px-4 py-2 border-2 border-teal-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
             style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%233B82F6' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%232C9A9A' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
               backgroundRepeat: "no-repeat",
               backgroundPosition: "right 0.7rem center",
               paddingRight: "2rem",
@@ -160,15 +139,15 @@ const VehicleFilterSection: React.FC<VehicleFilterSectionProps> = ({
 
         {/* Body Type */}
         <div className="space-y-2">
-          <label className="block text-sm font-semibold text-blue-800">
+          <label className="block text-sm font-semibold text-teal-800">
             Body Type
           </label>
           <select
             value={filters.bodyType}
             onChange={(e) => onFilterChange("bodyType", e.target.value)}
-            className="text-sm lg:text-md w-full px-4 py-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
+            className="text-sm lg:text-md w-full px-4 py-2 border-2 border-teal-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white text-gray-900 font-medium transition-all appearance-none cursor-pointer"
             style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%233B82F6' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%232C9A9A' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
               backgroundRepeat: "no-repeat",
               backgroundPosition: "right 0.7rem center",
               paddingRight: "2rem",
@@ -193,7 +172,7 @@ const VehicleFilterSection: React.FC<VehicleFilterSectionProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Year Range */}
           <div className="space-y-2">
-            <label className="block text-sm font-semibold text-indigo-800">
+            <label className="block text-sm font-semibold text-cyan-800">
               Year Range
             </label>
             <div className="flex items-center gap-2">
@@ -203,17 +182,17 @@ const VehicleFilterSection: React.FC<VehicleFilterSectionProps> = ({
                 max={filterOptions.maxYear}
                 value={filters.yearRange[0]}
                 onChange={(e) => handleYearRangeChange("min", parseInt(e.target.value) || filterOptions.minYear)}
-                className="text-sm w-full px-3 py-2 border-2 border-indigo-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="text-sm w-full px-3 py-2 border-2 border-cyan-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 placeholder="Min"
               />
-              <span className="text-indigo-600 font-semibold">-</span>
+              <span className="text-cyan-600 font-semibold">-</span>
               <input
                 type="number"
                 min={filterOptions.minYear}
                 max={filterOptions.maxYear}
                 value={filters.yearRange[1]}
                 onChange={(e) => handleYearRangeChange("max", parseInt(e.target.value) || filterOptions.maxYear)}
-                className="text-sm w-full px-3 py-2 border-2 border-indigo-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="text-sm w-full px-3 py-2 border-2 border-cyan-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 placeholder="Max"
               />
             </div>
@@ -221,15 +200,15 @@ const VehicleFilterSection: React.FC<VehicleFilterSectionProps> = ({
 
           {/* Engine Type */}
           <div className="space-y-2">
-            <label className="block text-sm font-semibold text-indigo-800">
+            <label className="block text-sm font-semibold text-cyan-800">
               Engine Type
             </label>
             <select
               value={filters.engineType}
               onChange={(e) => onFilterChange("engineType", e.target.value)}
-              className="text-sm w-full px-4 py-2 border-2 border-indigo-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-gray-900 appearance-none cursor-pointer"
+              className="text-sm w-full px-4 py-2 border-2 border-cyan-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-white text-gray-900 appearance-none cursor-pointer"
               style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234f46e5' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%230E7C7C' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
                 backgroundRepeat: "no-repeat",
                 backgroundPosition: "right 0.7rem center",
                 paddingRight: "2rem",
@@ -246,15 +225,15 @@ const VehicleFilterSection: React.FC<VehicleFilterSectionProps> = ({
 
           {/* Transmission */}
           <div className="space-y-2">
-            <label className="block text-sm font-semibold text-indigo-800">
+            <label className="block text-sm font-semibold text-cyan-800">
               Transmission
             </label>
             <select
               value={filters.transmission}
               onChange={(e) => onFilterChange("transmission", e.target.value)}
-              className="text-sm w-full px-4 py-2 border-2 border-indigo-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-gray-900 appearance-none cursor-pointer"
+              className="text-sm w-full px-4 py-2 border-2 border-cyan-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-white text-gray-900 appearance-none cursor-pointer"
               style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234f46e5' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%230E7C7C' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
                 backgroundRepeat: "no-repeat",
                 backgroundPosition: "right 0.7rem center",
                 paddingRight: "2rem",
@@ -271,15 +250,15 @@ const VehicleFilterSection: React.FC<VehicleFilterSectionProps> = ({
 
           {/* Fuel Type */}
           <div className="space-y-2">
-            <label className="block text-sm font-semibold text-indigo-800">
+            <label className="block text-sm font-semibold text-cyan-800">
               Fuel Type
             </label>
             <select
               value={filters.fuelType}
               onChange={(e) => onFilterChange("fuelType", e.target.value)}
-              className="text-sm w-full px-4 py-2 border-2 border-indigo-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-gray-900 appearance-none cursor-pointer"
+              className="text-sm w-full px-4 py-2 border-2 border-cyan-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-white text-gray-900 appearance-none cursor-pointer"
               style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234f46e5' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%230E7C7C' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
                 backgroundRepeat: "no-repeat",
                 backgroundPosition: "right 0.7rem center",
                 paddingRight: "2rem",
@@ -296,7 +275,7 @@ const VehicleFilterSection: React.FC<VehicleFilterSectionProps> = ({
 
           {/* Horsepower Range */}
           <div className="space-y-2">
-            <label className="block text-sm font-semibold text-indigo-800">
+            <label className="block text-sm font-semibold text-cyan-800">
               Horsepower (HP)
             </label>
             <div className="flex items-center gap-2">
@@ -306,17 +285,17 @@ const VehicleFilterSection: React.FC<VehicleFilterSectionProps> = ({
                 max={filterOptions.maxHorsepower}
                 value={filters.horsepowerRange[0]}
                 onChange={(e) => handleHorsepowerRangeChange("min", parseInt(e.target.value) || filterOptions.minHorsepower)}
-                className="text-sm w-full px-3 py-2 border-2 border-indigo-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="text-sm w-full px-3 py-2 border-2 border-cyan-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 placeholder="Min"
               />
-              <span className="text-indigo-600 font-semibold">-</span>
+              <span className="text-cyan-600 font-semibold">-</span>
               <input
                 type="number"
                 min={filterOptions.minHorsepower}
                 max={filterOptions.maxHorsepower}
                 value={filters.horsepowerRange[1]}
                 onChange={(e) => handleHorsepowerRangeChange("max", parseInt(e.target.value) || filterOptions.maxHorsepower)}
-                className="text-sm w-full px-3 py-2 border-2 border-indigo-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="text-sm w-full px-3 py-2 border-2 border-cyan-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 placeholder="Max"
               />
             </div>
@@ -324,15 +303,15 @@ const VehicleFilterSection: React.FC<VehicleFilterSectionProps> = ({
 
           {/* Seat Capacity */}
           <div className="space-y-2">
-            <label className="block text-sm font-semibold text-indigo-800">
+            <label className="block text-sm font-semibold text-cyan-800">
               Seat Capacity
             </label>
             <select
               value={filters.seatCapacity}
               onChange={(e) => onFilterChange("seatCapacity", e.target.value)}
-              className="text-sm w-full px-4 py-2 border-2 border-indigo-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-gray-900 appearance-none cursor-pointer"
+              className="text-sm w-full px-4 py-2 border-2 border-cyan-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-white text-gray-900 appearance-none cursor-pointer"
               style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234f46e5' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%230E7C7C' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
                 backgroundRepeat: "no-repeat",
                 backgroundPosition: "right 0.7rem center",
                 paddingRight: "2rem",
@@ -346,44 +325,18 @@ const VehicleFilterSection: React.FC<VehicleFilterSectionProps> = ({
               ))}
             </select>
           </div>
-
-          {/* Price Range */}
-          <div className="space-y-2 md:col-span-2 lg:col-span-3">
-            <label className="block text-sm font-semibold text-indigo-800">
-              Price Range: {formatCurrency(filters.priceRange[0])} - {formatCurrency(filters.priceRange[1])}
-            </label>
-            <div className="flex items-center gap-4">
-              <input
-                type="range"
-                min={filterOptions.minPrice}
-                max={filterOptions.maxPrice}
-                value={filters.priceRange[0]}
-                onChange={(e) => handlePriceRangeChange("min", parseInt(e.target.value))}
-                className="w-full h-2 bg-gradient-to-r from-blue-300 to-indigo-300 rounded-lg appearance-none cursor-pointer"
-              />
-              <span className="text-indigo-600 font-semibold whitespace-nowrap">to</span>
-              <input
-                type="range"
-                min={filterOptions.minPrice}
-                max={filterOptions.maxPrice}
-                value={filters.priceRange[1]}
-                onChange={(e) => handlePriceRangeChange("max", parseInt(e.target.value))}
-                className="w-full h-2 bg-gradient-to-r from-blue-300 to-indigo-300 rounded-lg appearance-none cursor-pointer"
-              />
-            </div>
-          </div>
         </div>
       </div>
 
       {/* Separator Line with Advanced Filters Button */}
       <div className={`relative ${showAdvancedFilters ? "mt-6" : "mb-6"}`}>
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t-2 border-blue-300"></div>
+          <div className="w-full border-t-2 border-teal-300"></div>
         </div>
         <div className="relative flex justify-center">
           <button
             onClick={toggleAdvancedFilters}
-            className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+            className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
           >
             {showAdvancedFilters ? (
               <>
@@ -446,15 +399,6 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
   onFilterChange,
   filterOptions,
 }) => {
-  const formatCurrency = (value: number): string => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
-  };
-
   interface ActiveFilter {
     name: keyof VehicleFilters;
     label: string;
@@ -535,14 +479,6 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
     });
   }
 
-  if (filters.priceRange[0] > filterOptions.minPrice || filters.priceRange[1] < filterOptions.maxPrice) {
-    activeFilters.push({
-      name: "priceRange",
-      label: `Price: ${formatCurrency(filters.priceRange[0])} - ${formatCurrency(filters.priceRange[1])}`,
-      value: filters.priceRange,
-    });
-  }
-
   if (activeFilters.length === 0) return null;
 
   const resetValues: Record<keyof VehicleFilters, FilterValue> = {
@@ -555,7 +491,6 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
     fuelType: "",
     horsepowerRange: [filterOptions.minHorsepower, filterOptions.maxHorsepower] as [number, number],
     seatCapacity: "",
-    priceRange: [filterOptions.minPrice, filterOptions.maxPrice] as [number, number],
   };
 
   const removeFilter = (filterName: keyof VehicleFilters) => {
@@ -563,18 +498,18 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
   };
 
   return (
-    <div className="border-t-2 border-blue-300 pt-4 mt-4">
+    <div className="border-t-2 border-teal-300 pt-4 mt-4">
       <div className="flex items-center gap-2 mb-2">
-        <span className="text-sm font-semibold text-blue-800">
+        <span className="text-sm font-semibold text-teal-800">
           Active Filters:
         </span>
-        <span className="text-sm text-blue-600">({activeFilters.length})</span>
+        <span className="text-sm text-teal-600">({activeFilters.length})</span>
       </div>
       <div className="flex flex-wrap gap-2">
         {activeFilters.map((filter) => (
           <span
             key={filter.name}
-            className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 rounded-full text-xs font-medium border border-blue-200 transition-all duration-200 hover:shadow-md"
+            className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-teal-100 to-cyan-100 text-teal-800 rounded-full text-xs font-medium border border-teal-200 transition-all duration-200 hover:shadow-md"
           >
             {filter.label}
             <button

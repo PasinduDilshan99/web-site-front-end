@@ -9,6 +9,7 @@ import {
   PLACE_HOLDER_IMAGE,
 } from "@/utils/constant";
 import { DESTINATIONS_PAGE_PATH } from "@/utils/urls";
+import Image from "next/image";
 
 interface DestinationCardProps {
   destination: EnhancedDestination;
@@ -172,9 +173,11 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
                 }`}
                 onClick={() => handleImageSwitch(index)}
               >
-                <img
+                <Image
                   src={image.imageUrl}
                   alt={image.imageDescription}
+                  width={1000}
+                  height={1000}
                   className="w-full h-full object-cover"
                   onError={(e) => {
                     e.currentTarget.src = PLACE_HOLDER_IMAGE;
@@ -203,7 +206,7 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
           <div className="flex items-center">
             {[...Array(5)].map((_, i) => (
               <svg
-                key={i}
+                key={i+1}
                 className={`w-4 h-4 ${
                   i < Math.floor(destination.rating)
                     ? "text-yellow-400"
@@ -276,9 +279,6 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
               {destination.activities.length} activities
             </span>
           </div>
-
-          {/* Price and Button */}
-          {/* ...your existing commented code... */}
 
           <button
             onClick={handleExploreClick}

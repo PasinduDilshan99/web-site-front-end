@@ -1,6 +1,7 @@
 // components/booking/BookingSuccessMessage.tsx
 import React from "react";
 import { CheckCircle, Mail, Phone, Calendar } from "lucide-react";
+import { COMPANY_CONTACT_NUMBER } from "@/utils/constant";
 
 interface BookingSuccessMessageProps {
   onClose: () => void;
@@ -53,7 +54,7 @@ const BookingSuccessMessage: React.FC<BookingSuccessMessageProps> = ({
                   </li>
                   <li className="flex items-start gap-2">
                     <div className="w-2 h-2 bg-sky-500 rounded-full mt-2 flex-shrink-0" />
-                    <span>Our travel specialist will contact you within 24 hours</span>
+                    <span>Our travel specialist will contact you within 2 hours</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <div className="w-2 h-2 bg-sky-500 rounded-full mt-2 flex-shrink-0" />
@@ -81,13 +82,13 @@ const BookingSuccessMessage: React.FC<BookingSuccessMessageProps> = ({
 
             <button
               onClick={onClose}
-              className="w-full px-6 py-4 bg-gradient-to-r from-sky-600 to-teal-600 text-white font-bold rounded-xl hover:from-sky-700 hover:to-teal-700 transition-all duration-200 text-lg shadow-lg hover:shadow-xl"
+              className="cursor-pointer w-full px-6 py-4 bg-gradient-to-r from-sky-600 to-teal-600 text-white font-bold rounded-xl hover:from-sky-700 hover:to-teal-700 transition-all duration-200 text-lg shadow-lg hover:shadow-xl"
             >
               Back to Tour Details
             </button>
             
             <p className="mt-4 text-sm text-gray-500">
-              Need immediate assistance? Call us at +1-800-TOUR-HELP
+              Need immediate assistance? Call us at {COMPANY_CONTACT_NUMBER}
             </p>
           </div>
         </div>

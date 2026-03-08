@@ -1,4 +1,3 @@
-// components/vehicle-types-components/VehicleTypeImageSlideshow.tsx
 "use client";
 import React, { useState, useEffect } from "react";
 import { VehicleTypeImage } from "@/types/vehicle-types";
@@ -58,8 +57,8 @@ const VehicleTypeImageSlideshow: React.FC<VehicleTypeImageSlideshowProps> = ({
 
   if (validImages.length === 0) {
     return (
-      <div className="w-full h-40 sm:h-48 md:h-56 lg:h-64 bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center rounded-t-xl sm:rounded-t-2xl">
-        <span className="text-purple-400 text-sm">No image available</span>
+      <div className="w-full h-40 sm:h-48 md:h-56 lg:h-64 bg-gradient-to-br from-teal-100 to-cyan-100 flex items-center justify-center rounded-t-xl sm:rounded-t-2xl">
+        <span className="text-teal-400 text-sm">No image available</span>
       </div>
     );
   }

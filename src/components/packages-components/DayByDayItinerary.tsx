@@ -19,7 +19,7 @@ const meals = [
 /* ── Icons ─────────────────────────────────────────────────────────── */
 const IconPin = () => (
   <svg
-    className="w-5 h-5 flex-shrink-0"
+    className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0"
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -41,7 +41,7 @@ const IconPin = () => (
 
 const IconStar = ({ filled }: { filled: boolean }) => (
   <svg
-    className={`w-5 h-5 ${filled ? "text-amber-400" : "text-slate-200"}`}
+    className={`w-4 h-4 sm:w-5 sm:h-5 ${filled ? "text-amber-400" : "text-slate-200"}`}
     fill="currentColor"
     viewBox="0 0 20 20"
   >
@@ -51,7 +51,7 @@ const IconStar = ({ filled }: { filled: boolean }) => (
 
 const IconChevron = ({ open }: { open: boolean }) => (
   <svg
-    className={`w-6 h-6 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+    className={`w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -67,7 +67,7 @@ const IconChevron = ({ open }: { open: boolean }) => (
 
 const IconCheck = () => (
   <svg
-    className="w-5 h-5 text-emerald-500 flex-shrink-0"
+    className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0"
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -83,7 +83,7 @@ const IconCheck = () => (
 
 const IconCar = () => (
   <svg
-    className="w-6 h-6 text-sky-500"
+    className="w-5 h-5 sm:w-6 sm:h-6 text-sky-500"
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -99,7 +99,7 @@ const IconCar = () => (
 
 const IconHotel = () => (
   <svg
-    className="w-6 h-6 text-sky-500"
+    className="w-5 h-5 sm:w-6 sm:h-6 text-sky-500"
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -115,7 +115,7 @@ const IconHotel = () => (
 
 const IconUtensils = () => (
   <svg
-    className="w-6 h-6 text-sky-500"
+    className="w-5 h-5 sm:w-6 sm:h-6 text-sky-500"
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -131,7 +131,7 @@ const IconUtensils = () => (
 
 const IconExternalLink = () => (
   <svg
-    className="w-4 h-4 ml-1"
+    className="w-3.5 h-3.5 sm:w-4 sm:h-4 ml-1"
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -156,9 +156,11 @@ const Section = ({
   children: React.ReactNode;
 }) => (
   <div>
-    <div className="flex items-center gap-3 mb-4">
+    <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
       {icon}
-      <h4 className="text-xl font-semibold text-slate-700">{title}</h4>
+      <h4 className="text-base sm:text-lg lg:text-xl font-semibold text-slate-700">
+        {title}
+      </h4>
     </div>
     {children}
   </div>
@@ -169,19 +171,19 @@ const DayByDayItinerary: React.FC<DayByDayItineraryProps> = ({ itinerary }) => {
   const [expandedDay, setExpandedDay] = useState<number | null>(1);
 
   return (
-    <div className="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
+    <div className="bg-white rounded-xl sm:rounded-2xl shadow-md border border-slate-200 overflow-hidden w-full">
       {/* ── Header ── */}
-      <div className="bg-gradient-to-r from-sky-600 to-teal-500 px-6 sm:px-10 py-7">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+      <div className="bg-gradient-to-r from-sky-600 to-teal-500 px-4 sm:px-6 lg:px-10 py-5 sm:py-6 lg:py-7">
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white tracking-tight leading-tight">
               Day By Day Itinerary
             </h2>
-            <p className="text-sky-100 text-base mt-1.5">
+            <p className="text-sky-100 text-sm sm:text-base mt-1">
               Your complete travel plan
             </p>
           </div>
-          <div className="bg-white/20 text-white text-lg font-semibold px-5 py-2.5 rounded-full">
+          <div className="flex-shrink-0 bg-white/20 text-white text-sm sm:text-base lg:text-lg font-semibold px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 lg:py-2.5 rounded-full whitespace-nowrap">
             {itinerary.length} Days
           </div>
         </div>
@@ -200,24 +202,24 @@ const DayByDayItinerary: React.FC<DayByDayItineraryProps> = ({ itinerary }) => {
               {/* Collapsed row / toggle */}
               <button
                 onClick={() => setExpandedDay(isOpen ? null : day.dayNumber)}
-                className={`cursor-pointer w-full px-6 sm:px-10 py-5 flex items-center gap-5 text-left transition-colors duration-150 ${
+                className={`cursor-pointer w-full px-4 sm:px-6 lg:px-10 py-4 sm:py-5 flex items-center gap-3 sm:gap-4 lg:gap-5 text-left transition-colors duration-150 ${
                   isOpen ? "bg-sky-50" : "hover:bg-slate-50"
                 }`}
               >
                 {/* Day badge */}
                 <div
-                  className={`flex-shrink-0 w-16 h-16 rounded-2xl flex flex-col items-center justify-center transition-all duration-200 ${
+                  className={`flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center transition-all duration-200 ${
                     isOpen
                       ? "bg-sky-600 text-white shadow-lg shadow-sky-200"
                       : "bg-slate-100 text-slate-600"
                   }`}
                 >
                   <span
-                    className={`text-xs font-bold uppercase tracking-widest leading-none ${isOpen ? "opacity-60" : "opacity-40"}`}
+                    className={`text-[9px] sm:text-xs font-bold uppercase tracking-widest leading-none ${isOpen ? "opacity-60" : "opacity-40"}`}
                   >
                     Day
                   </span>
-                  <span className="text-2xl font-bold leading-tight">
+                  <span className="text-xl sm:text-2xl font-bold leading-tight">
                     {day.dayNumber}
                   </span>
                 </div>
@@ -225,28 +227,28 @@ const DayByDayItinerary: React.FC<DayByDayItineraryProps> = ({ itinerary }) => {
                 {/* Hotel name + location */}
                 {day.hotelLocation && (
                   <div className="flex-1 min-w-0">
-                    <p className="text-lg sm:text-xl font-semibold text-slate-800 truncate">
+                    <p className="text-base sm:text-lg lg:text-xl font-semibold text-slate-800 truncate">
                       {day.hotelName}
                     </p>
-                    <div className="flex items-center gap-1.5 mt-1.5 text-slate-400">
+                    <div className="flex items-center gap-1 sm:gap-1.5 mt-1 sm:mt-1.5 text-slate-400">
                       <IconPin />
-                      <span className="text-base truncate">
+                      <span className="text-xs sm:text-sm lg:text-base truncate">
                         {day.hotelLocation}
                       </span>
                     </div>
                   </div>
                 )}
 
-                {/* Quick-glance chips when collapsed */}
+                {/* Quick-glance chips when collapsed — hidden on mobile, shown on sm+ */}
                 {!isOpen && (
-                  <div className="hidden sm:flex items-center gap-2 flex-shrink-0">
+                  <div className="hidden sm:flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
                     {includedMeals.length > 0 && (
-                      <span className="text-sm bg-emerald-50 text-emerald-600 border border-emerald-200 font-semibold px-3.5 py-1.5 rounded-lg">
+                      <span className="text-xs sm:text-sm bg-emerald-50 text-emerald-600 border border-emerald-200 font-semibold px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-lg">
                         {includedMeals.length} meals
                       </span>
                     )}
                     <span
-                      className={`text-sm font-semibold px-3.5 py-1.5 rounded-lg border ${
+                      className={`text-xs sm:text-sm font-semibold px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-lg border ${
                         day.airCondition
                           ? "bg-sky-50 text-sky-600 border-sky-200"
                           : "bg-slate-50 text-slate-400 border-slate-200"
@@ -258,9 +260,7 @@ const DayByDayItinerary: React.FC<DayByDayItineraryProps> = ({ itinerary }) => {
                 )}
 
                 <span
-                  className={`flex-shrink-0 transition-colors duration-200 ${
-                    isOpen ? "text-sky-500" : "text-slate-300"
-                  }`}
+                  className={`flex-shrink-0 transition-colors duration-200 ${isOpen ? "text-sky-500" : "text-slate-300"}`}
                 >
                   <IconChevron open={isOpen} />
                 </span>
@@ -269,27 +269,27 @@ const DayByDayItinerary: React.FC<DayByDayItineraryProps> = ({ itinerary }) => {
               {/* Expanded panel */}
               <div
                 className={`transition-all duration-300 ease-in-out overflow-hidden ${
-                  isOpen ? "max-h-[1400px] opacity-100" : "max-h-0 opacity-0"
+                  isOpen ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
                 }`}
               >
-                <div className="px-6 sm:px-10 py-7 space-y-7 bg-slate-50/50 border-t border-slate-100">
+                <div className="px-4 sm:px-6 lg:px-10 py-5 sm:py-6 lg:py-7 space-y-5 sm:space-y-6 lg:space-y-7 bg-slate-50/50 border-t border-slate-100">
                   {/* ── Accommodation ── */}
                   {day.hotelName ? (
                     <Section icon={<IconHotel />} title="Accommodation">
-                      <div className="bg-white rounded-2xl border border-slate-200 p-6">
-                        <div className="flex items-start justify-between gap-4">
+                      <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-200 p-4 sm:p-5 lg:p-6">
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
                           <div className="flex-1 min-w-0">
-                            <p className="text-xl font-bold text-slate-800">
+                            <p className="text-lg sm:text-xl font-bold text-slate-800">
                               {day.hotelName}
                             </p>
-                            <div className="flex items-center gap-2 mt-1.5 text-slate-400">
+                            <div className="flex items-center gap-1.5 sm:gap-2 mt-1.5 text-slate-400">
                               <IconPin />
-                              <span className="text-base">
+                              <span className="text-sm sm:text-base truncate">
                                 {day.hotelLocation}
                               </span>
                             </div>
-                            <div className="flex items-center gap-3 mt-3">
-                              <div className="flex items-center gap-1">
+                            <div className="flex items-center gap-2 sm:gap-3 mt-2 sm:mt-3 flex-wrap">
+                              <div className="flex items-center gap-0.5 sm:gap-1">
                                 {[...Array(5)].map((_, i) => (
                                   <IconStar
                                     key={i}
@@ -297,8 +297,10 @@ const DayByDayItinerary: React.FC<DayByDayItineraryProps> = ({ itinerary }) => {
                                   />
                                 ))}
                               </div>
-                              <span className="text-slate-300 text-lg">|</span>
-                              <span className="text-base text-slate-500 bg-slate-100 px-3 py-1 rounded-full font-medium">
+                              <span className="text-slate-300 text-base sm:text-lg">
+                                |
+                              </span>
+                              <span className="text-xs sm:text-sm lg:text-base text-slate-500 bg-slate-100 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full font-medium">
                                 {day.hotelType}
                               </span>
                             </div>
@@ -308,14 +310,14 @@ const DayByDayItinerary: React.FC<DayByDayItineraryProps> = ({ itinerary }) => {
                               href={day.hotelWebsite}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex-shrink-0 text-base font-semibold text-sky-600 hover:text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200 px-5 py-2.5 rounded-xl transition-colors"
+                              className="self-start flex-shrink-0 text-sm sm:text-base font-semibold text-sky-600 hover:text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl transition-colors"
                             >
                               Website ↗
                             </a>
                           )}
                         </div>
                         {day.hotelDescription && (
-                          <p className="text-base text-slate-500 mt-4 pt-4 border-t border-slate-100 leading-relaxed">
+                          <p className="text-sm sm:text-base text-slate-500 mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-slate-100 leading-relaxed">
                             {day.hotelDescription}
                           </p>
                         )}
@@ -323,8 +325,8 @@ const DayByDayItinerary: React.FC<DayByDayItineraryProps> = ({ itinerary }) => {
                     </Section>
                   ) : (
                     <Section icon={<IconHotel />} title="Accommodation">
-                      <div className="bg-white rounded-2xl border border-slate-200 p-2">
-                        <div className="flex items-center gap-1">
+                      <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-200 p-3 sm:p-4">
+                        <div className="flex items-center gap-0.5 sm:gap-1">
                           {[...Array(5)].map((_, i) => (
                             <IconStar key={i} filled={i < day.hotelCategory} />
                           ))}
@@ -333,10 +335,15 @@ const DayByDayItinerary: React.FC<DayByDayItineraryProps> = ({ itinerary }) => {
                     </Section>
                   )}
 
-                  {/* ── Meals Included (Only show included meals) ── */}
+                  {/* ── Meals Included ── */}
                   {includedMeals.length > 0 && (
                     <Section icon={<IconUtensils />} title="Meals Included">
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {/* 
+                        Mobile:  1 column
+                        Tablet:  2 columns
+                        Desktop: 3 columns
+                      */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
                         {includedMeals.map(({ key, label, descKey }) => {
                           const desc = day[
                             descKey as keyof PackageDayAccommodation
@@ -344,18 +351,18 @@ const DayByDayItinerary: React.FC<DayByDayItineraryProps> = ({ itinerary }) => {
                           return (
                             <div
                               key={key}
-                              className="flex items-start gap-3 px-4 py-4 rounded-xl border bg-white border-emerald-100"
+                              className="flex items-start gap-2.5 sm:gap-3 px-3 sm:px-4 py-3 sm:py-4 rounded-lg sm:rounded-xl border bg-white border-emerald-100"
                             >
                               <div className="mt-0.5">
                                 <IconCheck />
                               </div>
                               <div className="min-w-0">
-                                <p className="text-base font-semibold leading-tight text-slate-700">
+                                <p className="text-sm sm:text-base font-semibold leading-tight text-slate-700">
                                   {label}
                                 </p>
                                 {desc && (
                                   <p
-                                    className="text-sm text-slate-400 mt-1 truncate"
+                                    className="text-xs sm:text-sm text-slate-400 mt-0.5 sm:mt-1 truncate"
                                     title={desc}
                                   >
                                     {desc}
@@ -373,11 +380,12 @@ const DayByDayItinerary: React.FC<DayByDayItineraryProps> = ({ itinerary }) => {
                   <Section icon={<IconCar />} title="Transport">
                     <Link
                       href={`${VEHICLE_SPECIFICATION_DETAILS_PATH}/${day.vehicleSpecificationId}?vehicle-model=${day.vehicleModel}`}
-                      className="block bg-white rounded-2xl border border-slate-200 p-6 hover:border-sky-300 hover:shadow-md transition-all duration-200"
+                      className="block bg-white rounded-xl sm:rounded-2xl border border-slate-200 p-4 sm:p-5 lg:p-6 hover:border-sky-300 hover:shadow-md transition-all duration-200"
                     >
-                      <div className="flex items-center justify-between gap-4 flex-wrap">
-                        <div>
-                          <p className="text-xl font-bold text-slate-800 group-hover:text-sky-600">
+                      {/* Stack on mobile, side-by-side on md+ */}
+                      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-4">
+                        <div className="min-w-0">
+                          <p className="text-base sm:text-lg lg:text-xl font-bold text-slate-800">
                             {day.vehicleTypeName}
                             {day.vehicleModel && (
                               <span className="font-normal text-slate-400">
@@ -387,14 +395,16 @@ const DayByDayItinerary: React.FC<DayByDayItineraryProps> = ({ itinerary }) => {
                             )}
                           </p>
                           {day.vehicleRegistrationNumber && (
-                            <p className="text-base text-slate-400 mt-1.5">
+                            <p className="text-sm sm:text-base text-slate-400 mt-1 sm:mt-1.5">
                               Reg. {day.vehicleRegistrationNumber}
                             </p>
                           )}
                         </div>
-                        <div className="flex items-center gap-3 flex-wrap">
+
+                        {/* Chips — wrap gracefully on small screens */}
+                        <div className="flex items-center gap-2 flex-wrap">
                           <span
-                            className={`text-base font-semibold px-5 py-2.5 rounded-xl border ${
+                            className={`text-xs sm:text-sm lg:text-base font-semibold px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 lg:py-2.5 rounded-lg sm:rounded-xl border ${
                               day.airCondition
                                 ? "bg-sky-50 text-sky-600 border-sky-200"
                                 : "bg-slate-50 text-slate-400 border-slate-200"
@@ -402,10 +412,10 @@ const DayByDayItinerary: React.FC<DayByDayItineraryProps> = ({ itinerary }) => {
                           >
                             {day.airCondition ? "Air Conditioned" : "Non A/C"}
                           </span>
-                          <span className="text-base bg-slate-100 text-slate-600 font-semibold px-5 py-2.5 rounded-xl border border-slate-200">
+                          <span className="text-xs sm:text-sm lg:text-base bg-slate-100 text-slate-600 font-semibold px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 lg:py-2.5 rounded-lg sm:rounded-xl border border-slate-200">
                             {day.seatCapacity} Seats
                           </span>
-                          <span className="text-sky-600 text-sm font-semibold flex items-center">
+                          <span className="text-sky-600 text-xs sm:text-sm font-semibold flex items-center">
                             View Details <IconExternalLink />
                           </span>
                         </div>
@@ -415,9 +425,9 @@ const DayByDayItinerary: React.FC<DayByDayItineraryProps> = ({ itinerary }) => {
 
                   {/* ── Notes ── */}
                   {day.otherNotes && (
-                    <div className="flex gap-4 bg-amber-50 border border-amber-200 rounded-2xl px-6 py-5">
+                    <div className="flex gap-3 sm:gap-4 bg-amber-50 border border-amber-200 rounded-xl sm:rounded-2xl px-4 sm:px-5 lg:px-6 py-4 sm:py-5">
                       <svg
-                        className="w-6 h-6 text-amber-500 flex-shrink-0 mt-0.5"
+                        className="w-5 h-5 sm:w-6 sm:h-6 text-amber-500 flex-shrink-0 mt-0.5"
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
@@ -428,10 +438,10 @@ const DayByDayItinerary: React.FC<DayByDayItineraryProps> = ({ itinerary }) => {
                         />
                       </svg>
                       <div>
-                        <p className="text-base font-semibold text-amber-700 mb-1">
+                        <p className="text-sm sm:text-base font-semibold text-amber-700 mb-0.5 sm:mb-1">
                           Note
                         </p>
-                        <p className="text-base text-amber-800 leading-relaxed">
+                        <p className="text-sm sm:text-base text-amber-800 leading-relaxed">
                           {day.otherNotes}
                         </p>
                       </div>

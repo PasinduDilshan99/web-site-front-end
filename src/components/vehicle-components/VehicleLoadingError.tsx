@@ -1,4 +1,4 @@
-// components/vehicles-components/VehiclesLoadingError.tsx
+// components/vehicle-components/VehiclesLoadingError.tsx
 import React from "react";
 
 interface VehiclesLoadingErrorProps {
@@ -11,7 +11,7 @@ const VehiclesLoadingError: React.FC<VehiclesLoadingErrorProps> = ({
   message = "Couldn't fetch vehicles.",
 }) => {
   return (
-    <div className="mx-auto px-4 py-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen flex items-center justify-center">
+    <div className="mx-auto px-4 py-8 bg-gradient-to-br from-teal-50 via-cyan-50 to-seaBlue-50 min-h-screen flex items-center justify-center">
       <div className="text-center">
         <div className="mb-6">
           <svg
@@ -32,7 +32,7 @@ const VehiclesLoadingError: React.FC<VehiclesLoadingErrorProps> = ({
         <p className="text-gray-600 mb-6">{message}</p>
         <button
           onClick={onRetry}
-          className="cursor-pointer px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg"
+          className="cursor-pointer px-6 py-3 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all duration-300 shadow-md hover:shadow-lg"
         >
           Try Again
         </button>

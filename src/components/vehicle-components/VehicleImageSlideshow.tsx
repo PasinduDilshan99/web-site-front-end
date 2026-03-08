@@ -1,4 +1,4 @@
-// components/vehicles-components/VehicleImageSlideshow.tsx
+// components/vehicle-components/VehicleImageSlideshow.tsx
 "use client";
 import React, { useState, useEffect } from "react";
 import { VehicleImage } from "@/types/vehicle-types";
@@ -58,8 +58,8 @@ const VehicleImageSlideshow: React.FC<VehicleImageSlideshowProps> = ({
 
   if (validImages.length === 0) {
     return (
-      <div className="w-full h-40 sm:h-48 md:h-56 lg:h-64 bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center rounded-t-xl sm:rounded-t-2xl">
-        <span className="text-blue-400 text-sm">No image available</span>
+      <div className="w-full h-40 sm:h-48 md:h-56 lg:h-64 bg-gradient-to-br from-teal-100 to-cyan-100 flex items-center justify-center rounded-t-xl sm:rounded-t-2xl">
+        <span className="text-teal-400 text-sm">No image available</span>
       </div>
     );
   }
@@ -89,7 +89,7 @@ const VehicleImageSlideshow: React.FC<VehicleImageSlideshowProps> = ({
         <>
           <button
             onClick={prevImage}
-            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-1 sm:p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-black/70"
+            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-teal-600/70 text-white p-1 sm:p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-teal-700"
             aria-label="Previous image"
           >
             <svg
@@ -109,7 +109,7 @@ const VehicleImageSlideshow: React.FC<VehicleImageSlideshowProps> = ({
 
           <button
             onClick={nextImage}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-1 sm:p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-black/70"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-cyan-600/70 text-white p-1 sm:p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-cyan-700"
             aria-label="Next image"
           >
             <svg
@@ -142,7 +142,7 @@ const VehicleImageSlideshow: React.FC<VehicleImageSlideshowProps> = ({
               }}
               className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all duration-300 ${
                 idx === currentImageIndex
-                  ? "bg-white scale-125"
+                  ? "bg-gradient-to-r from-teal-400 to-cyan-400 scale-125 shadow-lg"
                   : "bg-white/50 hover:bg-white/80"
               }`}
               aria-label={`Go to image ${idx + 1}`}
@@ -153,7 +153,7 @@ const VehicleImageSlideshow: React.FC<VehicleImageSlideshowProps> = ({
 
       {/* Image Counter */}
       {validImages.length > 1 && (
-        <div className="absolute top-2 right-2 bg-black/50 text-white text-xs px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full">
+        <div className="absolute top-2 right-2 bg-gradient-to-r from-teal-600/80 to-cyan-600/80 text-white text-xs px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full backdrop-blur-sm border border-white/20">
           {currentImageIndex + 1}/{validImages.length}
         </div>
       )}

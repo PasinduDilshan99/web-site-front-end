@@ -18,7 +18,7 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useAuth();
-  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [isWishlisted, setIsWishlisted] = useState(packageData.isWished);
   const [loadingWishlist, setLoadingWishlist] = useState(false);
 
   const handleSubmitBooking = async (formData: BookingFormData) => {
@@ -46,15 +46,22 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
 
   const handleWishlistToggle = async (event: React.MouseEvent) => {
     event.stopPropagation();
-    if (loadingWishlist) return;
+    if (loadingWishlist || !user) return;
+
     setLoadingWishlist(true);
+    const previousState = isWishlisted;
+
+    // Optimistically update UI
+    setIsWishlisted(!previousState);
+
     try {
       await WishListService.addPackageWishList({
         packageId: packageData.packageId,
       });
-      setIsWishlisted((prev) => !prev);
     } catch (err) {
       console.error("Failed to update wishlist", err);
+      // Revert on error
+      setIsWishlisted(previousState);
       alert("Failed to update wishlist. Try again.");
     } finally {
       setLoadingWishlist(false);
@@ -90,38 +97,31 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
       day: "numeric",
     });
   };
+
   const handleShare = async () => {
     const shareData = {
-      title: "Check out this amazing package!", // Customize this
-      text: "I found this great travel package you might like", // Customize this
-      url: window.location.href, // Current page URL
+      title: "Check out this amazing package!",
+      text: "I found this great travel package you might like",
+      url: window.location.href,
     };
 
-    // Check if Web Share API is supported
     if (navigator.share && navigator.canShare?.(shareData)) {
       try {
         await navigator.share(shareData);
-        console.log("Shared successfully");
       } catch (error) {
         if (error instanceof Error && error.name !== "AbortError") {
-          // User cancelled share
-          console.error("Error sharing:", error);
-          // Fallback to clipboard
           fallbackShare();
         }
       }
     } else {
-      // Fallback for browsers that don't support Web Share API
       fallbackShare();
     }
   };
 
   const fallbackShare = () => {
-    // Copy to clipboard
     navigator.clipboard
       .writeText(window.location.href)
       .then(() => {
-        // Show toast or alert
         alert("Link copied to clipboard!");
       })
       .catch(() => {
@@ -158,53 +158,6 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
           per person
         </div>
       </div>
-
-      {/* Validity Period */}
-      {/* <div className="mb-4 sm:mb-6">
-        <div className="flex items-center justify-between text-xs sm:text-sm text-sky-700 mb-2">
-          <span>Valid From:</span>
-          <span className="font-medium">{formatDate(packageData.startDate)}</span>
-        </div>
-        <div className="flex items-center justify-between text-xs sm:text-sm text-sky-700">
-          <span>Valid To:</span>
-          <span className="font-medium">{formatDate(packageData.endDate)}</span>
-        </div>
-      </div> */}
-
-      {/* Participants */}
-      {/* <div className="mb-4 sm:mb-6">
-        <label className="block text-xs sm:text-sm font-semibold text-sky-800 mb-1.5 sm:mb-2">
-          Number of Participants
-        </label>
-        <div className="flex items-center gap-2 sm:gap-3">
-          <button
-            onClick={() =>
-              setParticipants(
-                Math.max(packageData.minPersonCount, participants - 1)
-              )
-            }
-            disabled={participants <= packageData.minPersonCount}
-            className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-sky-200 hover:bg-sky-300 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base text-sky-800 transition-colors"
-          >
-            -
-          </button>
-          <span className="font-semibold text-sky-900 text-base sm:text-lg">{participants}</span>
-          <button
-            onClick={() =>
-              setParticipants(
-                Math.min(packageData.maxPersonCount, participants + 1)
-              )
-            }
-            disabled={participants >= packageData.maxPersonCount}
-            className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-sky-200 hover:bg-sky-300 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base text-sky-800 transition-colors"
-          >
-            +
-          </button>
-          <span className="text-xs sm:text-sm text-sky-700 ml-1 sm:ml-2">
-            ({packageData.minPersonCount}-{packageData.maxPersonCount})
-          </span>
-        </div>
-      </div> */}
 
       {/* Package Features Summary */}
       {packageData.packageFeatures &&
@@ -244,19 +197,6 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
           </div>
         )}
 
-      {/* Total Price */}
-      {/* <div className="border-t border-sky-200 pt-3 sm:pt-4 mb-4 sm:mb-6">
-        <div className="flex justify-between items-center mb-1 sm:mb-2">
-          <span className="font-semibold text-sky-800 text-sm sm:text-base">Total Price:</span>
-          <span className="text-lg sm:text-xl md:text-2xl font-bold text-teal-600">
-            {formatPrice(calculateTotalPrice())}
-          </span>
-        </div>
-        <div className="text-xs sm:text-sm text-sky-700 text-center">
-          For {participants} participant{participants > 1 ? "s" : ""}
-        </div>
-      </div> */}
-
       {/* Book Now Button */}
       <button
         onClick={handleBookNow}
@@ -267,21 +207,80 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
 
       {/* Quick Actions */}
       <div className="flex gap-2 sm:gap-3 mt-3 sm:mt-4">
+        {/* ── Wishlist button ── */}
         <button
           onClick={handleWishlistToggle}
-          disabled={!user}
-          className={`cursor-pointer flex-1 py-1.5 sm:py-2 border rounded-lg transition-colors text-xs sm:text-sm ${
-            user
-              ? "border-sky-300 text-sky-700 hover:border-sky-400 hover:bg-sky-50"
-              : "border-gray-200 text-gray-400 bg-gray-50 cursor-not-allowed"
+          disabled={!user || loadingWishlist}
+          className={`cursor-pointer flex-1 py-1.5 sm:py-2 border rounded-lg transition-all duration-200 text-xs sm:text-sm flex items-center justify-center gap-1.5 font-medium ${
+            !user
+              ? "border-gray-200 text-gray-400 bg-gray-50 cursor-not-allowed"
+              : isWishlisted
+              ? "border-rose-300 text-rose-600 bg-rose-50 hover:bg-rose-100 hover:border-rose-400"
+              : "border-sky-300 text-sky-700 hover:border-sky-400 hover:bg-sky-50"
           }`}
         >
-          {user ? "Save for Later" : "Login to Save"}
+          {loadingWishlist ? (
+            /* Spinner while toggling */
+            <svg
+              className="w-3.5 h-3.5 animate-spin flex-shrink-0"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v8z"
+              />
+            </svg>
+          ) : (
+            /* Heart icon — filled when wishlisted */
+            <svg
+              className="w-3.5 h-3.5 flex-shrink-0 transition-all duration-200"
+              fill={user && isWishlisted ? "currentColor" : "none"}
+              stroke="currentColor"
+              strokeWidth={2}
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+              />
+            </svg>
+          )}
+          {!user
+            ? "Login to Save"
+            : isWishlisted
+            ? "Wishlisted"
+            : "Save for Later"}
         </button>
+
+        {/* ── Share button ── */}
         <button
           onClick={handleShare}
-          className="cursor-pointer flex-1 py-1.5 sm:py-2 border border-sky-300 text-sky-700 rounded-lg hover:border-sky-400 hover:bg-sky-50 transition-colors text-xs sm:text-sm"
+          className="cursor-pointer flex-1 py-1.5 sm:py-2 border border-sky-300 text-sky-700 rounded-lg hover:border-sky-400 hover:bg-sky-50 transition-colors text-xs sm:text-sm flex items-center justify-center gap-1.5 font-medium"
         >
+          <svg
+            className="w-3.5 h-3.5 flex-shrink-0"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+            />
+          </svg>
           Share
         </button>
       </div>

@@ -8,6 +8,7 @@ import {
   UpdateNotificationRequest,
 } from "@/types/user-notifications-permissions";
 import { USER_PROFILE_NOTIFICATION_VIEW_PRIVILEGE } from "@/utils/privileges";
+import { USER_PROFILE_PAGE_PATH } from "@/utils/urls";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
@@ -30,7 +31,7 @@ export default function NotificationsPage() {
       user &&
       !user.privileges.includes(USER_PROFILE_NOTIFICATION_VIEW_PRIVILEGE)
     ) {
-      router.push("/profile");
+      router.push(USER_PROFILE_PAGE_PATH);
     }
   }, [user, router]);
 
@@ -338,21 +339,25 @@ export default function NotificationsPage() {
                               handleToggle(camelCaseField, isEnabled)
                             }
                             disabled={updating === camelCaseField}
-                            className={`relative inline-flex h-4 w-8 md:h-6 md:w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 ${
-                              isEnabled ? "bg-teal-600" : "bg-gray-600"
-                            } ${updating === camelCaseField ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                            className={`relative inline-flex h-4 w-8 md:h-6 md:w-11 items-center rounded-full transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 hover:shadow-lg hover:scale-105 active:scale-95 ${
+                              isEnabled
+                                ? "bg-teal-600 hover:bg-teal-500"
+                                : "bg-gray-600 hover:bg-gray-500"
+                            } ${updating === camelCaseField ? "opacity-50 cursor-not-allowed hover:scale-100 hover:shadow-none" : "cursor-pointer"}`}
                           >
                             <span
-                              className={`inline-block h-2 w-2 md:h-4 md:w-4 transform rounded-full bg-white transition-transform duration-200 ${
+                              className={`inline-block h-2 w-2 md:h-4 md:w-4 transform rounded-full bg-white transition-all duration-300 ease-out ${
                                 isEnabled
                                   ? "translate-x-4 md:translate-x-6"
                                   : "translate-x-1"
-                              }`}
+                              } ${updating !== camelCaseField ? "hover:scale-110 hover:shadow-md" : ""}`}
                             />
                           </button>
 
                           {updating === camelCaseField && (
-                            <div className="h-3 w-3 md:h-4 md:w-4 border-2 border-sky-600 border-t-transparent rounded-full animate-spin"></div>
+                            <div className="h-3 w-3 md:h-4 md:w-4">
+                              <div className="animate-spin rounded-full h-3 w-3 md:h-4 md:w-4 border-2 border-sky-600 border-t-transparent hover:border-sky-500 transition-colors duration-300"></div>
+                            </div>
                           )}
                         </div>
                       </div>
@@ -366,16 +371,17 @@ export default function NotificationsPage() {
           {/* Sidebar - Quick Actions */}
           <div className="space-y-6">
             {/* Enable All */}
-            <div className="bg-white rounded-2xl shadow-lg border border-sky-200 p-6">
+            {/* Enable All */}
+            <div className="bg-white rounded-2xl shadow-lg border border-sky-200 p-6 group/enable">
               <div className="flex items-center space-x-3 mb-4">
-                <div className="w-10 h-10 bg-sky-100 rounded-xl flex items-center justify-center text-lg">
+                <div className="w-10 h-10 bg-sky-100 rounded-xl flex items-center justify-center text-lg group-hover/enable:scale-110 group-hover/enable:bg-sky-200 transition-all duration-300">
                   💡
                 </div>
-                <h3 className="font-semibold text-gray-800">
+                <h3 className="font-semibold text-gray-800 group-hover/enable:text-sky-600 transition-colors duration-300">
                   Enable All Notifications
                 </h3>
               </div>
-              <p className="text-gray-600 text-sm mb-4">
+              <p className="text-gray-600 text-sm mb-4 group-hover/enable:text-gray-700 transition-colors duration-300">
                 Turn on all notification types to stay updated with everything.
               </p>
               <button
@@ -390,23 +396,24 @@ export default function NotificationsPage() {
                     }
                   });
                 }}
-                className="w-full px-4 py-3 bg-gradient-to-r from-sky-600 to-sky-500 text-white rounded-lg hover:shadow-lg transition-all duration-200 text-sm font-medium"
+                className="cursor-pointer w-full px-4 py-3 bg-gradient-to-r from-sky-600 to-sky-500 text-white rounded-lg hover:shadow-xl hover:scale-[1.02] hover:from-sky-500 hover:to-sky-400 active:scale-[0.98] transition-all duration-300 text-sm font-medium relative overflow-hidden group/btn"
               >
-                Enable All
+                <span className="relative z-10">Enable All</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-sky-400 to-sky-300 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
               </button>
             </div>
 
             {/* Disable All */}
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 group/disable">
               <div className="flex items-center space-x-3 mb-4">
-                <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center text-lg">
+                <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center text-lg group-hover/disable:scale-110 group-hover/disable:bg-gray-200 transition-all duration-300">
                   🔕
                 </div>
-                <h3 className="font-semibold text-gray-800">
+                <h3 className="font-semibold text-gray-800 group-hover/disable:text-gray-600 transition-colors duration-300">
                   Disable All Notifications
                 </h3>
               </div>
-              <p className="text-gray-600 text-sm mb-4">
+              <p className="text-gray-600 text-sm mb-4 group-hover/disable:text-gray-700 transition-colors duration-300">
                 Turn off all notifications if you prefer not to receive any
                 updates.
               </p>
@@ -422,9 +429,10 @@ export default function NotificationsPage() {
                     }
                   });
                 }}
-                className="w-full px-4 py-3 bg-gradient-to-r from-gray-600 to-gray-500 text-white rounded-lg hover:shadow-lg transition-all duration-200 text-sm font-medium"
+                className="cursor-pointer w-full px-4 py-3 bg-gradient-to-r from-gray-600 to-gray-500 text-white rounded-lg hover:shadow-xl hover:scale-[1.02] hover:from-gray-500 hover:to-gray-400 active:scale-[0.98] transition-all duration-300 text-sm font-medium relative overflow-hidden group/btn"
               >
-                Disable All
+                <span className="relative z-10">Disable All</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-gray-400 to-gray-300 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
               </button>
             </div>
 

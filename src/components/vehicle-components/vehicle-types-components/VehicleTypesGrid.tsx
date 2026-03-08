@@ -1,4 +1,3 @@
-// components/vehicle-types-components/VehicleTypesGrid.tsx
 "use client";
 import React from "react";
 import VehicleTypeCard from "./VehicleTypeCard";
@@ -24,7 +23,7 @@ const VehicleTypesGrid: React.FC<VehicleTypesGridProps> = ({
       </div>
 
       {/* Display Count Info */}
-      <div className="text-center mt-4 sm:mt-6 text-xs sm:text-sm text-gray-500">
+      <div className="text-center mt-4 sm:mt-6 text-xs sm:text-sm text-teal-600">
         Showing {displayedVehicleTypes.length} of {vehicleTypes.length} vehicle types
       </div>
     </>

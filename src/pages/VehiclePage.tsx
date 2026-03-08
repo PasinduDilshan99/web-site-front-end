@@ -1,4 +1,4 @@
-// pages/VehiclePage.tsx
+// pages/VehiclePage.tsx (updated - removed price range)
 "use client";
 import React, { useState, useEffect, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -38,12 +38,6 @@ const filtersToUrlParams = (
   if (filters.horsepowerRange[1] < 1000)
     params.set("maxHp", filters.horsepowerRange[1].toString());
 
-  // Price range
-  if (filters.priceRange[0] > 0)
-    params.set("minPrice", filters.priceRange[0].toString());
-  if (filters.priceRange[1] < 100000)
-    params.set("maxPrice", filters.priceRange[1].toString());
-
   // Pagination
   params.set("page", page.toString());
   params.set("pageSize", pageSize.toString());
@@ -68,10 +62,6 @@ const urlParamsToFilters = (params: URLSearchParams): VehicleFilters => {
       Number(params.get("maxHp")) || 1000,
     ],
     seatCapacity: params.get("seatCapacity") || "",
-    priceRange: [
-      Number(params.get("minPrice")) || 0,
-      Number(params.get("maxPrice")) || 100000,
-    ],
   };
 };
 
@@ -104,8 +94,6 @@ const VehiclePageContent: React.FC = () => {
     maxYear: number;
     minHorsepower: number;
     maxHorsepower: number;
-    minPrice: number;
-    maxPrice: number;
   }>({
     makes: [],
     bodyTypes: [],
@@ -117,8 +105,6 @@ const VehiclePageContent: React.FC = () => {
     maxYear: 2024,
     minHorsepower: 0,
     maxHorsepower: 1000,
-    minPrice: 0,
-    maxPrice: 100000,
   });
 
   // Initialize filters from URL params
@@ -225,7 +211,6 @@ const VehiclePageContent: React.FC = () => {
         filterOptions.maxHorsepower,
       ],
       seatCapacity: "",
-      priceRange: [filterOptions.minPrice, filterOptions.maxPrice],
     };
 
     setFilters(resetFilterValues);
@@ -287,15 +272,15 @@ const VehiclePageContent: React.FC = () => {
   const endIndex = startIndex + itemsPerPage;
 
   return (
-    <div className="mx-auto px-4 py-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen">
+    <div className="mx-auto px-4 py-8 bg-gradient-to-br from-teal-50 to-cyan-50 to-seaBlue-50 min-h-screen">
       {/* Page Header */}
       <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
         <SectionHeader
           subtitle=""
           title="Vehicles"
           description="Discover the perfect vehicle for your journey in Sri Lanka"
-          fromColor="#3B82F6"
-          toColor="#8B5CF6"
+          fromColor="#2C9A9A"
+          toColor="#0E7C7C"
         />
       </div>
 
@@ -311,15 +296,15 @@ const VehiclePageContent: React.FC = () => {
       {/* Results Section */}
       <div id="results-section" className="mb-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <h3 className="text-lg lg:text-2xl font-semibold text-blue-900">
+          <h3 className="text-lg lg:text-2xl font-semibold text-teal-900">
             {totalVehicles} Vehicle{totalVehicles !== 1 ? "s" : ""} Found
           </h3>
 
           {/* Items Per Page Selector */}
-          <div className="flex items-center gap-3 bg-blue-50 rounded-lg px-4 py-2 border border-blue-200">
+          <div className="flex items-center gap-3 bg-teal-50 rounded-lg px-4 py-2 border border-teal-200">
             <label
               htmlFor="itemsPerPage"
-              className="text-sm font-medium text-blue-800 whitespace-nowrap"
+              className="text-sm font-medium text-teal-800 whitespace-nowrap"
             >
               Show:
             </label>
@@ -327,7 +312,7 @@ const VehiclePageContent: React.FC = () => {
               id="itemsPerPage"
               value={itemsPerPage}
               onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
-              className="cursor-pointer border border-blue-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-blue-700 transition-all duration-200 hover:border-blue-400"
+              className="cursor-pointer border border-teal-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white text-teal-700 transition-all duration-200 hover:border-teal-400"
             >
               <option value={6}>6</option>
               <option value={8}>8</option>
@@ -336,7 +321,7 @@ const VehiclePageContent: React.FC = () => {
               <option value={24}>24</option>
               <option value={32}>32</option>
             </select>
-            <span className="text-sm text-blue-600 whitespace-nowrap font-medium">
+            <span className="text-sm text-teal-600 whitespace-nowrap font-medium">
               per page
             </span>
           </div>
@@ -387,12 +372,12 @@ const NoResults: React.FC<{ onResetFilters: () => void }> = ({
   onResetFilters,
 }) => (
   <div className="text-center py-12">
-    <div className="text-blue-600 text-lg mb-4">
+    <div className="text-teal-600 text-lg mb-4">
       No vehicles found matching your filters.
     </div>
     <button
       onClick={onResetFilters}
-      className="cursor-pointer px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg"
+      className="cursor-pointer px-6 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all duration-300 shadow-md hover:shadow-lg"
     >
       Reset Filters
     </button>
@@ -462,8 +447,8 @@ const Pagination: React.FC<PaginationProps> = ({
   const pageNumbers = getPageNumbers();
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 pt-6 border-t border-blue-200">
-      <div className="text-sm text-blue-600 font-medium">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 pt-6 border-t border-teal-200">
+      <div className="text-sm text-teal-600 font-medium">
         Showing {startIndex + 1} to {endIndex} of {totalItems} results
       </div>
 
@@ -471,7 +456,7 @@ const Pagination: React.FC<PaginationProps> = ({
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="cursor-pointer px-4 py-2 text-sm font-medium text-blue-700 bg-white border-2 border-blue-300 rounded-lg hover:bg-blue-50 hover:text-blue-800 hover:border-blue-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+          className="cursor-pointer px-4 py-2 text-sm font-medium text-teal-700 bg-white border-2 border-teal-300 rounded-lg hover:bg-teal-50 hover:text-teal-800 hover:border-teal-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
           aria-label="Previous page"
         >
           <svg
@@ -496,7 +481,7 @@ const Pagination: React.FC<PaginationProps> = ({
               return (
                 <span
                   key={`ellipsis-${index}`}
-                  className="px-4 py-2 text-sm font-medium text-blue-700"
+                  className="px-4 py-2 text-sm font-medium text-teal-700"
                 >
                   ...
                 </span>
@@ -509,8 +494,8 @@ const Pagination: React.FC<PaginationProps> = ({
                 onClick={() => onPageChange(page as number)}
                 className={`cursor-pointer min-w-[40px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
                   currentPage === page
-                    ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg transform scale-105"
-                    : "text-blue-700 bg-white border-2 border-blue-300 hover:bg-blue-50 hover:text-blue-800 hover:border-blue-400 hover:shadow-md"
+                    ? "bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-lg transform scale-105"
+                    : "text-teal-700 bg-white border-2 border-teal-300 hover:bg-teal-50 hover:text-teal-800 hover:border-teal-400 hover:shadow-md"
                 }`}
                 aria-label={`Page ${page}`}
                 aria-current={currentPage === page ? "page" : undefined}
@@ -524,7 +509,7 @@ const Pagination: React.FC<PaginationProps> = ({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="cursor-pointer px-4 py-2 text-sm font-medium text-blue-700 bg-white border-2 border-blue-300 rounded-lg hover:bg-blue-50 hover:text-blue-800 hover:border-blue-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+          className="cursor-pointer px-4 py-2 text-sm font-medium text-teal-700 bg-white border-2 border-teal-300 rounded-lg hover:bg-teal-50 hover:text-teal-800 hover:border-teal-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
           aria-label="Next page"
         >
           <span className="hidden sm:inline">Next</span>

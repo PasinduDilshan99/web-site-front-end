@@ -1,4 +1,3 @@
-// components/vehicle-types-components/VehicleTypesLoadingError.tsx
 import React from "react";
 
 interface VehicleTypesLoadingErrorProps {
@@ -11,7 +10,7 @@ const VehicleTypesLoadingError: React.FC<VehicleTypesLoadingErrorProps> = ({
   message = "Couldn't fetch vehicle types.",
 }) => {
   return (
-    <div className="mx-auto px-4 py-8 bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 min-h-screen flex items-center justify-center">
+    <div className="mx-auto px-4 py-8 bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50 min-h-screen flex items-center justify-center">
       <div className="text-center">
         <div className="mb-6">
           <svg
@@ -28,11 +27,13 @@ const VehicleTypesLoadingError: React.FC<VehicleTypesLoadingErrorProps> = ({
             />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Oops! Something went wrong</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          Oops! Something went wrong
+        </h2>
         <p className="text-gray-600 mb-6">{message}</p>
         <button
           onClick={onRetry}
-          className="cursor-pointer px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-300 shadow-md hover:shadow-lg"
+          className="cursor-pointer px-6 py-3 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all duration-300 shadow-md hover:shadow-lg"
         >
           Try Again
         </button>
