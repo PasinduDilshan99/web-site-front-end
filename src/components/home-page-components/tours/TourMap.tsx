@@ -510,7 +510,7 @@ const TourMap: React.FC = () => {
           <SectionHeader
             subtitle="Explore the pearl of the Indian Ocean"
             title="Discover Sri Lanka"
-            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore."
+            description=""
             fromColor="#A855F7"
             toColor="#F59E0B"
           />
@@ -607,7 +607,7 @@ const TourMap: React.FC = () => {
         </div>
 
         {/* Map Container with Side Panel */}
-        <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl p-3 sm:p-4 md:p-6 lg:p-8 abc">
+        <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl p-3 sm:p-4 md:p-6 lg:p-8">
           <div className="flex gap-4">
             {/* Map */}
             <div className="flex-1 -z-0">

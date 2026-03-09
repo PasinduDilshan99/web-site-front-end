@@ -99,7 +99,7 @@ const AboutUsHeroSection = () => {
   const currentSlideData = heroData[currentSlide];
 
   return (
-    <div className="relative w-full h-[600px] md:h-[700px] overflow-hidden bg-gradient-to-br from-blue-900 to-teal-800">
+    <div className="relative w-full h-[70vh] lg:h-[90vh] overflow-hidden bg-gradient-to-br from-blue-900 to-teal-800">
       {/* Image Slider */}
       <div className="relative w-full h-full">
         {heroData.map((item, index) => (

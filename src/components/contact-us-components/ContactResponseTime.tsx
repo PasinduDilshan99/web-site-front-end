@@ -37,7 +37,7 @@ const ContactResponseTime = () => {
           <span className="font-semibold text-blue-600">Phone Calls</span>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-gray-700">Within 2 hours:</span>
+          <span className="text-gray-700">Within 30 minutes:</span>
           <span className="font-semibold text-purple-600">Email/Form</span>
         </div>
       </div>

@@ -129,9 +129,9 @@ const ActiveToursHomeGrid = () => {
         {/* Header Section */}
         <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
           <SectionHeader
-            subtitle="Lets plan your next home or holiday"
+            subtitle=""
             title="Tours"
-            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore."
+            description="Lets plan your next home or holiday"
             fromColor="#A855F7"
             toColor="#F59E0B"
           />
@@ -144,7 +144,7 @@ const ActiveToursHomeGrid = () => {
         />
       </div>
 
-      <div className="text-center mt-8">
+      <div className="text-center mt-2">
         <AnimatedButton onClick={handleMoreToursClick}>
           More Tours
         </AnimatedButton>

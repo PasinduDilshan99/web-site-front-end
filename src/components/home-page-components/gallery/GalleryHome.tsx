@@ -370,8 +370,8 @@ const GalleryHome = () => {
       <div className="text-center mb-6 sm:mb-10 md:mb-12 lg:mb-16 xl:mb-20 px-4">
         <SectionHeader
           subtitle=""
-          title="IMAGE GALLERY"
-          description="Explore our visual journey through stunning photographs"
+          title="Visual Diaries"
+          description="A glimpse into unforgettable journeys"
           fromColor="#A855F7"
           toColor="#F59E0B"
         />

@@ -271,7 +271,7 @@ const TrendingDestinations = () => {
           <SectionHeader
             subtitle=""
             title="Trending Destinations"
-            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore."
+            description="Explore the places everyone's talking about. From sun-soaked beaches to vibrant cities, these handpicked hotspots are ready for your next adventure."
             fromColor="#A855F7"
             toColor="#F59E0B"
           />

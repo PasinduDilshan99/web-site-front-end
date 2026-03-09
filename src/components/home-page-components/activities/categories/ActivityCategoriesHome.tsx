@@ -7,6 +7,7 @@ import { ActiveActivitiesCategoriesType, CategoryImage } from "@/types/activity-
 import { ActivityService } from "@/services/activityService";
 import { PLACE_HOLDER_IMAGE } from "@/utils/constant";
 import { useRouter } from "next/navigation";
+import { ACTIVITIES_CATEGORY_TYPE_PATH } from "@/utils/urls";
 
 // Category Image Component with Fallback
 const CategoryImageComponent = React.memo(
@@ -248,13 +249,13 @@ const ActivityCategoriesHome = () => {
   };
 
   const handleCategoryClick = (categoryName: string) => {
-    router.push(`/activities?category=${encodeURIComponent(categoryName)}`);
+    router.push(`${ACTIVITIES_CATEGORY_TYPE_PATH}${encodeURIComponent(categoryName)}`);
   };
 
   const handleExploreClick = (e: React.MouseEvent, categoryName: string) => {
     e.stopPropagation();
     e.preventDefault();
-    router.push(`/activities?category=${encodeURIComponent(categoryName)}`);
+    router.push(`${ACTIVITIES_CATEGORY_TYPE_PATH}${encodeURIComponent(categoryName)}`);
   };
 
   const goToSlide = (index: number) => {
@@ -317,9 +318,9 @@ const ActivityCategoriesHome = () => {
         {/* Header Section */}
         <div className="px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
           <SectionHeader
-            subtitle="Popular Activities"
-            title="Discover Actual Adventure"
-            description="Explore our diverse range of activity categories and find your perfect adventure"
+            subtitle=""
+            title="Ways to Wander"
+            description="Browse activities by interest adventure, culture, nature, and more"
             fromColor="#A855F7"
             toColor="#F59E0B"
           />
@@ -363,7 +364,7 @@ const ActivityCategoriesHome = () => {
                         }
                       >
                         {/* Category Image */}
-                        <div className="relative">
+                        <div className="relative cursor-pointer">
                           <CategoryImageComponent
                             primaryImage={primaryImage}
                             categoryName={category.categoryName}
@@ -405,7 +406,7 @@ const ActivityCategoriesHome = () => {
                           )}
 
                           {/* Category Name Overlay */}
-                          <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 lg:p-6">
+                          <div className="cursor-pointer absolute bottom-0 left-0 right-0 p-3 sm:p-4 lg:p-6">
                             <div
                               className="inline-block px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg backdrop-blur-sm"
                               style={{
@@ -448,7 +449,7 @@ const ActivityCategoriesHome = () => {
                               )}
 
                               <button
-                                className="px-4 sm:px-6 py-1.5 sm:py-2 rounded-lg font-semibold text-white transition-all duration-300 transform hover:scale-105 shadow-lg text-sm sm:text-base"
+                                className="cursor-pointer px-4 sm:px-6 py-1.5 sm:py-2 rounded-lg font-semibold text-white transition-all duration-300 transform hover:scale-105 shadow-lg text-sm sm:text-base"
                                 style={{ backgroundColor: category.color }}
                                 onMouseEnter={(e) => {
                                   e.currentTarget.style.backgroundColor =
@@ -508,7 +509,7 @@ const ActivityCategoriesHome = () => {
 
         {/* View All Button */}
         {activeActivitiesCategories.length > 0 && (
-          <div className="text-center mt-6 sm:mt-8 lg:mt-10">
+          <div className="text-center mt-2">
             <AnimatedButton onClick={() => router.push("/activities")}>
               More Activities
             </AnimatedButton>

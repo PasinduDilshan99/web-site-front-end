@@ -6,6 +6,7 @@ import { NavBarItem } from "@/types/nav-bar-types";
 import { User } from "@/context/AuthContext";
 import { useAuth } from "@/context/AuthContext";
 import MobileMenuItem from "./MobileMenuItem";
+import { LOGIN_PAGE_PATH, SIGNUP_PAGE_PATH } from "@/utils/urls";
 
 interface MobileNavProps {
   visibleNavBarItems: NavBarItem[];
@@ -58,46 +59,49 @@ const MobileNav: React.FC<MobileNavProps> = ({
           >
             {user ? (
               <>
-<div className="flex items-center space-x-3 px-4 py-3 mb-2">
-  {/* Replace UserAvatar with custom implementation */}
-  <div
-    className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden"
-    style={{
-      background: user?.imageUrl ? "none" : "linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%)",
-      border: "2px solid rgba(14, 165, 233, 0.3)",
-    }}
-  >
-    {user?.imageUrl ? (
-      <Image
-        alt="profile pic"
-        src={user.imageUrl}
-        width={400}
-        height={400}
-        className="w-full h-full object-cover"
-      />
-    ) : (
-      <span className="font-bold text-lg text-white">
-        {user.firstName.charAt(0).toUpperCase()}
-        {user.lastName.charAt(0).toUpperCase()}
-      </span>
-    )}
-  </div>
-  <div>
-    <div style={{ color: "#075985" }} className="font-medium">
-      {`${user.firstName} ${user.lastName}`}
-    </div>
-    <div style={{ color: "#0369a1" }} className="text-sm">
-      {user.email}
-    </div>
-  </div>
-</div>
+                <div className="flex items-center space-x-3 px-4 py-3 mb-2">
+                  {/* Replace UserAvatar with custom implementation */}
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden"
+                    style={{
+                      background: user?.imageUrl
+                        ? "none"
+                        : "linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%)",
+                      border: "2px solid rgba(14, 165, 233, 0.3)",
+                    }}
+                  >
+                    {user?.imageUrl ? (
+                      <Image
+                        alt="profile pic"
+                        src={user.imageUrl}
+                        width={400}
+                        height={400}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="font-bold text-lg text-white">
+                        {user.firstName.charAt(0).toUpperCase()}
+                        {user.lastName.charAt(0).toUpperCase()}
+                      </span>
+                    )}
+                  </div>
+                  <div>
+                    <div style={{ color: "#075985" }} className="font-medium">
+                      {`${user.firstName} ${user.lastName}`}
+                    </div>
+                    <div style={{ color: "#0369a1" }} className="text-sm">
+                      {user.email}
+                    </div>
+                  </div>
+                </div>
                 <Link
                   href="/profile"
                   className="block px-4 py-3 rounded-lg font-medium transition-all duration-300 border border-transparent backdrop-blur-sm"
                   style={{ color: "#075985" }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.color = "#0ea5e9";
-                    e.currentTarget.style.backgroundColor = "rgba(14, 165, 233, 0.08)";
+                    e.currentTarget.style.backgroundColor =
+                      "rgba(14, 165, 233, 0.08)";
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.color = "#075985";
@@ -113,7 +117,8 @@ const MobileNav: React.FC<MobileNavProps> = ({
                   style={{ color: "#dc2626" }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.color = "#ef4444";
-                    e.currentTarget.style.backgroundColor = "rgba(220, 38, 38, 0.08)";
+                    e.currentTarget.style.backgroundColor =
+                      "rgba(220, 38, 38, 0.08)";
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.color = "#dc2626";
@@ -126,7 +131,7 @@ const MobileNav: React.FC<MobileNavProps> = ({
             ) : (
               <>
                 <Link
-                  href="/login"
+                  href={LOGIN_PAGE_PATH}
                   className="block px-4 py-3 rounded-lg font-medium transition-all duration-300 border backdrop-blur-sm text-center mb-2"
                   style={{
                     color: "#0ea5e9",
@@ -139,17 +144,19 @@ const MobileNav: React.FC<MobileNavProps> = ({
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.color = "#0ea5e9";
-                    e.currentTarget.style.backgroundColor = "rgba(14, 165, 233, 0.05)";
+                    e.currentTarget.style.backgroundColor =
+                      "rgba(14, 165, 233, 0.05)";
                   }}
                   onClick={handleClose}
                 >
                   Login
                 </Link>
                 <Link
-                  href="/signup"
+                  href={SIGNUP_PAGE_PATH}
                   className="block px-4 py-3 rounded-lg font-medium transition-all duration-300 border border-transparent backdrop-blur-sm text-center"
                   style={{
-                    background: "linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%)",
+                    background:
+                      "linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%)",
                     color: "#FFFFFF",
                   }}
                   onMouseEnter={(e) => {
@@ -174,7 +181,13 @@ const MobileNav: React.FC<MobileNavProps> = ({
 };
 
 // Helper component for user avatar
-const UserAvatar = ({ user, size = "medium" }: { user: User; size?: "small" | "medium" | "large" }) => {
+const UserAvatar = ({
+  user,
+  size = "medium",
+}: {
+  user: User;
+  size?: "small" | "medium" | "large";
+}) => {
   const dimensions = {
     small: "w-7 h-7 text-xs",
     medium: "w-8 h-8 text-sm",

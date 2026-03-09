@@ -381,12 +381,13 @@ const ContactForm = () => {
   };
 
   // Check if email should be required based on contact method
-  const isEmailRequired = formData.preferredContactMethod === "EMAIL";
+  const isEmailRequired = formData.preferredContactMethod === "EMAIL" || formData.preferredContactMethod === "";
 
   // Check if phone should be required based on contact method
   const isPhoneRequired =
     formData.preferredContactMethod === "WHATSAPP" ||
-    formData.preferredContactMethod === "CALL";
+    formData.preferredContactMethod === "CALL" ||
+    formData.preferredContactMethod === "";
 
   return (
     <div className="bg-gradient-to-b from-white to-gray-50 pb-12 pt-6 lg:pb-16 lg:pt-8 xl:pb-20 xl:pt-10">
@@ -481,7 +482,7 @@ const ContactForm = () => {
                         />
                       </svg>
                       <span className="text-md lg:text-2xl font-medium">
-                        We usually respond within 24 hours
+                        We usually respond within 2 hours
                       </span>
                     </div>
                     <button
@@ -1020,10 +1021,10 @@ const ContactForm = () => {
                         </div>
                         <div className="text-sm lg:text-lg">
                           <p className="text-sm text-gray-700">
-                            <span className="font-semibold text-blue-600">
+                            <p className="font-semibold text-blue-600">
                               We&apos;ll contact you through your preferred
                               method.
-                            </span>{" "}
+                            </p>{" "}
                             For urgent inquiries, please call us at{" "}
                             <a
                               href={`tel:${COMPANY_CONTACT_NUMBER}`}

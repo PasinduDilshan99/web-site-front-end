@@ -4,6 +4,7 @@ import { WishListService } from "@/services/wishListService";
 import { PLACE_HOLDER_IMAGE } from "@/utils/constant";
 import { useAuth } from "@/context/AuthContext";
 import { ActiveToursType } from "@/types/tour-types";
+import Image from "next/image";
 
 interface TourImageGalleryProps {
   tour: ActiveToursType;
@@ -38,9 +39,11 @@ const ThumbnailImage = React.memo(({ src, alt, className, onClick }: {
 
   return (
     <div onClick={onClick} className={`${className} cursor-pointer relative overflow-hidden`}>
-      <img
+      <Image
         src={imgSrc}
         alt={alt}
+        width={2000}
+        height={2000}
         className="w-full h-full object-cover"
         onError={() => { if (!hasError) { setImgSrc(PLACE_HOLDER_IMAGE); setHasError(true); } }}
       />
@@ -106,7 +109,7 @@ const Lightbox = ({ images, startIndex, onClose }: {
         </div>
         <button
           onClick={onClose}
-          className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
+          className="cursor-pointer w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
           style={{ background: "rgba(255,255,255,0.1)" }}
         >
           <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -123,7 +126,7 @@ const Lightbox = ({ images, startIndex, onClose }: {
         {/* Prev */}
         <button
           onClick={prev}
-          className="absolute left-2 sm:left-4 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
+          className="cursor-pointer absolute left-2 sm:left-4 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
           style={{ background: "rgba(11,126,168,0.25)", border: "1px solid rgba(11,126,168,0.4)" }}
         >
           <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -133,9 +136,11 @@ const Lightbox = ({ images, startIndex, onClose }: {
 
         {/* Image */}
         <div className="w-full max-w-4xl h-full flex items-center justify-center">
-          <img
+          <Image
             src={images[activeIndex]?.url || PLACE_HOLDER_IMAGE}
             alt={images[activeIndex]?.name}
+            width={2000}
+            height={2000}
             className="max-w-full max-h-full object-contain rounded-xl shadow-2xl"
             style={{ maxHeight: "calc(100vh - 220px)" }}
           />
@@ -144,7 +149,7 @@ const Lightbox = ({ images, startIndex, onClose }: {
         {/* Next */}
         <button
           onClick={next}
-          className="absolute right-2 sm:right-4 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
+          className="cursor-pointer absolute right-2 sm:right-4 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
           style={{ background: "rgba(14,158,142,0.25)", border: "1px solid rgba(14,158,142,0.4)" }}
         >
           <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -171,7 +176,7 @@ const Lightbox = ({ images, startIndex, onClose }: {
           <button
             key={i}
             onClick={() => setActiveIndex(i)}
-            className="flex-shrink-0 transition-all duration-200"
+            className="cursor-pointer flex-shrink-0 transition-all duration-200"
             style={{
               width: 56,
               height: 40,
