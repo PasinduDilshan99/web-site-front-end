@@ -68,7 +68,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
           onClick={closeAllDropdowns}
         >
           <Image
-            src="/felicita_trips.png"
+            src="/logo.png"
             alt={companyName}
             width={150}
             height={50}

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { User } from "@/context/AuthContext";
 import { useRouter, usePathname } from "next/navigation";
@@ -17,8 +17,55 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
   onCloseAll,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const pathname = usePathname();
+
+  // Handle outside clicks and custom close events
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      
+      // Check if click is outside both the dropdown and its trigger
+      if (
+        dropdownRef.current && 
+        triggerRef.current && 
+        !dropdownRef.current.contains(target) && 
+        !triggerRef.current.contains(target)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    const handleCloseAll = () => {
+      setIsDropdownOpen(false);
+    };
+
+    // Listen for custom close event from NavBarContainer
+    window.addEventListener('closeAllNavDropdowns', handleCloseAll);
+    
+    // Also listen for direct close event on this dropdown
+    if (dropdownRef.current) {
+      dropdownRef.current.addEventListener('closeDropdown', handleCloseAll);
+    }
+
+    // Add click outside listener
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      window.removeEventListener('closeAllNavDropdowns', handleCloseAll);
+      if (dropdownRef.current) {
+        dropdownRef.current.removeEventListener('closeDropdown', handleCloseAll);
+      }
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Close dropdown when route changes
+  useEffect(() => {
+    setIsDropdownOpen(false);
+  }, [pathname]);
 
   const handleLogout = async () => {
     await onLogout();
@@ -29,11 +76,30 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
     }
   };
 
+  // Toggle dropdown and manage classes for outside click detection
+  const toggleDropdown = () => {
+    const newState = !isDropdownOpen;
+    setIsDropdownOpen(newState);
+    
+    // Add/remove data attribute for NavBarContainer to detect open state
+    if (dropdownRef.current) {
+      if (newState) {
+        dropdownRef.current.setAttribute('data-open', 'true');
+        dropdownRef.current.classList.add('open');
+      } else {
+        dropdownRef.current.setAttribute('data-open', 'false');
+        dropdownRef.current.classList.remove('open');
+      }
+    }
+  };
+
   return (
     <div className="flex items-center space-x-3">
-      <div className="relative group">
+      <div className="relative">
+        {/* Trigger Element */}
         <div
-          className="flex items-center space-x-2 cursor-pointer p-2 rounded-lg transition-all duration-300"
+          ref={triggerRef}
+          className="flex items-center space-x-2 cursor-pointer p-2 rounded-lg transition-all duration-300 nav-trigger"
           style={{
             backgroundColor: isDropdownOpen
               ? "rgba(14, 165, 233, 0.08)"
@@ -50,7 +116,10 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
               e.currentTarget.style.backgroundColor = "transparent";
             }
           }}
-          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          onClick={toggleDropdown}
+          aria-expanded={isDropdownOpen}
+          aria-haspopup="true"
+          aria-label="User menu"
         >
           <div
             className="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden"
@@ -59,21 +128,22 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
               border: "2px solid rgba(14, 165, 233, 0.3)",
             }}
           >
-            {(user && (
+            {user?.imageUrl ? (
               <Image
-                alt="profile pic"
-                src={user?.imageUrl}
-                width={400}
-                height={400}
+                alt={`${user.firstName} ${user.lastName}'s profile`}
+                src={user.imageUrl}
+                width={32}
+                height={32}
+                className="w-full h-full object-cover"
               />
-            )) || (
+            ) : (
               <span className="font-bold text-sm text-white">
-                {user?.firstName.charAt(0).toUpperCase()}
-                {user?.lastName.charAt(0).toUpperCase()}
+                {user?.firstName?.charAt(0).toUpperCase()}
+                {user?.lastName?.charAt(0).toUpperCase()}
               </span>
             )}
           </div>
-          <span className="font-medium text-sm" style={{ color: "#075985" }}>
+          <span className="font-medium text-sm hidden sm:inline" style={{ color: "#075985" }}>
             {user.firstName}
           </span>
         </div>
@@ -81,12 +151,14 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
         {/* Dropdown Menu */}
         {isDropdownOpen && (
           <div
-            className="absolute right-0 top-full mt-2 w-48 rounded-lg shadow-xl z-50"
+            ref={dropdownRef}
+            className="absolute right-0 top-full mt-2 w-48 rounded-lg shadow-xl z-50 nav-dropdown"
             style={{
               backgroundColor: "rgba(248, 250, 252, 0.98)",
               border: "1px solid rgba(14, 165, 233, 0.2)",
               backdropFilter: "blur(16px)",
             }}
+            data-open="true"
           >
             <div className="p-2">
               <div
@@ -98,13 +170,14 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
               >
                 Signed in as
                 <br />
-                <span style={{ color: "#075985", fontWeight: "600" }}>
+                <span className="font-semibold" style={{ color: "#075985" }}>
                   {user.firstName} {user.lastName}
                 </span>
               </div>
+              
               <Link
                 href="/profile"
-                className="block px-3 py-2 rounded-md transition-colors duration-300"
+                className="block px-3 py-2 rounded-md transition-all duration-300 hover:scale-105"
                 style={{
                   color: "#075985",
                 }}
@@ -124,9 +197,10 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
               >
                 Profile
               </Link>
+              
               <Link
                 href="/profile/notifications"
-                className="block px-3 py-2 rounded-md transition-colors duration-300"
+                className="block px-3 py-2 rounded-md transition-all duration-300 hover:scale-105"
                 style={{
                   color: "#075985",
                 }}
@@ -146,9 +220,10 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
               >
                 Settings
               </Link>
+              
               <Link
                 href="/password-change"
-                className="block px-3 py-2 rounded-md transition-colors duration-300"
+                className="block px-3 py-2 rounded-md transition-all duration-300 hover:scale-105"
                 style={{
                   color: "#075985",
                 }}
@@ -168,9 +243,10 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
               >
                 Password Change
               </Link>
+              
               <button
                 onClick={handleLogout}
-                className="block w-full text-left px-3 py-2 rounded-md transition-colors duration-300 mt-2 border-t pt-2"
+                className="block w-full text-left px-3 py-2 rounded-md transition-all duration-300 hover:scale-105 mt-2 border-t pt-2"
                 style={{
                   color: "#dc2626",
                   borderColor: "rgba(14, 165, 233, 0.1)",

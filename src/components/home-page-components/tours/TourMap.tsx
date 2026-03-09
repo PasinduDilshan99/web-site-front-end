@@ -575,7 +575,7 @@ const TourMap: React.FC = () => {
         </div>
 
         {/* Category Selection - Dropdown (Mobile & Tablet) */}
-        <div className="lg:hidden mb-4 sm:mb-6">
+        <div className="lg:hidden mb-4 sm:mb-6 max-w-[90%] flex justify-center mx-auto ">
           <select
             value={selectedCategory}
             onChange={(e) => handleCategoryClick(e.target.value)}
@@ -607,10 +607,10 @@ const TourMap: React.FC = () => {
         </div>
 
         {/* Map Container with Side Panel */}
-        <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl p-3 sm:p-4 md:p-6 lg:p-8">
+        <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl p-3 sm:p-4 md:p-6 lg:p-8 abc">
           <div className="flex gap-4">
             {/* Map */}
-            <div className="flex-1">
+            <div className="flex-1 -z-0">
               <div
                 ref={mapRef}
                 className="w-full h-[400px] sm:h-[500px] md:h-[550px] lg:h-[600px] rounded-lg sm:rounded-xl overflow-hidden"
