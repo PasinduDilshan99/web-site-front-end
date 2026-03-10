@@ -5,6 +5,7 @@ import {
   COMPANY_CONTACT_NUMBER,
   COMPANY_CONTACT_NUMBER_LINK,
   COMPANY_EMERGENCY_CONTACT_NUMBER,
+  COMPANY_LOCATION,
 } from "@/utils/constant";
 import React, { useState, useEffect } from "react";
 import HeroSectionLoading from "../loading-components/HeroSectionLoading";
@@ -220,7 +221,7 @@ const ContactUsHeroSection = () => {
                   d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <span className="text-sm font-medium">Mon-Sat: 9AM-6PM</span>
+              <span className="text-sm font-medium">24/7 Available</span>{" "}
             </div>
             <div className="flex items-center gap-2 px-5 py-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
               <svg
@@ -242,7 +243,7 @@ const ContactUsHeroSection = () => {
                   d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                 />
               </svg>
-              <span className="text-sm font-medium">Colombo, Sri Lanka</span>
+              <span className="text-sm font-medium">{COMPANY_LOCATION}</span>
             </div>
           </div>
         </div>

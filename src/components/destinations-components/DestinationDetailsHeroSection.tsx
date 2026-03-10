@@ -4,6 +4,7 @@ import Image from "next/image";
 import { DestinationData, DestinationImage } from "@/types/destination-types";
 import { OtherService } from "@/services/otherService";
 import { WeatherResponse } from "@/types/other-types";
+import { SunIcon } from "lucide-react";
 
 interface DestinationDetailsHeroSectionProps {
   destination: DestinationData;
@@ -63,7 +64,11 @@ const DestinationDetailsHeroSection: React.FC<
     setIsAutoPlaying(false);
     setTimeout(() => setIsAutoPlaying(true), 10000);
   };
-
+  const truncateDescription = (text: string, limit: number = 200) => {
+    if (!text) return "";
+    if (text.length <= limit) return text;
+    return text.substring(0, limit) + "...";
+  };
   const nextSlide = () => {
     setSelectedImageIndex((prev) => (prev + 1) % destination.images.length);
     setIsAutoPlaying(false);
@@ -174,7 +179,7 @@ const DestinationDetailsHeroSection: React.FC<
   return (
     <>
       {/* Hero Section with Slider */}
-      <div className="relative h-[500px] md:h-[600px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
+      <div className="relative h-[70vh] lg:h-[90vh] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
         {/* Image Slider */}
         <div className="relative w-full h-full">
           {destination.images.map((image, index) => {
@@ -213,66 +218,120 @@ const DestinationDetailsHeroSection: React.FC<
           })}
         </div>
 
-        {/* Weather Widget - Positioned to avoid overlap */}
         {destination.latitude && destination.longitude && (
-          <div className="absolute top-6 right-6 md:block z-20">
-            <div className="bg-white/10 backdrop-blur-2xl rounded-xl p-4 border border-white/20 min-w-[200px] shadow-lg">
-              {weatherLoading ? (
-                <div className="flex items-center gap-3">
-                  <div className="animate-pulse">
-                    <div className="w-5 h-5 bg-yellow-300/50 rounded-full"></div>
+          <div className="absolute top-0 left-0 right-0 bottom-0 pointer-events-none z-20">
+            {/* Mobile - Bottom Center (below sm) */}
+            <div className="block sm:hidden absolute bottom-12 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-sm pointer-events-auto">
+              <div className="bg-white/10 backdrop-blur-2xl rounded-xl p-3 border border-white/20 shadow-lg">
+                {weatherLoading ? (
+                  <div className="flex items-center justify-center gap-3">
+                    <div className="animate-pulse w-5 h-5 bg-yellow-300/50 rounded-full" />
+                    <div className="space-y-2">
+                      <div className="h-3 w-24 bg-white/30 rounded" />
+                      <div className="h-4 w-16 bg-white/30 rounded" />
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <div className="h-3 w-24 bg-white/30 rounded"></div>
-                    <div className="h-4 w-16 bg-white/30 rounded"></div>
-                  </div>
-                </div>
-              ) : weatherError ? (
-                <div className="text-center">
-                  <p className="text-sm text-white/80 mb-2">
-                    Weather Unavailable
-                  </p>
-                  <button
-                    onClick={retryWeatherFetch}
-                    className="text-xs bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-full transition-colors"
-                  >
-                    Retry
-                  </button>
-                </div>
-              ) : weatherData && weatherData.current_weather ? (
-                <>
-                  <div className="flex items-center gap-3 mb-2">
-                    <svg
-                      className="w-5 h-5 text-yellow-300"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+                ) : weatherError ? (
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-white/80">Weather Unavailable</p>
+                    <button
+                      onClick={retryWeatherFetch}
+                      className="text-xs bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-full transition-colors"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-                      />
-                    </svg>
-                    <div>
-                      <p className="text-sm text-white/80">Current Weather</p>
-                      <p className="text-lg font-bold text-teal-200">
-                        {weatherData.current_weather.temperature}°C /{" "}
-                        {celsiusToFahrenheit(
-                          weatherData.current_weather.temperature,
+                      Retry
+                    </button>
+                  </div>
+                ) : weatherData?.current_weather ? (
+                  <>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <SunIcon className="w-5 h-5 text-yellow-300 flex-shrink-0" />
+                        <div>
+                          <p className="text-xs text-white/80">
+                            Current Weather
+                          </p>
+                          <p className="text-base font-bold text-teal-200">
+                            {weatherData.current_weather.temperature}°C /{" "}
+                            {celsiusToFahrenheit(
+                              weatherData.current_weather.temperature,
+                            )}
+                            °F
+                          </p>
+                        </div>
+                      </div>
+                      <span className="text-xs text-white/60 bg-white/10 px-2 py-1 rounded-full">
+                        {getClimateType(destination.latitude)}
+                      </span>
+                    </div>
+                    <div className="mt-2 flex items-center justify-between text-xs text-white/70">
+                      <span className="truncate max-w-[150px]">
+                        {getWeatherDescription(
+                          weatherData.current_weather.weathercode,
                         )}
-                        °F
+                      </span>
+                      <span className="flex-shrink-0 ml-2">
+                        Wind: {weatherData.current_weather.windspeed} km/h
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <SunIcon className="w-5 h-5 text-yellow-300/50 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm text-white/80">Current Climate</p>
+                      <p className="text-base font-bold text-teal-300/50">
+                        --°C / --°F
                       </p>
                     </div>
                   </div>
-                  <div className="space-y-1">
+                )}
+              </div>
+            </div>
+
+            {/* Tablet (sm) - Top Left */}
+            <div className="hidden sm:block md:hidden absolute top-4 left-4 pointer-events-auto">
+              <div className="bg-white/10 backdrop-blur-2xl rounded-xl p-3 border border-white/20 w-[200px] shadow-lg">
+                {weatherLoading ? (
+                  <div className="flex items-center gap-3">
+                    <div className="animate-pulse w-5 h-5 bg-yellow-300/50 rounded-full" />
+                    <div className="space-y-2">
+                      <div className="h-3 w-20 bg-white/30 rounded" />
+                      <div className="h-4 w-14 bg-white/30 rounded" />
+                    </div>
+                  </div>
+                ) : weatherError ? (
+                  <div className="text-center">
+                    <p className="text-sm text-white/80 mb-2">
+                      Weather Unavailable
+                    </p>
+                    <button
+                      onClick={retryWeatherFetch}
+                      className="text-xs bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-full transition-colors"
+                    >
+                      Retry
+                    </button>
+                  </div>
+                ) : weatherData?.current_weather ? (
+                  <>
+                    <div className="flex items-center gap-2 mb-2">
+                      <SunIcon className="w-4 h-4 text-yellow-300 flex-shrink-0" />
+                      <div>
+                        <p className="text-xs text-white/80">Current Weather</p>
+                        <p className="text-sm font-bold text-teal-200">
+                          {weatherData.current_weather.temperature}°C /{" "}
+                          {celsiusToFahrenheit(
+                            weatherData.current_weather.temperature,
+                          )}
+                          °F
+                        </p>
+                      </div>
+                    </div>
                     <p className="text-xs text-white/70 truncate">
                       {getWeatherDescription(
                         weatherData.current_weather.weathercode,
                       )}
                     </p>
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between mt-1">
                       <span className="text-xs text-white/60">
                         Wind: {weatherData.current_weather.windspeed} km/h
                       </span>
@@ -280,31 +339,85 @@ const DestinationDetailsHeroSection: React.FC<
                         {getClimateType(destination.latitude)}
                       </span>
                     </div>
+                  </>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <SunIcon className="w-4 h-4 text-yellow-300/50 flex-shrink-0" />
+                    <div>
+                      <p className="text-xs text-white/80">Current Climate</p>
+                      <p className="text-sm font-bold text-teal-300/50">
+                        --°C / --°F
+                      </p>
+                    </div>
                   </div>
-                </>
-              ) : (
-                <div className="flex items-center gap-3">
-                  <svg
-                    className="w-5 h-5 text-yellow-300/50"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-                    />
-                  </svg>
-                  <div>
-                    <p className="text-sm text-white/80">Current Climate</p>
-                    <p className="text-lg font-bold text-teal-300/50">
-                      --°C / --°F
+                )}
+              </div>
+            </div>
+
+            {/* Laptop/Desktop (md+) - Top Right */}
+            <div className="hidden md:block absolute top-6 right-6 pointer-events-auto">
+              <div className="bg-white/10 backdrop-blur-2xl rounded-xl p-4 border border-white/20 min-w-[220px] lg:min-w-[240px] shadow-lg">
+                {weatherLoading ? (
+                  <div className="flex items-center gap-3">
+                    <div className="animate-pulse w-5 h-5 bg-yellow-300/50 rounded-full" />
+                    <div className="space-y-2">
+                      <div className="h-3 w-24 bg-white/30 rounded" />
+                      <div className="h-4 w-16 bg-white/30 rounded" />
+                    </div>
+                  </div>
+                ) : weatherError ? (
+                  <div className="text-center">
+                    <p className="text-sm text-white/80 mb-2">
+                      Weather Unavailable
                     </p>
+                    <button
+                      onClick={retryWeatherFetch}
+                      className="text-xs bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-full transition-colors"
+                    >
+                      Retry
+                    </button>
                   </div>
-                </div>
-              )}
+                ) : weatherData?.current_weather ? (
+                  <>
+                    <div className="flex items-center gap-3 mb-2">
+                      <SunIcon className="w-5 h-5 text-yellow-300 flex-shrink-0" />
+                      <div>
+                        <p className="text-sm text-white/80">Current Weather</p>
+                        <p className="text-lg font-bold text-teal-200">
+                          {weatherData.current_weather.temperature}°C /{" "}
+                          {celsiusToFahrenheit(
+                            weatherData.current_weather.temperature,
+                          )}
+                          °F
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-xs text-white/70 truncate">
+                      {getWeatherDescription(
+                        weatherData.current_weather.weathercode,
+                      )}
+                    </p>
+                    <div className="flex items-center justify-between mt-1">
+                      <span className="text-xs text-white/60">
+                        Wind: {weatherData.current_weather.windspeed} km/h
+                      </span>
+                      <span className="text-xs text-white/60">
+                        {getClimateType(destination.latitude)}
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <SunIcon className="w-5 h-5 text-yellow-300/50 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm text-white/80">Current Climate</p>
+                      <p className="text-lg font-bold text-teal-300/50">
+                        --°C / --°F
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -321,7 +434,11 @@ const DestinationDetailsHeroSection: React.FC<
 
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 md:p-8 mx-auto max-w-3xl mb-8">
                   <p className="text-md md:text-lg lg:text-xl text-gray-100 leading-relaxed mb-6">
-                    {destination.images[selectedImageIndex].imageDescription}
+                    {/* {destination.images[selectedImageIndex].imageDescription} */}
+                    {truncateDescription(
+                      destination.destinationDescription,
+                      150,
+                    )}
                   </p>
 
                   {/* Destination Info - CENTERED */}

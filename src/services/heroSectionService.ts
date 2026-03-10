@@ -264,11 +264,6 @@ export class HeroSectionService {
     error: string | null;
   }> {
     try {
-
-        console.log('====================================');
-        console.log("abb");
-        console.log('====================================');
-
       const response = await fetch(GET_ACTIVE_TOUR_HERO_SECTION_DATA_FE, {
         method: "GET",
         headers: {

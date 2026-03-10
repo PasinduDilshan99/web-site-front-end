@@ -429,8 +429,7 @@ export interface PopularDestinationsDetailsType {
   latitude: number;
   longitude: number;
   ratings: number;
-  categoryName: string;
-  categoryDescription: string;
+  destinationCategoryDetailsDtos: destinationCategoryDetails[];
   statusName: string;
   activities: Activity[];
   images: DestinationImage[];

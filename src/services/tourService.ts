@@ -404,7 +404,6 @@ export class TourService {
       }
 
       const data = await response.json();
-      console.log("Tour Extra Details:", data);
 
       if (data.code === 200) {
         return {

@@ -148,42 +148,46 @@ const PackageGallery: React.FC<PackageGalleryProps> = ({
         {/* Thumbnail Grid */}
         {hasNavigation && (
           <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-1 sm:gap-2">
-            {images.map((image, index) => (
-              <button
-                key={image.imageId}
-                onClick={() => onImageSelect(index)}
-                className={`cursor-pointer relative h-16 sm:h-20 md:h-24 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
-                  index === selectedImageIndex
-                    ? "border-sky-500 ring-1 sm:ring-2 ring-sky-300 shadow-lg scale-[1.02]"
-                    : "border-transparent hover:border-sky-300 hover:shadow-md"
-                }`}
-              >
-                <Image
-                  src={image.imageUrl}
-                  alt={image.imageDescription || image.imageName}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 640px) 25vw, (max-width: 768px) 20vw, (max-width: 1024px) 16vw, 14vw"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = PLACE_HOLDER_IMAGE;
-                  }}
-                />
-                {/* Type badge */}
-                <div
-                  className={`absolute bottom-1 left-1 text-white px-1.5 py-0.5 rounded text-xs font-medium ${
-                    image.type === "package"
-                      ? "bg-sky-600/90"
-                      : "bg-teal-600/90"
+            {images.map((image, index) => {
+              const uniqueKey = `${image.type}-${image.imageId}-${index}`;
+
+              return (
+                <button
+                  key={uniqueKey}
+                  onClick={() => onImageSelect(index)}
+                  className={`cursor-pointer relative h-16 sm:h-20 md:h-24 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
+                    index === selectedImageIndex
+                      ? "border-sky-500 ring-1 sm:ring-2 ring-sky-300 shadow-lg scale-[1.02]"
+                      : "border-transparent hover:border-sky-300 hover:shadow-md"
                   }`}
                 >
-                  {image.type === "package" ? "P" : "T"}
-                </div>
+                  <Image
+                    src={image.imageUrl}
+                    alt={image.imageDescription || image.imageName}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 640px) 25vw, (max-width: 768px) 20vw, (max-width: 1024px) 16vw, 14vw"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = PLACE_HOLDER_IMAGE;
+                    }}
+                  />
+                  {/* Type badge */}
+                  <div
+                    className={`absolute bottom-1 left-1 text-white px-1.5 py-0.5 rounded text-xs font-medium ${
+                      image.type === "package"
+                        ? "bg-sky-600/90"
+                        : "bg-teal-600/90"
+                    }`}
+                  >
+                    {image.type === "package" ? "P" : "T"}
+                  </div>
 
-                {index === selectedImageIndex && (
-                  <div className="absolute inset-0 border-2 border-sky-400 rounded-lg pointer-events-none" />
-                )}
-              </button>
-            ))}
+                  {index === selectedImageIndex && (
+                    <div className="absolute inset-0 border-2 border-sky-400 rounded-lg pointer-events-none" />
+                  )}
+                </button>
+              );
+            })}
           </div>
         )}
       </div>

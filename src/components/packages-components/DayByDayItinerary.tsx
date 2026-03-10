@@ -16,10 +16,10 @@ const meals = [
   { key: "snacks", label: "Snacks", descKey: "snackNote" },
 ] as const;
 
-/* ── Icons ─────────────────────────────────────────────────────────── */
-const IconPin = () => (
+/* ── Icons with responsive sizing ──────────────────────────────────── */
+const IconPin = ({ className = "" }: { className?: string }) => (
   <svg
-    className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0"
+    className={`w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 flex-shrink-0 ${className}`}
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -39,9 +39,15 @@ const IconPin = () => (
   </svg>
 );
 
-const IconStar = ({ filled }: { filled: boolean }) => (
+const IconStar = ({
+  filled,
+  className = "",
+}: {
+  filled: boolean;
+  className?: string;
+}) => (
   <svg
-    className={`w-4 h-4 sm:w-5 sm:h-5 ${filled ? "text-amber-400" : "text-slate-200"}`}
+    className={`w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 ${filled ? "text-amber-400" : "text-slate-200"} ${className}`}
     fill="currentColor"
     viewBox="0 0 20 20"
   >
@@ -49,9 +55,15 @@ const IconStar = ({ filled }: { filled: boolean }) => (
   </svg>
 );
 
-const IconChevron = ({ open }: { open: boolean }) => (
+const IconChevron = ({
+  open,
+  className = "",
+}: {
+  open: boolean;
+  className?: string;
+}) => (
   <svg
-    className={`w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+    className={`w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 transition-transform duration-300 ${open ? "rotate-180" : ""} ${className}`}
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -65,9 +77,9 @@ const IconChevron = ({ open }: { open: boolean }) => (
   </svg>
 );
 
-const IconCheck = () => (
+const IconCheck = ({ className = "" }: { className?: string }) => (
   <svg
-    className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0"
+    className={`w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-emerald-500 flex-shrink-0 ${className}`}
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -81,9 +93,9 @@ const IconCheck = () => (
   </svg>
 );
 
-const IconCar = () => (
+const IconCar = ({ className = "" }: { className?: string }) => (
   <svg
-    className="w-5 h-5 sm:w-6 sm:h-6 text-sky-500"
+    className={`w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-sky-500 ${className}`}
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -97,9 +109,9 @@ const IconCar = () => (
   </svg>
 );
 
-const IconHotel = () => (
+const IconHotel = ({ className = "" }: { className?: string }) => (
   <svg
-    className="w-5 h-5 sm:w-6 sm:h-6 text-sky-500"
+    className={`w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-sky-500 ${className}`}
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -113,9 +125,9 @@ const IconHotel = () => (
   </svg>
 );
 
-const IconUtensils = () => (
+const IconUtensils = ({ className = "" }: { className?: string }) => (
   <svg
-    className="w-5 h-5 sm:w-6 sm:h-6 text-sky-500"
+    className={`w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-sky-500 ${className}`}
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -129,9 +141,9 @@ const IconUtensils = () => (
   </svg>
 );
 
-const IconExternalLink = () => (
+const IconExternalLink = ({ className = "" }: { className?: string }) => (
   <svg
-    className="w-3.5 h-3.5 sm:w-4 sm:h-4 ml-1"
+    className={`w-3 h-3 sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4 ml-1 ${className}`}
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -145,7 +157,7 @@ const IconExternalLink = () => (
   </svg>
 );
 
-/* ── Section wrapper ────────────────────────────────────────────────── */
+/* ── Section wrapper with responsive spacing ── */
 const Section = ({
   icon,
   title,
@@ -155,10 +167,10 @@ const Section = ({
   title: string;
   children: React.ReactNode;
 }) => (
-  <div>
-    <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-      {icon}
-      <h4 className="text-base sm:text-lg lg:text-xl font-semibold text-slate-700">
+  <div className="mb-4 sm:mb-5 lg:mb-6 last:mb-0">
+    <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-3 mb-2 sm:mb-3 lg:mb-4">
+      <div className="flex-shrink-0">{icon}</div>
+      <h4 className="text-sm sm:text-base lg:text-lg xl:text-xl font-semibold text-slate-700">
         {title}
       </h4>
     </div>
@@ -172,18 +184,18 @@ const DayByDayItinerary: React.FC<DayByDayItineraryProps> = ({ itinerary }) => {
 
   return (
     <div className="bg-white rounded-xl sm:rounded-2xl shadow-md border border-slate-200 overflow-hidden w-full">
-      {/* ── Header ── */}
-      <div className="bg-gradient-to-r from-sky-600 to-teal-500 px-4 sm:px-6 lg:px-10 py-5 sm:py-6 lg:py-7">
-        <div className="flex items-center justify-between gap-3">
+      {/* ── Header with responsive padding ── */}
+      <div className="bg-gradient-to-r from-sky-600 to-teal-500 px-4 sm:px-6 md:px-8 lg:px-10 py-4 sm:py-5 md:py-6 lg:py-7">
+        <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-2 xs:gap-3">
           <div className="min-w-0">
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white tracking-tight leading-tight">
+            <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white tracking-tight leading-tight">
               Day By Day Itinerary
             </h2>
-            <p className="text-sky-100 text-sm sm:text-base mt-1">
+            <p className="text-sky-100 text-xs sm:text-sm md:text-base mt-0.5 sm:mt-1">
               Your complete travel plan
             </p>
           </div>
-          <div className="flex-shrink-0 bg-white/20 text-white text-sm sm:text-base lg:text-lg font-semibold px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 lg:py-2.5 rounded-full whitespace-nowrap">
+          <div className="flex-shrink-0 bg-white/20 text-white text-xs sm:text-sm md:text-base lg:text-lg font-semibold px-2.5 sm:px-3 md:px-4 lg:px-5 py-1 sm:py-1.5 md:py-2 lg:py-2.5 rounded-full whitespace-nowrap self-start xs:self-auto">
             {itinerary.length} Days
           </div>
         </div>
@@ -202,59 +214,70 @@ const DayByDayItinerary: React.FC<DayByDayItineraryProps> = ({ itinerary }) => {
               {/* Collapsed row / toggle */}
               <button
                 onClick={() => setExpandedDay(isOpen ? null : day.dayNumber)}
-                className={`cursor-pointer w-full px-4 sm:px-6 lg:px-10 py-4 sm:py-5 flex items-center gap-3 sm:gap-4 lg:gap-5 text-left transition-colors duration-150 ${
+                className={`cursor-pointer w-full px-4 sm:px-6 md:px-8 lg:px-10 py-3 sm:py-4 md:py-5 flex items-center gap-2 sm:gap-3 md:gap-4 lg:gap-5 text-left transition-colors duration-150 ${
                   isOpen ? "bg-sky-50" : "hover:bg-slate-50"
                 }`}
               >
-                {/* Day badge */}
+                {/* Day badge - responsive sizing */}
                 <div
-                  className={`flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center transition-all duration-200 ${
+                  className={`flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-lg sm:rounded-xl md:rounded-2xl flex flex-col items-center justify-center transition-all duration-200 ${
                     isOpen
                       ? "bg-sky-600 text-white shadow-lg shadow-sky-200"
                       : "bg-slate-100 text-slate-600"
                   }`}
                 >
                   <span
-                    className={`text-[9px] sm:text-xs font-bold uppercase tracking-widest leading-none ${isOpen ? "opacity-60" : "opacity-40"}`}
+                    className={`text-[8px] sm:text-[9px] md:text-xs font-bold uppercase tracking-widest leading-none ${isOpen ? "opacity-60" : "opacity-40"}`}
                   >
                     Day
                   </span>
-                  <span className="text-xl sm:text-2xl font-bold leading-tight">
+                  <span className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold leading-tight">
                     {day.dayNumber}
                   </span>
                 </div>
 
-                {/* Hotel name + location */}
-                {day.hotelLocation && (
-                  <div className="flex-1 min-w-0">
-                    <p className="text-base sm:text-lg lg:text-xl font-semibold text-slate-800 truncate">
+                {/* Hotel name + location - hidden on smallest screens if no hotel */}
+                {day.hotelLocation ? (
+                  <div className="flex-1 min-w-0 hidden xs:block">
+                    <p className="text-sm sm:text-base md:text-lg lg:text-xl font-semibold text-slate-800 truncate">
                       {day.hotelName}
                     </p>
-                    <div className="flex items-center gap-1 sm:gap-1.5 mt-1 sm:mt-1.5 text-slate-400">
+                    <div className="flex items-center gap-1 sm:gap-1.5 mt-0.5 sm:mt-1 text-slate-400">
                       <IconPin />
-                      <span className="text-xs sm:text-sm lg:text-base truncate">
+                      <span className="text-[10px] sm:text-xs md:text-sm lg:text-base truncate">
                         {day.hotelLocation}
                       </span>
                     </div>
                   </div>
+                ) : (
+                  <div className="flex-1 min-w-0 hidden xs:block">
+                    <p className="text-sm sm:text-base md:text-lg lg:text-xl font-semibold text-slate-800">
+                      Day {day.dayNumber}
+                    </p>
+                  </div>
                 )}
 
-                {/* Quick-glance chips when collapsed — hidden on mobile, shown on sm+ */}
+                {/* Quick-glance chips - responsive */}
                 {!isOpen && (
-                  <div className="hidden sm:flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+                  <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2 flex-shrink-0">
                     {includedMeals.length > 0 && (
-                      <span className="text-xs sm:text-sm bg-emerald-50 text-emerald-600 border border-emerald-200 font-semibold px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-lg">
+                      <span className="hidden sm:inline text-[10px] sm:text-xs md:text-sm bg-emerald-50 text-emerald-600 border border-emerald-200 font-semibold px-1.5 sm:px-2 md:px-2.5 lg:px-3.5 py-0.5 sm:py-1 md:py-1.5 rounded-md sm:rounded-lg">
                         {includedMeals.length} meals
                       </span>
                     )}
                     <span
-                      className={`text-xs sm:text-sm font-semibold px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-lg border ${
+                      className={`text-[10px] sm:text-xs md:text-sm font-semibold px-1.5 sm:px-2 md:px-2.5 lg:px-3.5 py-0.5 sm:py-1 md:py-1.5 rounded-md sm:rounded-lg border ${
                         day.airCondition
                           ? "bg-sky-50 text-sky-600 border-sky-200"
                           : "bg-slate-50 text-slate-400 border-slate-200"
                       }`}
                     >
-                      {day.airCondition ? "A/C" : "No A/C"}
+                      <span className="hidden xs:inline">
+                        {day.airCondition ? "Air Conditioned" : "Non A/C"}
+                      </span>
+                      <span className="xs:hidden">
+                        {day.airCondition ? "A/C" : "No A/C"}
+                      </span>
                     </span>
                   </div>
                 )}
@@ -266,29 +289,29 @@ const DayByDayItinerary: React.FC<DayByDayItineraryProps> = ({ itinerary }) => {
                 </span>
               </button>
 
-              {/* Expanded panel */}
+              {/* Expanded panel with responsive padding */}
               <div
                 className={`transition-all duration-300 ease-in-out overflow-hidden ${
                   isOpen ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
                 }`}
               >
-                <div className="px-4 sm:px-6 lg:px-10 py-5 sm:py-6 lg:py-7 space-y-5 sm:space-y-6 lg:space-y-7 bg-slate-50/50 border-t border-slate-100">
+                <div className="px-4 sm:px-6 md:px-8 lg:px-10 py-4 sm:py-5 md:py-6 lg:py-7 space-y-4 sm:space-y-5 md:space-y-6 lg:space-y-7 bg-slate-50/50 border-t border-slate-100">
                   {/* ── Accommodation ── */}
                   {day.hotelName ? (
                     <Section icon={<IconHotel />} title="Accommodation">
-                      <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-200 p-4 sm:p-5 lg:p-6">
+                      <div className="bg-white rounded-lg sm:rounded-xl md:rounded-2xl border border-slate-200 p-3 sm:p-4 md:p-5 lg:p-6">
                         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
                           <div className="flex-1 min-w-0">
-                            <p className="text-lg sm:text-xl font-bold text-slate-800">
+                            <p className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-slate-800 truncate">
                               {day.hotelName}
                             </p>
-                            <div className="flex items-center gap-1.5 sm:gap-2 mt-1.5 text-slate-400">
+                            <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2 mt-1 sm:mt-1.5 text-slate-400">
                               <IconPin />
-                              <span className="text-sm sm:text-base truncate">
+                              <span className="text-xs sm:text-sm md:text-base truncate">
                                 {day.hotelLocation}
                               </span>
                             </div>
-                            <div className="flex items-center gap-2 sm:gap-3 mt-2 sm:mt-3 flex-wrap">
+                            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 md:gap-3 mt-2 sm:mt-3">
                               <div className="flex items-center gap-0.5 sm:gap-1">
                                 {[...Array(5)].map((_, i) => (
                                   <IconStar
@@ -297,10 +320,10 @@ const DayByDayItinerary: React.FC<DayByDayItineraryProps> = ({ itinerary }) => {
                                   />
                                 ))}
                               </div>
-                              <span className="text-slate-300 text-base sm:text-lg">
+                              <span className="text-slate-300 text-sm sm:text-base md:text-lg hidden xs:inline">
                                 |
                               </span>
-                              <span className="text-xs sm:text-sm lg:text-base text-slate-500 bg-slate-100 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full font-medium">
+                              <span className="text-[10px] sm:text-xs md:text-sm lg:text-base text-slate-500 bg-slate-100 px-1.5 sm:px-2 md:px-2.5 lg:px-3 py-0.5 sm:py-1 rounded-full font-medium">
                                 {day.hotelType}
                               </span>
                             </div>
@@ -310,14 +333,15 @@ const DayByDayItinerary: React.FC<DayByDayItineraryProps> = ({ itinerary }) => {
                               href={day.hotelWebsite}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="self-start flex-shrink-0 text-sm sm:text-base font-semibold text-sky-600 hover:text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl transition-colors"
+                              className="self-start flex-shrink-0 text-xs sm:text-sm md:text-base font-semibold text-sky-600 hover:text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200 px-2.5 sm:px-3 md:px-4 lg:px-5 py-1.5 sm:py-2 md:py-2.5 rounded-lg sm:rounded-xl transition-colors inline-flex items-center"
                             >
-                              Website ↗
+                              <span>Website</span>
+                              <IconExternalLink />
                             </a>
                           )}
                         </div>
                         {day.hotelDescription && (
-                          <p className="text-sm sm:text-base text-slate-500 mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-slate-100 leading-relaxed">
+                          <p className="text-xs sm:text-sm md:text-base text-slate-500 mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-slate-100 leading-relaxed">
                             {day.hotelDescription}
                           </p>
                         )}
@@ -325,7 +349,7 @@ const DayByDayItinerary: React.FC<DayByDayItineraryProps> = ({ itinerary }) => {
                     </Section>
                   ) : (
                     <Section icon={<IconHotel />} title="Accommodation">
-                      <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-200 p-3 sm:p-4">
+                      <div className="bg-white rounded-lg sm:rounded-xl md:rounded-2xl border border-slate-200 p-2.5 sm:p-3 md:p-4">
                         <div className="flex items-center gap-0.5 sm:gap-1">
                           {[...Array(5)].map((_, i) => (
                             <IconStar key={i} filled={i < day.hotelCategory} />
@@ -338,11 +362,6 @@ const DayByDayItinerary: React.FC<DayByDayItineraryProps> = ({ itinerary }) => {
                   {/* ── Meals Included ── */}
                   {includedMeals.length > 0 && (
                     <Section icon={<IconUtensils />} title="Meals Included">
-                      {/* 
-                        Mobile:  1 column
-                        Tablet:  2 columns
-                        Desktop: 3 columns
-                      */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
                         {includedMeals.map(({ key, label, descKey }) => {
                           const desc = day[
@@ -351,18 +370,18 @@ const DayByDayItinerary: React.FC<DayByDayItineraryProps> = ({ itinerary }) => {
                           return (
                             <div
                               key={key}
-                              className="flex items-start gap-2.5 sm:gap-3 px-3 sm:px-4 py-3 sm:py-4 rounded-lg sm:rounded-xl border bg-white border-emerald-100"
+                              className="flex items-start gap-1.5 sm:gap-2 md:gap-2.5 px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4 rounded-lg sm:rounded-xl border bg-white border-emerald-100"
                             >
                               <div className="mt-0.5">
                                 <IconCheck />
                               </div>
-                              <div className="min-w-0">
-                                <p className="text-sm sm:text-base font-semibold leading-tight text-slate-700">
+                              <div className="min-w-0 flex-1">
+                                <p className="text-xs sm:text-sm md:text-base font-semibold leading-tight text-slate-700">
                                   {label}
                                 </p>
                                 {desc && (
                                   <p
-                                    className="text-xs sm:text-sm text-slate-400 mt-0.5 sm:mt-1 truncate"
+                                    className="text-[10px] sm:text-xs md:text-sm text-slate-400 mt-0.5 sm:mt-1 truncate"
                                     title={desc}
                                   >
                                     {desc}
@@ -380,43 +399,51 @@ const DayByDayItinerary: React.FC<DayByDayItineraryProps> = ({ itinerary }) => {
                   <Section icon={<IconCar />} title="Transport">
                     <Link
                       href={`${VEHICLE_SPECIFICATION_DETAILS_PATH}/${day.vehicleSpecificationId}?vehicle-model=${day.vehicleModel}`}
-                      className="block bg-white rounded-xl sm:rounded-2xl border border-slate-200 p-4 sm:p-5 lg:p-6 hover:border-sky-300 hover:shadow-md transition-all duration-200"
+                      className="block bg-white rounded-lg sm:rounded-xl md:rounded-2xl border border-slate-200 p-3 sm:p-4 md:p-5 lg:p-6 hover:border-sky-300 hover:shadow-md transition-all duration-200"
                     >
-                      {/* Stack on mobile, side-by-side on md+ */}
-                      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
                         <div className="min-w-0">
-                          <p className="text-base sm:text-lg lg:text-xl font-bold text-slate-800">
+                          <p className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-slate-800">
                             {day.vehicleTypeName}
                             {day.vehicleModel && (
-                              <span className="font-normal text-slate-400">
+                              <span className="font-normal text-slate-400 text-xs sm:text-sm md:text-base">
                                 {" "}
                                 · {day.vehicleModel}
                               </span>
                             )}
                           </p>
                           {day.vehicleRegistrationNumber && (
-                            <p className="text-sm sm:text-base text-slate-400 mt-1 sm:mt-1.5">
+                            <p className="text-xs sm:text-sm md:text-base text-slate-400 mt-0.5 sm:mt-1">
                               Reg. {day.vehicleRegistrationNumber}
                             </p>
                           )}
                         </div>
 
-                        {/* Chips — wrap gracefully on small screens */}
-                        <div className="flex items-center gap-2 flex-wrap">
+                        {/* Chips - responsive */}
+                        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                           <span
-                            className={`text-xs sm:text-sm lg:text-base font-semibold px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 lg:py-2.5 rounded-lg sm:rounded-xl border ${
+                            className={`text-[10px] sm:text-xs md:text-sm lg:text-base font-semibold px-2 sm:px-2.5 md:px-3 lg:px-4 py-1 sm:py-1.5 md:py-2 lg:py-2.5 rounded-md sm:rounded-lg border ${
                               day.airCondition
                                 ? "bg-sky-50 text-sky-600 border-sky-200"
                                 : "bg-slate-50 text-slate-400 border-slate-200"
                             }`}
                           >
-                            {day.airCondition ? "Air Conditioned" : "Non A/C"}
+                            <span className="hidden xs:inline">
+                              {day.airCondition ? "Air Conditioned" : "Non A/C"}
+                            </span>
+                            <span className="xs:hidden">
+                              {day.airCondition ? "A/C" : "No A/C"}
+                            </span>
                           </span>
-                          <span className="text-xs sm:text-sm lg:text-base bg-slate-100 text-slate-600 font-semibold px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 lg:py-2.5 rounded-lg sm:rounded-xl border border-slate-200">
+                          <span className="text-[10px] sm:text-xs md:text-sm lg:text-base bg-slate-100 text-slate-600 font-semibold px-2 sm:px-2.5 md:px-3 lg:px-4 py-1 sm:py-1.5 md:py-2 lg:py-2.5 rounded-md sm:rounded-lg border border-slate-200">
                             {day.seatCapacity} Seats
                           </span>
-                          <span className="text-sky-600 text-xs sm:text-sm font-semibold flex items-center">
-                            View Details <IconExternalLink />
+                          <span className="text-sky-600 text-[10px] sm:text-xs md:text-sm font-semibold flex items-center whitespace-nowrap">
+                            <span className="hidden xs:inline">
+                              View Details
+                            </span>
+                            <span className="xs:hidden">Details</span>
+                            <IconExternalLink />
                           </span>
                         </div>
                       </div>
@@ -425,9 +452,9 @@ const DayByDayItinerary: React.FC<DayByDayItineraryProps> = ({ itinerary }) => {
 
                   {/* ── Notes ── */}
                   {day.otherNotes && (
-                    <div className="flex gap-3 sm:gap-4 bg-amber-50 border border-amber-200 rounded-xl sm:rounded-2xl px-4 sm:px-5 lg:px-6 py-4 sm:py-5">
+                    <div className="flex gap-2 sm:gap-3 md:gap-4 bg-amber-50 border border-amber-200 rounded-lg sm:rounded-xl md:rounded-2xl px-3 sm:px-4 md:px-5 lg:px-6 py-3 sm:py-4 md:py-5">
                       <svg
-                        className="w-5 h-5 sm:w-6 sm:h-6 text-amber-500 flex-shrink-0 mt-0.5"
+                        className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-amber-500 flex-shrink-0 mt-0.5"
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
@@ -437,11 +464,11 @@ const DayByDayItinerary: React.FC<DayByDayItineraryProps> = ({ itinerary }) => {
                           clipRule="evenodd"
                         />
                       </svg>
-                      <div>
-                        <p className="text-sm sm:text-base font-semibold text-amber-700 mb-0.5 sm:mb-1">
+                      <div className="min-w-0">
+                        <p className="text-xs sm:text-sm md:text-base font-semibold text-amber-700 mb-0.5 sm:mb-1">
                           Note
                         </p>
-                        <p className="text-sm sm:text-base text-amber-800 leading-relaxed">
+                        <p className="text-xs sm:text-sm md:text-base text-amber-800 leading-relaxed">
                           {day.otherNotes}
                         </p>
                       </div>

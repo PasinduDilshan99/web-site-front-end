@@ -15,7 +15,7 @@ const TourHeroSection = () => {
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
   const router = useRouter();
-  const {categories} = useCommon()
+  const { categories } = useCommon();
 
   useEffect(() => {
     const fetchHeroData = async () => {
@@ -116,7 +116,7 @@ const TourHeroSection = () => {
   const currentSlideData = heroData[currentSlide];
 
   return (
-    <div className="relative w-full h-[550px] sm:h-[600px] md:h-[700px] lg:h-[750px] xl:h-[800px] 2xl:h-[850px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
+    <div className="relative w-full h-[70vh] lg:h-[90vh]  overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
       {/* Image Slider - Only show image if available and not failed */}
       <div className="relative w-full h-full">
         {heroData.map((item, index) => {
@@ -197,9 +197,7 @@ const TourHeroSection = () => {
                   {currentSlideData.primaryButtonText && (
                     <button
                       onClick={() =>
-                        router.push(
-                          `${currentSlideData.primaryButtonLink}`,
-                        )
+                        router.push(`${currentSlideData.primaryButtonLink}`)
                       }
                       className="cursor-pointer w-full sm:w-auto px-5 sm:px-7 md:px-9 py-3 sm:py-4 md:py-5 bg-gradient-to-r from-sky-500 to-teal-500 text-white text-sm sm:text-base font-semibold rounded-xl sm:rounded-2xl hover:from-sky-600 hover:to-teal-600 transform hover:scale-[1.02] transition-all duration-300 shadow-2xl flex items-center justify-center gap-3 sm:gap-4 group"
                     >
@@ -213,7 +211,7 @@ const TourHeroSection = () => {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth="2"
-                          d="M14 5l7 7m0 0l-7 7m7-7H3"
+                          d="M3 21h18l-6-9-4 6-4-6-4 6z M15 9l3-3m0 0l-3-3m3 3H9"
                         />
                       </svg>
                       <span className="truncate">
@@ -224,14 +222,12 @@ const TourHeroSection = () => {
                   {currentSlideData.secondaryButtonText && (
                     <button
                       onClick={() =>
-                        router.push(
-                          `${currentSlideData.secondaryButtonLink}`,
-                        )
+                        router.push(`${currentSlideData.secondaryButtonLink}`)
                       }
                       className="cursor-pointer w-full sm:w-auto px-5 sm:px-7 md:px-9 py-3 sm:py-4 md:py-5 border-2 border-sky-300/50 text-white text-sm sm:text-base font-semibold rounded-xl sm:rounded-2xl hover:bg-sky-50/20 hover:border-sky-200 backdrop-blur-sm transition-all duration-300 flex items-center justify-center gap-3 sm:gap-4 group"
                     >
                       <svg
-                        className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 group-hover:scale-110 transition-transform duration-300"
+                        className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 group-hover:rotate-12 transition-transform duration-300"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -240,7 +236,7 @@ const TourHeroSection = () => {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth="2"
-                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                          d="M14 5l7 7m0 0l-7 7m7-7H3"
                         />
                       </svg>
                       <span className="truncate">

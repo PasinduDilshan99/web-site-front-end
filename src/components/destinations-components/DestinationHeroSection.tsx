@@ -218,7 +218,7 @@ const DestinationHeroSection = () => {
   const currentType = getDestinationType(currentSlideData);
 
   return (
-    <div className="relative w-full h-[650px] lg:h-[850px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
+    <div className="relative w-full h-[70vh] lg:h-[90vh] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
       {/* Image Slider - Only show image if available and not failed */}
       <div className="relative w-full h-full">
         {heroData.map((item, index) => {
@@ -264,14 +264,14 @@ const DestinationHeroSection = () => {
                 {currentSlideData.title || "Discover Sri Lanka"}
               </h1>
 
-              {currentSlideData.subtitle && (
+              {/* {currentSlideData.subtitle && (
                 <div className="mb-6">
                   <h2 className="text-2xl md:text-3xl font-semibold mb-3 text-sky-100">
                     {currentSlideData.subtitle}
                   </h2>
                   <div className="w-20 h-1 bg-gradient-to-r from-sky-400 to-teal-400 rounded-full mx-auto shadow-lg"></div>
                 </div>
-              )}
+              )} */}
             </div>
 
             <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-6 md:p-8 max-w-3xl mb-8 border border-white/10 shadow-2xl mx-auto">
@@ -288,7 +288,7 @@ const DestinationHeroSection = () => {
                       onClick={() =>
                         handleButtonClick(currentSlideData.primaryButtonLink)
                       }
-                      className="cursor-pointer px-6 lg:px-8 py-2 lg:py-4 text-sm lg:text-lg bg-gradient-to-r from-sky-500 to-teal-500 text-white font-semibold rounded-xl hover:from-sky-600 hover:to-teal-600 transform hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-3 group"
+                      className="cursor-pointer w-full sm:w-auto px-5 sm:px-7 md:px-9 py-3 sm:py-4 md:py-5 bg-gradient-to-r from-sky-500 to-teal-500 text-white text-sm sm:text-base font-semibold rounded-xl sm:rounded-2xl hover:from-sky-600 hover:to-teal-600 transform hover:scale-[1.02] transition-all duration-300 shadow-2xl flex items-center justify-center gap-3 sm:gap-4 group"
                     >
                       <svg
                         className="w-4 h-4 lg:w-6 lg:h-6 group-hover:rotate-12 transition-transform duration-300"
@@ -317,7 +317,7 @@ const DestinationHeroSection = () => {
                       onClick={() =>
                         handleButtonClick(currentSlideData.secondaryButtonLink)
                       }
-                      className="cursor-pointer px-6 lg:px-8 py-2 lg:py-4 text-sm lg:text-lg border-2 border-sky-300/50 text-white font-semibold rounded-xl hover:bg-sky-50/20 hover:border-sky-200 backdrop-blur-sm transition-all duration-300 flex items-center gap-3 group"
+                      className="cursor-pointer w-full sm:w-auto px-5 sm:px-7 md:px-9 py-3 sm:py-4 md:py-5 border-2 border-sky-300/50 text-white text-sm sm:text-base font-semibold rounded-xl sm:rounded-2xl hover:bg-sky-50/20 hover:border-sky-200 backdrop-blur-sm transition-all duration-300 flex items-center justify-center gap-3 sm:gap-4 group"
                     >
                       <svg
                         className="w-4 h-4 lg:w-6 lg:h-6 group-hover:scale-110 transition-transform duration-300"
@@ -493,7 +493,7 @@ const DestinationHeroSection = () => {
         <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 flex space-x-2">
           {filteredDestinations.map((_, index) => (
             <button
-              key={index}
+              key={index + 1}
               onClick={() => goToSlide(index)}
               className={`cursor-pointer w-2.5 h-2.5 rounded-full transition-all duration-300 ${
                 index === currentSlide

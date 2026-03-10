@@ -82,7 +82,7 @@ const PackageDetailsHeroSection: React.FC<PackageHeaderProps> = ({
   };
 
   return (
-    <div className="relative w-full h-[450px] sm:h-[500px] md:h-[550px] lg:h-[600px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
+    <div className="relative w-full h-[70vh] lg:h-[90vh] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
       {/* Image Slider */}
       <div className="relative w-full h-full">
         {allImages.map((image, index) => {

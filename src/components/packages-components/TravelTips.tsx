@@ -27,12 +27,12 @@ const TravelTips: React.FC<TravelTipsProps> = ({ travelTips }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 border border-sky-100">
-      <h2 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-sky-600 to-teal-600 bg-clip-text text-transparent mb-4 sm:mb-6">
+    <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-5 md:p-6 border border-sky-100">
+      <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-sky-600 to-teal-600 bg-clip-text text-transparent mb-3 sm:mb-4 md:mb-5 lg:mb-6">
         Travel Tips
       </h2>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2 sm:gap-3 md:gap-4">
         {Object.entries(groupedTips).map(([category, tips]) => {
           const isOpen = openCategories.has(category);
           return (
@@ -43,11 +43,11 @@ const TravelTips: React.FC<TravelTipsProps> = ({ travelTips }) => {
               {/* Header / Toggle Button */}
               <button
                 onClick={() => toggleCategory(category)}
-                className="cursor-pointer w-full flex items-center justify-between p-3 sm:p-4 text-left group"
+                className="cursor-pointer w-full flex items-center justify-between p-2.5 sm:p-3 md:p-4 text-left group"
               >
-                <span className="flex items-center gap-2">
+                <span className="flex items-center gap-1.5 sm:gap-2 min-w-0">
                   <svg
-                    className="w-4 h-4 sm:w-5 sm:h-5 text-sky-600 flex-shrink-0"
+                    className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-sky-600 flex-shrink-0"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -57,17 +57,17 @@ const TravelTips: React.FC<TravelTipsProps> = ({ travelTips }) => {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span className="text-sm sm:text-base font-semibold text-sky-800">
+                  <span className="text-xs sm:text-sm md:text-base font-semibold text-sky-800 truncate">
                     {category}
                   </span>
-                  <span className="text-xs text-sky-400 font-normal">
+                  <span className="text-[10px] sm:text-xs text-sky-400 font-normal flex-shrink-0">
                     ({tips.length})
                   </span>
                 </span>
 
                 {/* Arrow icon */}
                 <svg
-                  className={`w-4 h-4 text-sky-500 flex-shrink-0 transition-transform duration-300 ease-in-out ${
+                  className={`w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 text-sky-500 flex-shrink-0 transition-transform duration-300 ease-in-out ${
                     isOpen ? "rotate-180" : "rotate-0"
                   }`}
                   fill="none"
@@ -84,11 +84,11 @@ const TravelTips: React.FC<TravelTipsProps> = ({ travelTips }) => {
                   isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
                 }`}
               >
-                <ul className="px-3 sm:px-4 pb-3 sm:pb-4 space-y-1.5 sm:space-y-2 border-t border-sky-100 pt-2 sm:pt-3">
+                <ul className="px-2.5 sm:px-3 md:px-4 pb-2.5 sm:pb-3 md:pb-4 space-y-1 sm:space-y-1.5 md:space-y-2 border-t border-sky-100 pt-1.5 sm:pt-2 md:pt-3">
                   {tips.map((tip) => (
-                    <li key={tip.id} className="flex items-start gap-2">
+                    <li key={tip.id} className="flex items-start gap-1.5 sm:gap-2">
                       <svg
-                        className="w-3 h-3 sm:w-4 sm:h-4 text-teal-500 flex-shrink-0 mt-0.5"
+                        className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 text-teal-500 flex-shrink-0 mt-0.5"
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
@@ -98,7 +98,9 @@ const TravelTips: React.FC<TravelTipsProps> = ({ travelTips }) => {
                           clipRule="evenodd"
                         />
                       </svg>
-                      <span className="text-sky-700 text-xs sm:text-sm">{tip.description}</span>
+                      <span className="text-sky-700 text-[10px] sm:text-xs md:text-sm leading-relaxed">
+                        {tip.description}
+                      </span>
                     </li>
                   ))}
                 </ul>

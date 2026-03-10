@@ -371,38 +371,38 @@ const SriLankanTourPageContent: React.FC = () => {
 
       {/* Results Section */}
       <div id="results-section" className="mb-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <h3 className="text-2xl font-semibold text-sky-900">
-            {totalTours} Tour{totalTours !== 1 ? "s" : ""} Found
-          </h3>
+  <div className="flex flex-row items-center justify-between gap-3 mb-6">
+  <h3 className="text-lg sm:text-xl md:text-2xl font-semibold text-sky-900 leading-tight">
+    {totalTours} Tour{totalTours !== 1 ? "s" : ""} Found
+  </h3>
 
-          {/* Items Per Page Selector */}
-          <div className="flex items-center gap-3 bg-sky-50 rounded-lg px-4 py-2 border border-sky-200">
-            <label
-              htmlFor="itemsPerPage"
-              className="text-sm font-medium text-sky-800 whitespace-nowrap"
-            >
-              Show:
-            </label>
-            <select
-              id="itemsPerPage"
-              value={itemsPerPage}
-              onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
-              className="cursor-pointer border text-sky-700 border-sky-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white transition-all duration-200 hover:border-sky-400"
-            >
-              <option value={6}>6</option>
-              <option value={8}>8</option>
-              <option value={10}>10</option>
-              <option value={12}>12</option>
-              <option value={16}>16</option>
-              <option value={20}>20</option>
-              <option value={24}>24</option>
-            </select>
-            <span className="text-sm text-sky-600 whitespace-nowrap font-medium">
-              per page
-            </span>
-          </div>
-        </div>
+  {/* Items Per Page Selector */}
+  <div className="flex items-center gap-2 sm:gap-3 bg-sky-50 rounded-lg px-3 sm:px-4 py-1.5 sm:py-2 border border-sky-200">
+    <label
+      htmlFor="itemsPerPage"
+      className="text-xs sm:text-sm font-medium text-sky-800 whitespace-nowrap"
+    >
+      Show:
+    </label>
+    <select
+      id="itemsPerPage"
+      value={itemsPerPage}
+      onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+      className="cursor-pointer border text-sky-700 border-sky-300 rounded-lg px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white transition-all duration-200 hover:border-sky-400"
+    >
+      <option value={6}>6</option>
+      <option value={8}>8</option>
+      <option value={10}>10</option>
+      <option value={12}>12</option>
+      <option value={16}>16</option>
+      <option value={20}>20</option>
+      <option value={24}>24</option>
+    </select>
+    <span className="hidden xs:inline text-xs sm:text-sm text-sky-600 whitespace-nowrap font-medium">
+      per page
+    </span>
+  </div>
+</div>
 
         {/* Tours Grid */}
         {tours.length > 0 ? (

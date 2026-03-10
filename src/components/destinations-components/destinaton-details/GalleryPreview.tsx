@@ -13,11 +13,15 @@ const GalleryPreview: React.FC<GalleryPreviewProps> = ({
   destination,
   onImageSelect,
 }) => {
-  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(
+    null,
+  );
   const [showAll, setShowAll] = useState(false);
 
   const INITIAL_COUNT = 4;
-  const visibleImages = showAll ? destination.images : destination.images.slice(0, INITIAL_COUNT);
+  const visibleImages = showAll
+    ? destination.images
+    : destination.images.slice(0, INITIAL_COUNT);
   const remainingCount = destination.images.length - INITIAL_COUNT;
 
   const handleImageClick = (index: number) => {
@@ -31,13 +35,15 @@ const GalleryPreview: React.FC<GalleryPreviewProps> = ({
 
   const handlePrev = () => {
     setSelectedImageIndex((prev) =>
-      prev !== null ? (prev - 1 + destination.images.length) % destination.images.length : 0
+      prev !== null
+        ? (prev - 1 + destination.images.length) % destination.images.length
+        : 0,
     );
   };
 
   const handleNext = () => {
     setSelectedImageIndex((prev) =>
-      prev !== null ? (prev + 1) % destination.images.length : 0
+      prev !== null ? (prev + 1) % destination.images.length : 0,
     );
   };
 
@@ -58,7 +64,10 @@ const GalleryPreview: React.FC<GalleryPreviewProps> = ({
             >
               <Image
                 src={image.imageUrl}
-                alt={image.imageDescription}
+                alt={
+                  image.imageDescription ||
+                  `Thumbnail ${index + 1} for ${destination.destinationName}`
+                }
                 width={150}
                 height={150}
                 className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"

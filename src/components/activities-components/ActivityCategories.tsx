@@ -76,19 +76,14 @@ const ActivityCategories: React.FC<ActivityCategoriesProps> = ({
   };
 
   const handleCategoryClick = (categoryId: number, categoryName: string) => {
-    // Encode the category name for URL
     const encodedCategoryName = encodeURIComponent(categoryName);
-
-    // Navigate to activities page with category filter
     router.push(`${ACTIVITIES_CATEGORY_TYPE_PATH}${encodedCategoryName}`);
 
-    // Call the original onCategoryClick if provided
     if (onCategoryClick) {
       onCategoryClick(categoryId, categoryName);
     }
   };
 
-  // Sort categories to show primary ones first
   const sortedCategories = [...categories].sort((a, b) => {
     if (a.is_primary && !b.is_primary) return -1;
     if (!a.is_primary && b.is_primary) return 1;
@@ -96,31 +91,31 @@ const ActivityCategories: React.FC<ActivityCategoriesProps> = ({
   });
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6">
-      <h2 className="text-lg lg:text-xl font-bold text-gray-900 mb-4 flex items-center">
-        <span className="w-2 h-2 bg-gradient-to-r from-sky-500 to-teal-500 rounded-full mr-2"></span>
+    <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-5 lg:p-6">
+      <h2 className="text-base sm:text-lg lg:text-xl font-bold text-gray-900 mb-3 sm:mb-4 flex items-center">
+        <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gradient-to-r from-sky-500 to-teal-500 rounded-full mr-1.5 sm:mr-2"></span>
         Categories
       </h2>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-1.5 sm:gap-2">
         {sortedCategories.map((category) => {
           const colors = getCategoryColor(category.id);
           return (
             <button
               key={category.id}
               onClick={() => handleCategoryClick(category.id, category.name)}
-              className={`group relative px-4 py-2 rounded-full border transition-all duration-300 hover:shadow-md ${colors.bg} ${colors.text} ${colors.border} ${colors.hover} cursor-pointer`}
+              className={`group relative px-2.5 sm:px-3 lg:px-4 py-1.5 sm:py-2 rounded-full border transition-all duration-300 hover:shadow-md ${colors.bg} ${colors.text} ${colors.border} ${colors.hover} cursor-pointer text-xs sm:text-sm`}
               title={`View all ${category.name} activities`}
             >
-              <span className="text-sm font-medium">{category.name}</span>
+              <span className="font-medium">{category.name}</span>
 
-              {/* Primary Badge */}
+              {/* Primary Badge - Responsive sizing */}
               {category.is_primary && (
-                <span className="absolute -top-2 -right-2 flex h-5 w-5">
+                <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 sm:h-5 sm:w-5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-5 w-5 bg-amber-500 border-2 border-white items-center justify-center">
+                  <span className="relative inline-flex rounded-full h-4 w-4 sm:h-5 sm:w-5 bg-amber-500 border-2 border-white items-center justify-center">
                     <svg
-                      className="w-3 h-3 text-white"
+                      className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -130,9 +125,9 @@ const ActivityCategories: React.FC<ActivityCategoriesProps> = ({
                 </span>
               )}
 
-              {/* Tooltip with description on hover (if description exists) */}
+              {/* Tooltip - Responsive positioning */}
               {category.description && (
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap z-10">
+                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 sm:px-3 sm:py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap z-10 hidden sm:block">
                   {category.description}
                   <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900"></div>
                 </div>
@@ -142,23 +137,32 @@ const ActivityCategories: React.FC<ActivityCategoriesProps> = ({
         })}
       </div>
 
-      {/* Show count of categories with primary indicator */}
-      <div className="mt-4 text-xs text-gray-500 flex items-center justify-between">
+      {/* Footer - Responsive layout */}
+      <div className="mt-3 sm:mt-4 flex flex-col xs:flex-row xs:items-center justify-between gap-2 text-xs text-gray-500">
         <span>
           {categories.length} categor{categories.length === 1 ? "y" : "ies"}
         </span>
         {categories.filter((c) => c.is_primary).length > 0 && (
           <span className="flex items-center gap-1">
             <span className="w-2 h-2 bg-amber-500 rounded-full"></span>
-            <span>{categories.filter((c) => c.is_primary).length} primary</span>
+            <span>
+              {categories.filter((c) => c.is_primary).length} primary
+              <span className="hidden xs:inline">
+                {" "}
+                categor
+                {categories.filter((c) => c.is_primary).length === 1
+                  ? "y"
+                  : "ies"}
+              </span>
+            </span>
           </span>
         )}
       </div>
 
-      {/* Hint for category navigation */}
-      <div className="mt-3 text-xs text-gray-400 flex items-center gap-1">
+      {/* Hint - Hidden on very small screens */}
+      <div className="mt-2 sm:mt-3 text-xs text-gray-400 flex items-center gap-1">
         <svg
-          className="w-3 h-3"
+          className="w-3 h-3 flex-shrink-0"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -170,7 +174,7 @@ const ActivityCategories: React.FC<ActivityCategoriesProps> = ({
             d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z"
           />
         </svg>
-        <span>Click on a category to explore related activities</span>
+        <span className="truncate">Click on a category to explore</span>
       </div>
     </div>
   );

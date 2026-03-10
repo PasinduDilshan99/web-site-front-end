@@ -64,7 +64,7 @@ const ActivityDetailsHeroSection: React.FC<ActivityDetailsHeroSectionProps> = ({
   return (
     <>
       {/* Hero Section with Slider */}
-      <div className="relative h-[500px] md:h-[700px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
+      <div className="relative h-[70vh] lg:h-[90vh] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
         {/* Image Slider */}
         <div className="relative w-full h-full">
           {activity.images.map((image, index) => {
@@ -134,13 +134,13 @@ const ActivityDetailsHeroSection: React.FC<ActivityDetailsHeroSectionProps> = ({
               </div> */}
 
               {/* Activity Title - CENTERED */}
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+              <h1 className="text-2xl md:text-4xl lg:text-6xl font-bold mb-6 leading-tight">
                 {activity.name}
               </h1>
 
               {/* Description Container - CENTERED */}
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 md:p-8 mx-auto max-w-4xl mb-8">
-                <p className="text-lg md:text-xl text-gray-100 leading-relaxed mb-6">
+                <p className="text-md md:text-lg lg:text-xl text-gray-100 leading-relaxed mb-6">
                   {activity.description}
                 </p>
 

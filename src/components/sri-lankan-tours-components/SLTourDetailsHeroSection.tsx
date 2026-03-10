@@ -99,7 +99,7 @@ const SLTourDetailsHeroSection: React.FC<SLTourDetailsHeroSectionProps> = ({
   return (
     <>
       {/* Hero Section with Slider */}
-      <div className="relative h-[500px] md:h-[600px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
+      <div className="relative h-[70vh] lg:h-[90vh] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
         {/* Image Slider */}
         <div className="relative w-full h-full">
           {tour.images.map((image, index) => {

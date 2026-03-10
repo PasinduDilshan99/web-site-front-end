@@ -203,8 +203,6 @@ const DestinationPageContent: React.FC = () => {
         // Prepare API request
         const requestBody = buildSearchRequest(filterValues, page, pageSize);
 
-        console.log("Request Body:", requestBody); // For debugging
-
         const { data, error } =
           await destinationService.fetchDestinationsWithFilters(requestBody);
 
@@ -381,17 +379,17 @@ const DestinationPageContent: React.FC = () => {
 
       {/* Results Section */}
       <div id="results-section" className="mb-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <h3 className="text-xl lg:text-2xl font-semibold text-sky-900">
-            {totalDestinations} Destination
-            {totalDestinations !== 1 ? "s" : ""} Found
+        <div className="flex flex-row items-center justify-between gap-3 mb-6">
+          <h3 className="text-lg sm:text-xl md:text-2xl font-semibold text-sky-900 leading-tight">
+            {totalDestinations} Destination{totalDestinations !== 1 ? "s" : ""}{" "}
+            Found
           </h3>
 
           {/* Items per page selector */}
-          <div className="flex items-center gap-3 bg-sky-50 rounded-lg px-4 py-2 border border-sky-200">
+          <div className="flex items-center gap-2 sm:gap-3 bg-sky-50 rounded-lg px-3 sm:px-4 py-1.5 sm:py-2 border border-sky-200">
             <label
               htmlFor="itemsPerPage"
-              className="text-sm font-medium text-sky-800 whitespace-nowrap"
+              className="text-xs sm:text-sm font-medium text-sky-800 whitespace-nowrap"
             >
               Show:
             </label>
@@ -399,14 +397,17 @@ const DestinationPageContent: React.FC = () => {
               id="itemsPerPage"
               value={itemsPerPage}
               onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
-              className="cursor-pointer border border-sky-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-sky-700 transition-all duration-200 hover:border-sky-400"
+              className="cursor-pointer border border-sky-300 rounded-lg px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-sky-700 transition-all duration-200 hover:border-sky-400"
             >
-              <option value={4}>4 per page</option>
-              <option value={6}>6 per page</option>
-              <option value={9}>9 per page</option>
-              <option value={12}>12 per page</option>
-              <option value={16}>16 per page</option>
+              <option value={4}>4</option>
+              <option value={6}>6</option>
+              <option value={9}>9</option>
+              <option value={12}>12</option>
+              <option value={16}>16</option>
             </select>
+            <span className="hidden xs:inline text-xs sm:text-sm text-sky-600 whitespace-nowrap font-medium">
+              per page
+            </span>
           </div>
         </div>
 
@@ -557,20 +558,23 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
   const pageNumbers = getPageNumbers();
 
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-8 pt-6 border-t border-sky-200">
-      <div className="text-sm text-sky-600 font-medium">
+    <div className="flex flex-col items-center justify-between gap-3 mt-8 pt-6 border-t border-sky-200 sm:flex-row">
+      {/* Results count */}
+      <div className="text-xs sm:text-sm text-sky-600 font-medium order-2 sm:order-1">
         Showing {startItem} to {endItem} of {totalItems} destinations
       </div>
 
-      <div className="flex items-center gap-2">
+      {/* Pagination controls */}
+      <div className="flex items-center gap-1.5 sm:gap-2 order-1 sm:order-2">
+        {/* Previous */}
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="cursor-pointer px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+          className="cursor-pointer px-2.5 sm:px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-1.5"
           aria-label="Previous page"
         >
           <svg
-            className="w-4 h-4"
+            className="w-4 h-4 shrink-0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -585,15 +589,16 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
           <span className="hidden sm:inline">Previous</span>
         </button>
 
-        <div className="flex gap-1">
+        {/* Page numbers */}
+        <div className="flex items-center gap-1">
           {pageNumbers.map((page, index) => {
             if (page === "...") {
               return (
                 <span
                   key={`ellipsis-${index}`}
-                  className="px-4 py-2 text-sm font-medium text-sky-700"
+                  className="w-8 sm:w-10 text-center py-2 text-xs sm:text-sm font-medium text-sky-400"
                 >
-                  ...
+                  …
                 </span>
               );
             }
@@ -602,9 +607,9 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
               <button
                 key={page}
                 onClick={() => onPageChange(page as number)}
-                className={`cursor-pointer min-w-[40px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
+                className={`cursor-pointer min-w-[32px] sm:min-w-[40px] px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-lg transition-all duration-300 ${
                   currentPage === page
-                    ? "bg-gradient-to-r from-sky-600 to-teal-600 text-white shadow-lg transform scale-105"
+                    ? "bg-gradient-to-r from-sky-600 to-teal-600 text-white shadow-lg scale-105"
                     : "text-sky-700 bg-white border-2 border-sky-300 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 hover:shadow-md"
                 }`}
                 aria-label={`Page ${page}`}
@@ -616,15 +621,16 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
           })}
         </div>
 
+        {/* Next */}
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="cursor-pointer px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+          className="cursor-pointer px-2.5 sm:px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-1.5"
           aria-label="Next page"
         >
           <span className="hidden sm:inline">Next</span>
           <svg
-            className="w-4 h-4"
+            className="w-4 h-4 shrink-0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

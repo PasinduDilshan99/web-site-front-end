@@ -91,7 +91,7 @@ const FaqHeroSection = () => {
 
   if (error || heroData.length === 0) {
     return (
-      <div className="relative w-full h-[500px] sm:h-[600px] md:h-[700px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900 flex items-center justify-center">
+      <div className="relative w-full h-[70vh] lg:h-[90vh] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900 flex items-center justify-center">
         <div className="text-center text-white px-4 max-w-2xl mx-auto">
           <div className="mb-6">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 text-white">
@@ -124,7 +124,7 @@ const FaqHeroSection = () => {
   const currentSlideData = heroData[currentSlide];
 
   return (
-    <div className="relative w-full h-[500px] sm:h-[600px] md:h-[650px] lg:h-[700px] xl:h-[750px] 2xl:h-[800px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
+    <div className="relative w-full h-[70vh] lg:h-[90vh] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
       {/* Image Slider - Only show gradient if no image or image failed */}
       <div className="relative w-full h-full">
         {heroData.map((item, index) => {
@@ -217,9 +217,9 @@ const FaqHeroSection = () => {
             </div>
 
             {/* Stats Cards - Centered */}
-            <div className="flex flex-wrap gap-4 justify-center">
+            <div className="hidden lg:flex flex-wrap gap-4 justify-center">
               {/* Solved Issues */}
-              <div className="flex items-center gap-3 px-5 py-3 bg-white/5 backdrop-blur-sm rounded-xl border border-sky-500/20 hover:border-sky-400/40 hover:bg-white/10 transition-all duration-300 min-w-[180px]">
+              <div className="hidden lg:flex items-center gap-3 px-5 py-3 bg-white/5 backdrop-blur-sm rounded-xl border border-sky-500/20 hover:border-sky-400/40 hover:bg-white/10 transition-all duration-300 min-w-[180px]">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-sky-500/20 to-sky-600/20 flex items-center justify-center flex-shrink-0">
                   <svg
                     className="w-5 h-5 text-sky-300"
@@ -242,7 +242,7 @@ const FaqHeroSection = () => {
               </div>
 
               {/* Response Time */}
-              <div className="flex items-center gap-3 px-5 py-3 bg-white/5 backdrop-blur-sm rounded-xl border border-teal-500/20 hover:border-teal-400/40 hover:bg-white/10 transition-all duration-300 min-w-[180px]">
+              <div className="hidden lg:flex items-center gap-3 px-5 py-3 bg-white/5 backdrop-blur-sm rounded-xl border border-teal-500/20 hover:border-teal-400/40 hover:bg-white/10 transition-all duration-300 min-w-[180px]">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-500/20 to-teal-600/20 flex items-center justify-center flex-shrink-0">
                   <svg
                     className="w-5 h-5 text-teal-300"
@@ -265,7 +265,7 @@ const FaqHeroSection = () => {
               </div>
 
               {/* Active Support */}
-              <div className="flex items-center gap-3 px-5 py-3 bg-white/5 backdrop-blur-sm rounded-xl border border-cyan-500/20 hover:border-cyan-400/40 hover:bg-white/10 transition-all duration-300 min-w-[180px]">
+              <div className="hidden lg:flex items-center gap-3 px-5 py-3 bg-white/5 backdrop-blur-sm rounded-xl border border-cyan-500/20 hover:border-cyan-400/40 hover:bg-white/10 transition-all duration-300 min-w-[180px]">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500/20 to-cyan-600/20 flex items-center justify-center flex-shrink-0">
                   <svg
                     className="w-5 h-5 text-cyan-300"
@@ -296,7 +296,7 @@ const FaqHeroSection = () => {
         <>
           <button
             onClick={prevSlide}
-            className="cursor-pointer absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group z-10 shadow-lg"
+            className="cursor-pointer hidden lg:flex absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group z-10 shadow-lg"
             aria-label="Previous slide"
           >
             <svg
@@ -316,7 +316,7 @@ const FaqHeroSection = () => {
 
           <button
             onClick={nextSlide}
-            className="cursor-pointer absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group z-10 shadow-lg"
+            className="hidden lg:flex cursor-pointer absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group z-10 shadow-lg"
             aria-label="Next slide"
           >
             <svg

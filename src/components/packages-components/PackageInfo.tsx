@@ -42,26 +42,26 @@ const PackageInfo: React.FC<PackageInfoProps> = ({ packageData }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 border border-sky-100">
-      <h2 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-sky-600 to-teal-600 bg-clip-text text-transparent mb-4 sm:mb-6">
+    <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-5 md:p-6 border border-sky-100">
+      <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-sky-600 to-teal-600 bg-clip-text text-transparent mb-3 sm:mb-4 md:mb-5 lg:mb-6">
         Package Details
       </h2>
 
       {/* Package Type */}
-      <div className="mb-4 sm:mb-6">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-          <h3 className="text-lg sm:text-xl font-semibold text-sky-800">
+      <div className="mb-3 sm:mb-4 md:mb-5 lg:mb-6">
+        <div className="flex flex-col xs:flex-row xs:items-center gap-2 sm:gap-3">
+          <h3 className="text-base sm:text-lg md:text-xl font-semibold text-sky-800">
             Package Type
           </h3>
 
           <Link
             href={`${PACKAGE_TYPE_PATH}${packageData.packageTypeName}`}
-            className="self-start sm:self-auto"
+            className="self-start xs:self-auto"
           >
             <span
               onMouseEnter={() => setIsHover(true)}
               onMouseLeave={() => setIsHover(false)}
-              className="inline-block px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-sm sm:text-base font-medium border cursor-pointer transition-colors duration-200"
+              className="inline-block px-2.5 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 rounded-full text-xs sm:text-sm md:text-base font-medium border cursor-pointer transition-colors duration-200 whitespace-nowrap"
               style={{
                 backgroundColor: `${
                   (isHover
@@ -83,7 +83,7 @@ const PackageInfo: React.FC<PackageInfoProps> = ({ packageData }) => {
           </Link>
         </div>
 
-        <p className="text-gray-600 text-sm sm:text-base mt-2">
+        <p className="text-gray-600 text-xs sm:text-sm md:text-base mt-1 sm:mt-2">
           {packageData.tourName}
         </p>
       </div>
@@ -91,38 +91,38 @@ const PackageInfo: React.FC<PackageInfoProps> = ({ packageData }) => {
       {/* Features */}
       {packageData.packageFeatures &&
         packageData.packageFeatures.length > 0 && (
-          <div className="mb-4 sm:mb-6">
-            <h3 className="text-lg sm:text-xl font-semibold text-sky-800 mb-2 sm:mb-3">
+          <div className="mb-3 sm:mb-4 md:mb-5 lg:mb-6">
+            <h3 className="text-base sm:text-lg md:text-xl font-semibold text-sky-800 mb-2 sm:mb-2.5 md:mb-3">
               Included Features
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-2.5 md:gap-3">
               {packageData.packageFeatures.map((feature) => (
                 <div
                   key={feature.featureId}
-                  className="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg border"
+                  className="flex items-start gap-1.5 sm:gap-2 md:gap-3 p-2 sm:p-2.5 md:p-3 rounded-lg border hover:shadow-sm transition-shadow duration-200"
                   style={{
-                    backgroundColor: `${feature.color}10`,
+                    backgroundColor: `${feature.color}08`,
                     borderColor: `${feature.color}20`,
                   }}
                 >
                   <div
-                    className="w-2 h-2 sm:w-3 sm:h-3 rounded-full mt-1.5 sm:mt-2 flex-shrink-0"
+                    className="w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-2.5 md:h-2.5 rounded-full mt-1 sm:mt-1.5 md:mt-2 flex-shrink-0"
                     style={{ backgroundColor: feature.color }}
                   />
-                  <div className="flex-1">
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-0.5 sm:mb-1">
-                      <span className="font-semibold text-gray-900 text-sm sm:text-base">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-col xs:flex-row xs:items-center gap-0.5 xs:gap-1 sm:gap-2 mb-0.5 sm:mb-1">
+                      <span className="font-semibold text-gray-900 text-xs sm:text-sm md:text-base">
                         {feature.featureName}:
                       </span>
-                      <span className="text-gray-700 text-sm sm:text-base">
+                      <span className="text-gray-700 text-xs sm:text-sm md:text-base truncate">
                         {feature.featureValue}
                       </span>
                     </div>
-                    <p className="text-xs sm:text-sm text-gray-600 mb-1">
+                    <p className="text-[10px] sm:text-xs md:text-sm text-gray-600 mb-0.5 sm:mb-1 line-clamp-2 sm:line-clamp-3">
                       {feature.featureDescription}
                     </p>
                     {feature.specialNote && (
-                      <p className="text-xs sm:text-sm text-sky-600 font-medium">
+                      <p className="text-[10px] sm:text-xs md:text-sm text-sky-600 font-medium truncate">
                         💡 {feature.specialNote}
                       </p>
                     )}
@@ -133,7 +133,7 @@ const PackageInfo: React.FC<PackageInfoProps> = ({ packageData }) => {
           </div>
         )}
 
-      {/* Validity Period */}
+      {/* Validity Period - Commented out */}
       {/* <div className="mb-4 sm:mb-6">
         <h3 className="text-lg sm:text-xl font-semibold text-sky-800 mb-2 sm:mb-3">Validity Period</h3>
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 p-3 sm:p-4 bg-sky-50 rounded-lg border border-sky-100">
@@ -155,7 +155,7 @@ const PackageInfo: React.FC<PackageInfoProps> = ({ packageData }) => {
         </div>
       </div> */}
 
-      {/* Pricing Details */}
+      {/* Pricing Details - Commented out */}
       {/* <div>
         <h3 className="text-lg sm:text-xl font-semibold text-sky-800 mb-2 sm:mb-3">Pricing Details</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">

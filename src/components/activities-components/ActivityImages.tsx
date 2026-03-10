@@ -39,8 +39,7 @@ const ActivityImages: React.FC<ActivityImagesProps> = ({
   const handlePrev = () =>
     setModalIndex((prev) => (prev - 1 + images.length) % images.length);
 
-  const handleNext = () =>
-    setModalIndex((prev) => (prev + 1) % images.length);
+  const handleNext = () => setModalIndex((prev) => (prev + 1) % images.length);
 
   const handleDownload = async () => {
     const url = images[modalIndex]?.image_url;
@@ -77,23 +76,28 @@ const ActivityImages: React.FC<ActivityImagesProps> = ({
   // Lock scroll when modal is open
   useEffect(() => {
     document.body.style.overflow = isModalOpen ? "hidden" : "unset";
-    return () => { document.body.style.overflow = "unset"; };
+    return () => {
+      document.body.style.overflow = "unset";
+    };
   }, [isModalOpen]);
 
   return (
     <>
-      <div className="space-y-4">
-        {/* Main Image */}
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-          <div className="relative h-96 lg:h-[500px]">
+      <div className="space-y-3 sm:space-y-4">
+        {/* Main Image - Fully Responsive */}
+        <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg overflow-hidden">
+          <div className="relative w-full aspect-[4/3] xs:aspect-[16/9] sm:aspect-[16/9] md:aspect-[21/9] lg:aspect-[24/9] xl:aspect-[3/1]">
             {hasImages ? (
               <>
                 <Image
-                  src={images[selectedImageIndex]?.image_url || PLACE_HOLDER_IMAGE}
+                  src={
+                    images[selectedImageIndex]?.image_url || PLACE_HOLDER_IMAGE
+                  }
                   alt={images[selectedImageIndex]?.name || activityName}
                   fill
-                  className="object-cover"
+                  className="object-cover object-center"
                   priority
+                  sizes="(max-width: 480px) 100vw, (max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 100vw, (max-width: 1280px) 100vw, 1280px"
                 />
                 {/* Clickable overlay with zoom hint */}
                 <button
@@ -101,15 +105,18 @@ const ActivityImages: React.FC<ActivityImagesProps> = ({
                   className="cursor-pointer absolute inset-0 group flex items-center justify-center"
                   aria-label="View full image"
                 >
-                  <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center gap-2 bg-black/50 backdrop-blur-sm text-white text-sm font-medium px-4 py-2 rounded-xl border border-white/20">
-                    <MagnifyingGlassPlusIcon className="w-4 h-4" />
-                    View Full Image
+                  <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center gap-2 bg-black/50 backdrop-blur-sm text-white text-xs sm:text-sm font-medium px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl border border-white/20">
+                    <MagnifyingGlassPlusIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    <span className="hidden xs:inline">View Full Image</span>
+                    <span className="xs:hidden">Full View</span>
                   </span>
                 </button>
               </>
             ) : (
               <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                <span className="text-gray-500">No Image Available</span>
+                <span className="text-gray-500 text-sm sm:text-base">
+                  No Image Available
+                </span>
               </div>
             )}
           </div>
@@ -117,12 +124,12 @@ const ActivityImages: React.FC<ActivityImagesProps> = ({
 
         {/* Thumbnail Images */}
         {hasNavigation && (
-          <div className="flex space-x-2 overflow-x-auto pb-2">
+          <div className="flex space-x-2 sm:space-x-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
             {images.map((image, index) => (
               <button
                 key={image.id}
                 onClick={() => setSelectedImageIndex(index)}
-                className={`cursor-pointer flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
+                className={`cursor-pointer flex-shrink-0 w-16 xs:w-20 sm:w-24 md:w-28 h-16 xs:h-20 sm:h-24 md:h-28 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
                   selectedImageIndex === index
                     ? "border-cyan-500 scale-105 shadow-md"
                     : "border-gray-300 hover:border-cyan-300"
@@ -131,9 +138,10 @@ const ActivityImages: React.FC<ActivityImagesProps> = ({
                 <Image
                   src={image.image_url}
                   alt={image.name}
-                  width={80}
-                  height={80}
+                  width={112}
+                  height={112}
                   className="w-full h-full object-cover"
+                  sizes="(max-width: 640px) 80px, (max-width: 768px) 96px, 112px"
                 />
               </button>
             ))}
@@ -141,109 +149,117 @@ const ActivityImages: React.FC<ActivityImagesProps> = ({
         )}
       </div>
 
-      {/* Full-screen Modal */}
+      {/* Full-screen Modal - Reduced Width */}
       {isModalOpen && hasImages && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-2 xs:p-3 sm:p-4"
           onClick={handleCloseModal}
         >
           <div
-            className="relative w-full max-w-5xl mx-4 md:mx-8 lg:mx-auto"
+            className="relative w-full max-w-xs xs:max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl 2xl:max-w-3xl mx-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Image card */}
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-neutral-900">
-
-              {/* Top-right action buttons */}
-              <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
-                {/* Counter */}
+            <div className="relative rounded-lg sm:rounded-xl lg:rounded-2xl overflow-hidden shadow-2xl bg-neutral-900">
+              {/* Top-right action buttons - Responsive layout */}
+              <div className="absolute top-2 xs:top-3 right-2 xs:right-3 z-10 flex items-center gap-1.5 xs:gap-2">
+                {/* Counter - hidden on very small screens */}
                 {hasNavigation && (
-                  <span className="px-2.5 py-1.5 bg-black/50 backdrop-blur-sm text-white/60 text-xs font-medium rounded-lg border border-white/10">
+                  <span className="hidden xs:inline-block px-2 xs:px-2.5 py-1 xs:py-1.5 bg-black/50 backdrop-blur-sm text-white/60 text-xs font-medium rounded-md xs:rounded-lg border border-white/10">
                     {modalIndex + 1} / {images.length}
                   </span>
                 )}
 
-                {/* Download */}
+                {/* Download - icon only on mobile, text on larger */}
                 <button
                   onClick={handleDownload}
-                  className="cursor-pointer flex items-center gap-1.5 px-3 py-1.5 bg-black/50 hover:bg-black/70 text-white/80 hover:text-white text-xs font-medium tracking-wide rounded-lg border border-white/10 hover:border-white/20 backdrop-blur-sm transition-all duration-200"
+                  className="cursor-pointer flex items-center gap-1 xs:gap-1.5 px-2 xs:px-2.5 sm:px-3 py-1.5 xs:py-1.5 bg-black/50 hover:bg-black/70 text-white/80 hover:text-white text-xs font-medium tracking-wide rounded-md xs:rounded-lg border border-white/10 hover:border-white/20 backdrop-blur-sm transition-all duration-200"
                   aria-label="Download image"
                 >
-                  <ArrowDownTrayIcon className="w-4 h-4" />
+                  <ArrowDownTrayIcon className="w-3.5 h-3.5 xs:w-4 xs:h-4" />
                   <span className="hidden sm:inline">Download</span>
                 </button>
 
                 {/* Close */}
                 <button
                   onClick={handleCloseModal}
-                  className="cursor-pointer flex items-center justify-center w-8 h-8 bg-black/50 hover:bg-black/70 text-white/80 hover:text-white rounded-lg border border-white/10 hover:border-white/20 backdrop-blur-sm transition-all duration-200"
+                  className="cursor-pointer flex items-center justify-center w-7 h-7 xs:w-8 xs:h-8 bg-black/50 hover:bg-black/70 text-white/80 hover:text-white rounded-md xs:rounded-lg border border-white/10 hover:border-white/20 backdrop-blur-sm transition-all duration-200"
                   aria-label="Close modal"
                 >
-                  <XMarkIcon className="w-4 h-4" />
+                  <XMarkIcon className="w-3.5 h-3.5 xs:w-4 xs:h-4" />
                 </button>
               </div>
 
-              {/* Prev */}
+              {/* Navigation arrows - repositioned for mobile */}
               {hasNavigation && (
-                <button
-                  onClick={handlePrev}
-                  className="cursor-pointer absolute left-3 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-9 h-9 bg-black/50 hover:bg-black/70 text-white/80 hover:text-white rounded-lg border border-white/10 hover:border-white/20 backdrop-blur-sm transition-all duration-200"
-                  aria-label="Previous image"
-                >
-                  <ChevronLeftIcon className="w-5 h-5" />
-                </button>
+                <>
+                  <button
+                    onClick={handlePrev}
+                    className="cursor-pointer absolute left-1 xs:left-2 sm:left-3 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-7 h-7 xs:w-8 xs:h-8 sm:w-9 sm:h-9 bg-black/50 hover:bg-black/70 text-white/80 hover:text-white rounded-md xs:rounded-lg border border-white/10 hover:border-white/20 backdrop-blur-sm transition-all duration-200"
+                    aria-label="Previous image"
+                  >
+                    <ChevronLeftIcon className="w-4 h-4 xs:w-5 xs:h-5" />
+                  </button>
+                  <button
+                    onClick={handleNext}
+                    className="cursor-pointer absolute right-1 xs:right-2 sm:right-3 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-7 h-7 xs:w-8 xs:h-8 sm:w-9 sm:h-9 bg-black/50 hover:bg-black/70 text-white/80 hover:text-white rounded-md xs:rounded-lg border border-white/10 hover:border-white/20 backdrop-blur-sm transition-all duration-200"
+                    aria-label="Next image"
+                  >
+                    <ChevronRightIcon className="w-4 h-4 xs:w-5 xs:h-5" />
+                  </button>
+                </>
               )}
 
-              {/* Next */}
-              {hasNavigation && (
-                <button
-                  onClick={handleNext}
-                  className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-9 h-9 bg-black/50 hover:bg-black/70 text-white/80 hover:text-white rounded-lg border border-white/10 hover:border-white/20 backdrop-blur-sm transition-all duration-200"
-                  aria-label="Next image"
-                >
-                  <ChevronRightIcon className="w-5 h-5" />
-                </button>
-              )}
-
-              {/* Image */}
-              <div className="relative w-full" style={{ maxHeight: "82vh" }}>
+              {/* Image - Responsive container */}
+              <div
+                className="relative w-full"
+                style={{ maxHeight: "calc(100vh - 120px)" }}
+              >
                 <Image
                   src={images[modalIndex]?.image_url || PLACE_HOLDER_IMAGE}
                   alt={images[modalIndex]?.name || activityName}
-                  width={1280}
-                  height={800}
+                  width={1024}
+                  height={768}
                   className="w-full h-auto object-contain"
-                  style={{ maxHeight: "82vh", display: "block" }}
-                  sizes="(max-width: 1280px) 100vw, 1280px"
+                  style={{ maxHeight: "calc(100vh - 120px)", display: "block" }}
+                  sizes="(max-width: 480px) 320px, (max-width: 640px) 384px, (max-width: 768px) 448px, (max-width: 1024px) 512px, (max-width: 1280px) 576px, 768px"
                   priority
                 />
               </div>
 
-              {/* Caption */}
+              {/* Caption - responsive padding */}
               {images[modalIndex]?.name && (
-                <div className="px-5 py-3 bg-neutral-900/95 border-t border-white/5">
-                  <p className="text-sm text-white/70 font-medium truncate">
+                <div className="px-3 xs:px-4 sm:px-5 py-2 xs:py-2.5 sm:py-3 bg-neutral-900/95 border-t border-white/5">
+                  <p className="text-xs xs:text-sm text-white/70 font-medium truncate">
                     {images[modalIndex].name}
                   </p>
                 </div>
               )}
             </div>
 
-            {/* Keyboard hints */}
-            <p className="mt-3 text-center text-xs text-white/30 tracking-wider">
+            {/* Keyboard hints - hidden on mobile */}
+            <p className="hidden sm:block mt-3 text-center text-xs text-white/30 tracking-wider">
               {hasNavigation ? (
                 <>
-                  <kbd className="font-mono bg-white/10 px-1.5 py-0.5 rounded text-white/40">←</kbd>
+                  <kbd className="font-mono bg-white/10 px-1.5 py-0.5 rounded text-white/40">
+                    ←
+                  </kbd>
                   {" / "}
-                  <kbd className="font-mono bg-white/10 px-1.5 py-0.5 rounded text-white/40">→</kbd>
+                  <kbd className="font-mono bg-white/10 px-1.5 py-0.5 rounded text-white/40">
+                    →
+                  </kbd>
                   {" to navigate · "}
-                  <kbd className="font-mono bg-white/10 px-1.5 py-0.5 rounded text-white/40">ESC</kbd>
+                  <kbd className="font-mono bg-white/10 px-1.5 py-0.5 rounded text-white/40">
+                    ESC
+                  </kbd>
                   {" to close"}
                 </>
               ) : (
                 <>
                   Press{" "}
-                  <kbd className="font-mono bg-white/10 px-1.5 py-0.5 rounded text-white/40">ESC</kbd>
+                  <kbd className="font-mono bg-white/10 px-1.5 py-0.5 rounded text-white/40">
+                    ESC
+                  </kbd>
                   {" to close"}
                 </>
               )}
