@@ -47,14 +47,14 @@ const MobileNav: React.FC<MobileNavProps> = ({
           borderColor: "rgba(14, 165, 233, 0.3)",
         }}
       >
-        <div className="px-4 pt-4 pb-6 space-y-2">
+        <div className="px-4 lg:pt-4 lg:pb-6">
           {visibleNavBarItems.map((item) => (
             <MobileMenuItem key={item.id} item={item} onClose={handleClose} />
           ))}
 
           {/* Mobile Auth Links */}
           <div
-            className="border-t pt-4 mt-4"
+            className="border-t lg:pt-4 lg:mt-4 "
             style={{ borderColor: "rgba(14, 165, 233, 0.2)" }}
           >
             {user ? (
@@ -96,7 +96,7 @@ const MobileNav: React.FC<MobileNavProps> = ({
                 </div>
                 <Link
                   href="/profile"
-                  className="block px-4 py-3 rounded-lg font-medium transition-all duration-300 border border-transparent backdrop-blur-sm"
+                  className="block px-4 lg:py-3 rounded-lg font-medium transition-all duration-300 border border-transparent backdrop-blur-sm"
                   style={{ color: "#075985" }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.color = "#0ea5e9";

@@ -147,7 +147,7 @@ const SeasonHeroSection = () => {
   const seasonalGradient = getSeasonalGradient(currentSlideData.name);
 
   return (
-    <div className="relative w-full h-[650px] lg:h-[800px] overflow-hidden bg-gradient-to-br from-teal-900 via-cyan-800 to-blue-900">
+    <div className="relative w-full h-[70vh] lg:h-[90vh] overflow-hidden bg-gradient-to-br from-teal-900 via-cyan-800 to-blue-900">
       {/* Image Slider */}
       <div className="relative w-full h-full">
         {heroData.map((item, index) => {
@@ -212,7 +212,7 @@ const SeasonHeroSection = () => {
 
               {currentSlideData.subtitle && (
                 <div className="mb-6">
-                  <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold mb-3 text-cyan-100">
+                  <h2 className="text-md md:text-lg lg:text-3xl font-semibold mb-3 text-cyan-100">
                     {currentSlideData.subtitle}
                   </h2>
                   <div
@@ -223,7 +223,7 @@ const SeasonHeroSection = () => {
             </div>
 
             <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-6 md:p-8 max-w-3xl mb-8 border border-white/10 shadow-2xl mx-auto">
-              <p className="text-mf md:text-lg lg:text-xl mb-6 text-slate-100 leading-relaxed">
+              <p className="text-sm md:text-lg lg:text-xl mb-6 text-slate-100 leading-relaxed">
                 {currentSlideData.description ||
                   "Discover the best time to visit Sri Lanka. From the cool hill country to sun-drenched beaches, each season offers unique experiences for your perfect getaway."}
               </p>
@@ -236,7 +236,7 @@ const SeasonHeroSection = () => {
                       onClick={() =>
                         handleButtonClick(currentSlideData.primaryButtonLink)
                       }
-                      className={`cursor-pointer px-8 py-4 bg-gradient-to-r ${seasonalGradient} text-white font-semibold rounded-xl hover:opacity-90 transform hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-3 group`}
+                      className={`cursor-pointer w-full sm:w-auto px-5 sm:px-7 md:px-9 py-3 sm:py-4 md:py-5 bg-gradient-to-r from-sky-500 to-teal-500 text-white text-sm sm:text-base font-semibold rounded-xl sm:rounded-2xl hover:from-sky-600 hover:to-teal-600 transform hover:scale-[1.02] transition-all duration-300 shadow-2xl flex items-center justify-center gap-3 sm:gap-4 group`}
                     >
                       <svg
                         className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300"
@@ -259,7 +259,7 @@ const SeasonHeroSection = () => {
                       onClick={() =>
                         handleButtonClick(currentSlideData.secondaryButtonLink)
                       }
-                      className="cursor-pointer px-8 py-4 border-2 border-cyan-300/50 text-white font-semibold rounded-xl hover:bg-cyan-50/20 hover:border-cyan-200 backdrop-blur-sm transition-all duration-300 flex items-center gap-3 group"
+                      className="cursor-pointer w-full sm:w-auto px-5 sm:px-7 md:px-9 py-3 sm:py-4 md:py-5 border-2 border-sky-300/50 text-white text-sm sm:text-base font-semibold rounded-xl sm:rounded-2xl hover:bg-sky-50/20 hover:border-sky-200 backdrop-blur-sm transition-all duration-300 flex items-center justify-center gap-3 sm:gap-4 group"
                     >
                       <svg
                         className="w-6 h-6 group-hover:scale-110 transition-transform duration-300"

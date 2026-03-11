@@ -98,9 +98,26 @@ const ScrolledMobileNav: React.FC<ScrolledMobileNavProps> = ({
                     </div>
                   </div>
                 </div>
+                <Link
+                  href="/profile"
+                  className="block px-4 lg:py-3 rounded-lg font-medium transition-all duration-300 border border-transparent backdrop-blur-sm"
+                  style={{ color: "#075985" }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = "#0ea5e9";
+                    e.currentTarget.style.backgroundColor =
+                      "rgba(14, 165, 233, 0.08)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = "#075985";
+                    e.currentTarget.style.backgroundColor = "transparent";
+                  }}
+                  onClick={handleClose}
+                >
+                  Profile
+                </Link>
                 <button
                   onClick={handleLogout}
-                  className="block w-full text-left px-3 py-2 rounded-md font-medium transition-all duration-300 border border-transparent backdrop-blur-sm text-sm"
+                  className="block w-full text-left px-4 py-3 rounded-lg font-medium transition-all duration-300 border border-transparent backdrop-blur-sm"
                   style={{ color: "#dc2626" }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.color = "#ef4444";

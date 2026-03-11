@@ -1093,20 +1093,25 @@ const Pagination: React.FC<PaginationProps> = ({
   const pageNumbers: (number | string)[] = getPageNumbers();
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 pt-6 border-t border-teal-200">
-      <div className="text-sm text-teal-600 font-medium">
-        Showing {startIndex + 1} to {endIndex} of {totalItems} results
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-teal-200">
+      {/* Results count - Centered on mobile, left-aligned on larger screens */}
+      <div className="text-xs sm:text-sm text-teal-600 font-medium order-2 sm:order-1">
+        Showing <span className="font-bold">{startIndex + 1}</span> to{" "}
+        <span className="font-bold">{endIndex}</span> of{" "}
+        <span className="font-bold">{totalItems}</span> results
       </div>
 
-      <div className="flex items-center gap-2">
+      {/* Pagination controls - Full width on mobile, auto on larger screens */}
+      <div className="flex items-center justify-center sm:justify-end gap-1.5 sm:gap-2 w-full sm:w-auto order-1 sm:order-2">
+        {/* Previous button */}
         <button
           onClick={(): void => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="cursor-pointer px-4 py-2 text-sm font-medium text-teal-700 bg-white border-2 border-teal-300 rounded-lg hover:bg-teal-50 hover:text-teal-800 hover:border-teal-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+          className="cursor-pointer px-2.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-teal-700 bg-white border-2 border-teal-300 rounded-lg hover:bg-teal-50 hover:text-teal-800 hover:border-teal-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-1 sm:gap-2"
           aria-label="Previous page"
         >
           <svg
-            className="w-4 h-4"
+            className="w-3.5 h-3.5 sm:w-4 sm:h-4"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -1118,16 +1123,17 @@ const Pagination: React.FC<PaginationProps> = ({
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          <span className="hidden sm:inline">Previous</span>
+          <span className="hidden xs:inline">Previous</span>
         </button>
 
-        <div className="flex gap-1">
+        {/* Page numbers - Scrollable on mobile */}
+        <div className="flex overflow-x-auto max-w-[200px] xs:max-w-[300px] sm:max-w-none px-1 py-0.5 sm:px-0 sm:py-0 gap-1 scrollbar-thin scrollbar-thumb-teal-300 scrollbar-track-teal-100">
           {pageNumbers.map((page: number | string, index: number) => {
             if (page === "...") {
               return (
                 <span
                   key={`ellipsis-${index}`}
-                  className="px-4 py-2 text-sm font-medium text-teal-700"
+                  className="px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-teal-700"
                 >
                   ...
                 </span>
@@ -1138,7 +1144,7 @@ const Pagination: React.FC<PaginationProps> = ({
               <button
                 key={page}
                 onClick={(): void => onPageChange(page as number)}
-                className={`cursor-pointer min-w-[40px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
+                className={`cursor-pointer min-w-[32px] sm:min-w-[40px] px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg transition-all duration-300 flex-shrink-0 ${
                   currentPage === page
                     ? "bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-lg transform scale-105"
                     : "text-teal-700 bg-white border-2 border-teal-300 hover:bg-teal-50 hover:text-teal-800 hover:border-teal-400 hover:shadow-md"
@@ -1152,15 +1158,16 @@ const Pagination: React.FC<PaginationProps> = ({
           })}
         </div>
 
+        {/* Next button */}
         <button
           onClick={(): void => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="cursor-pointer px-4 py-2 text-sm font-medium text-teal-700 bg-white border-2 border-teal-300 rounded-lg hover:bg-teal-50 hover:text-teal-800 hover:border-teal-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+          className="cursor-pointer px-2.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-teal-700 bg-white border-2 border-teal-300 rounded-lg hover:bg-teal-50 hover:text-teal-800 hover:border-teal-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-1 sm:gap-2"
           aria-label="Next page"
         >
-          <span className="hidden sm:inline">Next</span>
+          <span className="hidden xs:inline">Next</span>
           <svg
-            className="w-4 h-4"
+            className="w-3.5 h-3.5 sm:w-4 sm:h-4"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
