@@ -5,6 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 import { UserProfileAPIService } from "@/services/userProfileAPIService";
 import { CancelledTour } from "@/types/cancelled-tours";
 import { USER_PROFILE_CANCELLED_TOURS_VIEW_PRIVILEGE } from "@/utils/privileges";
+import { USER_PROFILE_PAGE_PATH } from "@/utils/urls";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
@@ -17,13 +18,23 @@ export default function CancelledToursPage() {
   const apiService = new UserProfileAPIService();
   const { user } = useAuth();
   const router = useRouter();
+  const [expandedDescriptions, setExpandedDescriptions] = useState<{
+    [key: number]: boolean;
+  }>({});
 
+  // Add this function to toggle description
+  const toggleDescription = (bookingId: number) => {
+    setExpandedDescriptions((prev) => ({
+      ...prev,
+      [bookingId]: !prev[bookingId],
+    }));
+  };
   useEffect(() => {
     if (
       user &&
       !user.privileges.includes(USER_PROFILE_CANCELLED_TOURS_VIEW_PRIVILEGE)
     ) {
-      router.push("/profile");
+      router.push(USER_PROFILE_PAGE_PATH);
     }
   }, [user, router]);
 
@@ -48,7 +59,7 @@ export default function CancelledToursPage() {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-LK", {
       style: "currency",
-      currency: "LKR",
+      currency: "USD",
       minimumFractionDigits: 0,
     }).format(amount);
   };
@@ -331,9 +342,24 @@ export default function CancelledToursPage() {
                         </span>
                       </div>
                     </div>
-                    <p className="text-slate-300 text-sm mb-3 line-clamp-2">
-                      {tour.tourDescription}
-                    </p>
+                    <div className="mb-3">
+                      <p className="text-sky-100 text-sm md:text-base">
+                        {expandedDescriptions[tour.bookingId]
+                          ? tour.tourDescription
+                          : tour.tourDescription.substring(0, 200) +
+                            (tour.tourDescription.length > 200 ? "..." : "")}
+                      </p>
+                      {tour.tourDescription.length > 200 && (
+                        <button
+                          onClick={() => toggleDescription(tour.bookingId)}
+                          className="cursor-pointer text-sky-200 hover:text-sky-100 text-xs underline mt-1 transition-colors"
+                        >
+                          {expandedDescriptions[tour.bookingId]
+                            ? "Show Less"
+                            : "Show More"}
+                        </button>
+                      )}
+                    </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs md:text-sm">
                       <div className="flex items-center gap-1">
                         <span className="text-slate-400">📅</span>
@@ -361,7 +387,7 @@ export default function CancelledToursPage() {
                   </div>
                   <button
                     onClick={() => toggleBookingExpansion(tour.bookingId)}
-                    className="self-start bg-white/10 hover:bg-white/20 p-2 rounded-lg transition-colors"
+                    className="cursor-pointer self-start bg-white/10 hover:bg-white/20 p-2 rounded-lg transition-colors"
                   >
                     <svg
                       className={`w-5 h-5 md:w-6 md:h-6 transform transition-transform ${
@@ -398,13 +424,13 @@ export default function CancelledToursPage() {
                           <div className="text-xs text-slate-600">
                             Cancellation Date
                           </div>
-                          <div className="font-medium">
+                          <div className="font-medium text-gray-700">
                             {formatDateTime(tour.cancellationDate || "")}
                           </div>
                         </div>
                         <div>
                           <div className="text-xs text-slate-600">Reason</div>
-                          <div className="font-medium">
+                          <div className="font-medium text-gray-700">
                             {getCancellationReasonText(tour.cancellationReason)}
                           </div>
                         </div>
@@ -469,7 +495,7 @@ export default function CancelledToursPage() {
                             <div className="text-xs text-slate-600">
                               Original Amount
                             </div>
-                            <div className="font-medium">
+                            <div className="font-medium text-gray-700">
                               {formatCurrency(tour.finalAmount)}
                             </div>
                           </div>
@@ -517,24 +543,24 @@ export default function CancelledToursPage() {
                           <div className="text-xs text-slate-600">
                             Tour Name
                           </div>
-                          <div className="font-medium truncate">
+                          <div className="font-medium text-gray-700">
                             {tour.tourName}
                           </div>
                         </div>
                         <div>
                           <div className="text-xs text-slate-600">Duration</div>
-                          <div className="font-medium">
+                          <div className="font-medium text-gray-700">
                             {tour.tourDuration} days
                           </div>
                         </div>
-                        <div>
+                        {/* <div>
                           <div className="text-xs text-slate-600">Type</div>
                           <div className="font-medium">{tour.tourType}</div>
-                        </div>
-                        <div>
+                        </div> */}
+                        {/* <div>
                           <div className="text-xs text-slate-600">Category</div>
                           <div className="font-medium">{tour.tourCategory}</div>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
 
@@ -548,21 +574,25 @@ export default function CancelledToursPage() {
                           <div className="text-xs text-slate-600">
                             Package Name
                           </div>
-                          <div className="font-medium truncate">
+                          <div className="font-medium text-gray-700">
                             {tour.packageName}
                           </div>
                         </div>
-                        <div>
-                          <div className="text-xs text-slate-600">Schedule</div>
-                          <div className="font-medium">
-                            {tour.packageScheduleName}
+                        {tour.packageScheduleName && (
+                          <div>
+                            <div className="text-xs text-slate-600">
+                              Schedule
+                            </div>
+                            <div className="font-medium text-gray-700">
+                              {tour.packageScheduleName}
+                            </div>
                           </div>
-                        </div>
+                        )}
                         <div>
                           <div className="text-xs text-slate-600">
                             Price per person
                           </div>
-                          <div className="font-medium">
+                          <div className="font-medium text-gray-700">
                             {formatCurrency(tour.packagePricePerPerson)}
                           </div>
                         </div>

@@ -1,390 +1,533 @@
+// pages/VehiclePage.tsx (updated - removed price range)
 "use client";
-
-import Footer from "@/components/common-components/footer/Footer";
-import NavBar from "@/components/common-components/navBar/NavBar";
-import ImagesTab from "@/components/vehicle-components/ImagesTab";
-import OverviewTab from "@/components/vehicle-components/OverviewTab";
-import Pagination from "@/components/vehicle-components/Pagination";
-import SpecificationsTab from "@/components/vehicle-components/SpecificationsTab";
-import UsageTab from "@/components/vehicle-components/UsageTab";
-import VehicleCard from "@/components/vehicle-components/VehicleCard";
+import React, { useState, useEffect, useCallback, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Vehicle, VehicleFilters } from "@/types/vehicle-types";
+import SectionHeader from "@/components/common-components/section-header/SectionHeader";
+import { vehicleService } from "@/services/vehicleService";
+import VehiclesLoading from "@/components/vehicle-components/specification-components/VehiclesLoading";
 import VehicleFilterSection from "@/components/vehicle-components/VehicleFilterSection";
-import VehicleTabs, {
-  VehicleTab,
-} from "@/components/vehicle-components/VehicleTabs";
-import {
-  PaginationState,
-  Vehicle,
-  VehicleFilters,
-} from "@/types/vehicle-types";
-import React, { useState, useEffect, useMemo } from "react";
+import VehiclesLoadingError from "@/components/vehicle-components/VehicleLoadingError";
+import VehiclesGrid from "@/components/vehicle-components/VehiclesGrid";
 
-const VehiclePage: React.FC = () => {
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+// Utility functions for URL params management
+const filtersToUrlParams = (
+  filters: VehicleFilters,
+  page: number,
+  pageSize: number,
+): URLSearchParams => {
+  const params = new URLSearchParams();
+
+  if (filters.search) params.set("search", filters.search);
+  if (filters.make) params.set("make", filters.make);
+  if (filters.bodyType) params.set("bodyType", filters.bodyType);
+  if (filters.engineType) params.set("engineType", filters.engineType);
+  if (filters.transmission) params.set("transmission", filters.transmission);
+  if (filters.fuelType) params.set("fuelType", filters.fuelType);
+  if (filters.seatCapacity) params.set("seatCapacity", filters.seatCapacity);
+
+  // Year range
+  if (filters.yearRange[0] > 0)
+    params.set("minYear", filters.yearRange[0].toString());
+  if (filters.yearRange[1] < 2030)
+    params.set("maxYear", filters.yearRange[1].toString());
+
+  // Horsepower range
+  if (filters.horsepowerRange[0] > 0)
+    params.set("minHp", filters.horsepowerRange[0].toString());
+  if (filters.horsepowerRange[1] < 1000)
+    params.set("maxHp", filters.horsepowerRange[1].toString());
+
+  // Pagination
+  params.set("page", page.toString());
+  params.set("pageSize", pageSize.toString());
+
+  return params;
+};
+
+const urlParamsToFilters = (params: URLSearchParams): VehicleFilters => {
+  return {
+    search: params.get("search") || "",
+    make: params.get("make") || "",
+    bodyType: params.get("bodyType") || "",
+    yearRange: [
+      Number(params.get("minYear")) || 2000,
+      Number(params.get("maxYear")) || 2030,
+    ],
+    engineType: params.get("engineType") || "",
+    transmission: params.get("transmission") || "",
+    fuelType: params.get("fuelType") || "",
+    horsepowerRange: [
+      Number(params.get("minHp")) || 0,
+      Number(params.get("maxHp")) || 1000,
+    ],
+    seatCapacity: params.get("seatCapacity") || "",
+  };
+};
+
+const urlParamsToPagination = (
+  params: URLSearchParams,
+): { page: number; pageSize: number } => {
+  return {
+    page: Number(params.get("page")) || 1,
+    pageSize: Number(params.get("pageSize")) || 12,
+  };
+};
+
+// Main component wrapped with Suspense for useSearchParams
+const VehiclePageContent: React.FC = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [allVehicles, setAllVehicles] = useState<Vehicle[]>([]);
   const [filteredVehicles, setFilteredVehicles] = useState<Vehicle[]>([]);
-  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
-  const [activeTab, setActiveTab] = useState<VehicleTab>("overview");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
-  // Filter state
-  const [filters, setFilters] = useState<VehicleFilters>({
-    search: "",
-    status: "",
-    make: "",
-    model: "",
-    bodyType: "",
-    yearRange: [2000, 2023],
-    priceRange: [0, 100000],
-    engineType: "",
-    transmissionType: "",
-    fuelType: "",
+  const [filterOptions, setFilterOptions] = useState<{
+    makes: string[];
+    bodyTypes: string[];
+    engineTypes: string[];
+    transmissions: string[];
+    fuelTypes: string[];
+    seatCapacities: number[];
+    minYear: number;
+    maxYear: number;
+    minHorsepower: number;
+    maxHorsepower: number;
+  }>({
+    makes: [],
+    bodyTypes: [],
+    engineTypes: [],
+    transmissions: [],
+    fuelTypes: [],
+    seatCapacities: [],
+    minYear: 2000,
+    maxYear: 2024,
     minHorsepower: 0,
-    maxHorsepower: 500,
+    maxHorsepower: 1000,
   });
 
-  // Pagination state
-  const [pagination, setPagination] = useState<PaginationState>({
-    currentPage: 1,
-    itemsPerPage: 10,
-    totalItems: 0,
-    totalPages: 0,
-  });
+  // Initialize filters from URL params
+  const [filters, setFilters] = useState<VehicleFilters>(() =>
+    urlParamsToFilters(new URLSearchParams(searchParams?.toString())),
+  );
 
-  // Fetch vehicles
+  // Pagination states from URL params
+  const [currentPage, setCurrentPage] = useState<number>(
+    () =>
+      urlParamsToPagination(new URLSearchParams(searchParams?.toString())).page,
+  );
+  const [itemsPerPage, setItemsPerPage] = useState<number>(
+    () =>
+      urlParamsToPagination(new URLSearchParams(searchParams?.toString()))
+        .pageSize,
+  );
+
+  const [totalVehicles, setTotalVehicles] = useState<number>(0);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
+
+  // Fetch all vehicles on mount
   useEffect(() => {
     const fetchVehicles = async () => {
       try {
-        const response = await fetch("/api/vehicles");
-        if (!response.ok) {
-          throw new Error("Failed to fetch vehicles");
-        }
+        setLoading(true);
+        const { vehicles, error } = await vehicleService.fetchVehicles();
 
-        const result = await response.json();
-        if (result.data && result.data.length > 0) {
-          setVehicles(result.data);
-          setFilteredVehicles(result.data);
-          setSelectedVehicle(result.data[0]);
+        if (error) {
+          setError(error);
+        } else {
+          setAllVehicles(vehicles);
+
+          // Extract filter options from all vehicles
+          const options = vehicleService.extractFilterOptions(vehicles);
+          setFilterOptions(options);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
         setLoading(false);
+        setIsInitialLoad(false);
       }
     };
 
     fetchVehicles();
   }, []);
 
-  // Apply filters
+  // Apply filters and pagination when filters or pagination change
   useEffect(() => {
-    const filtered = vehicles.filter((vehicle) => {
-      const spec = vehicle.specification;
+    if (allVehicles.length > 0 && !isInitialLoad) {
+      const {
+        filteredVehicles: paginatedVehicles,
+        totalFiltered,
+        totalPages,
+      } = vehicleService.filterVehicles(
+        allVehicles,
+        filters,
+        currentPage,
+        itemsPerPage,
+      );
 
-      // Search filter
-      if (filters.search) {
-        const searchTerm = filters.search.toLowerCase();
-        const searchable = [
-          vehicle.registrationNumber,
-          spec.make,
-          spec.model,
-          spec.generation,
-          spec.bodyType,
-        ]
-          .join(" ")
-          .toLowerCase();
+      setFilteredVehicles(paginatedVehicles);
+      setTotalVehicles(totalFiltered);
+      setTotalPages(totalPages);
+    }
+  }, [allVehicles, filters, currentPage, itemsPerPage, isInitialLoad]);
 
-        if (!searchable.includes(searchTerm)) return false;
-      }
+  // Update URL when filters or pagination change
+  const updateUrlParams = useCallback(
+    (newFilters: VehicleFilters, page: number, pageSize: number) => {
+      const params = filtersToUrlParams(newFilters, page, pageSize);
+      router.push(`?${params.toString()}`, { scroll: false });
+    },
+    [router],
+  );
 
-      // Status filter
-      if (filters.status && vehicle.status !== filters.status) return false;
-
-      // Make filter
-      if (filters.make && spec.make !== filters.make) return false;
-
-      // Body type filter
-      if (filters.bodyType && spec.bodyType !== filters.bodyType) return false;
-
-      // Engine type filter
-      if (filters.engineType && spec.engineType !== filters.engineType)
-        return false;
-
-      // Year range filter
-      if (spec.year < filters.yearRange[0] || spec.year > filters.yearRange[1])
-        return false;
-
-      // Price range filter
-      if (
-        spec.price < filters.priceRange[0] ||
-        spec.price > filters.priceRange[1]
-      )
-        return false;
-
-      // Horsepower filter
-      if (
-        spec.horsepowerHp < filters.minHorsepower ||
-        spec.horsepowerHp > filters.maxHorsepower
-      )
-        return false;
-
-      return true;
-    });
-
-    setFilteredVehicles(filtered);
-    setPagination((prev) => ({
+  const handleFilterChange = (
+    filterName: keyof VehicleFilters,
+    value: string | [number, number],
+  ): void => {
+    setFilters((prev) => ({
       ...prev,
-      currentPage: 1,
-      totalItems: filtered.length,
-      totalPages: Math.ceil(filtered.length / prev.itemsPerPage),
+      [filterName]: value,
     }));
-  }, [vehicles, filters]);
-
-  // Update pagination when items per page changes
-  useEffect(() => {
-    setPagination((prev) => ({
-      ...prev,
-      totalPages: Math.ceil(filteredVehicles.length / prev.itemsPerPage),
-      currentPage: 1,
-    }));
-  }, [filteredVehicles.length, pagination.itemsPerPage]);
-
-  // Get current page vehicles
-  const currentVehicles = useMemo(() => {
-    const startIndex = (pagination.currentPage - 1) * pagination.itemsPerPage;
-    const endIndex = startIndex + pagination.itemsPerPage;
-    return filteredVehicles.slice(startIndex, endIndex);
-  }, [filteredVehicles, pagination.currentPage, pagination.itemsPerPage]);
-
-  // Filter handlers
-  const handleFilterChange = (filterName: keyof VehicleFilters, value: unknown) => {
-    setFilters((prev) => ({ ...prev, [filterName]: value }));
   };
 
-  const handleResetFilters = () => {
-    setFilters({
+  const handleSearch = (): void => {
+    updateUrlParams(filters, 1, itemsPerPage);
+  };
+
+  const resetFilters = (): void => {
+    const resetFilterValues: VehicleFilters = {
       search: "",
-      status: "",
       make: "",
-      model: "",
       bodyType: "",
-      yearRange: [2000, 2023],
-      priceRange: [0, 100000],
+      yearRange: [filterOptions.minYear, filterOptions.maxYear],
       engineType: "",
-      transmissionType: "",
+      transmission: "",
       fuelType: "",
-      minHorsepower: 0,
-      maxHorsepower: 500,
-    });
+      horsepowerRange: [
+        filterOptions.minHorsepower,
+        filterOptions.maxHorsepower,
+      ],
+      seatCapacity: "",
+    };
+
+    setFilters(resetFilterValues);
+    updateUrlParams(resetFilterValues, 1, itemsPerPage);
   };
 
-  // Pagination handlers
+  const handleRetry = () => {
+    setError(null);
+    setLoading(true);
+    setIsInitialLoad(true);
+
+    const fetchVehicles = async () => {
+      try {
+        const { vehicles, error } = await vehicleService.fetchVehicles();
+        if (error) {
+          setError(error);
+        } else {
+          setAllVehicles(vehicles);
+          const options = vehicleService.extractFilterOptions(vehicles);
+          setFilterOptions(options);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+      } finally {
+        setLoading(false);
+        setIsInitialLoad(false);
+      }
+    };
+
+    fetchVehicles();
+  };
+
   const handlePageChange = (page: number) => {
-    setPagination((prev) => ({ ...prev, currentPage: page }));
-  };
-
-  const handleItemsPerPageChange = (itemsPerPage: number) => {
-    setPagination((prev) => ({
-      ...prev,
-      itemsPerPage,
-      currentPage: 1,
-      totalPages: Math.ceil(prev.totalItems / itemsPerPage),
-    }));
-  };
-
-  const renderTabContent = () => {
-    if (!selectedVehicle) return null;
-
-    switch (activeTab) {
-      case "overview":
-        return <OverviewTab vehicle={selectedVehicle} />;
-      case "specifications":
-        return <SpecificationsTab vehicle={selectedVehicle} />;
-      case "usage":
-        return <UsageTab vehicle={selectedVehicle} />;
-      case "images":
-        return <ImagesTab vehicle={selectedVehicle} />;
-      default:
-        return null;
+    updateUrlParams(filters, page, itemsPerPage);
+    const resultsSection = document.getElementById("results-section");
+    if (resultsSection) {
+      resultsSection.scrollIntoView({ behavior: "smooth" });
     }
   };
 
+  const handleItemsPerPageChange = (value: number) => {
+    updateUrlParams(filters, 1, value);
+  };
+
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-purple-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading vehicles...</p>
-        </div>
-      </div>
-    );
+    return <VehiclesLoading itemsPerPage={itemsPerPage} />;
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-purple-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4">😞</div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            Error Loading Vehicles
-          </h3>
-          <p className="text-gray-600">{error}</p>
-        </div>
-      </div>
+      <VehiclesLoadingError
+        onRetry={handleRetry}
+        message="Couldn't fetch vehicles."
+      />
     );
   }
 
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
   return (
-    <>
-      <NavBar />
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-purple-50">
-        <div className="container mx-auto px-3 sm:px-4 py-6">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-amber-600 to-purple-600 bg-clip-text text-transparent mb-4">
-              Vehicle Fleet Management
-            </h1>
-            <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">
-              Manage and monitor your vehicle fleet with detailed
-              specifications, usage history, and maintenance tracking.
-            </p>
-          </div>
+    <div className="mx-auto px-4 py-8 bg-gradient-to-br from-teal-50 to-cyan-50 to-seaBlue-50 min-h-screen">
+      {/* Page Header */}
+      <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
+        <SectionHeader
+          subtitle=""
+          title="Vehicles"
+          description="Discover the perfect vehicle for your journey in Sri Lanka"
+          fromColor="#2C9A9A"
+          toColor="#0E7C7C"
+        />
+      </div>
 
-          {/* Filter Section */}
-          <VehicleFilterSection
-            filters={filters}
-            onFilterChange={handleFilterChange}
-            onResetFilters={handleResetFilters}
-            vehicles={vehicles}
-          />
+      {/* Filters Section */}
+      <VehicleFilterSection
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        onSearch={handleSearch}
+        onResetFilters={resetFilters}
+        filterOptions={filterOptions}
+      />
 
-          <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-            {/* Vehicle List Sidebar */}
-            <div className="xl:col-span-1">
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold text-gray-900 flex items-center">
-                    <span className="mr-2">🚗</span>
-                    Vehicles ({filteredVehicles.length})
-                  </h2>
-                </div>
+      {/* Results Section */}
+      <div id="results-section" className="mb-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <h3 className="text-lg lg:text-2xl font-semibold text-teal-900">
+            {totalVehicles} Vehicle{totalVehicles !== 1 ? "s" : ""} Found
+          </h3>
 
-                {/* Mobile View - Horizontal Scroll */}
-                <div className="xl:hidden">
-                  <div className="flex space-x-3 overflow-x-auto pb-4 -mx-2 px-2">
-                    {currentVehicles.map((vehicle) => (
-                      <div
-                        key={vehicle.vehicleId}
-                        className="flex-shrink-0 w-64"
-                      >
-                        <VehicleCard
-                          vehicle={vehicle}
-                          isSelected={
-                            selectedVehicle?.vehicleId === vehicle.vehicleId
-                          }
-                          onClick={() => {
-                            setSelectedVehicle(vehicle);
-                            setActiveTab("overview");
-                          }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Desktop View - Vertical List */}
-                <div className="hidden xl:block">
-                  <div className="space-y-3 max-h-[600px] overflow-y-auto">
-                    {currentVehicles.map((vehicle) => (
-                      <VehicleCard
-                        key={vehicle.vehicleId}
-                        vehicle={vehicle}
-                        isSelected={
-                          selectedVehicle?.vehicleId === vehicle.vehicleId
-                        }
-                        onClick={() => {
-                          setSelectedVehicle(vehicle);
-                          setActiveTab("overview");
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                {/* Pagination */}
-                {filteredVehicles.length > 0 && (
-                  <div className="mt-4">
-                    <Pagination
-                      pagination={pagination}
-                      onPageChange={handlePageChange}
-                      onItemsPerPageChange={handleItemsPerPageChange}
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Vehicle Details */}
-            <div className="xl:col-span-3">
-              {selectedVehicle ? (
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                  {/* Vehicle Header */}
-                  <div className="p-4 sm:p-6 border-b border-gray-200">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div>
-                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-                          {selectedVehicle.specification.make}{" "}
-                          {selectedVehicle.specification.model}
-                        </h2>
-                        <p className="text-gray-600 text-sm sm:text-base">
-                          {selectedVehicle.registrationNumber} •{" "}
-                          {selectedVehicle.specification.year} •{" "}
-                          {selectedVehicle.specification.bodyType}
-                        </p>
-                      </div>
-                      <span
-                        className={`px-3 py-1 sm:px-4 sm:py-2 rounded-full font-medium text-sm ${
-                          selectedVehicle.status === "ACTIVE"
-                            ? "bg-green-100 text-green-800"
-                            : selectedVehicle.status === "MAINTENANCE"
-                            ? "bg-amber-100 text-amber-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
-                      >
-                        {selectedVehicle.status}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Tabs Navigation */}
-                  <div className="px-4 sm:px-6">
-                    <VehicleTabs
-                      activeTab={activeTab}
-                      onTabChange={setActiveTab}
-                    />
-                  </div>
-
-                  {/* Tab Content */}
-                  <div className="p-4 sm:p-6">{renderTabContent()}</div>
-                </div>
-              ) : (
-                <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-                  <div className="text-6xl mb-4">🚗</div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    No Vehicle Selected
-                  </h3>
-                  <p className="text-gray-600">
-                    Select a vehicle from the list to view details
-                  </p>
-                </div>
-              )}
-            </div>
+          {/* Items Per Page Selector */}
+          <div className="flex items-center gap-3 bg-teal-50 rounded-lg px-4 py-2 border border-teal-200">
+            <label
+              htmlFor="itemsPerPage"
+              className="text-sm font-medium text-teal-800 whitespace-nowrap"
+            >
+              Show:
+            </label>
+            <select
+              id="itemsPerPage"
+              value={itemsPerPage}
+              onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+              className="cursor-pointer border border-teal-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white text-teal-700 transition-all duration-200 hover:border-teal-400"
+            >
+              <option value={6}>6</option>
+              <option value={8}>8</option>
+              <option value={12}>12</option>
+              <option value={16}>16</option>
+              <option value={24}>24</option>
+              <option value={32}>32</option>
+            </select>
+            <span className="text-sm text-teal-600 whitespace-nowrap font-medium">
+              per page
+            </span>
           </div>
         </div>
+
+        {/* Vehicles Grid */}
+        {filteredVehicles.length > 0 ? (
+          <>
+            <VehiclesGrid
+              vehicles={filteredVehicles}
+              displayCount={filteredVehicles.length}
+            />
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                totalItems={totalVehicles}
+                itemsPerPage={itemsPerPage}
+                startIndex={startIndex}
+                endIndex={Math.min(endIndex, totalVehicles)}
+              />
+            )}
+          </>
+        ) : (
+          <NoResults onResetFilters={resetFilters} />
+        )}
       </div>
-      <Footer />
-    </>
+    </div>
+  );
+};
+
+// Wrap with Suspense for useSearchParams
+const VehiclePage: React.FC = () => {
+  return (
+    <Suspense fallback={<VehiclesLoading itemsPerPage={12} />}>
+      <VehiclePageContent />
+    </Suspense>
   );
 };
 
 export default VehiclePage;
+
+// No Results Component
+const NoResults: React.FC<{ onResetFilters: () => void }> = ({
+  onResetFilters,
+}) => (
+  <div className="text-center py-12">
+    <div className="text-teal-600 text-lg mb-4">
+      No vehicles found matching your filters.
+    </div>
+    <button
+      onClick={onResetFilters}
+      className="cursor-pointer px-6 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all duration-300 shadow-md hover:shadow-lg"
+    >
+      Reset Filters
+    </button>
+  </div>
+);
+
+// Pagination Component
+interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  totalItems: number;
+  itemsPerPage: number;
+  startIndex: number;
+  endIndex: number;
+}
+
+const Pagination: React.FC<PaginationProps> = ({
+  currentPage,
+  totalPages,
+  onPageChange,
+  totalItems,
+  itemsPerPage,
+  startIndex,
+  endIndex,
+}) => {
+  const getPageNumbers = () => {
+    const pages: (number | string)[] = [];
+    const maxVisiblePages = 5;
+
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      pages.push(1);
+
+      let startPage = Math.max(2, currentPage - 1);
+      let endPage = Math.min(totalPages - 1, currentPage + 1);
+
+      if (currentPage <= 3) {
+        endPage = Math.min(totalPages - 1, 4);
+      }
+
+      if (currentPage >= totalPages - 2) {
+        startPage = Math.max(2, totalPages - 3);
+      }
+
+      if (startPage > 2) {
+        pages.push("...");
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+
+      if (endPage < totalPages - 1) {
+        pages.push("...");
+      }
+
+      pages.push(totalPages);
+    }
+
+    return pages;
+  };
+
+  const pageNumbers = getPageNumbers();
+
+  return (
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 pt-6 border-t border-teal-200">
+      <div className="text-sm text-teal-600 font-medium">
+        Showing {startIndex + 1} to {endIndex} of {totalItems} results
+      </div>
+
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="cursor-pointer px-4 py-2 text-sm font-medium text-teal-700 bg-white border-2 border-teal-300 rounded-lg hover:bg-teal-50 hover:text-teal-800 hover:border-teal-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+          aria-label="Previous page"
+        >
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+          <span className="hidden sm:inline">Previous</span>
+        </button>
+
+        <div className="flex gap-1">
+          {pageNumbers.map((page, index) => {
+            if (page === "...") {
+              return (
+                <span
+                  key={`ellipsis-${index}`}
+                  className="px-4 py-2 text-sm font-medium text-teal-700"
+                >
+                  ...
+                </span>
+              );
+            }
+
+            return (
+              <button
+                key={page}
+                onClick={() => onPageChange(page as number)}
+                className={`cursor-pointer min-w-[40px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
+                  currentPage === page
+                    ? "bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-lg transform scale-105"
+                    : "text-teal-700 bg-white border-2 border-teal-300 hover:bg-teal-50 hover:text-teal-800 hover:border-teal-400 hover:shadow-md"
+                }`}
+                aria-label={`Page ${page}`}
+                aria-current={currentPage === page ? "page" : undefined}
+              >
+                {page}
+              </button>
+            );
+          })}
+        </div>
+
+        <button
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="cursor-pointer px-4 py-2 text-sm font-medium text-teal-700 bg-white border-2 border-teal-300 rounded-lg hover:bg-teal-50 hover:text-teal-800 hover:border-teal-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+          aria-label="Next page"
+        >
+          <span className="hidden sm:inline">Next</span>
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
+};

@@ -255,9 +255,9 @@ const ActiveToursHome = () => {
                           />
 
                           {/* Tour Category Badge */}
-                          <div className="absolute top-3 left-3 bg-purple-600/90 text-white px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold backdrop-blur-sm">
+                          {/* <div className="absolute top-3 left-3 bg-purple-600/90 text-white px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold backdrop-blur-sm">
                             {tour.tourCategoryName}
-                          </div>
+                          </div> */}
 
                           {/* Duration Badge */}
                           <div className="absolute bottom-3 left-3 bg-amber-600 text-white px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold">
@@ -300,7 +300,7 @@ const ActiveToursHome = () => {
                                 {tour.startLocation} → {tour.endLocation}
                               </span>
                             </div>
-                            <div className="flex items-center text-sm sm:text-base lg:text-sm xl:text-base text-gray-600">
+                            {/* <div className="flex items-center text-sm sm:text-base lg:text-sm xl:text-base text-gray-600">
                               <svg
                                 className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0 text-gray-400"
                                 fill="none"
@@ -315,7 +315,7 @@ const ActiveToursHome = () => {
                                 />
                               </svg>
                               {tour.tourTypeName}
-                            </div>
+                            </div> */}
                           </div>
 
                           {/* Schedule Info */}

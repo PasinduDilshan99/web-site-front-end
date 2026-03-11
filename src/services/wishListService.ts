@@ -1,13 +1,22 @@
 // wishListService.ts
 
-import { InsertWishListRequest, WishListApiResponse } from "@/types/wish-list-types";
+import {
+  InsertWishListRequest,
+  WishListApiResponse,
+} from "@/types/wish-list-types";
+import {
+  ADD_ACTIVITY_WISH_LIST_DATA_FE,
+  ADD_DESTINATION_WISH_LIST_DATA_FE,
+  ADD_PACKAGE_WISH_LIST_DATA_FE,
+  ADD_TOUR_WISH_LIST_DATA_FE,
+} from "@/utils/frontEndConstant";
 
-
-const API_BASE = "/api/wish-list";
-
-async function postWishList(endpoint: string, body: InsertWishListRequest): Promise<WishListApiResponse> {
+async function postWishList(
+  endpoint: string,
+  body: InsertWishListRequest,
+): Promise<WishListApiResponse> {
   try {
-    const response = await fetch(`${API_BASE}/${endpoint}`, {
+    const response = await fetch(endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -29,8 +38,12 @@ async function postWishList(endpoint: string, body: InsertWishListRequest): Prom
 }
 
 export const WishListService = {
-  addActivityWishList: (body: InsertWishListRequest) => postWishList("insert-activity-wish-list", body),
-  addDestinationWishList: (body: InsertWishListRequest) => postWishList("insert-destination-wish-list", body),
-  addPackageWishList: (body: InsertWishListRequest) => postWishList("insert-package-wish-list", body),
-  addTourWishList: (body: InsertWishListRequest) => postWishList("insert-tour-wish-list", body),
+  addActivityWishList: (body: InsertWishListRequest) =>
+    postWishList(ADD_ACTIVITY_WISH_LIST_DATA_FE, body),
+  addDestinationWishList: (body: InsertWishListRequest) =>
+    postWishList(ADD_DESTINATION_WISH_LIST_DATA_FE, body),
+  addPackageWishList: (body: InsertWishListRequest) =>
+    postWishList(ADD_PACKAGE_WISH_LIST_DATA_FE, body),
+  addTourWishList: (body: InsertWishListRequest) =>
+    postWishList(ADD_TOUR_WISH_LIST_DATA_FE, body),
 };

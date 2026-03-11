@@ -1,14 +1,14 @@
 import React from "react";
-import { Package } from "@/types/package-types";
+import { PackageComparison } from "@/types/package-comparison-types";
 
 interface PackageSelectionProps {
-  packages: Package[];
+  packages: PackageComparison[];
   package1Id: string;
   package2Id: string;
   onPackageSelect: (packageId: string, isFirstPackage: boolean) => void;
   formatCurrency: (amount: number) => string;
-  selectedPackage1: Package | null;
-  selectedPackage2: Package | null;
+  selectedPackage1: PackageComparison | null;
+  selectedPackage2: PackageComparison | null;
 }
 
 const PackageSelection: React.FC<PackageSelectionProps> = ({
@@ -36,7 +36,7 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
             <select
               value={package1Id}
               onChange={(e) => onPackageSelect(e.target.value, true)}
-              className="text-gray-700 w-full p-3 border-2 border-sky-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-200 focus:outline-none transition-all duration-200 bg-white"
+              className="cursor-pointer text-gray-700 w-full p-3 border-2 border-sky-300 rounded-lg focus:border-sky-500 focus:ring-2 focus:ring-sky-200 focus:outline-none transition-all duration-200 bg-white"
             >
               <option value="">Select a package</option>
               {packages.map((pkg) => (
@@ -46,6 +46,18 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
                 </option>
               ))}
             </select>
+            
+            {/* Selected Package 1 Summary */}
+            {selectedPackage1 && (
+              <div className="mt-3 p-3 bg-sky-50 rounded-lg border border-sky-200">
+                <p className="text-sm text-sky-700">
+                  <span className="font-semibold">Selected:</span> {selectedPackage1.packageName}
+                </p>
+                <p className="text-xs text-sky-600 mt-1">
+                  {selectedPackage1.packageDayByDayDtoList.length} days itinerary
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Package 2 Selection */}
@@ -56,7 +68,7 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
             <select
               value={package2Id}
               onChange={(e) => onPackageSelect(e.target.value, false)}
-              className="text-gray-700 w-full p-3 border-2 border-teal-300 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:outline-none transition-all duration-200 bg-white"
+              className="cursor-pointer text-gray-700 w-full p-3 border-2 border-teal-300 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:outline-none transition-all duration-200 bg-white"
             >
               <option value="">Select a package</option>
               {packages
@@ -68,6 +80,18 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
                   </option>
                 ))}
             </select>
+            
+            {/* Selected Package 2 Summary */}
+            {selectedPackage2 && (
+              <div className="mt-3 p-3 bg-teal-50 rounded-lg border border-teal-200">
+                <p className="text-sm text-teal-700">
+                  <span className="font-semibold">Selected:</span> {selectedPackage2.packageName}
+                </p>
+                <p className="text-xs text-teal-600 mt-1">
+                  {selectedPackage2.packageDayByDayDtoList.length} days itinerary
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -82,6 +106,13 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
                 Comparing {selectedPackage1.packageName} vs {selectedPackage2.packageName}
               </span>
             </div>
+          </div>
+        )}
+
+        {/* No Packages Message */}
+        {packages.length === 0 && (
+          <div className="mt-6 text-center text-gray-500">
+            No packages available for this tour
           </div>
         )}
       </div>

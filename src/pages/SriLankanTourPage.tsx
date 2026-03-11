@@ -1,5 +1,6 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Loading from "@/components/common-components/loading/Loading";
 import { ErrorState } from "@/components/common-components/error-state/ErrorState";
 import FilterSection from "@/components/sri-lankan-tours-components/FilterSection";
@@ -8,7 +9,6 @@ import ReviewsSection from "@/components/sri-lankan-tours-components/ReviewsSect
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";
 import TourHistorySection from "@/components/sri-lankan-tours-components/TourHistorySection";
 import TourHistoryGallery from "@/components/sri-lankan-tours-components/TourHistoryGallery";
-import { useSearchParams } from "next/navigation";
 import {
   ActiveToursType,
   TourFilters,
@@ -17,11 +17,69 @@ import {
   TourReview,
   TourSearchRequest,
   FilterOptions,
-} from "@/types/tour-types"; // Import types
+} from "@/types/tour-types";
 import { TourService } from "@/services/tourService";
 import ToursLoading from "@/components/sri-lankan-tours-components/ToursLoading";
+import { useCommon } from "@/context/CommonContext";
+import SLTourDetailsLoadingError from "@/components/sri-lankan-tours-components/SLTourDetailsLoadingError";
 
-const SriLankanTourPage: React.FC = () => {
+// Utility functions for URL params management
+const filtersToUrlParams = (
+  filters: TourFilters,
+  page: number,
+  pageSize: number,
+): URLSearchParams => {
+  const params = new URLSearchParams();
+
+  if (filters.search) params.set("search", filters.search);
+  if (filters.tourType) params.set("tourType", filters.tourType);
+  if (filters.tourCategory) params.set("tourCategory", filters.tourCategory);
+  if (filters.duration) params.set("duration", filters.duration.toString());
+  if (filters.season) params.set("season", filters.season);
+  if (filters.location) params.set("location", filters.location);
+
+  // Price range - only add if not default values
+  if (filters.priceRange[0] > 0)
+    params.set("minPrice", filters.priceRange[0].toString());
+  if (filters.priceRange[1] < 5000)
+    params.set("maxPrice", filters.priceRange[1].toString());
+
+  // Pagination
+  params.set("page", page.toString());
+  params.set("pageSize", pageSize.toString());
+
+  return params;
+};
+
+const urlParamsToFilters = (params: URLSearchParams): TourFilters => {
+  return {
+    search: params.get("search") || "",
+    tourType: params.get("tourType") || "",
+    tourCategory: params.get("tourCategory") || "",
+    duration: params.get("duration") || "",
+    season: params.get("season") || "",
+    location: params.get("location") || "",
+    priceRange: [
+      Number(params.get("minPrice")) || 0,
+      Number(params.get("maxPrice")) || 5000,
+    ] as [number, number],
+  };
+};
+
+const urlParamsToPagination = (
+  params: URLSearchParams,
+): { page: number; pageSize: number } => {
+  return {
+    page: Number(params.get("page")) || 1,
+    pageSize: Number(params.get("pageSize")) || 10,
+  };
+};
+
+// Main component wrapped with Suspense for useSearchParams
+const SriLankanTourPageContent: React.FC = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [tours, setTours] = useState<ActiveToursType[]>([]);
   const [reviews, setReviews] = useState<TourReview[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -34,54 +92,86 @@ const SriLankanTourPage: React.FC = () => {
   const [galleryImages, setGalleryImages] = useState<TourHistoryImage[]>([]);
   const [galleryLoading, setGalleryLoading] = useState<boolean>(true);
   const [galleryError, setGalleryError] = useState<string | null>(null);
-  const searchParams = useSearchParams();
 
-  const [tourType, setTourType] = useState<string | null>(null);
-  const [location, setLocation] = useState<string | null>(null);
+  // Use the common context
+  const { categories, loading: categoriesLoading } = useCommon();
 
-  useEffect(() => {
-    if (searchParams) {
-      setTourType(searchParams.get("tourType"));
-      setLocation(searchParams.get("location"));
-    }
-  }, [searchParams]);
+  // Initialize filters from URL params
+  const [filters, setFilters] = useState<TourFilters>(() =>
+    urlParamsToFilters(new URLSearchParams(searchParams?.toString())),
+  );
 
-  // Pagination states
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [itemsPerPage, setItemsPerPage] = useState<number>(10);
+  // Pagination states from URL params
+  const [currentPage, setCurrentPage] = useState<number>(
+    () =>
+      urlParamsToPagination(new URLSearchParams(searchParams?.toString())).page,
+  );
+  const [itemsPerPage, setItemsPerPage] = useState<number>(
+    () =>
+      urlParamsToPagination(new URLSearchParams(searchParams?.toString()))
+        .pageSize,
+  );
+
   const [totalTours, setTotalTours] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(0);
+  const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
 
-  // Filter states
-  const [filters, setFilters] = useState<TourFilters>({
-    search: "",
-    priceRange: [0, 5000],
-    duration: "",
-    tourType: "",
-    tourCategory: "",
-    season: "",
-    location: "",
-  });
-
-  // Filter options
+  // Filter options - derived from context
   const [tourTypes, setTourTypes] = useState<string[]>([]);
   const [tourCategories, setTourCategories] = useState<string[]>([]);
   const [seasons, setSeasons] = useState<string[]>([]);
   const [locations, setLocations] = useState<string[]>([]);
   const [durations, setDurations] = useState<number[]>([]);
 
-  // Debounce timer
-  const [pageSizeDebounceTimer, setPageSizeDebounceTimer] =
-    useState<NodeJS.Timeout | null>(null);
+  // Transform context data into filter options
+  useEffect(() => {
+    if (categories) {
+      // Extract tour type names
+      const typeNames = categories.tourTypeList.map(
+        (type) => type.tourTypeName,
+      );
+      setTourTypes(typeNames);
 
-  // Fetch filter options
+      // Extract tour category names
+      const categoryNames = categories.tourCategoryList.map(
+        (cat) => cat.tourCategoryName,
+      );
+      setTourCategories(categoryNames);
+    }
+  }, [categories]);
+
+  // Build search request from filters
+  const buildSearchRequest = useCallback(
+    (
+      filterValues: TourFilters,
+      page: number,
+      pageSize: number,
+    ): TourSearchRequest => {
+      return {
+        name: filterValues.search || null,
+        minPrice:
+          filterValues.priceRange[0] > 0 ? filterValues.priceRange[0] : null,
+        maxPrice:
+          filterValues.priceRange[1] < 5000 ? filterValues.priceRange[1] : null,
+        duration: filterValues.duration
+          ? parseInt(filterValues.duration)
+          : null,
+        tourType: filterValues.tourType || null,
+        tourCategory: filterValues.tourCategory || null,
+        season: filterValues.season || null,
+        location: filterValues.location || null,
+        pageNumber: page,
+        pageSize: pageSize,
+      };
+    },
+    [],
+  );
+
+  // Fetch other filter options (seasons, locations, durations)
   const fetchFilterOptions = useCallback(async (): Promise<void> => {
     try {
-      // USING THE SERVICE
       const options = await TourService.getFilterOptions();
 
-      setTourTypes(options.tourTypes);
-      setTourCategories(options.tourCategories);
       setSeasons(options.seasons);
       setLocations(options.locations);
       setDurations(options.durations);
@@ -90,30 +180,30 @@ const SriLankanTourPage: React.FC = () => {
     }
   }, []);
 
+  // Update URL when filters or pagination change
+  const updateUrlParams = useCallback(
+    (newFilters: TourFilters, page: number, pageSize: number) => {
+      const params = filtersToUrlParams(newFilters, page, pageSize);
+      router.push(`?${params.toString()}`, { scroll: false });
+    },
+    [router],
+  );
+
   // Fetch tours with filters - MAIN API CALL FUNCTION
   const fetchToursWithFilters = useCallback(
     async (
-      pageNum: number = currentPage,
-      pageSize: number = itemsPerPage,
+      filterValues: TourFilters,
+      page: number,
+      pageSize: number,
     ): Promise<void> => {
       try {
         setLoading(true);
 
         // Prepare API request
-        const requestBody: TourSearchRequest = {
-          name: filters.search || null,
-          minPrice: filters.priceRange[0] > 0 ? filters.priceRange[0] : null,
-          maxPrice: filters.priceRange[1] < 5000 ? filters.priceRange[1] : null,
-          duration: filters.duration ? parseInt(filters.duration) : null,
-          tourType: filters.tourType || tourType || null,
-          tourCategory: filters.tourCategory || null,
-          season: filters.season || null,
-          location: filters.location || location || null,
-          pageNumber: pageNum,
-          pageSize: pageSize,
-        };
+        const requestBody = buildSearchRequest(filterValues, page, pageSize);
 
-        // USING THE SERVICE
+        console.log("Request Body:", requestBody); // For debugging
+
         const result = await TourService.searchTours(requestBody);
 
         if (result.code === 200) {
@@ -121,195 +211,93 @@ const SriLankanTourPage: React.FC = () => {
             setTours(result.data.tourResponseDtoList);
             setTotalTours(result.data.totalTours);
             setTotalPages(Math.ceil(result.data.totalTours / pageSize));
-            setCurrentPage(pageNum);
+            setError(null);
           } else {
             setTours([]);
             setTotalTours(0);
             setTotalPages(0);
           }
-          setError(null);
         } else {
-          throw new Error(result.message);
+          setError(result.message);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
         setLoading(false);
+        setIsInitialLoad(false);
       }
     },
-    [filters, currentPage, itemsPerPage, tourType, location],
+    [buildSearchRequest],
   );
 
-  // Add this useEffect to sync URL params on component mount
-  useEffect(() => {
-    if (tourType || location) {
-      setFilters((prev) => ({
-        ...prev,
-        ...(tourType && { tourType }),
-        ...(location && { location }),
-      }));
-    }
-  }, []);
-
-  // Initial data fetch
+  // Initial data fetch - runs only once on mount
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
         setLoading(true);
-
-        if (tourType || location) {
-          setFilters((prev) => ({
-            ...prev,
-            ...(tourType && { tourType }),
-            ...(location && { location }),
-          }));
-        }
-
         await fetchFilterOptions();
-        await fetchToursWithFilters(1, itemsPerPage);
-        // fetchReviews();
-        // fetchTourHistory();
-        // fetchTourHistoryImages();
+        await fetchToursWithFilters(filters, currentPage, itemsPerPage);
+
+        // Uncomment these if needed
+        // await fetchReviews();
+        // await fetchTourHistory();
+        // await fetchTourHistoryImages();
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchInitialData();
-  }, [tourType, location]);
+  }, []); // Empty dependency array - runs only once on mount
 
-  // Fetch tours when page changes
+  // Watch for URL params changes and fetch data
   useEffect(() => {
-    if (currentPage > 0 && !loading) {
-      fetchToursWithFilters(currentPage, itemsPerPage);
+    if (!isInitialLoad) {
+      const urlFilters = urlParamsToFilters(
+        new URLSearchParams(searchParams?.toString()),
+      );
+      const { page, pageSize } = urlParamsToPagination(
+        new URLSearchParams(searchParams?.toString()),
+      );
+
+      setFilters(urlFilters);
+      setCurrentPage(page);
+      setItemsPerPage(pageSize);
+
+      fetchToursWithFilters(urlFilters, page, pageSize);
     }
-  }, [currentPage]);
-
-  // Handle page size change with immediate API call
-  const handleItemsPerPageChange = (value: number) => {
-    if (pageSizeDebounceTimer) {
-      clearTimeout(pageSizeDebounceTimer);
-    }
-
-    setItemsPerPage(value);
-
-    const timer = setTimeout(() => {
-      setCurrentPage(1);
-      fetchToursWithFilters(1, value);
-    }, 300);
-
-    setPageSizeDebounceTimer(timer);
-  };
-
-  // Cleanup debounce timer on unmount
-  useEffect(() => {
-    return () => {
-      if (pageSizeDebounceTimer) {
-        clearTimeout(pageSizeDebounceTimer);
-      }
-    };
-  }, [pageSizeDebounceTimer]);
-
-  // Handle search button click - resets to page 1
-  const handleSearch = useCallback(() => {
-    setCurrentPage(1);
-    fetchToursWithFilters(1, itemsPerPage);
-  }, [fetchToursWithFilters, itemsPerPage]);
-
-  // Handle reset filters - resets to page 1
-  const resetFilters = useCallback(() => {
-    setFilters({
-      search: "",
-      priceRange: [0, 5000],
-      duration: "",
-      tourType: "",
-      tourCategory: "",
-      season: "",
-      location: "",
-    });
-    setCurrentPage(1);
-
-    if (typeof window !== "undefined") {
-      window.history.replaceState({}, "", "/sri-lankan-tours");
-    }
-
-    fetchToursWithFilters(1, itemsPerPage);
-  }, [fetchToursWithFilters, itemsPerPage]);
-
-  // const fetchTourHistory = async (): Promise<void> => {
-  //   try {
-  //     setHistoryLoading(true);
-  //     // USING THE SERVICE
-  //     const result = await TourService.getTourHistory();
-
-  //     if (result.code === 200) {
-  //       setHistories(result.data);
-  //       setHistoryError(null);
-  //     } else {
-  //       throw new Error(result.message);
-  //     }
-  //   } catch (err) {
-  //     setHistoryError(
-  //       err instanceof Error ? err.message : "Failed to load tour history",
-  //     );
-  //   } finally {
-  //     setHistoryLoading(false);
-  //   }
-  // };
-
-  // const fetchTourHistoryImages = async (): Promise<void> => {
-  //   try {
-  //     setGalleryLoading(true);
-  //     // USING THE SERVICE
-  //     const result = await TourService.getTourHistoryImages();
-
-  //     if (result.code === 200) {
-  //       setGalleryImages(result.data);
-  //       setGalleryError(null);
-  //     } else {
-  //       throw new Error(result.message);
-  //     }
-  //   } catch (err) {
-  //     setGalleryError(
-  //       err instanceof Error ? err.message : "Failed to load tour images",
-  //     );
-  //   } finally {
-  //     setGalleryLoading(false);
-  //   }
-  // };
-
-  // const fetchReviews = async (): Promise<void> => {
-  //   try {
-  //     setReviewsLoading(true);
-  //     // USING THE SERVICE
-  //     const result = await TourService.getTourReviews();
-
-  //     if (result.code === 200) {
-  //       setReviews(result.data);
-  //       setReviewsError(null);
-  //     } else {
-  //       throw new Error(result.message);
-  //     }
-  //   } catch (err) {
-  //     setReviewsError(
-  //       err instanceof Error ? err.message : "Failed to load reviews",
-  //     );
-  //   } finally {
-  //     setReviewsLoading(false);
-  //   }
-  // };
+  }, [searchParams]); // Only depend on searchParams
 
   const handleFilterChange = (
     filterName: keyof TourFilters,
-    value: unknown,
+    value: TourFilters[keyof TourFilters],
   ): void => {
     setFilters((prev) => ({
       ...prev,
       [filterName]: value,
     }));
   };
+
+  const handleSearch = useCallback((): void => {
+    // Reset to page 1 and update URL
+    updateUrlParams(filters, 1, itemsPerPage);
+  }, [filters, itemsPerPage, updateUrlParams]);
+
+  const resetFilters = useCallback((): void => {
+    const resetFilterValues: TourFilters = {
+      search: "",
+      priceRange: [0, 5000] as [number, number],
+      duration: "",
+      tourType: "",
+      tourCategory: "",
+      season: "",
+      location: "",
+    };
+
+    setFilters(resetFilterValues);
+    // Update URL with reset filters and page 1
+    updateUrlParams(resetFilterValues, 1, itemsPerPage);
+  }, [itemsPerPage, updateUrlParams]);
 
   const handleRetry = () => {
     setError(null);
@@ -320,40 +308,38 @@ const SriLankanTourPage: React.FC = () => {
     setReviewsLoading(true);
     setHistoryLoading(true);
     setGalleryLoading(true);
+    setIsInitialLoad(true);
     fetchFilterOptions();
-    fetchToursWithFilters(1, itemsPerPage);
-    // fetchReviews();
-    // fetchTourHistory();
-    // fetchTourHistoryImages();
+    fetchToursWithFilters(filters, currentPage, itemsPerPage);
   };
 
+  // Pagination calculations
+  const startIndex = (currentPage - 1) * itemsPerPage + 1;
+  const endIndex = Math.min(currentPage * itemsPerPage, totalTours);
+
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+    updateUrlParams(filters, page, itemsPerPage);
+    // Scroll to top of results section
     const resultsSection = document.getElementById("results-section");
     if (resultsSection) {
       resultsSection.scrollIntoView({ behavior: "smooth" });
     }
   };
 
-  if (loading) {
+  const handleItemsPerPageChange = (value: number) => {
+    updateUrlParams(filters, 1, value); // Reset to page 1 when changing items per page
+  };
+
+  if (loading || categoriesLoading) {
     return <ToursLoading itemsPerPage={itemsPerPage} />;
   }
 
   if (error) {
     return (
-      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <ErrorState
-            title="Failed to Load tours"
-            message={error}
-            icon="alert"
-            variant="error"
-            size="md"
-            actionLabel="Try Again"
-            onAction={handleRetry}
-          />
-        </div>
-      </section>
+      <SLTourDetailsLoadingError
+        onRetry={handleRetry}
+        message="Couldn't load the Sri Lanka tour information."
+      />
     );
   }
 
@@ -385,38 +371,38 @@ const SriLankanTourPage: React.FC = () => {
 
       {/* Results Section */}
       <div id="results-section" className="mb-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <h3 className="text-2xl font-semibold text-sky-900">
-            {totalTours} Tour{totalTours !== 1 ? "s" : ""} Found
-          </h3>
+  <div className="flex flex-row items-center justify-between gap-3 mb-6">
+  <h3 className="text-lg sm:text-xl md:text-2xl font-semibold text-sky-900 leading-tight">
+    {totalTours} Tour{totalTours !== 1 ? "s" : ""} Found
+  </h3>
 
-          {/* Items Per Page Selector */}
-          <div className="flex items-center gap-3 bg-sky-50 rounded-lg px-4 py-2 border border-sky-200">
-            <label
-              htmlFor="itemsPerPage"
-              className="text-sm font-medium text-sky-800 whitespace-nowrap"
-            >
-              Show:
-            </label>
-            <select
-              id="itemsPerPage"
-              value={itemsPerPage}
-              onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
-              className="border text-sky-700 border-sky-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white transition-all duration-200 hover:border-sky-400"
-            >
-              <option value={6}>6</option>
-              <option value={8}>8</option>
-              <option value={10}>10</option>
-              <option value={12}>12</option>
-              <option value={16}>16</option>
-              <option value={20}>20</option>
-              <option value={24}>24</option>
-            </select>
-            <span className="text-sm text-sky-600 whitespace-nowrap font-medium">
-              per page
-            </span>
-          </div>
-        </div>
+  {/* Items Per Page Selector */}
+  <div className="flex items-center gap-2 sm:gap-3 bg-sky-50 rounded-lg px-3 sm:px-4 py-1.5 sm:py-2 border border-sky-200">
+    <label
+      htmlFor="itemsPerPage"
+      className="text-xs sm:text-sm font-medium text-sky-800 whitespace-nowrap"
+    >
+      Show:
+    </label>
+    <select
+      id="itemsPerPage"
+      value={itemsPerPage}
+      onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+      className="cursor-pointer border text-sky-700 border-sky-300 rounded-lg px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white transition-all duration-200 hover:border-sky-400"
+    >
+      <option value={6}>6</option>
+      <option value={8}>8</option>
+      <option value={10}>10</option>
+      <option value={12}>12</option>
+      <option value={16}>16</option>
+      <option value={20}>20</option>
+      <option value={24}>24</option>
+    </select>
+    <span className="hidden xs:inline text-xs sm:text-sm text-sky-600 whitespace-nowrap font-medium">
+      per page
+    </span>
+  </div>
+</div>
 
         {/* Tours Grid */}
         {tours.length > 0 ? (
@@ -431,8 +417,8 @@ const SriLankanTourPage: React.FC = () => {
                 onPageChange={handlePageChange}
                 totalItems={totalTours}
                 itemsPerPage={itemsPerPage}
-                startIndex={(currentPage - 1) * itemsPerPage + 1}
-                endIndex={Math.min(currentPage * itemsPerPage, totalTours)}
+                startIndex={startIndex}
+                endIndex={endIndex}
               />
             )}
           </>
@@ -441,7 +427,7 @@ const SriLankanTourPage: React.FC = () => {
         )}
       </div>
 
-      {/* Reviews Section */}
+      {/* Optional Sections - Uncomment if needed */}
       {/* <ReviewsSection
         reviews={reviews}
         loading={reviewsLoading}
@@ -464,6 +450,15 @@ const SriLankanTourPage: React.FC = () => {
   );
 };
 
+// Wrap with Suspense for useSearchParams
+const SriLankanTourPage: React.FC = () => {
+  return (
+    <Suspense fallback={<ToursLoading itemsPerPage={10} />}>
+      <SriLankanTourPageContent />
+    </Suspense>
+  );
+};
+
 export default SriLankanTourPage;
 
 // No Results Component
@@ -471,19 +466,19 @@ const NoResults: React.FC<{ onResetFilters: () => void }> = ({
   onResetFilters,
 }) => (
   <div className="text-center py-12">
-    <div className="text-gray-500 text-lg mb-4">
+    <div className="text-teal-600 text-lg mb-4">
       No tours found matching your filters.
     </div>
     <button
       onClick={onResetFilters}
-      className="px-6 py-2 bg-gradient-to-r from-amber-600 to-purple-600 text-white rounded-lg hover:from-amber-700 hover:to-purple-700 transition-colors"
+      className="cursor-pointer px-6 py-2 bg-gradient-to-r from-cyan-500 to-teal-500 text-white rounded-lg hover:from-cyan-600 hover:to-teal-600 transition-colors"
     >
       Reset Filters
     </button>
   </div>
 );
 
-// Pagination Component
+// Updated Pagination Component with First/Last Page Numbers
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
@@ -504,7 +499,7 @@ const Pagination: React.FC<PaginationProps> = ({
   endIndex,
 }) => {
   const getPageNumbers = () => {
-    const pages = [];
+    const pages: (number | string)[] = [];
     const maxVisiblePages = 5;
 
     if (totalPages <= maxVisiblePages) {
@@ -512,16 +507,38 @@ const Pagination: React.FC<PaginationProps> = ({
         pages.push(i);
       }
     } else {
-      const startPage = Math.max(1, currentPage - 2);
-      const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+      pages.push(1);
+
+      let startPage = Math.max(2, currentPage - 1);
+      let endPage = Math.min(totalPages - 1, currentPage + 1);
+
+      if (currentPage <= 3) {
+        endPage = Math.min(totalPages - 1, 4);
+      }
+
+      if (currentPage >= totalPages - 2) {
+        startPage = Math.max(2, totalPages - 3);
+      }
+
+      if (startPage > 2) {
+        pages.push("...");
+      }
 
       for (let i = startPage; i <= endPage; i++) {
         pages.push(i);
       }
+
+      if (endPage < totalPages - 1) {
+        pages.push("...");
+      }
+
+      pages.push(totalPages);
     }
 
     return pages;
   };
+
+  const pageNumbers = getPageNumbers();
 
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 pt-6 border-t border-sky-200">
@@ -536,7 +553,7 @@ const Pagination: React.FC<PaginationProps> = ({
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+          className="cursor-pointer px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
         >
           <svg
             className="w-4 h-4"
@@ -551,33 +568,48 @@ const Pagination: React.FC<PaginationProps> = ({
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          Previous
+          <span className="hidden sm:inline">Previous</span>
         </button>
 
         {/* Page numbers */}
         <div className="flex gap-1">
-          {getPageNumbers().map((page) => (
-            <button
-              key={page}
-              onClick={() => onPageChange(page)}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
-                currentPage === page
-                  ? "bg-gradient-to-r from-sky-600 to-teal-600 text-white shadow-lg transform scale-105"
-                  : "text-sky-700 bg-white border-2 border-sky-300 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 hover:shadow-md"
-              }`}
-            >
-              {page}
-            </button>
-          ))}
+          {pageNumbers.map((page, index) => {
+            if (page === "...") {
+              return (
+                <span
+                  key={`ellipsis-${index}`}
+                  className="px-4 py-2 text-sm font-medium text-sky-700"
+                >
+                  ...
+                </span>
+              );
+            }
+
+            return (
+              <button
+                key={page}
+                onClick={() => onPageChange(page as number)}
+                className={`cursor-pointer min-w-[40px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
+                  currentPage === page
+                    ? "bg-gradient-to-r from-sky-600 to-teal-600 text-white shadow-lg transform scale-105"
+                    : "text-sky-700 bg-white border-2 border-sky-300 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 hover:shadow-md"
+                }`}
+                aria-label={`Page ${page}`}
+                aria-current={currentPage === page ? "page" : undefined}
+              >
+                {page}
+              </button>
+            );
+          })}
         </div>
 
         {/* Next button */}
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+          className="cursor-pointer px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
         >
-          Next
+          <span className="hidden sm:inline">Next</span>
           <svg
             className="w-4 h-4"
             fill="none"

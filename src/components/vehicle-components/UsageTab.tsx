@@ -11,7 +11,7 @@ const UsageTab: React.FC<UsageTabProps> = ({ vehicle }) => {
       <div className="text-center py-12">
         <div className="text-6xl mb-4">📊</div>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">No Usage History</h3>
-        <p className="text-gray-600">This vehicle hasnt been used yet.</p>
+        <p className="text-gray-600">This vehicle hasn&apos;t been used yet.</p>
       </div>
     );
   }
@@ -28,7 +28,7 @@ const UsageTab: React.FC<UsageTabProps> = ({ vehicle }) => {
               <h3 className="font-semibold text-lg text-gray-900">{log.purpose}</h3>
               <p className="text-gray-600">{log.routeDescription}</p>
             </div>
-            <span className="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-sm font-medium">
+            <span className="px-3 py-1 bg-teal-100 text-teal-800 rounded-full text-sm font-medium">
               {new Date(log.startDatetime).toLocaleDateString()}
             </span>
           </div>

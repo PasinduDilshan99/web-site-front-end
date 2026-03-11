@@ -1,4 +1,4 @@
-import { ActivityData } from "@/types/activities-types";
+import { ActivityData } from "@/types/activity-types";
 import React from "react";
 
 interface ActivityDetailsProps {
@@ -32,18 +32,17 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = ({ activity }) => {
     <div className="bg-white rounded-2xl shadow-lg p-6">
       <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
         <div>
-          <span className="inline-block bg-sky-100 text-sky-800 px-3 py-1 rounded-full text-xs lg:text-sm font-medium mb-2">
-            {activity.category_name}
-          </span>
-          <h1 className="text-xl lg:text-3xl font-bold text-gray-900">{activity.name}</h1>
+          <h1 className="text-xl lg:text-3xl font-bold text-gray-900">
+            {activity.name}
+          </h1>
         </div>
-        <span
+        {/* <span
           className={`px-4 py-2 rounded-full text-xs lg:text-sm font-bold ${getStatusColor(
             activity.status
           )}`}
         >
           {activity.status}
-        </span>
+        </span> */}
       </div>
 
       <p className="text-gray-600 text-sm lg:text-lg leading-relaxed">

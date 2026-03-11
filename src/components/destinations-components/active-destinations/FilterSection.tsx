@@ -22,25 +22,26 @@ const FilterSection: React.FC<FilterSectionProps> = ({
 }) => {
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
-  const formatPrice = (price: number): string => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(price);
-  };
+  // Remove formatPrice function as it's no longer needed
+  // const formatPrice = (price: number): string => {
+  //   return new Intl.NumberFormat("en-US", {
+  //     style: "currency",
+  //     currency: "USD",
+  //   }).format(price);
+  // };
 
   const toggleAdvancedFilters = () => {
     setShowAdvancedFilters(!showAdvancedFilters);
   };
 
-  // Handle price range change
-  const handlePriceChange = (minMax: 'min' | 'max', value: number) => {
-    if (minMax === 'min') {
-      onFilterChange("priceRange", [value, filters.priceRange[1]]);
-    } else {
-      onFilterChange("priceRange", [filters.priceRange[0], value]);
-    }
-  };
+  // Remove handlePriceChange function
+  // const handlePriceChange = (minMax: 'min' | 'max', value: number) => {
+  //   if (minMax === 'min') {
+  //     onFilterChange("priceRange", [value, filters.priceRange[1]]);
+  //   } else {
+  //     onFilterChange("priceRange", [filters.priceRange[0], value]);
+  //   }
+  // };
 
   const handleSearchClick = () => {
     onSearch();
@@ -55,13 +56,13 @@ const FilterSection: React.FC<FilterSectionProps> = ({
         <div className="flex gap-3">
           <button
             onClick={onResetFilters}
-            className="px-6 py-2 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:from-sky-700 hover:to-teal-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg"
+            className="cursor-pointer px-6 py-2 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:from-sky-700 hover:to-teal-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg"
           >
             Reset Filters
           </button>
           <button
             onClick={handleSearchClick}
-            className="px-6 py-2 bg-gradient-to-r from-teal-600 to-sky-600 text-white rounded-lg hover:from-teal-700 hover:to-sky-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg flex items-center gap-2"
+            className="cursor-pointer px-6 py-2 bg-gradient-to-r from-teal-600 to-sky-600 text-white rounded-lg hover:from-teal-700 hover:to-sky-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg flex items-center gap-2"
           >
             <svg 
               className="w-4 h-4" 
@@ -82,7 +83,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
       </div>
 
       {/* Basic Filters - Always Visible */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         {/* Search */}
         <div className="space-y-2">
           <label className="block text-sm font-semibold text-sky-800">
@@ -95,33 +96,6 @@ const FilterSection: React.FC<FilterSectionProps> = ({
             onChange={(e) => onFilterChange("search", e.target.value)}
             className="text-sm lg:text-md w-full px-4 py-2 border-2 border-sky-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500 transition-all"
           />
-        </div>
-
-        {/* Price Range */}
-        <div className="space-y-2 text-sky-800">
-          <label className="block text-sm font-semibold">
-            Price Range ($)
-          </label>
-          <div className="flex gap-4">
-            <input
-              type="number"
-              min="0"
-              max="10000"
-              value={filters.priceRange[0]}
-              onChange={(e) => handlePriceChange('min', parseInt(e.target.value, 10) || 0)}
-              className="w-1/2 px-3 py-1 border border-sky-300 rounded-md md:text-md text-lg focus:outline-none focus:ring-1 focus:ring-sky-400 text-gray-600"
-              placeholder="Min"
-            />
-            <input
-              type="number"
-              min="0"
-              max="10000"
-              value={filters.priceRange[1]}
-              onChange={(e) => handlePriceChange('max', parseInt(e.target.value, 10) || 10000)}
-              className="w-1/2 px-3 py-1 border border-sky-300 rounded-md md:text-md text-lg focus:outline-none focus:ring-1 focus:ring-sky-400 text-gray-600"
-              placeholder="Max"
-            />
-          </div>
         </div>
 
         {/* Duration */}
@@ -224,7 +198,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
                       rating === filters.rating ? 0 : rating
                     )
                   }
-                  className={`p-2 rounded-lg transition-all duration-200 ${
+                  className={`cursor-pointer p-2 rounded-lg transition-all duration-200 ${
                     filters.rating >= rating
                       ? "bg-gradient-to-r from-yellow-400 to-yellow-500 text-white shadow-md"
                       : "bg-gray-200 text-gray-400 hover:bg-gray-300"
@@ -257,7 +231,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
         <div className="relative flex justify-center">
           <button
             onClick={toggleAdvancedFilters}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-sky-500 to-teal-500 text-white rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+            className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-sky-500 to-teal-500 text-white rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
           >
             {showAdvancedFilters ? (
               <>
@@ -305,6 +279,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
 };
 
 // Active Filters Summary Component
+// Active Filters Summary Component
 interface ActiveFiltersSummaryProps {
   filters: Filters;
   onFilterChange: (filterName: keyof Filters, value: Filters[keyof Filters]) => void;
@@ -314,12 +289,13 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
   filters, 
   onFilterChange 
 }) => {
-  const formatPrice = (price: number): string => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(price);
-  };
+  // Remove formatPrice function as it's no longer needed
+  // const formatPrice = (price: number): string => {
+  //   return new Intl.NumberFormat("en-US", {
+  //     style: "currency",
+  //     currency: "USD",
+  //   }).format(price);
+  // };
 
   interface ActiveFilter {
     name: keyof Filters;
@@ -370,13 +346,14 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
     });
   }
   
-  if (filters.priceRange[0] > 0 || filters.priceRange[1] < 10000) {
-    activeFilters.push({
-      name: "priceRange",
-      label: `Price: ${formatPrice(filters.priceRange[0])} - ${formatPrice(filters.priceRange[1])}`,
-      value: filters.priceRange,
-    });
-  }
+  // Remove price range from active filters
+  // if (filters.priceRange[0] > 0 || filters.priceRange[1] < 10000) {
+  //   activeFilters.push({
+  //     name: "priceRange",
+  //     label: `Price: ${formatPrice(filters.priceRange[0])} - ${formatPrice(filters.priceRange[1])}`,
+  //     value: filters.priceRange,
+  //   });
+  // }
 
   if (activeFilters.length === 0) return null;
 
@@ -386,6 +363,7 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
     category: "",
     location: "",
     rating: 0,
+    // Keep priceRange in resetValues but don't display it
     priceRange: [0, 10000],
   };
 

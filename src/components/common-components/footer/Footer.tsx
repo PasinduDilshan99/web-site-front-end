@@ -1,6 +1,6 @@
 "use client";
 import React, { JSX, useEffect, useState } from "react";
-import { COMPANY_NAME } from "@/utils/constant";
+import { COMPANY_CONTACT_NUMBER, COMPANY_INFO_EMAIL, COMPANY_LOCATION, COMPANY_NAME } from "@/utils/constant";
 import { FooterService } from "@/services/footerService";
 import {
   FooterData,
@@ -9,11 +9,61 @@ import {
   FooterOtherLink,
 } from "@/types/footer-types";
 import FooterLoading from "./FooterLoading";
+import Image from "next/image";
+
+interface Turtle {
+  id: number;
+  x: number;
+  size: number;
+  delay: number;
+  duration: number;
+  flip: boolean;
+}
+
+const SeaTurtle = ({ size, flip }: { size: number; flip: boolean }) => (
+  <svg
+    width={size * 0.75}
+    height={size}
+    viewBox="0 0 60 80"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ transform: flip ? "scaleX(-1)" : undefined, opacity: 0.4 }}
+  >
+    {/* Head */}
+    <ellipse cx="30" cy="9" rx="8" ry="9" fill="#0f766e" />
+    <circle cx="27" cy="6" r="1" fill="#0d9488" />
+    <circle cx="33" cy="6" r="1" fill="#0d9488" />
+    <circle cx="23" cy="10" r="2" fill="#134e4a" />
+    <circle cx="37" cy="10" r="2" fill="#134e4a" />
+    <circle cx="23.8" cy="9.2" r="0.8" fill="#5eead4" />
+    <circle cx="37.8" cy="9.2" r="0.8" fill="#5eead4" />
+    {/* Neck */}
+    <rect x="25" y="16" width="10" height="6" rx="3" fill="#0f766e" />
+    {/* Body */}
+    <ellipse cx="30" cy="45" rx="17" ry="22" fill="#0f766e" />
+    {/* Shell */}
+    <ellipse cx="30" cy="44" rx="13" ry="18" fill="#14b8a6" />
+    <ellipse cx="30" cy="44" rx="7" ry="10" fill="#0d9488" />
+    <line x1="30" y1="26" x2="30" y2="62" stroke="#0f766e" strokeWidth="1.2" />
+    <line x1="17" y1="44" x2="43" y2="44" stroke="#0f766e" strokeWidth="1.2" />
+    <line x1="19" y1="32" x2="41" y2="56" stroke="#0f766e" strokeWidth="0.8" />
+    <line x1="41" y1="32" x2="19" y2="56" stroke="#0f766e" strokeWidth="0.8" />
+    {/* Front flippers */}
+    <ellipse cx="10" cy="33" rx="7" ry="4" fill="#0d9488" transform="rotate(-40 10 33)" />
+    <ellipse cx="50" cy="33" rx="7" ry="4" fill="#0d9488" transform="rotate(40 50 33)" />
+    {/* Rear flippers */}
+    <ellipse cx="11" cy="57" rx="6" ry="3.5" fill="#0d9488" transform="rotate(30 11 57)" />
+    <ellipse cx="49" cy="57" rx="6" ry="3.5" fill="#0d9488" transform="rotate(-30 49 57)" />
+    {/* Tail */}
+    <ellipse cx="30" cy="69" rx="3.5" ry="5" fill="#0f766e" />
+  </svg>
+);
 
 const Footer = () => {
   const [footerData, setFooterData] = useState<FooterData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [turtles, setTurtles] = useState<Turtle[]>([]);
   const currentYear = new Date().getFullYear();
 
   useEffect(() => {
@@ -38,6 +88,17 @@ const Footer = () => {
     };
 
     fetchFooterData();
+
+    setTurtles(
+      Array.from({ length: 9 }, (_, i) => ({
+        id: i,
+        x: Math.random() * 88 + 2,
+        size: Math.random() * 22 + 18,
+        delay: Math.random() * 6,
+        duration: Math.random() * 10 + 14,
+        flip: Math.random() > 0.5,
+      }))
+    );
   }, []);
 
   const groupedSections = footerData?.sections.reduce(
@@ -101,38 +162,81 @@ const Footer = () => {
   }
 
   if (error || !footerData) {
-    return (
-      <footer className="bg-gradient-to-b from-slate-900 to-gray-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
-          <p className="text-red-400">Failed to load footer data</p>
-        </div>
-      </footer>
-    );
+    return;
   }
 
   return (
-    <footer className="bg-gradient-to-b from-slate-900 to-gray-900 text-white">
+    <footer
+      className="relative text-white overflow-hidden"
+      style={{
+        background:
+          "linear-gradient(160deg, #0a2a3a 0%, #0d3d4f 30%, #0e5a5e 60%, #0f7a6e 100%)",
+      }}
+    >
+      {/* ── Deep ocean gradient orbs ── */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div
+          className="absolute -top-32 -left-32 w-96 h-96 rounded-full opacity-20"
+          style={{
+            background: "radial-gradient(circle, #14b8a6 0%, transparent 70%)",
+            animation: "footer-orb-1 18s ease-in-out infinite",
+          }}
+        />
+        <div
+          className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full opacity-15"
+          style={{
+            background: "radial-gradient(circle, #0891b2 0%, transparent 70%)",
+            animation: "footer-orb-2 22s ease-in-out infinite",
+          }}
+        />
+      </div>
+
+      {/* ── Swimming turtles ── */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {turtles.map((t) => (
+          <div
+            key={t.id}
+            style={{
+              position: "absolute",
+              left: `${t.x}%`,
+              bottom: `-${t.size * 2}px`,
+              animation: `turtle-swim ${t.duration}s ${t.delay}s ease-in-out infinite`,
+            }}
+          >
+            <SeaTurtle size={t.size} flip={t.flip} />
+          </div>
+        ))}
+      </div>
+
+      {/* ── Ocean floor wave ── */}
+      <div className="absolute bottom-0 left-0 right-0 pointer-events-none">
+        <svg
+          viewBox="0 0 1440 60"
+          fill="none"
+          className="w-full"
+          style={{ animation: "footer-wave 10s linear infinite" }}
+        >
+          <path
+            d="M0,30 C240,55 480,5 720,30 C960,55 1200,5 1440,30 L1440,60 L0,60 Z"
+            fill="rgba(20,184,166,0.08)"
+          />
+        </svg>
+      </div>
+
       {/* Main Footer Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+      <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Company Info - Left Column */}
           <div className="lg:col-span-1 space-y-6">
             {/* Logo & Company Name */}
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-sky-600 to-teal-500 rounded-xl flex items-center justify-center shadow-lg">
-                <svg
-                  className="w-7 h-7 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
+              <div className="w-12 h-12rounded-xl flex items-center justify-center shadow-lg">
+                <Image
+                src='/logo.png'
+                alt="logo"
+                width={2000}
+                height={2000}
+                />
               </div>
               <div>
                 <h2 className="text-xl font-bold text-white">{COMPANY_NAME}</h2>
@@ -143,7 +247,7 @@ const Footer = () => {
             </div>
 
             {/* Company Description */}
-            <p className="text-gray-300 text-sm leading-relaxed">
+            <p className="text-teal-100/70 text-sm leading-relaxed">
               Discover Sri Lanka with our expertly curated tours. We offer
               unforgettable travel experiences with personalized service and
               attention to detail.
@@ -151,9 +255,9 @@ const Footer = () => {
 
             {/* Contact Info */}
             <div className="space-y-3">
-              <div className="flex items-center space-x-3 text-sm text-gray-300">
+              <div className="flex items-center space-x-3 text-sm text-teal-100/70">
                 <svg
-                  className="w-5 h-5 text-sky-400"
+                  className="w-5 h-5 text-sky-400 shrink-0"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -165,11 +269,11 @@ const Footer = () => {
                     d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                   />
                 </svg>
-                <span>+94 77 123 4567</span>
+                <span>{COMPANY_CONTACT_NUMBER}</span>
               </div>
-              <div className="flex items-center space-x-3 text-sm text-gray-300">
+              <div className="flex items-center space-x-3 text-sm text-teal-100/70">
                 <svg
-                  className="w-5 h-5 text-sky-400"
+                  className="w-5 h-5 text-sky-400 shrink-0"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -181,11 +285,11 @@ const Footer = () => {
                     d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                   />
                 </svg>
-                <span>info@felicitatrips.com</span>
+                <span>{COMPANY_INFO_EMAIL}</span>
               </div>
-              <div className="flex items-center space-x-3 text-sm text-gray-300">
+              <div className="flex items-center space-x-3 text-sm text-teal-100/70">
                 <svg
-                  className="w-5 h-5 text-sky-400"
+                  className="w-5 h-5 text-sky-400 shrink-0"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -203,27 +307,9 @@ const Footer = () => {
                     d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                   />
                 </svg>
-                <span>Colombo, Sri Lanka</span>
+                <span>{COMPANY_LOCATION}</span>
               </div>
             </div>
-
-            {/* Social Media Links */}
-            {/* <div className="flex space-x-3 pt-4">
-              {footerData.socialMedia
-                .filter((social) => social.status === "ACTIVE")
-                .map((social) => (
-                  <a
-                    key={social.id}
-                    href={social.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-gradient-to-r hover:from-sky-600 hover:to-teal-500 transition-all duration-300 group shadow-md"
-                    title={social.description}
-                  >
-                    {getSocialIcon(social.name)}
-                  </a>
-                ))}
-            </div> */}
           </div>
 
           {/* Dynamic Sections */}
@@ -231,7 +317,10 @@ const Footer = () => {
             .filter((section) => section.status === "ACTIVE")
             .map((section) => (
               <div key={section.id} className="lg:col-span-1">
-                <h3 className="text-lg font-semibold text-white mb-6 pb-3 border-b border-slate-700">
+                <h3
+                  className="text-lg font-semibold text-white mb-6 pb-3"
+                  style={{ borderBottom: "1px solid rgba(20,184,166,0.25)" }}
+                >
                   {section.title}
                 </h3>
                 <ul className="space-y-4">
@@ -241,10 +330,10 @@ const Footer = () => {
                       <li key={item.id}>
                         <a
                           href={item.linkUrl}
-                          className="text-gray-300 hover:text-sky-300 transition-all duration-200 text-sm flex items-center group"
+                          className="text-teal-100/60 hover:text-teal-300 transition-all duration-200 text-sm flex items-center group"
                         >
                           <svg
-                            className="w-4 h-4 mr-2 text-sky-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                            className="w-4 h-4 mr-2 text-sky-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -267,11 +356,14 @@ const Footer = () => {
       </div>
 
       {/* Copyright Section */}
-      <div className="border-t border-slate-800">
+      <div
+        className="relative z-10"
+        style={{ borderTop: "1px solid rgba(20,184,166,0.18)" }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             {/* Copyright Text */}
-            <div className="text-gray-400 text-sm text-center md:text-left">
+            <div className="text-teal-100/40 text-sm text-center md:text-left">
               {copyrightText?.description ||
                 `© ${currentYear} ${COMPANY_NAME}. All rights reserved.`}
             </div>
@@ -284,7 +376,7 @@ const Footer = () => {
                   <a
                     key={link.id}
                     href={link.linkUrl}
-                    className="text-gray-400 hover:text-sky-300 transition-colors duration-200 hover:underline"
+                    className="text-teal-100/40 hover:text-teal-300 transition-colors duration-200 hover:underline"
                   >
                     {link.name}
                   </a>
@@ -294,7 +386,7 @@ const Footer = () => {
             {/* Back to Top */}
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="text-gray-400 hover:text-sky-300 transition-colors duration-200 text-sm flex items-center"
+              className="text-teal-100/40 hover:text-teal-300 transition-colors duration-200 text-sm flex items-center"
             >
               <svg
                 className="w-4 h-4 mr-1"
@@ -314,8 +406,37 @@ const Footer = () => {
           </div>
         </div>
       </div>
+
+      {/* ── Keyframes ── */}
+      <style jsx global>{`
+        @keyframes turtle-swim {
+          0%   { transform: translateY(0)      rotate(0deg);  opacity: 0; }
+          8%   { opacity: 1; }
+          20%  { transform: translateY(-20vh)  rotate(4deg); }
+          40%  { transform: translateY(-40vh)  rotate(-4deg); }
+          60%  { transform: translateY(-60vh)  rotate(3deg); }
+          80%  { transform: translateY(-80vh)  rotate(-3deg); opacity: 0.8; }
+          95%  { opacity: 0; }
+          100% { transform: translateY(-105vh) rotate(0deg);  opacity: 0; }
+        }
+        @keyframes footer-orb-1 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50%       { transform: translate(30px, 20px) scale(1.1); }
+        }
+        @keyframes footer-orb-2 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50%       { transform: translate(-40px, -30px) scale(1.08); }
+        }
+        @keyframes footer-wave {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+        }
+      `}</style>
     </footer>
   );
 };
 
-export default Footer;
+export default Footer;  

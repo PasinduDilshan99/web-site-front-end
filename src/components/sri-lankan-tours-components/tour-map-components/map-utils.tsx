@@ -1,21 +1,69 @@
 // components/map-utils.tsx
 import L from "leaflet";
+import { TourMapLocation, TourMapImage } from "@/types/tour-map-types";
 
-type Location = {
-  id: number;
-  name: string;
+// Re-export for internal use clarity
+type Location = TourMapLocation;
+type Image = TourMapImage;
+
+type AirportLocation = {
   lat: number;
   lng: number;
-  description?: string;
-  images: Image[];
+  name: string;
 };
 
-type Image = {
-  id: number;
-  url: string;
-  name: string;
-  description?: string;
-};
+export function createAirportMarker(
+  map: L.Map,
+  airport: AirportLocation
+): L.Marker {
+  const iconHtml = `
+    <div class="relative flex items-center justify-center w-14 h-14 rounded-xl bg-purple-600 border-2 border-white shadow-xl transition-transform duration-200 hover:scale-105">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-white" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M21 16v-2l-8-5V3.5A1.5 1.5 0 0 0 11.5 2 1.5 1.5 0 0 0 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/>
+      </svg>
+      <div class="absolute -top-1 -right-1 bg-white text-purple-700 text-xs font-bold px-1.5 py-0.5 rounded-full shadow-lg border border-purple-200">✈</div>
+    </div>
+  `;
+
+  const customIcon = L.divIcon({
+    html: iconHtml,
+    className: "custom-airport-icon",
+    iconSize: [56, 56],
+    iconAnchor: [28, 28],
+  });
+
+  const marker = L.marker([airport.lat, airport.lng], {
+    icon: customIcon,
+  }).addTo(map);
+
+  const popupContent = `
+    <div class="w-64 bg-white rounded-xl shadow-xl overflow-hidden">
+      <div class="bg-purple-600 px-4 py-3 flex items-center gap-2">
+        <span class="text-2xl">✈️</span>
+        <div>
+          <h3 class="text-white font-bold text-sm">Departure & Return Point</h3>
+          <p class="text-purple-200 text-xs">Tour starts and ends here</p>
+        </div>
+      </div>
+      <div class="p-3">
+        <p class="text-gray-800 font-semibold text-sm">${airport.name}</p>
+        <div class="mt-2 flex gap-2">
+          <span class="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded-full font-medium">🛫 Departs here</span>
+          <span class="bg-amber-100 text-amber-700 text-xs px-2 py-1 rounded-full font-medium">🛬 Returns here</span>
+        </div>
+        <p class="text-gray-400 text-xs mt-2">${airport.lat.toFixed(4)}, ${airport.lng.toFixed(4)}</p>
+      </div>
+    </div>
+  `;
+
+  marker.bindPopup(
+    L.popup({ maxWidth: 280, className: "custom-popup" }).setContent(
+      popupContent
+    )
+  );
+
+  return marker;
+}
 
 export function createPhotoMarker(
   map: L.Map,
@@ -28,9 +76,9 @@ export function createPhotoMarker(
 
   const getMarkerBadge = () => {
     if (isStart)
-      return `<div class="absolute -top-1 -right-1 bg-green-500 text-white text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full shadow-lg">START</div>`;
+      return `<div class="absolute -top-1 -right-1 bg-green-500 text-white text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full shadow-lg">1ST</div>`;
     if (isEnd)
-      return `<div class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full shadow-lg">END</div>`;
+      return `<div class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full shadow-lg">LAST</div>`;
     return `<div class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full shadow-lg">${
       index + 1
     }</div>`;
@@ -60,11 +108,24 @@ export function createPhotoMarker(
   const popupContent = createPopupContent(location, index, totalLocations);
   const popup = L.popup({
     maxWidth: 400,
-    className: "custom-popup",
+    maxHeight: 480,
+    autoPan: true,
+    className: "custom-popup scrollable-popup",
   }).setContent(popupContent);
 
   marker.bindPopup(popup);
-  marker.on("popupopen", () => initializeCarousel(location.id.toString()));
+  marker.on("popupopen", () => {
+    initializeCarousel(location.id.toString());
+
+    // Allow scrolling inside the popup without the map intercepting wheel/touch events
+    const popupEl = document.querySelector(
+      `.scrollable-popup .leaflet-popup-content`
+    ) as HTMLElement | null;
+    if (popupEl) {
+      L.DomEvent.disableScrollPropagation(popupEl);
+      L.DomEvent.disableClickPropagation(popupEl);
+    }
+  });
 
   return marker;
 }
@@ -93,6 +154,11 @@ export function createPopupContent(
       @media (min-width: 640px) { .carousel-image { height: 240px; } }
       .carousel-caption { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); padding: 12px; border-radius: 0 0 8px 8px; z-index: 30; }
       .carousel-indicators-container { position: absolute; z-index: 30; display: flex; gap: 6px; bottom: 12px; left: 50%; transform: translateX(-50%); }
+      .scrollable-popup .leaflet-popup-content-wrapper { padding: 0; overflow: hidden; }
+      .scrollable-popup .leaflet-popup-content { margin: 0; overflow-y: auto; max-height: 460px; overscroll-behavior: contain; }
+      .scrollable-popup .leaflet-popup-content::-webkit-scrollbar { width: 4px; }
+      .scrollable-popup .leaflet-popup-content::-webkit-scrollbar-track { background: #f1f5f9; }
+      .scrollable-popup .leaflet-popup-content::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
     </style>
   `;
 
@@ -174,12 +240,12 @@ export function createPopupContent(
             <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-1">
               ${
                 isStart
-                  ? '<span class="bg-green-100 text-green-800 text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full font-medium">🚩 Start</span>'
+                  ? '<span class="bg-green-100 text-green-800 text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full font-medium">🚩 1st Stop</span>'
                   : ""
               }
               ${
                 isEnd
-                  ? '<span class="bg-red-100 text-red-800 text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full font-medium">🏁 End</span>'
+                  ? '<span class="bg-red-100 text-red-800 text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full font-medium">🏁 Last Stop</span>'
                   : ""
               }
               ${

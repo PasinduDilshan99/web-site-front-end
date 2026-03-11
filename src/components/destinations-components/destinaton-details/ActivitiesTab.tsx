@@ -1,20 +1,21 @@
-import { Activity } from "@/types/destination-types";
+import { ActivityData } from "@/types/destination-types";
+import {
+  ACTIVITIES_CATEGORY_TYPE_PATH,
+  ACTIVITIES_SEASON_PATH,
+} from "@/utils/urls";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 interface ActivitiesTabProps {
-  activities: Activity[];
+  activities: ActivityData[];
 }
 
 const ActivitiesTab: React.FC<ActivitiesTabProps> = ({ activities }) => {
   const [displayCount, setDisplayCount] = useState(6);
+  const router = useRouter();
   const initialLoadCount = 6;
   const loadMoreCount = 6;
-
-  const formatTime = (timeString: string) => {
-    return timeString.substring(0, 5);
-  };
-
   const getSeasonColors = (season: string) => {
     const seasons = season.split(",");
     return seasons.map((season) => {
@@ -35,7 +36,9 @@ const ActivitiesTab: React.FC<ActivitiesTabProps> = ({ activities }) => {
   };
 
   const handleLoadMore = () => {
-    setDisplayCount(prevCount => Math.min(prevCount + loadMoreCount, activities.length));
+    setDisplayCount((prevCount) =>
+      Math.min(prevCount + loadMoreCount, activities.length),
+    );
   };
 
   const displayedActivities = activities.slice(0, displayCount);
@@ -53,7 +56,7 @@ const ActivitiesTab: React.FC<ActivitiesTabProps> = ({ activities }) => {
           </span>
         )}
       </div>
-      
+
       <div className="space-y-4">
         {displayedActivities.map((activity) => (
           <div
@@ -64,10 +67,34 @@ const ActivitiesTab: React.FC<ActivitiesTabProps> = ({ activities }) => {
               <h4 className="text-md lg:text-lg font-semibold text-gray-900">
                 {activity.activityName}
               </h4>
-              <div className="flex space-x-2">
-                <span className="text-xs lg:text-sm bg-gradient-to-r from-sky-100 to-teal-100 text-sky-800 px-2 py-1 rounded font-medium border border-sky-200">
-                  {activity.activitiesCategory}
-                </span>
+              <div className="flex flex-wrap gap-2">
+                {activity.activityCategories?.map(
+                  (category: string, index: number) => (
+                    <span
+                      key={index}
+                      onClick={() =>
+                        router.push(
+                          `${ACTIVITIES_CATEGORY_TYPE_PATH}${encodeURIComponent(category)}`,
+                        )
+                      }
+                      className="
+        cursor-pointer 
+        text-xs lg:text-sm 
+        bg-gradient-to-r from-sky-100 to-teal-100 
+        text-sky-800 
+        px-2 py-1 
+        rounded 
+        font-medium 
+        border border-sky-200
+        transition-colors 
+        duration-300 
+        hover:from-sky-200 hover:to-teal-200
+      "
+                    >
+                      {category}
+                    </span>
+                  ),
+                )}
               </div>
             </div>
 
@@ -108,24 +135,37 @@ const ActivitiesTab: React.FC<ActivitiesTabProps> = ({ activities }) => {
                 </svg>
 
                 <span className="text-xs sm:text-sm font-medium text-teal-800">
-                  {activity.maxParticipate === 0
-                    ? "Any"
-                    : `${activity.minParticipate}-${activity.maxParticipate}`}
+                  {activity.maxParticipate === 0 ||
+                  activity.maxParticipate === null
+                    ? "any participants"
+                    : activity.minParticipate === activity.maxParticipate
+                      ? `${activity.minParticipate}`
+                      : `${activity.minParticipate}-${activity.maxParticipate}`}
                 </span>
               </div>
             </div>
 
             <div className="mt-3 flex justify-between items-center">
-              <div className="flex space-x-1">
+              <div className="flex space-x-1 flex-wrap gap-2">
                 {activity.season.split(",").map((season, index) => (
-                  <span
-                    key={season}
-                    className={`px-2 py-1 rounded text-xs font-medium ${
-                      getSeasonColors(activity.season)[index]
-                    }`}
+                  <button
+                    key={index}
+                    onClick={() =>
+                      router.push(
+                        `${ACTIVITIES_SEASON_PATH}${encodeURIComponent(season.trim())}`,
+                      )
+                    }
+                    className={`
+        px-2 py-1 rounded text-xs font-medium
+        ${getSeasonColors(activity.season)[index]}
+        cursor-pointer
+        transition-all duration-200
+        hover:scale-105
+        hover:shadow-md
+      `}
                   >
                     {season.trim()}
-                  </span>
+                  </button>
                 ))}
               </div>
               <Link

@@ -18,3 +18,19 @@ export interface TourBookingInquiryResponse {
   };
   timestamp: string;
 }
+
+export interface CancelBookingRequest {
+  bookingId: number;
+  bookingStatus:string
+}
+
+export interface CancelBookingResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: {
+    message: string;
+    id: number;
+  };
+  timestamp: string;
+}

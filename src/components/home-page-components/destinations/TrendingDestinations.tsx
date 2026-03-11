@@ -10,6 +10,7 @@ import {
   PLACE_HOLDER_IMAGE,
 } from "@/utils/constant";
 import { useRouter } from "next/navigation";
+import { DESTINATIONS_PAGE_PATH } from "@/utils/urls";
 // Destination Image Component with Error Handling
 const DestinationImage = React.memo(
   ({
@@ -177,7 +178,7 @@ const TrendingDestinations = () => {
     destinationId: number,
     destinationName: string,
   ) => {
-    window.location.href = `/destinations/${destinationId}?name=${encodeURIComponent(
+    window.location.href = `${DESTINATIONS_PAGE_PATH}/${destinationId}?name=${encodeURIComponent(
       destinationName,
     )}`;
   };
@@ -270,7 +271,7 @@ const TrendingDestinations = () => {
           <SectionHeader
             subtitle=""
             title="Trending Destinations"
-            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore."
+            description="Explore the places everyone's talking about. From sun-soaked beaches to vibrant cities, these handpicked hotspots are ready for your next adventure."
             fromColor="#A855F7"
             toColor="#F59E0B"
           />

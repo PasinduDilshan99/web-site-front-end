@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Quote } from "lucide-react";
 import { EmployeeService } from "@/services/employeeService";
 import CeoSpeechLoading from "./CeoSpeechLoading";
+import Image from "next/image";
 
 interface CeoData {
   name: string;
@@ -77,6 +78,49 @@ const CeoSpeech: React.FC = () => {
       .toUpperCase()
       .slice(0, 2);
 
+  // If no image, render a different layout without the image column
+  if (!ceoData.imageUrl) {
+    return (
+      <div className="bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 py-6 md:py-10 lg:py-14 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-4xl">
+          <div className="space-y-6">
+            <div className="inline-block p-4 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-2xl">
+              <Quote className="w-8 h-8 text-blue-600" />
+            </div>
+
+            <div>
+              <h2 className="text-2xl md:text-4xl font-bold text-slate-800 mb-2">
+                A Message from Our CEO
+              </h2>
+
+              <div className="w-24 h-1.5 bg-gradient-to-r from-blue-600 to-teal-500 rounded-full"></div>
+            </div>
+
+            <div className="space-y-4 text-gray-700 text-base md:text-lg lg:text-xl">
+              {ceoData.speech.slice(0, -1).map((paragraph, index) => (
+                <p key={index + 1}>{paragraph}</p>
+              ))}
+
+              <p className="font-semibold text-blue-800">
+                {typingText}
+
+                {isTyping && (
+                  <span className="inline-block w-0.5 h-5 bg-blue-600 ml-1 animate-pulse"></span>
+                )}
+              </p>
+            </div>
+
+            <div className="pt-6">
+              <p className="text-2xl font-bold text-blue-700">{ceoData.name}</p>
+              <p className="text-gray-500 italic">{ceoData.title}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Original layout with image
   return (
     <div className="bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 py-6 md:py-10 lg:py-14 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
@@ -87,17 +131,13 @@ const CeoSpeech: React.FC = () => {
               <div className="absolute -inset-4 bg-gradient-to-br from-blue-400 to-teal-400 rounded-full opacity-20 blur-2xl"></div>
 
               <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[420px] lg:h-[420px]">
-                {ceoData.imageUrl ? (
-                  <img
-                    src={ceoData.imageUrl}
-                    alt={ceoData.name}
-                    className="w-full h-full rounded-3xl object-cover shadow-2xl"
-                  />
-                ) : (
-                  <div className="w-full h-full rounded-3xl bg-gradient-to-br from-blue-500 to-teal-500 flex items-center justify-center text-white text-7xl font-bold">
-                    {getInitials(ceoData.name)}
-                  </div>
-                )}
+                <Image
+                  src={ceoData.imageUrl}
+                  alt={ceoData.name}
+                  width={2000}
+                  height={2000}
+                  className="w-full h-full rounded-3xl object-cover shadow-2xl"
+                />
               </div>
 
               <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-white rounded-2xl shadow-xl px-6 py-4 text-center min-w-[260px] border border-blue-100">
@@ -127,7 +167,7 @@ const CeoSpeech: React.FC = () => {
 
             <div className="space-y-4 text-gray-700 text-base md:text-lg lg:text-xl">
               {ceoData.speech.slice(0, -1).map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
+                <p key={index + 1}>{paragraph}</p>
               ))}
 
               <p className="font-semibold text-blue-800">

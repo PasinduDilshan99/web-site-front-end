@@ -240,3 +240,119 @@ export interface ActivityHeroApiResponse {
   data: ActivityHeroData[];
   timestamp: string;
 }
+
+export interface VehicleHeroData {
+  id: number;
+  name: string;
+  imageUrl: string;
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  primaryButtonText?: string;
+  primaryButtonLink?: string;
+  secondaryButtonText?: string;
+  secondaryButtonLink?: string;
+  order?: number;
+  createdAt?: string;
+  updatedAt?: string;
+  status?: string;
+  createdBy?: number;
+  updatedBy?: number | null;
+  terminatedAt?: string | null;
+  terminatedBy?: number | null;
+}
+
+export interface VehicleHeroDataApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: VehicleHeroData[];
+  timestamp: string;
+}
+
+export interface VehicleSpecificationHeroData {
+  id: number;
+  name: string;
+  imageUrl: string;
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  primaryButtonText?: string;
+  primaryButtonLink?: string;
+  secondaryButtonText?: string;
+  secondaryButtonLink?: string;
+  order?: number;
+  createdAt?: string;
+  updatedAt?: string;
+  status?: string;
+  createdBy?: number;
+  updatedBy?: number | null;
+  terminatedAt?: string | null;
+  terminatedBy?: number | null;
+}
+
+export interface VehicleSpecificationHeroDataApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: VehicleSpecificationHeroData[];
+  timestamp: string;
+}
+
+export interface VehicleTypesHeroData {
+  id: number;
+  name: string;
+  imageUrl: string;
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  primaryButtonText?: string;
+  primaryButtonLink?: string;
+  secondaryButtonText?: string;
+  secondaryButtonLink?: string;
+  order?: number;
+  createdAt?: string;
+  updatedAt?: string;
+  status?: string;
+  createdBy?: number;
+  updatedBy?: number | null;
+  terminatedAt?: string | null;
+  terminatedBy?: number | null;
+}
+
+export interface VehicleTypesHeroDataApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: VehicleTypesHeroData[];
+  timestamp: string;
+}
+
+export interface SeasonHeroData {
+  id: number;
+  name: string;
+  imageUrl: string;
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  primaryButtonText?: string;
+  primaryButtonLink?: string;
+  secondaryButtonText?: string;
+  secondaryButtonLink?: string;
+  order?: number;
+  createdAt?: string;
+  updatedAt?: string;
+  status?: string;
+  createdBy?: number;
+  updatedBy?: number | null;
+  terminatedAt?: string | null;
+  terminatedBy?: number | null;
+}
+
+export interface SeasonHeroDataApiResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: SeasonHeroData[];
+  timestamp: string;
+}

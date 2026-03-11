@@ -358,7 +358,7 @@ export class DestinationService {
 
   // Fetch filter options
   async fetchFilterOptions(): Promise<{
-    categories: string[];
+    // categories: string[];
     locations: string[];
     durations: number[];
   }> {
@@ -380,18 +380,18 @@ export class DestinationService {
 
       if (error || !data) {
         return {
-          categories: [],
+          // categories: [],
           locations: [],
           durations: [],
         };
       }
 
       // Extract unique values for filters
-      const categoriesList = [
-        ...new Set(
-          data.destinationResponseDtos.map((dest) => dest.categoryName),
-        ),
-      ];
+      // const categoriesList = [
+      //   ...new Set(
+      //     data.destinationResponseDtos.map((dest) => dest.categoryName),
+      //   ),
+      // ];
 
       const locationsList = [
         ...new Set(data.destinationResponseDtos.map((dest) => dest.location)),
@@ -410,14 +410,14 @@ export class DestinationService {
         .sort((a, b) => a - b);
 
       return {
-        categories: categoriesList,
+        // categories: categoriesList,
         locations: locationsList,
         durations: durationsList,
       };
     } catch (err) {
       console.error("Error fetching filter options:", err);
       return {
-        categories: [],
+        // categories: [],
         locations: [],
         durations: [],
       };

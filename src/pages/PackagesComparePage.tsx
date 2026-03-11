@@ -104,7 +104,7 @@ const PackagesComparePage = () => {
     }
   };
 
-  // Filter tours based on search query
+  // Filter tours based on search query - UPDATED for multiple categories and types
   useEffect(() => {
     if (searchQuery.trim() === "") {
       setFilteredTours(tours);
@@ -117,12 +117,16 @@ const PackagesComparePage = () => {
           tour.tourDetails.tourDescription
             .toLowerCase()
             .includes(searchQuery.toLowerCase()) ||
-          tour.tourDetails.tourCategoryName
-            ?.toLowerCase()
-            .includes(searchQuery.toLowerCase()) ||
-          tour.tourDetails.tourTypeName
-            ?.toLowerCase()
-            .includes(searchQuery.toLowerCase()),
+          // Search through multiple categories
+          tour.tourDetails.tourCategoryDto?.some((category) =>
+            category.tourCategoryName
+              ?.toLowerCase()
+              .includes(searchQuery.toLowerCase())
+          ) ||
+          // Search through multiple types
+          tour.tourDetails.tourTypeDtos?.some((type) =>
+            type.tourTypeName?.toLowerCase().includes(searchQuery.toLowerCase())
+          )
       );
       setFilteredTours(filtered);
     }
@@ -134,6 +138,12 @@ const PackagesComparePage = () => {
     setTourName(tour.tourDetails.tourName);
     setSearchQuery(tour.tourDetails.tourName);
     setShowTourDropdown(false);
+
+    // Reset package selections
+    setSelectedPackage1(null);
+    setSelectedPackage2(null);
+    setPackage1Id("");
+    setPackage2Id("");
 
     // Update URL params
     const params = new URLSearchParams(searchParams?.toString());
@@ -169,9 +179,11 @@ const PackagesComparePage = () => {
       maximumFractionDigits: 0,
     }).format(amount);
   };
+
   if (loading) {
     return <PackagesCompareLoading />;
   }
+
   // Render package images gallery
   const renderPackageImages = (pkg: ComparisonPackage) => {
     if (!pkg.images || pkg.images.length === 0) return null;

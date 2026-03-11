@@ -1,5 +1,6 @@
 "use client";
 import { ActivityImage } from "@/types/activities-types";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
 interface ActivityImageSlideshowProps {
@@ -16,7 +17,7 @@ const ActivityImageSlideshow: React.FC<ActivityImageSlideshowProps> = ({
 
   // Filter out images with invalid URLs
   const validImages = images.filter(
-    (img) => img.image_url && img.image_url.trim() !== ""
+    (img) => img.image_url && img.image_url.trim() !== "",
   );
 
   // Auto-rotate images every 4 seconds
@@ -66,7 +67,7 @@ const ActivityImageSlideshow: React.FC<ActivityImageSlideshowProps> = ({
     setIsTransitioning(true);
     setTimeout(() => {
       setCurrentImageIndex(
-        (prev) => (prev - 1 + validImages.length) % validImages.length
+        (prev) => (prev - 1 + validImages.length) % validImages.length,
       );
       setIsTransitioning(false);
     }, 300);
@@ -77,9 +78,11 @@ const ActivityImageSlideshow: React.FC<ActivityImageSlideshowProps> = ({
       {/* Main Image */}
       <div className="relative w-full h-full">
         {validImages.map((image, index) => (
-          <img
+          <Image
             key={image.id}
             src={image.image_url}
+            width={2000}
+            height={2000}
             alt={image.name || activityName}
             className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
               index === currentImageIndex ? "opacity-100" : "opacity-0"
@@ -98,7 +101,7 @@ const ActivityImageSlideshow: React.FC<ActivityImageSlideshowProps> = ({
               e.stopPropagation();
               prevImage();
             }}
-            className="absolute left-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            className="cursor-pointer absolute left-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
             aria-label="Previous image"
           >
             <svg
@@ -120,7 +123,7 @@ const ActivityImageSlideshow: React.FC<ActivityImageSlideshowProps> = ({
               e.stopPropagation();
               nextImage();
             }}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            className="cursor-pointer absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
             aria-label="Next image"
           >
             <svg
@@ -157,7 +160,7 @@ const ActivityImageSlideshow: React.FC<ActivityImageSlideshowProps> = ({
                 e.stopPropagation();
                 goToImage(index);
               }}
-              className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${
+              className={`cursor-pointer w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${
                 index === currentImageIndex
                   ? "bg-white scale-110"
                   : "bg-white/50 hover:bg-white/80"
@@ -178,7 +181,7 @@ const ActivityImageSlideshow: React.FC<ActivityImageSlideshowProps> = ({
                 e.stopPropagation();
                 goToImage(index);
               }}
-              className={`w-6 h-6 sm:w-8 sm:h-8 rounded border-2 transition-all duration-200 ${
+              className={`cursor-pointer w-6 h-6 sm:w-8 sm:h-8 rounded border-2 transition-all duration-200 ${
                 index === currentImageIndex
                   ? "border-white scale-110"
                   : "border-white/50 hover:border-white/80"

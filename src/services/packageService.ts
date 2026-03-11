@@ -1,4 +1,4 @@
-import { PackageComparison } from '@/types/package-comparison-types';
+import { PackageComparison } from "@/types/package-comparison-types";
 import {
   Package,
   PackagesApiResponse,
@@ -23,7 +23,20 @@ import {
   PackageScheduleApiResponse,
   ActivePackagesForFilters,
 } from "@/types/package-types";
-import { GET_ACTIVE_PACKAGE_DETAILS_DATA_FE, GET_PACKAGE_ALL_DETAILS_BY_ID_DATA_FE, GET_PACKAGE_DETAILS_BY_ID_DATA_FE, GET_PACKAGE_DETAILS_BY_TOUR_ID_DATA_FE, GET_PACKAGE_DETAILS_FOR_COMPARE_BY_TOUR_ID_DATA_FE, GET_PACKAGE_EXTRA_DETAILS_BY_TOUR_ID_DATA_FE, GET_PACKAGE_HISTORY_DETAILS_DATA_FE, GET_PACKAGE_HISTORY_IMAGES_DETAILS_DATA_FE, GET_PACKAGE_REVIEWS_DETAILS_DATA_FE, GET_PACKAGE_SCHEDULES_DETAILS_BY_PACKAGE_ID_DATA_FE, GET_PACKAGE_SCHEDULES_DETAILS_BY_TOUR_ID_DATA_FE, GET_PACKAGES_DETAILS_FOR_REQUEST_DATA_FE } from "@/utils/frontEndConstant";
+import {
+  GET_ACTIVE_PACKAGE_DETAILS_DATA_FE,
+  GET_PACKAGE_ALL_DETAILS_BY_ID_DATA_FE,
+  GET_PACKAGE_DETAILS_BY_ID_DATA_FE,
+  GET_PACKAGE_DETAILS_BY_TOUR_ID_DATA_FE,
+  GET_PACKAGE_DETAILS_FOR_COMPARE_BY_TOUR_ID_DATA_FE,
+  GET_PACKAGE_EXTRA_DETAILS_BY_TOUR_ID_DATA_FE,
+  GET_PACKAGE_HISTORY_DETAILS_DATA_FE,
+  GET_PACKAGE_HISTORY_IMAGES_DETAILS_DATA_FE,
+  GET_PACKAGE_REVIEWS_DETAILS_DATA_FE,
+  GET_PACKAGE_SCHEDULES_DETAILS_BY_PACKAGE_ID_DATA_FE,
+  GET_PACKAGE_SCHEDULES_DETAILS_BY_TOUR_ID_DATA_FE,
+  GET_PACKAGES_DETAILS_FOR_REQUEST_DATA_FE,
+} from "@/utils/frontEndConstant";
 
 export class PackageService {
   // Get packages for a tour
@@ -32,14 +45,16 @@ export class PackageService {
     error: string | null;
   }> {
     try {
-      const response = await fetch(`${GET_PACKAGE_DETAILS_BY_TOUR_ID_DATA_FE}/${tourId}`);
-      
+      const response = await fetch(
+        `${GET_PACKAGE_DETAILS_BY_TOUR_ID_DATA_FE}/${tourId}`,
+      );
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data: PackagesApiResponse = await response.json();
-      
+
       if (data.code === 200) {
         return {
           data: data.data || [],
@@ -66,14 +81,16 @@ export class PackageService {
     error: string | null;
   }> {
     try {
-      const response = await fetch(`${GET_PACKAGE_EXTRA_DETAILS_BY_TOUR_ID_DATA_FE}/${tourId}`);
-      
+      const response = await fetch(
+        `${GET_PACKAGE_EXTRA_DETAILS_BY_TOUR_ID_DATA_FE}/${tourId}`,
+      );
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data: PackageExtraDetailsApiResponse = await response.json();
-      
+
       if (data.code === 200) {
         return {
           data: data.data || [],
@@ -100,14 +117,16 @@ export class PackageService {
     error: string | null;
   }> {
     try {
-      const response = await fetch(`${GET_PACKAGE_SCHEDULES_DETAILS_BY_TOUR_ID_DATA_FE}/${tourId}`);
-      
+      const response = await fetch(
+        `${GET_PACKAGE_SCHEDULES_DETAILS_BY_TOUR_ID_DATA_FE}/${tourId}`,
+      );
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data: PackageSchedulesApiResponse = await response.json();
-      
+
       if (data.code === 200) {
         return {
           data: data.data || [],
@@ -136,7 +155,8 @@ export class PackageService {
   }> {
     try {
       const response = await fetch(GET_ACTIVE_PACKAGE_DETAILS_DATA_FE);
-      const data: ApiResponse<ActivePackagesForFilters[]> = await response.json();
+      const data: ApiResponse<ActivePackagesForFilters[]> =
+        await response.json();
 
       if (response.ok && data.code === 200) {
         return {
@@ -162,7 +182,7 @@ export class PackageService {
     }
   }
 
-static async fetchFilterOptions(): Promise<{
+  static async fetchFilterOptions(): Promise<{
     packageTypes: string[];
     locations: string[];
     durations: number[];
@@ -197,17 +217,17 @@ static async fetchFilterOptions(): Promise<{
       if (result.code === 200 && result.data) {
         const types = [
           ...new Set(
-            result.data.packageResponseDtos.map((pkg) => pkg.packageTypeName)
+            result.data.packageResponseDtos.map((pkg) => pkg.packageTypeName),
           ),
         ];
         const locationsList = [
           ...new Set(
-            result.data.packageResponseDtos.map((pkg) => pkg.startLocation)
+            result.data.packageResponseDtos.map((pkg) => pkg.startLocation),
           ),
         ];
         const durationsList = [
           ...new Set(
-            result.data.packageResponseDtos.map((pkg) => pkg.duration)
+            result.data.packageResponseDtos.map((pkg) => pkg.duration),
           ),
         ].sort((a, b) => a - b);
 
@@ -231,7 +251,8 @@ static async fetchFilterOptions(): Promise<{
         packageTypes: [],
         locations: [],
         durations: [],
-        error: err instanceof Error ? err.message : "Failed to fetch filter options",
+        error:
+          err instanceof Error ? err.message : "Failed to fetch filter options",
       };
     }
   }
@@ -240,7 +261,7 @@ static async fetchFilterOptions(): Promise<{
   static async fetchPackagesWithFilters(
     filters: PackageSearchRequest,
     pageSize: number,
-    pageNumber: number
+    pageNumber: number,
   ): Promise<{
     packages: ActivePackagesForFilters[];
     totalPackages: number;
@@ -370,7 +391,8 @@ static async fetchFilterOptions(): Promise<{
       console.error("Error fetching history images:", err);
       return {
         historyImages: [],
-        error: err instanceof Error ? err.message : "Failed to fetch history images",
+        error:
+          err instanceof Error ? err.message : "Failed to fetch history images",
       };
     }
   }
@@ -403,15 +425,14 @@ static async fetchFilterOptions(): Promise<{
     };
   }
 
-
-    // Fetch package details by ID
+  // Fetch package details by ID
   static async fetchPackageDetails(packageId: string | number): Promise<{
     data: ActivePackagesType | null;
     error: string | null;
   }> {
     try {
       const response = await fetch(
-        `${GET_PACKAGE_DETAILS_BY_ID_DATA_FE}/${packageId}`
+        `${GET_PACKAGE_DETAILS_BY_ID_DATA_FE}/${packageId}`,
       );
       const result: ApiResponse<ActivePackagesType> = await response.json();
 
@@ -430,19 +451,30 @@ static async fetchFilterOptions(): Promise<{
       console.error("Error fetching package details:", err);
       return {
         data: null,
-        error: err instanceof Error ? err.message : "Failed to fetch package details",
+        error:
+          err instanceof Error
+            ? err.message
+            : "Failed to fetch package details",
       };
     }
   }
 
-    static async fetchPackageAllDetails(packageId: string | number): Promise<{
+  static async fetchPackageAllDetails(packageId: string | number): Promise<{
     data: ActivePackagesType | null;
     error: string | null;
   }> {
     try {
       const response = await fetch(
-        `${GET_PACKAGE_ALL_DETAILS_BY_ID_DATA_FE}/${packageId}`
+        `${GET_PACKAGE_ALL_DETAILS_BY_ID_DATA_FE}/${packageId}`,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
       );
+
       const result: ApiResponse<ActivePackagesType> = await response.json();
 
       if (result.code === 200) {
@@ -458,9 +490,13 @@ static async fetchFilterOptions(): Promise<{
       }
     } catch (err) {
       console.error("Error fetching package details:", err);
+
       return {
         data: null,
-        error: err instanceof Error ? err.message : "Failed to fetch package details",
+        error:
+          err instanceof Error
+            ? err.message
+            : "Failed to fetch package details",
       };
     }
   }
@@ -503,7 +539,7 @@ static async fetchFilterOptions(): Promise<{
   }> {
     try {
       const response = await fetch(
-        `${GET_PACKAGE_REVIEWS_DETAILS_DATA_FE}/${packageId}`
+        `${GET_PACKAGE_REVIEWS_DETAILS_DATA_FE}/${packageId}`,
       );
       const result: ReviewsResponse = await response.json();
 
@@ -534,7 +570,7 @@ static async fetchFilterOptions(): Promise<{
   }> {
     try {
       const response = await fetch(
-        `${GET_PACKAGE_HISTORY_DETAILS_DATA_FE}/${packageId}`
+        `${GET_PACKAGE_HISTORY_DETAILS_DATA_FE}/${packageId}`,
       );
       const result: PackageHistoryResponse = await response.json();
 
@@ -553,19 +589,24 @@ static async fetchFilterOptions(): Promise<{
       console.error("Error fetching package history:", err);
       return {
         history: [],
-        error: err instanceof Error ? err.message : "Failed to fetch package history",
+        error:
+          err instanceof Error
+            ? err.message
+            : "Failed to fetch package history",
       };
     }
   }
 
   // Fetch package history images
-  static async fetchPackageHistoryImagesById(packageId: string | number): Promise<{
+  static async fetchPackageHistoryImagesById(
+    packageId: string | number,
+  ): Promise<{
     historyImages: PackageHistoryImage[];
     error: string | null;
   }> {
     try {
       const response = await fetch(
-        `${GET_PACKAGE_HISTORY_IMAGES_DETAILS_DATA_FE}/${packageId}`
+        `${GET_PACKAGE_HISTORY_IMAGES_DETAILS_DATA_FE}/${packageId}`,
       );
       const result: PackageHistoryImagesResponse = await response.json();
 
@@ -584,7 +625,8 @@ static async fetchFilterOptions(): Promise<{
       console.error("Error fetching history images:", err);
       return {
         historyImages: [],
-        error: err instanceof Error ? err.message : "Failed to fetch history images",
+        error:
+          err instanceof Error ? err.message : "Failed to fetch history images",
       };
     }
   }
@@ -600,7 +642,7 @@ static async fetchFilterOptions(): Promise<{
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       const result: ApiResponse<PackageComparison[]> = await response.json();
 
@@ -624,7 +666,6 @@ static async fetchFilterOptions(): Promise<{
     }
   }
 
-
   static async fetchPackageScheduleDetails(packageId: string): Promise<{
     packageDetails: PackageScheduleDetails | null;
     schedules: PackageSchedule[];
@@ -635,7 +676,7 @@ static async fetchFilterOptions(): Promise<{
         `${GET_PACKAGE_SCHEDULES_DETAILS_BY_PACKAGE_ID_DATA_FE}/${packageId}`,
         {
           credentials: "include",
-        }
+        },
       );
 
       if (!response.ok) {
@@ -670,5 +711,4 @@ static async fetchFilterOptions(): Promise<{
       };
     }
   }
-
 }

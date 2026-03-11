@@ -11,8 +11,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ vehicle }) => {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="bg-gradient-to-br from-amber-50 to-purple-50 p-6 rounded-lg border border-amber-100">
-          <h3 className="font-semibold text-amber-800 mb-2">Basic Info</h3>
+        <div className="bg-gradient-to-br from-teal-50 to-cyan-50 p-6 rounded-lg border border-teal-100">
+          <h3 className="font-semibold text-teal-800 mb-2">Basic Info</h3>
           <div className="space-y-2 text-sm">
             <p><span className="font-medium">Make:</span> {spec.make}</p>
             <p><span className="font-medium">Model:</span> {spec.model}</p>
@@ -21,8 +21,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ vehicle }) => {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-purple-50 to-amber-50 p-6 rounded-lg border border-purple-100">
-          <h3 className="font-semibold text-purple-800 mb-2">Performance</h3>
+        <div className="bg-gradient-to-br from-cyan-50 to-teal-50 p-6 rounded-lg border border-cyan-100">
+          <h3 className="font-semibold text-cyan-800 mb-2">Performance</h3>
           <div className="space-y-2 text-sm">
             <p><span className="font-medium">Engine:</span> {spec.engineType}</p>
             <p><span className="font-medium">Horsepower:</span> {spec.horsepowerHp} HP</p>
@@ -31,8 +31,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ vehicle }) => {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-amber-50 to-purple-50 p-6 rounded-lg border border-amber-100">
-          <h3 className="font-semibold text-amber-800 mb-2">Vehicle Status</h3>
+        <div className="bg-gradient-to-br from-teal-50 to-cyan-50 p-6 rounded-lg border border-teal-100">
+          <h3 className="font-semibold text-teal-800 mb-2">Vehicle Status</h3>
           <div className="space-y-2 text-sm">
             <p><span className="font-medium">Registration:</span> {vehicle.registrationNumber}</p>
             <p><span className="font-medium">Status:</span> 
@@ -42,8 +42,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ vehicle }) => {
                 {vehicle.status}
               </span>
             </p>
-            <p><span className="font-medium">Purchase Date:</span> {new Date(vehicle.purchaseDate).toLocaleDateString()}</p>
-            <p><span className="font-medium">Price:</span> ${vehicle.purchasePrice.toLocaleString()}</p>
+            <p><span className="font-medium">Purchase Date:</span> {new Date(vehicle.purchaseDate)?.toLocaleDateString()}</p>
+            <p><span className="font-medium">Price:</span> ${vehicle.purchasePrice?.toLocaleString()}</p>
           </div>
         </div>
       </div>

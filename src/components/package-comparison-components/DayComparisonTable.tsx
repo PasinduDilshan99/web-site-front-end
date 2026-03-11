@@ -1,11 +1,10 @@
 import React from "react";
 import { Star, MapPin, Hotel, Car, Utensils, Users, Info } from "lucide-react";
-import { Package } from "@/types/package-types";
-import { PackageDayByDay } from "@/types/package-comparison-types";
+import { PackageComparison, PackageDayByDay } from "@/types/package-comparison-types";
 
 interface DayComparisonTableProps {
-  selectedPackage1: Package;
-  selectedPackage2: Package;
+  selectedPackage1: PackageComparison;
+  selectedPackage2: PackageComparison;
 }
 
 interface DayDataProps {
@@ -226,7 +225,7 @@ const DayComparisonTable: React.FC<DayComparisonTableProps> = ({
   );
 
   const getDayData = (
-    pkg: Package,
+    pkg: PackageComparison,
     dayIndex: number,
   ): PackageDayByDay | null => {
     return (

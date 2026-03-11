@@ -8,21 +8,69 @@ import { WhyChooseUsService } from "@/services/whyChooseUsService";
 import SectionHeader from "@/components/common-components/section-header/SectionHeader";
 import { PLACE_HOLDER_IMAGE } from "@/utils/constant";
 
-// Default icon SVG component with Sunset Purple theme
+// Import Lucide React icons specifically
+import {
+  Clock,
+  Users,
+  Briefcase,
+  Star,
+  ThumbsUp,
+  ArrowUp,
+  LucideIcon,
+} from "lucide-react";
+import { ABOUT_US_PAGE_PATH } from "@/utils/urls";
+import WhyChooseUsLoading from "./WhyChooseUsLoading";
+
+// Icon mapping object
+const iconMap: Record<string, LucideIcon> = {
+  Clock: Clock,
+  Users: Users,
+  Briefcase: Briefcase,
+  Star: Star,
+  ThumbsUp: ThumbsUp,
+  ArrowUp: ArrowUp,
+};
+
+// Default icon component
 const DefaultIcon = ({ color = "#A855F7" }: { color?: string }) => (
-  <svg
-    width="32"
-    height="32"
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8"
-  >
-    <circle cx="16" cy="16" r="14" fill={color} fillOpacity="0.1" />
-    <circle cx="16" cy="16" r="10" fill={color} fillOpacity="0.2" />
-    <circle cx="16" cy="16" r="6" fill={color} />
-  </svg>
+  <Clock className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" style={{ color }} />
 );
+
+// Dynamic Icon Component with proper typing
+const DynamicIcon = ({
+  iconName,
+  color,
+  className,
+}: {
+  iconName: string | null;
+  color?: string;
+  className?: string;
+}) => {
+  const [iconError, setIconError] = useState(false);
+
+  useEffect(() => {
+    setIconError(false);
+  }, [iconName]);
+
+  if (!iconName || iconError) {
+    return <DefaultIcon color={color} />;
+  }
+
+  // Get icon from map
+  const IconComponent = iconMap[iconName];
+
+  if (!IconComponent) {
+    console.warn(`Icon "${iconName}" not found in icon map, using default`);
+    return <DefaultIcon color={color} />;
+  }
+
+  return (
+    <IconComponent
+      className={className || "w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8"}
+      style={{ color }}
+    />
+  );
+};
 
 // Card Image Component with Error Handling
 const CardImage = React.memo(
@@ -95,56 +143,6 @@ const CardImage = React.memo(
 
 CardImage.displayName = "CardImage";
 
-// Icon Component with Error Handling
-const CardIcon = React.memo(
-  ({
-    iconUrl,
-    title,
-    color,
-    hasError,
-    onError,
-  }: {
-    iconUrl: string | null;
-    title: string;
-    color?: string;
-    hasError: boolean;
-    onError: () => void;
-  }) => {
-    const [imgSrc, setImgSrc] = useState(iconUrl || "");
-    const [imgError, setImgError] = useState(hasError || !iconUrl);
-
-    useEffect(() => {
-      setImgSrc(iconUrl || "");
-      setImgError(!iconUrl);
-    }, [iconUrl]);
-
-    const handleError = () => {
-      if (!imgError && iconUrl) {
-        setImgError(true);
-        onError();
-      }
-    };
-
-    if (imgError || !iconUrl) {
-      return <DefaultIcon color={color || "#A855F7"} />;
-    }
-
-    return (
-      <Image
-        src={imgSrc}
-        alt={`${title} icon`}
-        width={32}
-        height={32}
-        className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8"
-        onError={handleError}
-        unoptimized
-      />
-    );
-  },
-);
-
-CardIcon.displayName = "CardIcon";
-
 const WhyChooseUs = ({ buttonRequired }: { buttonRequired: boolean }) => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -189,7 +187,7 @@ const WhyChooseUs = ({ buttonRequired }: { buttonRequired: boolean }) => {
 
   // Handle Learn More button click - navigate to about-us page
   const handleLearnMoreClick = () => {
-    router.push("/about-us");
+    router.push(ABOUT_US_PAGE_PATH);
   };
 
   // Extract stats from title (e.g., "50+", "100%", "10+", "98%")
@@ -200,39 +198,7 @@ const WhyChooseUs = ({ buttonRequired }: { buttonRequired: boolean }) => {
 
   // Loading state
   if (loading) {
-    return (
-      <div className="min-h-[400px] bg-gradient-to-br from-slate-900 via-gray-900 to-teal-950 flex items-center justify-center p-8">
-        <div className="w-full mx-auto">
-          {/* Simple loading header */}
-          <div className="flex justify-center mb-8">
-            <div className="flex items-center space-x-3 px-4 py-2 bg-gray-900/50 backdrop-blur-sm rounded-full border border-teal-500/30">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-teal-400"></div>
-              <span className="text-teal-300 text-sm">
-                Loading why choose us...
-              </span>
-            </div>
-          </div>
-
-          {/* Why Choose Us Cards - 3 cards layout */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[...Array(3)].map((_, index) => (
-              <div
-                key={index}
-                className="bg-gradient-to-br from-gray-800/80 to-teal-900/30 rounded-xl p-6 border border-teal-500/20 animate-pulse"
-                style={{ animationDelay: `${index * 150}ms` }}
-              >
-                <div className="w-14 h-14 bg-gradient-to-br from-gray-700 to-teal-800/50 rounded-lg mb-4 mx-auto"></div>
-                <div className="h-5 bg-gradient-to-r from-gray-700 to-teal-800/50 rounded w-32 mx-auto mb-3"></div>
-                <div className="space-y-2">
-                  <div className="h-3 bg-gradient-to-r from-gray-700 to-cyan-800/40 rounded w-full"></div>
-                  <div className="h-3 bg-gradient-to-r from-gray-700 to-cyan-800/40 rounded w-5/6 mx-auto"></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
+    return <WhyChooseUsLoading />;
   }
 
   // Error state
@@ -264,9 +230,6 @@ const WhyChooseUs = ({ buttonRequired }: { buttonRequired: boolean }) => {
           {cardsData.map((card) => {
             const stats = extractStats(card.cardTitle);
             const hasCardImageError = hasImageError(card.cardImageUrl);
-            const hasCardIconError = card.cardIconUrl
-              ? hasImageError(card.cardIconUrl)
-              : true;
 
             return (
               <div
@@ -285,16 +248,12 @@ const WhyChooseUs = ({ buttonRequired }: { buttonRequired: boolean }) => {
                   {/* Gradient Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent group-hover:from-black/40 transition-all duration-300"></div>
 
-                  {/* Icon Overlay - Responsive Positioning and Size with Error Handling */}
+                  {/* Icon Overlay - Now using Lucide React Icons */}
                   <div className="absolute bottom-2 sm:bottom-3 md:bottom-4 right-2 sm:right-3 md:right-4 bg-white rounded-full p-1.5 sm:p-2 md:p-2.5 lg:p-3 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
-                    <CardIcon
-                      iconUrl={card.cardIconUrl}
-                      title={card.cardTitle}
-                      color={card.cardColor}
-                      hasError={hasCardIconError}
-                      onError={() =>
-                        card.cardIconUrl && handleImageError(card.cardIconUrl)
-                      }
+                    <DynamicIcon
+                      iconName={card.cardIconUrl}
+                      color={card.cardColor || "#A855F7"}
+                      className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8"
                     />
                   </div>
                 </div>

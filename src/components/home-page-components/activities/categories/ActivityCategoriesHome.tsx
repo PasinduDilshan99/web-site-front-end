@@ -1,46 +1,76 @@
 "use client";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import AnimatedButton from "../../../common-components/buttons/AnimatedButton";
 import SectionHeader from "../../../common-components/section-header/SectionHeader";
 import Image from "next/image";
-import { ActiveActivitiesCategoriesType } from "@/types/activity-types";
+import { ActiveActivitiesCategoriesType, CategoryImage } from "@/types/activity-types";
 import { ActivityService } from "@/services/activityService";
 import { PLACE_HOLDER_IMAGE } from "@/utils/constant";
 import { useRouter } from "next/navigation";
+import { ACTIVITIES_CATEGORY_TYPE_PATH } from "@/utils/urls";
 
 // Category Image Component with Fallback
-const CategoryImage = React.memo(
+const CategoryImageComponent = React.memo(
   ({
     primaryImage,
     categoryName,
     categoryId,
+    images,
   }: {
     primaryImage: string;
     categoryName: string;
     categoryId: number;
+    images: CategoryImage[];
   }) => {
     const [imgSrc, setImgSrc] = useState(primaryImage);
     const [hasError, setHasError] = useState(false);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [isHovered, setIsHovered] = useState(false);
+    const imageIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
       setImgSrc(primaryImage);
       setHasError(false);
     }, [primaryImage]);
 
+    // Image rotation effect on hover
+    useEffect(() => {
+      if (isHovered && images.length > 1) {
+        imageIntervalRef.current = setInterval(() => {
+          setCurrentImageIndex((prevIndex) => {
+            const nextIndex = (prevIndex + 1) % images.length;
+            setImgSrc(images[nextIndex].imageUrl);
+            return nextIndex;
+          });
+        }, 1500);
+      }
+
+      return () => {
+        if (imageIntervalRef.current) {
+          clearInterval(imageIntervalRef.current);
+        }
+      };
+    }, [isHovered, images]);
+
     const handleError = () => {
       if (!hasError) {
-        console.log(
-          `Image failed to load for ${categoryName}, using placeholder`,
-        );
         setImgSrc(PLACE_HOLDER_IMAGE);
         setHasError(true);
       }
     };
 
     return (
-      <div className="relative h-40 sm:h-48 md:h-56 lg:h-64 overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300">
+      <div
+        className="relative h-40 sm:h-48 md:h-56 lg:h-64 overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => {
+          setIsHovered(false);
+          setCurrentImageIndex(0);
+          setImgSrc(primaryImage);
+        }}
+      >
         <Image
-          key={`${categoryId}-${hasError}`}
+          key={`${categoryId}-${currentImageIndex}-${hasError}`}
           src={imgSrc}
           alt={categoryName}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
@@ -49,13 +79,31 @@ const CategoryImage = React.memo(
           onError={handleError}
           priority={categoryId < 4}
         />
+
+        {/* Image indicators for multiple images */}
+        {images.length > 1 && (
+          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1">
+            {images.map((_, index) => (
+              <div
+                key={index}
+                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                  index === currentImageIndex ? "bg-white w-3" : "bg-white/50"
+                }`}
+              />
+            ))}
+          </div>
+        )}
+
         {hasError && <div className="absolute inset-0 bg-black/20" />}
       </div>
     );
   },
 );
 
-CategoryImage.displayName = "CategoryImage";
+CategoryImageComponent.displayName = "CategoryImageComponent";
+
+// GAP between cards in pixels — keep in sync with the inline style below
+const GAP_PX = 24; // matches gap-6 (1.5rem = 24px at base 16px)
 
 const ActivityCategoriesHome = () => {
   const [loading, setLoading] = useState(true);
@@ -67,8 +115,36 @@ const ActivityCategoriesHome = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [cardsPerView, setCardsPerView] = useState(1);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [cardWidth, setCardWidth] = useState(0);
+  // When true, the transition is disabled so we can silently snap back to start
+  const [isTransitioning, setIsTransitioning] = useState(true);
+
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
+  // outerRef: full-width section wrapper — used for width measurement only (no padding applied to it)
+  const outerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  // Side padding in px — must stay in sync with px-* on the padded wrapper div below
+  const getSidePadding = useCallback(() => {
+    if (typeof window === "undefined") return 16;
+    const w = window.innerWidth;
+    if (w >= 1280) return 48; // xl:px-12
+    if (w >= 1024) return 40; // lg:px-10
+    if (w >= 768)  return 32; // md:px-8
+    if (w >= 640)  return 24; // sm:px-6
+    return 16;                // px-4
+  }, []);
+
+  // Card width = (outerWidth - 2×sidePadding - gaps) / cardsPerView
+  const measureCardWidth = useCallback(() => {
+    if (!outerRef.current) return;
+    const outerWidth = outerRef.current.offsetWidth;
+    const padding = getSidePadding();
+    const innerWidth = outerWidth - padding * 2;
+    const totalGap = GAP_PX * (cardsPerView - 1);
+    const computed = (innerWidth - totalGap) / cardsPerView;
+    setCardWidth(Math.floor(computed));
+  }, [cardsPerView, getSidePadding]);
 
   // Update cards per view based on screen size
   useEffect(() => {
@@ -90,23 +166,56 @@ const ActivityCategoriesHome = () => {
     return () => window.removeEventListener("resize", updateCardsPerView);
   }, []);
 
-  // Auto-play carousel
+  // Re-measure card width whenever cardsPerView or categories change
   useEffect(() => {
-    if (isAutoPlaying && activeActivitiesCategories.length > cardsPerView) {
+    measureCardWidth();
+    window.addEventListener("resize", measureCardWidth);
+    return () => window.removeEventListener("resize", measureCardWidth);
+  }, [measureCardWidth, activeActivitiesCategories.length]);
+
+  const totalReal = activeActivitiesCategories.length;
+  // We append `cardsPerView` clones at the end for the infinite effect
+  const cloneCount = cardsPerView;
+  // The real last slide index (before clones) — scrolls up to and including the clones
+  const maxIndex = Math.max(0, totalReal); // currentIndex can go up to totalReal (into clones)
+  const canShowCarousel = totalReal > cardsPerView;
+
+  // Infinite loop: when we land on a clone position, snap silently back to real start
+  useEffect(() => {
+    if (currentIndex >= totalReal) {
+      // Wait for the CSS transition to finish (500ms), then silently snap to 0
+      const snapTimer = setTimeout(() => {
+        setIsTransitioning(false);
+        setCurrentIndex(0);
+      }, 500);
+      return () => clearTimeout(snapTimer);
+    }
+  }, [currentIndex, totalReal]);
+
+  // Re-enable transition after the silent snap
+  useEffect(() => {
+    if (!isTransitioning) {
+      const reenableTimer = setTimeout(() => setIsTransitioning(true), 50);
+      return () => clearTimeout(reenableTimer);
+    }
+  }, [isTransitioning]);
+
+  // Auto-play carousel — always advances forward, infinite
+  useEffect(() => {
+    if (isAutoPlaying && canShowCarousel) {
       autoPlayRef.current = setInterval(() => {
-        setCurrentIndex((prevIndex) => {
-          const maxIndex = activeActivitiesCategories.length - cardsPerView;
-          return prevIndex >= maxIndex ? 0 : prevIndex + 1;
-        });
+        setCurrentIndex((prev) => prev + 1);
       }, 3000);
     }
-
     return () => {
-      if (autoPlayRef.current) {
-        clearInterval(autoPlayRef.current);
-      }
+      if (autoPlayRef.current) clearInterval(autoPlayRef.current);
     };
-  }, [isAutoPlaying, activeActivitiesCategories.length, cardsPerView]);
+  }, [isAutoPlaying, canShowCarousel]);
+
+  // Reset index when cardsPerView changes to avoid out-of-bounds
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [cardsPerView]);
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -132,49 +241,37 @@ const ActivityCategoriesHome = () => {
     fetchActivities();
   }, []);
 
-  // Get colors for a category
-  const getCategoryColors = (categoryName: string) => {
-    return ActivityService.getCategoryColors(categoryName);
-  };
-
-  // Get primary image for category
   const getPrimaryImage = (category: ActiveActivitiesCategoriesType) => {
-    return ActivityService.getPrimaryImage(category);
+    if (category.images && category.images.length > 0) {
+      return category.images[0].imageUrl;
+    }
+    return PLACE_HOLDER_IMAGE;
   };
 
-  const handleRetry = () => {
-    setError(null);
-    setLoading(true);
-    window.location.reload();
+  const handleCategoryClick = (categoryName: string) => {
+    router.push(`${ACTIVITIES_CATEGORY_TYPE_PATH}${encodeURIComponent(categoryName)}`);
   };
 
-  // Navigation functions
-  const goToNext = () => {
-    setIsAutoPlaying(false);
-    setCurrentIndex((prevIndex) => {
-      const maxIndex = activeActivitiesCategories.length - cardsPerView;
-      return prevIndex >= maxIndex ? 0 : prevIndex + 1;
-    });
-  };
-
-  const goToPrevious = () => {
-    setIsAutoPlaying(false);
-    setCurrentIndex((prevIndex) => {
-      const maxIndex = activeActivitiesCategories.length - cardsPerView;
-      return prevIndex <= 0 ? maxIndex : prevIndex - 1;
-    });
+  const handleExploreClick = (e: React.MouseEvent, categoryName: string) => {
+    e.stopPropagation();
+    e.preventDefault();
+    router.push(`${ACTIVITIES_CATEGORY_TYPE_PATH}${encodeURIComponent(categoryName)}`);
   };
 
   const goToSlide = (index: number) => {
     setIsAutoPlaying(false);
+    setIsTransitioning(true);
     setCurrentIndex(index);
   };
 
-  const maxIndex = Math.max(
-    0,
-    activeActivitiesCategories.length - cardsPerView,
-  );
-  const canShowCarousel = activeActivitiesCategories.length > cardsPerView;
+  // The correct translate: shift by (cardWidth + gap) per step
+  const translateX = currentIndex * (cardWidth + GAP_PX);
+
+  // Build display list: real items + cloned first `cloneCount` items for seamless loop
+  const displayCategories = [
+    ...activeActivitiesCategories,
+    ...activeActivitiesCategories.slice(0, cloneCount),
+  ];
 
   // Loading skeleton
   if (loading) {
@@ -190,39 +287,18 @@ const ActivityCategoriesHome = () => {
             </div>
           </div>
 
-          <div className="flex gap-4 sm:gap-6">
+          <div className="flex gap-6">
             {[...Array(cardsPerView)].map((_, i) => (
               <div
                 key={i}
                 className="flex-1 bg-gradient-to-br from-gray-800/80 to-teal-900/30 rounded-xl sm:rounded-2xl overflow-hidden animate-pulse border border-teal-500/20"
                 style={{ animationDelay: `${i * 100}ms` }}
               >
-                <div className="h-40 sm:h-48 md:h-56 lg:h-64 bg-gradient-to-br from-gray-700 to-teal-800/50 relative">
-                  <div className="absolute top-3 left-3 w-10 h-10 bg-gray-800/80 rounded-lg border border-teal-500/30 backdrop-blur-sm flex items-center justify-center">
-                    <div className="w-5 h-5 bg-gradient-to-br from-teal-400 to-cyan-400 rounded-full animate-pulse"></div>
-                  </div>
-                  <div className="absolute bottom-3 right-3 w-16 h-6 bg-gray-800/80 rounded-full border border-teal-500/30"></div>
-                </div>
-
+                <div className="h-40 sm:h-48 md:h-56 lg:h-64 bg-gradient-to-br from-gray-700 to-teal-800/50" />
                 <div className="p-4 sm:p-6 space-y-3">
-                  <div className="h-5 sm:h-6 bg-gradient-to-r from-gray-700 to-teal-800/50 rounded w-3/4 mb-2 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-teal-500/10 to-transparent animate-shimmer"></div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="h-4 bg-gradient-to-r from-gray-700 to-cyan-800/40 rounded w-full relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/10 to-transparent animate-shimmer"></div>
-                    </div>
-                    <div className="h-4 bg-gradient-to-r from-gray-700 to-cyan-800/40 rounded w-5/6 relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/10 to-transparent animate-shimmer"></div>
-                    </div>
-                  </div>
-
-                  <div className="pt-2">
-                    <div className="h-4 bg-gradient-to-r from-gray-700 to-teal-800/50 rounded w-24 relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-teal-500/10 to-transparent animate-shimmer"></div>
-                    </div>
-                  </div>
+                  <div className="h-5 bg-gray-700 rounded w-3/4" />
+                  <div className="h-4 bg-gray-700 rounded w-full" />
+                  <div className="h-4 bg-gray-700 rounded w-5/6" />
                 </div>
               </div>
             ))}
@@ -240,11 +316,11 @@ const ActivityCategoriesHome = () => {
     <div className="bg-white py-6 lg:py-8 xl:py-12">
       <div className="mx-auto">
         {/* Header Section */}
-        <div className="px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
+        <div className="px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 mb-8 sm:mb-10 md:mb-12 lg:mb-16">
           <SectionHeader
-            subtitle="Popular Activities"
-            title="Discover Actual Adventure"
-            description="Explore our diverse range of activity categories and find your perfect adventure"
+            subtitle=""
+            title="Ways to Wander"
+            description="Browse activities by interest adventure, culture, nature, and more"
             fromColor="#A855F7"
             toColor="#F59E0B"
           />
@@ -252,56 +328,29 @@ const ActivityCategoriesHome = () => {
 
         {/* Carousel Container */}
         {activeActivitiesCategories.length > 0 && (
-          <div className="relative">
-            {/* Previous Button */}
-            {canShowCarousel && (
-              <button
-                onClick={goToPrevious}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white text-gray-800 p-2 sm:p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 -ml-4 sm:-ml-6"
-                aria-label="Previous slide"
-              >
-                <svg
-                  className="w-5 h-5 sm:w-6 sm:h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
-              </button>
-            )}
-
-            {/* Carousel Track */}
-            <div className="overflow-hidden">
+          /* outerRef: full section width, no padding — used only for card width math */
+          <div className="relative" ref={outerRef}>
+            {/* Padded + clipped container — padding is symmetric so both edges show */}
+            <div className="overflow-hidden px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12">
               <div
-                className="flex transition-transform duration-500 ease-out gap-4 sm:gap-6"
+                className="flex"
                 style={{
-                  transform: `translateX(-${currentIndex * (100 / cardsPerView)}%)`,
+                  gap: `${GAP_PX}px`,
+                  transform: `translateX(-${translateX}px)`,
+                  transition: isTransitioning ? "transform 500ms ease-out" : "none",
                 }}
               >
-                {activeActivitiesCategories.map((category) => {
-                  const colors = getCategoryColors(category.categoryName);
+                {displayCategories.map((category, displayIndex) => {
                   const primaryImage = getPrimaryImage(category);
+                  // Use a composite key so clones don't collide with originals
+                  const key = `${category.categoryId}-${displayIndex}`;
 
                   return (
                     <div
-                      key={category.categoryId}
-                      className="flex-shrink-0"
+                      key={key}
                       style={{
-                        width: `calc(${100 / cardsPerView}% - ${
-                          ((cardsPerView - 1) *
-                            (cardsPerView === 1
-                              ? 0
-                              : cardsPerView === 2
-                                ? 12
-                                : 16)) /
-                          cardsPerView
-                        }px)`,
+                        width: cardWidth > 0 ? `${cardWidth}px` : undefined,
+                        flex: cardWidth > 0 ? "0 0 auto" : "1 0 0",
                       }}
                     >
                       <div
@@ -310,13 +359,17 @@ const ActivityCategoriesHome = () => {
                           setHoveredCategory(category.categoryId)
                         }
                         onMouseLeave={() => setHoveredCategory(null)}
+                        onClick={() =>
+                          handleCategoryClick(category.categoryName)
+                        }
                       >
-                        {/* Category Image Container with Cloudinary Placeholder Fallback */}
-                        <div className="relative">
-                          <CategoryImage
+                        {/* Category Image */}
+                        <div className="relative cursor-pointer">
+                          <CategoryImageComponent
                             primaryImage={primaryImage}
                             categoryName={category.categoryName}
                             categoryId={category.categoryId}
+                            images={category.images || []}
                           />
 
                           {/* Default Transparent Overlay */}
@@ -324,7 +377,7 @@ const ActivityCategoriesHome = () => {
                             className="absolute inset-0 transition-all duration-300"
                             style={{
                               backgroundColor: ActivityService.hexToRgba(
-                                colors.color,
+                                category.color,
                                 0.15,
                               ),
                             }}
@@ -339,7 +392,7 @@ const ActivityCategoriesHome = () => {
                             }`}
                             style={{
                               backgroundColor: ActivityService.hexToRgba(
-                                colors.hoverColor,
+                                category.hoverColor,
                                 0.25,
                               ),
                             }}
@@ -353,17 +406,17 @@ const ActivityCategoriesHome = () => {
                           )}
 
                           {/* Category Name Overlay */}
-                          <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 lg:p-6">
+                          <div className="cursor-pointer absolute bottom-0 left-0 right-0 p-3 sm:p-4 lg:p-6">
                             <div
                               className="inline-block px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg backdrop-blur-sm"
                               style={{
                                 backgroundColor: "rgba(255, 255, 255, 0.9)",
-                                border: `2px solid ${ActivityService.hexToRgba(colors.color, 0.2)}`,
+                                border: `2px solid ${ActivityService.hexToRgba(category.color, 0.2)}`,
                               }}
                             >
                               <h3
                                 className="text-base sm:text-lg lg:text-xl font-bold text-center"
-                                style={{ color: colors.color }}
+                                style={{ color: category.color }}
                               >
                                 {category.categoryName}
                               </h3>
@@ -374,8 +427,8 @@ const ActivityCategoriesHome = () => {
                           <div
                             className={`absolute inset-0 flex flex-col justify-center items-center p-3 sm:p-4 lg:p-6 text-center transition-all duration-300 ${
                               hoveredCategory === category.categoryId
-                                ? "opacity-100"
-                                : "opacity-0"
+                                ? "opacity-100 visible"
+                                : "opacity-0 invisible"
                             }`}
                           >
                             <div className="bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 transform transition-transform duration-300 hover:scale-105 max-w-[90%]">
@@ -383,7 +436,6 @@ const ActivityCategoriesHome = () => {
                                 {category.categoryDescription}
                               </p>
 
-                              {/* Activities Count */}
                               {category.numberOfActivities > 0 && (
                                 <div className="flex justify-center mb-2 sm:mb-3">
                                   <span className="text-xs text-gray-500">
@@ -396,22 +448,22 @@ const ActivityCategoriesHome = () => {
                                 </div>
                               )}
 
-                              {/* Explore Button */}
                               <button
-                                className="px-4 sm:px-6 py-1.5 sm:py-2 rounded-lg font-semibold text-white transition-all duration-300 transform hover:scale-105 shadow-lg text-sm sm:text-base"
-                                style={{
-                                  backgroundColor: colors.color,
-                                }}
+                                className="cursor-pointer px-4 sm:px-6 py-1.5 sm:py-2 rounded-lg font-semibold text-white transition-all duration-300 transform hover:scale-105 shadow-lg text-sm sm:text-base"
+                                style={{ backgroundColor: category.color }}
                                 onMouseEnter={(e) => {
                                   e.currentTarget.style.backgroundColor =
-                                    colors.hoverColor;
+                                    category.hoverColor;
                                 }}
                                 onMouseLeave={(e) => {
                                   e.currentTarget.style.backgroundColor =
-                                    colors.color;
+                                    category.color;
                                 }}
+                                onClick={(e) =>
+                                  handleExploreClick(e, category.categoryName)
+                                }
                               >
-                                Explore
+                                Explore {category.categoryName}
                               </button>
                             </div>
                           </div>
@@ -423,38 +475,15 @@ const ActivityCategoriesHome = () => {
               </div>
             </div>
 
-            {/* Next Button */}
-            {canShowCarousel && (
-              <button
-                onClick={goToNext}
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white text-gray-800 p-2 sm:p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 -mr-4 sm:-mr-6"
-                aria-label="Next slide"
-              >
-                <svg
-                  className="w-5 h-5 sm:w-6 sm:h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </button>
-            )}
-
-            {/* Dots Indicator */}
+            {/* Dots Indicator — only real slides, active uses modulo so clones map back */}
             {canShowCarousel && (
               <div className="flex justify-center mt-6 sm:mt-8 gap-2">
-                {Array.from({ length: maxIndex + 1 }).map((_, index) => (
+                {Array.from({ length: totalReal - cardsPerView + 1 }).map((_, index) => (
                   <button
                     key={index}
                     onClick={() => goToSlide(index)}
                     className={`transition-all duration-300 rounded-full ${
-                      currentIndex === index
+                      (currentIndex % totalReal) === index
                         ? "w-8 sm:w-10 h-2 sm:h-2.5 bg-gradient-to-r from-cyan-500 to-emerald-500"
                         : "w-2 sm:w-2.5 h-2 sm:h-2.5 bg-gray-300 hover:bg-gray-400"
                     }`}
@@ -469,7 +498,7 @@ const ActivityCategoriesHome = () => {
               <div className="flex justify-center mt-4">
                 <button
                   onClick={() => setIsAutoPlaying(!isAutoPlaying)}
-                  className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                  className="text-sm text-gray-600 hover:text-gray-900 transition-colors cursor-pointer"
                 >
                   {isAutoPlaying ? "Pause" : "Play"} Auto-scroll
                 </button>
@@ -480,7 +509,7 @@ const ActivityCategoriesHome = () => {
 
         {/* View All Button */}
         {activeActivitiesCategories.length > 0 && (
-          <div className="text-center">
+          <div className="text-center mt-2">
             <AnimatedButton onClick={() => router.push("/activities")}>
               More Activities
             </AnimatedButton>

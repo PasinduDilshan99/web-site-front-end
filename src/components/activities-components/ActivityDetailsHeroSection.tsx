@@ -64,7 +64,7 @@ const ActivityDetailsHeroSection: React.FC<ActivityDetailsHeroSectionProps> = ({
   return (
     <>
       {/* Hero Section with Slider */}
-      <div className="relative h-[500px] md:h-[700px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
+      <div className="relative h-[70vh] lg:h-[90vh] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
         {/* Image Slider */}
         <div className="relative w-full h-full">
           {activity.images.map((image, index) => {
@@ -108,10 +108,7 @@ const ActivityDetailsHeroSection: React.FC<ActivityDetailsHeroSectionProps> = ({
           <div className="container mx-auto px-4 md:px-6 lg:px-8">
             <div className="max-w-6xl text-white text-center">
               {/* Activity Category Badges - CENTERED */}
-              <div className="mb-6 flex flex-wrap gap-3 justify-center">
-                <span className="px-4 py-2 bg-sky-500/90 backdrop-blur-sm rounded-full text-sm font-semibold">
-                  {activity.category_name}
-                </span>
+              {/* <div className="mb-6 flex flex-wrap gap-3 justify-center">
                 <span className="px-4 py-2 bg-teal-500/90 backdrop-blur-sm rounded-full text-sm font-semibold">
                   {activity.season}
                 </span>
@@ -134,16 +131,16 @@ const ActivityDetailsHeroSection: React.FC<ActivityDetailsHeroSectionProps> = ({
                 <span className="px-4 py-2 bg-emerald-500/90 backdrop-blur-sm rounded-full text-sm font-semibold">
                   {activity.status}
                 </span>
-              </div>
+              </div> */}
 
               {/* Activity Title - CENTERED */}
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+              <h1 className="text-2xl md:text-4xl lg:text-6xl font-bold mb-6 leading-tight">
                 {activity.name}
               </h1>
 
               {/* Description Container - CENTERED */}
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 md:p-8 mx-auto max-w-4xl mb-8">
-                <p className="text-lg md:text-xl text-gray-100 leading-relaxed mb-6">
+                <p className="text-md md:text-lg lg:text-xl text-gray-100 leading-relaxed mb-6">
                   {activity.description}
                 </p>
 
@@ -183,8 +180,9 @@ const ActivityDetailsHeroSection: React.FC<ActivityDetailsHeroSectionProps> = ({
                       />
                     </svg>
                     <span className="font-medium">
-                      {activity.min_participate} - {activity.max_participate}{" "}
-                      Participants
+                      {activity.max_participate === 0
+                        ? "Any Participants"
+                        : `${activity.min_participate} - ${activity.max_participate} Participants`}
                     </span>
                   </div>
                 </div>
@@ -220,7 +218,7 @@ const ActivityDetailsHeroSection: React.FC<ActivityDetailsHeroSectionProps> = ({
           <div className="hidden md:flex">
             <button
               onClick={prevSlide}
-              className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
+              className="cursor-pointer absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
               aria-label="Previous image"
             >
               <svg
@@ -240,7 +238,7 @@ const ActivityDetailsHeroSection: React.FC<ActivityDetailsHeroSectionProps> = ({
 
             <button
               onClick={nextSlide}
-              className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
+              className="cursor-pointer absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group"
               aria-label="Next image"
             >
               <svg
@@ -267,7 +265,7 @@ const ActivityDetailsHeroSection: React.FC<ActivityDetailsHeroSectionProps> = ({
               <button
                 key={index}
                 onClick={() => goToSlide(index)}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                className={`cursor-pointer w-3 h-3 rounded-full transition-all duration-300 ${
                   index === selectedImageIndex
                     ? "bg-gradient-to-r from-sky-400 to-teal-400 scale-125 shadow-lg"
                     : "bg-white/50 hover:bg-white/75"

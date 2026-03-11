@@ -8,9 +8,9 @@ interface VehicleUsageLogsProps {
 export default function VehicleUsageLogs({ usageLogs }: VehicleUsageLogsProps) {
   if (usageLogs.length === 0) {
     return (
-      <div className="bg-white rounded-2xl shadow-lg p-6 border border-purple-100">
+      <div className="bg-white rounded-2xl shadow-lg p-6 border border-teal-100">
         <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-          <span className="w-2 h-6 bg-purple-600 rounded-full mr-3"></span>
+          <span className="w-2 h-6 bg-cyan-600 rounded-full mr-3"></span>
           Usage Logs
         </h2>
         <p className="text-gray-500 text-center py-4">No usage logs found</p>
@@ -29,18 +29,18 @@ export default function VehicleUsageLogs({ usageLogs }: VehicleUsageLogsProps) {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 border border-purple-100">
+    <div className="bg-white rounded-2xl shadow-lg p-6 border border-teal-100">
       <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-        <span className="w-2 h-6 bg-purple-600 rounded-full mr-3"></span>
+        <span className="w-2 h-6 bg-cyan-600 rounded-full mr-3"></span>
         Recent Usage Logs
       </h2>
       
       <div className="space-y-4">
         {usageLogs.map((log, index) => (
-          <div key={log.usageId} className="border border-gray-200 rounded-lg p-4">
+          <div key={log.usageId} className="border border-teal-100 rounded-lg p-4 hover:shadow-md transition-shadow">
             <div className="flex justify-between items-start mb-2">
               <h3 className="font-semibold text-gray-900">{log.usagePurpose}</h3>
-              <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">
+              <span className="text-xs bg-teal-100 text-teal-800 px-2 py-1 rounded">
                 {log.packageId ? `Package ${log.packageId}` : 'No Package'}
               </span>
             </div>

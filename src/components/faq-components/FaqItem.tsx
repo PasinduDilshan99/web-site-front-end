@@ -39,7 +39,7 @@ export const FaqItemComponent = ({
       {/* Question Header */}
       <button
         onClick={() => onToggle(item.faqId)}
-        className="w-full px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4 md:py-5 lg:py-6 text-left flex items-start justify-between hover:bg-gradient-to-r hover:from-sky-50 hover:to-teal-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:ring-opacity-50"
+        className="cursor-pointer w-full px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4 md:py-5 lg:py-6 text-left flex items-start justify-between hover:bg-gradient-to-r hover:from-sky-50 hover:to-teal-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:ring-opacity-50"
       >
         <div className="flex items-start space-x-2 sm:space-x-3 md:space-x-4 flex-1 min-w-0">
           {/* Question Number */}

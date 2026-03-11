@@ -1,4 +1,4 @@
-import { GET_ACTIVE_ACTIVITY_HERO_SECTION_DATA_FE, GET_ACTIVE_DESTINATION_HERO_SECTION_DATA_FE, GET_ACTIVE_PACKAGE_HERO_SECTION_DATA_FE, GET_ACTIVE_TOUR_HERO_SECTION_DATA_FE } from './../utils/frontEndConstant';
+import { GET_ACTIVE_ACTIVITY_HERO_SECTION_DATA_FE, GET_ACTIVE_DESTINATION_HERO_SECTION_DATA_FE, GET_ACTIVE_PACKAGE_HERO_SECTION_DATA_FE, GET_ACTIVE_SEASONS_BASIC_DETAILS_DATA_FE, GET_ACTIVE_SEASONS_HERO_SECTION_DATA_FE, GET_ACTIVE_TOUR_HERO_SECTION_DATA_FE, GET_ACTIVE_VEHICLE_HERO_SECTION_DATA_FE, GET_ACTIVE_VEHICLE_SPECIFICATION_HERO_SECTION_DATA_FE, GET_ACTIVE_VEHICLE_TYPES_HERO_SECTION_DATA_FE } from './../utils/frontEndConstant';
 import {
   GET_ACTIVE_ABOUT_US_HERO_SECTION_DATA_FE,
   GET_ACTIVE_BLOG_HERO_SECTION_DATA_FE,
@@ -22,8 +22,16 @@ import {
   HeroSlideData,
   PackageHeroApiResponse,
   PackageHeroData,
+  SeasonHeroData,
+  SeasonHeroDataApiResponse,
   TourHeroApiResponse,
   TourHeroData,
+  VehicleHeroData,
+  VehicleHeroDataApiResponse,
+  VehicleSpecificationHeroData,
+  VehicleSpecificationHeroDataApiResponse,
+  VehicleTypesHeroData,
+  VehicleTypesHeroDataApiResponse,
 } from "@/types/hero-section-types";
 
 export class HeroSectionService {
@@ -256,11 +264,6 @@ export class HeroSectionService {
     error: string | null;
   }> {
     try {
-
-        console.log('====================================');
-        console.log("abb");
-        console.log('====================================');
-
       const response = await fetch(GET_ACTIVE_TOUR_HERO_SECTION_DATA_FE, {
         method: "GET",
         headers: {
@@ -445,6 +448,193 @@ export class HeroSectionService {
     }
   }
 
+  static async fetchVehicleHeroData(): Promise<{
+    data: VehicleHeroData[];
+    error: string | null;
+  }> {
+    try {
+      const response = await fetch(GET_ACTIVE_VEHICLE_HERO_SECTION_DATA_FE, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const apiResponse: VehicleHeroDataApiResponse = await response.json();
+
+      if (apiResponse.code === 200 && apiResponse.data) {
+        const activeItems = apiResponse.data.filter(
+          (item) => item.status === "ACTIVE"
+        );
+
+        const sortedItems = [...activeItems].sort(
+          (a, b) => (a.order || 0) - (b.order || 0)
+        );
+
+        return {
+          data: sortedItems,
+          error: null,
+        };
+      } else {
+        return {
+          data: [],
+          error: apiResponse.message || "Failed to fetch vehicle content",
+        };
+      }
+    } catch (err) {
+      console.error("Error fetching vehicle hero data:", err);
+      return {
+        data: [],
+        error: err instanceof Error ? err.message : "Failed to load vehicles content",
+      };
+    }
+  }
+
+  static async fetchVehicleSpecificationHeroData(): Promise<{
+    data: VehicleSpecificationHeroData[];
+    error: string | null;
+  }> {
+    try {
+      const response = await fetch(GET_ACTIVE_VEHICLE_SPECIFICATION_HERO_SECTION_DATA_FE, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const apiResponse: VehicleSpecificationHeroDataApiResponse = await response.json();
+
+      if (apiResponse.code === 200 && apiResponse.data) {
+        const activeItems = apiResponse.data.filter(
+          (item) => item.status === "ACTIVE"
+        );
+
+        const sortedItems = [...activeItems].sort(
+          (a, b) => (a.order || 0) - (b.order || 0)
+        );
+
+        return {
+          data: sortedItems,
+          error: null,
+        };
+      } else {
+        return {
+          data: [],
+          error: apiResponse.message || "Failed to fetch vehicle specification content",
+        };
+      }
+    } catch (err) {
+      console.error("Error fetching vehicle specification hero data:", err);
+      return {
+        data: [],
+        error: err instanceof Error ? err.message : "Failed to load vehicles specification content",
+      };
+    }
+  }
+
+  static async fetchVehicleTypesHeroData(): Promise<{
+    data: VehicleTypesHeroData[];
+    error: string | null;
+  }> {
+    try {
+      const response = await fetch(GET_ACTIVE_VEHICLE_TYPES_HERO_SECTION_DATA_FE, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const apiResponse: VehicleTypesHeroDataApiResponse = await response.json();
+
+      if (apiResponse.code === 200 && apiResponse.data) {
+        const activeItems = apiResponse.data.filter(
+          (item) => item.status === "ACTIVE"
+        );
+
+        const sortedItems = [...activeItems].sort(
+          (a, b) => (a.order || 0) - (b.order || 0)
+        );
+
+        return {
+          data: sortedItems,
+          error: null,
+        };
+      } else {
+        return {
+          data: [],
+          error: apiResponse.message || "Failed to fetch vehicle types content",
+        };
+      }
+    } catch (err) {
+      console.error("Error fetching vehicle types hero data:", err);
+      return {
+        data: [],
+        error: err instanceof Error ? err.message : "Failed to load vehicles types content",
+      };
+    }
+  }
+
+  static async fetchSeasonHeroData(): Promise<{
+    data: SeasonHeroData[];
+    error: string | null;
+  }> {
+    try {
+      const response = await fetch(GET_ACTIVE_SEASONS_HERO_SECTION_DATA_FE, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const apiResponse: SeasonHeroDataApiResponse = await response.json();
+
+      if (apiResponse.code === 200 && apiResponse.data) {
+        const activeItems = apiResponse.data.filter(
+          (item) => item.status === "ACTIVE"
+        );
+
+        const sortedItems = [...activeItems].sort(
+          (a, b) => (a.order || 0) - (b.order || 0)
+        );
+
+        return {
+          data: sortedItems,
+          error: null,
+        };
+      } else {
+        return {
+          data: [],
+          error: apiResponse.message || "Failed to fetch seasons content",
+        };
+      }
+    } catch (err) {
+      console.error("Error fetching seasons hero data:", err);
+      return {
+        data: [],
+        error: err instanceof Error ? err.message : "Failed to load seasons content",
+      };
+    }
+  }
 
 
 }

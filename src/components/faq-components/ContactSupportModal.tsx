@@ -1,10 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
 import { FaqService } from "@/services/faqService";
-import { 
-  ContactSupportModalProps, 
-  ContactSupportFormData, 
-  ValidationError 
+import {
+  ContactSupportModalProps,
+  ContactSupportFormData,
+  ValidationError,
 } from "@/types/faq-types";
 
 export const ContactSupportModal = ({
@@ -38,8 +38,11 @@ export const ContactSupportModal = ({
 
       setIsLoadingCategories(true);
       try {
-        const { categories: fetchedCategories, responseTime: fetchedResponseTime, error } = 
-          await FaqService.fetchContactOptions();
+        const {
+          categories: fetchedCategories,
+          responseTime: fetchedResponseTime,
+          error,
+        } = await FaqService.fetchContactOptions();
 
         if (error) {
           console.error("Error fetching categories:", error);
@@ -157,7 +160,7 @@ export const ContactSupportModal = ({
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     setFormData((prev) => ({
       ...prev,
@@ -223,7 +226,7 @@ export const ContactSupportModal = ({
             </div>
             <button
               onClick={onClose}
-              className="flex-shrink-0 bg-white/20 hover:bg-white/30 rounded-full p-1 sm:p-2 transition-all duration-200 transform hover:scale-110 active:scale-95 ml-4 sm:ml-6 backdrop-blur-sm"
+              className="cursor-pointer hover:bg-red-500 flex-shrink-0 bg-white/20 rounded-full p-1 sm:p-2 transition-all duration-200 transform hover:scale-110 active:scale-95 ml-4 sm:ml-6 backdrop-blur-sm"
               aria-label="Close modal"
             >
               <svg
@@ -506,14 +509,14 @@ export const ContactSupportModal = ({
                 type="button"
                 onClick={onClose}
                 disabled={isSubmitting}
-                className="flex-1 px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base text-gray-700 font-semibold border border-gray-300 rounded-lg sm:rounded-xl hover:bg-gray-50/80 backdrop-blur-sm transition-all duration-200 transform hover:scale-105 active:scale-95 hover:border-gray-400 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                className="cursor-pointer flex-1 px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base text-gray-700 font-semibold border border-gray-300 rounded-lg sm:rounded-xl hover:bg-gray-50/80 backdrop-blur-sm transition-all duration-200 transform hover:scale-105 active:scale-95 hover:border-gray-400 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting || isLoadingCategories}
-                className="flex-1 px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-gradient-to-r from-sky-500 to-teal-500 text-white font-semibold rounded-lg sm:rounded-xl hover:from-sky-600 hover:to-teal-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl relative overflow-hidden group"
+                className="cursor-pointer flex-1 px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-gradient-to-r from-sky-500 to-teal-500 text-white font-semibold rounded-lg sm:rounded-xl hover:from-sky-600 hover:to-teal-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl relative overflow-hidden group"
               >
                 {/* Animated background on hover */}
                 <div className="absolute inset-0 bg-gradient-to-r from-sky-600 to-teal-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -554,12 +557,21 @@ export const ContactSupportModal = ({
         {/* Footer Note */}
         <div className="border-t border-gray-200/50 bg-sky-50/50 backdrop-blur-sm px-4 sm:px-6 md:px-8 py-3 sm:py-4">
           <p className="text-xs sm:text-sm text-sky-800 text-center flex items-center justify-center space-x-1">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
-                d="M13 10V3L4 14h7v7l9-11h-7z" />
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M13 10V3L4 14h7v7l9-11h-7z"
+              />
             </svg>
             <span>
-              We typically respond within {responseTime} hours during business
+              We typically respond within {responseTime} hour during business
               days
             </span>
           </p>

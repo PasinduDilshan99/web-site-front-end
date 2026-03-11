@@ -22,16 +22,16 @@ export default function VehicleSpecifications({ specification }: VehicleSpecific
   ];
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 border border-purple-100">
+    <div className="bg-white rounded-2xl shadow-lg p-6 border border-teal-100">
       <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-        <span className="w-2 h-6 bg-purple-600 rounded-full mr-3"></span>
+        <span className="w-2 h-6 bg-cyan-600 rounded-full mr-3"></span>
         Vehicle Specifications
       </h2>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {specs.map((spec, index) => (
-          <div key={index} className="bg-gray-50 rounded-lg p-4">
-            <div className="text-sm text-gray-600 font-medium">{spec.label}</div>
+          <div key={index} className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-lg p-4 border border-teal-100">
+            <div className="text-sm text-teal-600 font-medium">{spec.label}</div>
             <div className="text-lg font-semibold text-gray-900 mt-1">{spec.value}</div>
           </div>
         ))}
@@ -44,19 +44,19 @@ export default function VehicleSpecifications({ specification }: VehicleSpecific
           <div className="space-y-2">
             {specification.entertainmentFeatures && (
               <div className="flex items-center text-sm text-gray-700">
-                <span className="w-2 h-2 bg-amber-500 rounded-full mr-2"></span>
+                <span className="w-2 h-2 bg-teal-500 rounded-full mr-2"></span>
                 Entertainment: {specification.entertainmentFeatures}
               </div>
             )}
             {specification.comfortFeatures && (
               <div className="flex items-center text-sm text-gray-700">
-                <span className="w-2 h-2 bg-amber-500 rounded-full mr-2"></span>
+                <span className="w-2 h-2 bg-cyan-500 rounded-full mr-2"></span>
                 Comfort: {specification.comfortFeatures}
               </div>
             )}
             {specification.safetyFeatures && (
               <div className="flex items-center text-sm text-gray-700">
-                <span className="w-2 h-2 bg-amber-500 rounded-full mr-2"></span>
+                <span className="w-2 h-2 bg-teal-500 rounded-full mr-2"></span>
                 Safety: {specification.safetyFeatures}
               </div>
             )}

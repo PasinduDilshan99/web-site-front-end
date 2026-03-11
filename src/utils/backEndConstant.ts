@@ -1,15 +1,15 @@
 // DEV
-const PROTOCOL = "http";
-const DOMAIN = "localhost";
-const PORT = "8080";
-const CONTEXT_ROOT = "felicita";
-const VERSION = "/v0";
-const API = "/api";
-export const BASE_PATH = `${PROTOCOL}://${DOMAIN}:${PORT}/${CONTEXT_ROOT}`;
+// const PROTOCOL = "http";
+// const DOMAIN = "localhost";
+// const PORT = "8080";
+// const CONTEXT_ROOT = "felicita";
+// const VERSION = "/v0";
+// const API = "/api";
+// export const BASE_PATH = `${PROTOCOL}://${DOMAIN}:${PORT}/${CONTEXT_ROOT}`;
 
 // Staging
 // const PROTOCOL = "http";
-// const DOMAIN = "staging-api.felicitatrips.com"; // staging backend domain
+// const DOMAIN = "stg-api.felicitatrips.com"; // staging backend domain
 // const PORT = "443"; // HTTPS
 // const CONTEXT_ROOT = "felicita";
 // const VERSION = "/v0";
@@ -17,13 +17,13 @@ export const BASE_PATH = `${PROTOCOL}://${DOMAIN}:${PORT}/${CONTEXT_ROOT}`;
 // export const BASE_PATH = `${PROTOCOL}://${DOMAIN}/${CONTEXT_ROOT}`;
 
 // Production
-// const PROTOCOL = "https";
-// const DOMAIN = "api.felicitatrips.com"; // production backend domain
-// const PORT = "443"; // if using HTTPS (omit port in URL)
-// const CONTEXT_ROOT = "felicita";
-// const VERSION = "/v0";
-// const API = "/api";
-// export const BASE_PATH = `${PROTOCOL}://${DOMAIN}/${CONTEXT_ROOT}`;
+const PROTOCOL = "https";
+const DOMAIN = "api.felicitatrips.com"; // production backend domain
+const PORT = "443"; // if using HTTPS (omit port in URL)
+const CONTEXT_ROOT = "felicita";
+const VERSION = "/v0";
+const API = "/api";
+export const BASE_PATH = `${PROTOCOL}://${DOMAIN}/${CONTEXT_ROOT}`;
 
 // http://159.198.43.146:8080/felicita
 const LINK_BAR = "/link-bar";
@@ -63,6 +63,7 @@ const ACCOUNT_SECURITY = "/account-security";
 const BOOKING = "/booking";
 const BROWSER_HISTORY = "/browser-history";
 const COMMON = "/common";
+const SEASONS = "/seasons";
 
 // Auth
 export const LOGIN = `${BASE_PATH}${API}${VERSION}${AUTH}/login`;
@@ -111,6 +112,7 @@ export const GET_REQUESTED_BOOKINGS_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}
 export const GET_CANCELLED_BOOKINGS_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${BOOKING}/cancelled`;
 export const GET_PENDING_BOOKINGS_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${BOOKING}/pending`;
 export const INSERT_BOOKINGS_INQUIRY_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${BOOKING}/tour-book-inquiry`;
+export const CANCELLED_PENDING_BOOKINGS_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${BOOKING}/cancelled-pending`;
 
 // User Benefits
 export const GET_ALL_ACTIVE_USER_BENEFITS_BE = `${BASE_PATH}${API}${VERSION}${USER_BENEFITS}/active`;
@@ -135,6 +137,10 @@ export const GET_ACTIVE_DESTINATION_HERO_SECTION_DATA = `${BASE_PATH}${API}${VER
 export const GET_ACTIVE_ACTIVITY_HERO_SECTION_DATA = `${BASE_PATH}${API}${VERSION}${HERO_SECTION}/activity`;
 export const GET_ACTIVE_PACKAGE_SCHEDULE_HERO_SECTION_DATA = `${BASE_PATH}${API}${VERSION}${HERO_SECTION}/package-schedule`;
 export const GET_ACTIVE_BOOKED_TOUR_HERO_SECTION_DATA = `${BASE_PATH}${API}${VERSION}${HERO_SECTION}/booked-tour`;
+export const GET_ACTIVE_VEHICLE_HERO_SECTION_DATA = `${BASE_PATH}${API}${VERSION}${HERO_SECTION}/vehicle`;
+export const GET_ACTIVE_VEHICLE_SPECIFICATION_HERO_SECTION_DATA = `${BASE_PATH}${API}${VERSION}${HERO_SECTION}/vehicle-specification`;
+export const GET_ACTIVE_VEHICLE_TYPES_HERO_SECTION_DATA = `${BASE_PATH}${API}${VERSION}${HERO_SECTION}/vehicle-types`;
+export const GET_ACTIVE_SEASONS_HERO_SECTION_DATA = `${BASE_PATH}${API}${VERSION}${HERO_SECTION}/seasons`;
 
 // Why Choose Us
 export const GET_ACTIVE_WHY_CHOOSE_US_DATA = `${BASE_PATH}${API}${VERSION}${WHY_CHOOSE_US}/active`;
@@ -255,6 +261,17 @@ export const GET_ALL_CATEGORIES_DATA = `${BASE_PATH}${API}${VERSION}${COMMON}/al
 // Others
 export const UPLOAD_IMAGE_TO_CLOUDINARY =
   "https://api.cloudinary.com/v1_1/dtzrivqye/image/upload";
+
+// Vehicles
+export const GET_VEHICLE_SPECIFICATION_DETAILS_BY_ID_DATA = `${BASE_PATH}${API}${VERSION}${VEHICLES}/specification`;
+export const GET_VEHICLE_SPECIFICATION_DETAILS_BY_REQUEST_DATA = `${BASE_PATH}${API}${VERSION}${VEHICLES}/specification`;
+export const GET_VEHICLE_SPECIFICATION_FILTERS_DATA = `${BASE_PATH}${API}${VERSION}${VEHICLES}/specification-filters`;
+export const GET_VEHICLE_TYPES_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${VEHICLES}/vehicle-types`;
+export const GET_VEHICLE_TYPES_DETAILS_BY_ID_DATA = `${BASE_PATH}${API}${VERSION}${VEHICLES}/vehicle-types`;
+
+// Seasons
+export const GET_ACTIVE_SEASONS_BASIC_DETAILS_DATA = `${BASE_PATH}${API}${VERSION}${SEASONS}/basic-details`;
+export const GET_SEASONS_DETAILS_BY_SEASON_ID_DATA = `${BASE_PATH}${API}${VERSION}${SEASONS}`;
 
 
   

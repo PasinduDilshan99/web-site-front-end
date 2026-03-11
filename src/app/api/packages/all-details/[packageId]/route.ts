@@ -7,17 +7,17 @@ interface PackageParams {
 
 export async function GET(
   request: NextRequest,
-  context: { params: PackageParams | Promise<PackageParams> }
+  context: { params: PackageParams | Promise<PackageParams> },
 ) {
   try {
-  const { packageId } = await context.params;
+    const { packageId } = await context.params;
 
     console.log("package  API - packageId:", packageId);
 
     if (!packageId) {
       return NextResponse.json(
         { error: "package ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -27,13 +27,15 @@ export async function GET(
 
     const backendUrl = `${GET_PACKAGE_ALL_DETAILS_BY_PACKAGE_ID_DATA}/${packageId}`;
     console.log("Backend URL:", backendUrl);
+    const cookie = request.headers.get("cookie");
 
     const response = await fetch(backendUrl, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        ...(cookie && { cookie }),
       },
-      cache: "no-store",
+      credentials: "include",
     });
 
     if (!response.ok) {
@@ -41,7 +43,7 @@ export async function GET(
       console.error("Backend returned error:", text);
       return NextResponse.json(
         { error: "Failed to fetch package details" },
-        { status: response.status }
+        { status: response.status },
       );
     }
 
@@ -51,7 +53,7 @@ export async function GET(
     console.error("Error fetching package details:", error);
     return NextResponse.json(
       { error: "Something went wrong" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

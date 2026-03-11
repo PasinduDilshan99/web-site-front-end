@@ -24,7 +24,7 @@ const VehicleTabs: React.FC<VehicleTabsProps> = ({ activeTab, onTabChange }) => 
             onClick={() => onTabChange(tab.id)}
             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
               activeTab === tab.id
-                ? 'border-amber-500 text-amber-600'
+                ? 'border-teal-500 text-teal-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             }`}
           >

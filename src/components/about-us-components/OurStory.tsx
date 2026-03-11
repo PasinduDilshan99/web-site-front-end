@@ -7,26 +7,37 @@ import {
   MapPin,
   Heart,
   Globe,
+  Map,
+  Handshake,
+  Rocket,
   LucideIcon,
 } from "lucide-react";
 import { OurStoryService } from "@/services/ourStoryService"; // Import service
-import {
-  TimelineItem,
-  CoreValue,
-  OurStoryData,
-  ColorClasses,
-  ColorMap,
-} from "@/types/our-story-types"; // Import types
+import { OurStoryData, ColorMap } from "@/types/our-story-types"; // Import types
 import LoadingOurStory from "./LoadingOurStory";
 
-// Icon mapping with proper LucideIcon type
+// Map Font Awesome class names to Lucide icons
 const iconMap: Record<string, LucideIcon> = {
+  // Font Awesome regular
+  "fa-regular fa-calendar": Calendar,
+  "fa-regular fa-clock": Calendar,
+
+  // Font Awesome solid
+  "fa-solid fa-users": Users,
+  "fa-solid fa-map-location-dot": Map,
+  "fa-solid fa-handshake": Handshake,
+  "fa-solid fa-rocket": Rocket,
+
+  // Also keep the original Lucide names as fallback
   Calendar,
   Users,
   Award,
   MapPin,
   Heart,
   Globe,
+  Map,
+  Handshake,
+  Rocket,
 };
 
 // Color mapping for Tailwind CSS classes
@@ -62,6 +73,15 @@ const colorMap: ColorMap = {
     bgLight: "bg-gradient-to-r from-blue-50 to-teal-50",
     gradient: "from-blue-600 to-teal-600",
   },
+};
+
+// Also add color mapping for the hex values from your data
+const hexToColorName: Record<string, string> = {
+  "#0891B2": "blue",
+  "#0D9488": "teal",
+  "#0284C7": "blue",
+  "#059669": "teal",
+  "#7C3AED": "purple",
 };
 
 const OurStory = () => {
@@ -101,21 +121,28 @@ const OurStory = () => {
     color: string,
     size = "w-5 h-5 sm:w-6 sm:h-6",
   ) => {
-    const IconComponent = iconMap[iconName];
+    const IconComponent =
+      iconMap[iconName] || iconMap[iconName.split(" ").pop() || ""];
+
     if (!IconComponent) {
       console.warn(`Icon ${iconName} not found in iconMap`);
+      // Return a default icon or null
       return null;
     }
 
-    const colorClasses = colorMap[color] || colorMap.blue;
+    // Handle hex color codes
+    const colorName = hexToColorName[color] || color;
+    const colorClasses = colorMap[colorName] || colorMap.blue;
+
     return <IconComponent className={`${size} ${colorClasses.text}`} />;
   };
 
   const getTimelineDotColor = (color: string) => {
-    const colorClasses = colorMap[color] || colorMap.blue;
+    const colorName = hexToColorName[color] || color;
+    const colorClasses = colorMap[colorName] || colorMap.blue;
 
     // Special handling for gradient colors
-    if (color === "blue-teal") {
+    if (colorName === "blue-teal") {
       return "bg-gradient-to-r from-blue-600 to-teal-600";
     }
 
@@ -127,14 +154,21 @@ const OurStory = () => {
     index: number,
     totalItems: number,
   ) => {
-    const colorClasses = colorMap[color] || colorMap.blue;
+    const colorName = hexToColorName[color] || color;
 
     // Last item gets special treatment
     if (index === totalItems - 1) {
-      if (color === "blue-teal") {
+      if (colorName === "blue-teal") {
         return "bg-gradient-to-r from-blue-50 to-teal-50 border border-blue-100";
       }
-      return `bg-gradient-to-r from-${color}-50 to-${color}-100 border border-${color}-100`;
+      // For hex colors, we need to map to Tailwind classes
+      if (colorName === "blue")
+        return "bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-100";
+      if (colorName === "teal")
+        return "bg-gradient-to-r from-teal-50 to-teal-100 border border-teal-100";
+      if (colorName === "purple")
+        return "bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-100";
+      return `bg-gradient-to-r from-${colorName}-50 to-${colorName}-100 border border-${colorName}-100`;
     }
 
     return "bg-white border border-gray-100";
@@ -204,7 +238,8 @@ const OurStory = () => {
           <div className="space-y-6 sm:space-y-8 md:space-y-12">
             {storyData.timelines.map((item, index) => {
               const isEven = index % 2 === 0;
-              const colorClasses = colorMap[item.color] || colorMap.blue;
+              const colorName = hexToColorName[item.color] || item.color;
+              const colorClasses = colorMap[colorName] || colorMap.blue;
 
               return (
                 <div key={item.storyId} className="relative">
@@ -318,7 +353,8 @@ const OurStory = () => {
           </h2>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-7 md:gap-8">
             {storyData.coreValues.map((value) => {
-              const colorClasses = colorMap[value.color] || colorMap.blue;
+              const colorName = hexToColorName[value.color] || value.color;
+              const colorClasses = colorMap[colorName] || colorMap.blue;
 
               return (
                 <div key={value.valueId} className="text-center">
@@ -340,25 +376,6 @@ const OurStory = () => {
             })}
           </div>
         </div>
-
-        {/* Call to Action - Commented out but with responsive classes added */}
-        {/* <div className="text-center mt-12 sm:mt-14 md:mt-16">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4 sm:mb-5 md:mb-6 px-4">
-            Ready to Experience Sri Lanka With Us?
-          </h2>
-          <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-6 sm:mb-7 md:mb-8 max-w-2xl mx-auto px-4 leading-relaxed">
-            Join thousands of travelers who have trusted us with their Sri Lankan adventures. 
-            Let&apos;s create your perfect journey together.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
-            <button className="px-6 sm:px-8 py-2.5 sm:py-3 bg-gradient-to-r from-blue-600 to-teal-600 text-white text-sm sm:text-base font-semibold rounded-full hover:from-blue-700 hover:to-teal-700 transform hover:scale-105 transition-all duration-300 shadow-lg">
-              Start Planning Your Trip
-            </button>
-            <button className="px-6 sm:px-8 py-2.5 sm:py-3 border-2 border-blue-600 text-blue-600 text-sm sm:text-base font-semibold rounded-full hover:bg-blue-50 transition-all duration-300">
-              Meet Our Team
-            </button>
-          </div>
-        </div> */}
       </div>
     </section>
   );

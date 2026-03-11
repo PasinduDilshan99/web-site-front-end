@@ -2,9 +2,19 @@
 "use client";
 import UserProfileUpcomingToursLoading from "@/components/user-profile-components/Loadings/UserProfileUpcomingToursLoading";
 import { useAuth } from "@/context/AuthContext";
+import { bookingService } from "@/services/bookingService";
 import { UserProfileAPIService } from "@/services/userProfileAPIService";
 import { UpcomingTour } from "@/types/upcoming-tours";
+import {
+  COMPANY_CONTACT_NUMBER_LINK,
+  PAID_BOOKING_STATUS,
+} from "@/utils/constant";
 import { USER_PROFILE_UPCOMING_TOURS_VIEW_PRIVILEGE } from "@/utils/privileges";
+import {
+  EMPLOYEE_PAGE_PATH,
+  SRI_LANKAN_TOUR_PAGE_PATH,
+  USER_PROFILE_PAGE_PATH,
+} from "@/utils/urls";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
@@ -20,13 +30,30 @@ export default function UpcomingToursPage() {
   const router = useRouter();
 
   const { user } = useAuth();
+  const [expandedDescriptions, setExpandedDescriptions] = useState<{
+    [key: number]: boolean;
+  }>({});
+
+  // ── Custom cancel-confirmation modal state ──
+  const [cancelModal, setCancelModal] = useState<{
+    open: boolean;
+    bookingId: number | null;
+  }>({ open: false, bookingId: null });
+  const [cancelling, setCancelling] = useState(false);
+
+  const toggleDescription = (bookingId: number) => {
+    setExpandedDescriptions((prev) => ({
+      ...prev,
+      [bookingId]: !prev[bookingId],
+    }));
+  };
 
   useEffect(() => {
     if (
       user &&
       !user.privileges.includes(USER_PROFILE_UPCOMING_TOURS_VIEW_PRIVILEGE)
     ) {
-      router.push("/profile");
+      router.push(USER_PROFILE_PAGE_PATH);
     }
   }, [user, router]);
 
@@ -51,7 +78,7 @@ export default function UpcomingToursPage() {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-LK", {
       style: "currency",
-      currency: "LKR",
+      currency: "USD",
       minimumFractionDigits: 0,
     }).format(amount);
   };
@@ -178,6 +205,39 @@ export default function UpcomingToursPage() {
     }
   };
 
+  // ── Open modal instead of window.confirm ──
+  const handleCancelRequest = (bookingId: number) => {
+    setCancelModal({ open: true, bookingId });
+  };
+
+  // ── Called when user confirms in the modal ──
+  const confirmCancel = async () => {
+    if (cancelModal.bookingId === null) return;
+    try {
+      setCancelling(true);
+      const response = await bookingService.cancelBookingInquiry({
+        bookingId: cancelModal.bookingId,
+        bookingStatus: PAID_BOOKING_STATUS,
+      });
+      if (response.code === 200) {
+        setCancelModal({ open: false, bookingId: null });
+      } else {
+        alert("Failed to cancel request.");
+      }
+      setCancelModal({ open: false, bookingId: null });
+      await loadUpcomingTours();
+    } catch (error) {
+      console.error("Failed to cancel tour:", error);
+      alert("Failed to cancel tour. Please try again.");
+    } finally {
+      setCancelling(false);
+    }
+  };
+
+  const dismissCancelModal = () => {
+    if (!cancelling) setCancelModal({ open: false, bookingId: null });
+  };
+
   if (loading) {
     return <UserProfileUpcomingToursLoading />;
   }
@@ -267,6 +327,63 @@ export default function UpcomingToursPage() {
 
   return (
     <div className="flex-1 p-4 md:p-6 lg:p-8 bg-gradient-to-br from-gray-50 to-white min-h-screen">
+      {/* ── Cancel Confirmation Modal ── */}
+      {cancelModal.open && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-white/20 backdrop-blur-sm"
+          onClick={dismissCancelModal}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-full max-w-md p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Icon */}
+            <div className="flex items-center justify-center w-14 h-14 mx-auto mb-4 rounded-full bg-red-50 border border-red-100">
+              <svg
+                className="w-7 h-7 text-red-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
+                />
+              </svg>
+            </div>
+
+            {/* Text */}
+            <h3 className="text-xl font-bold text-gray-800 text-center mb-2">
+              Cancel Upcoming Tour?
+            </h3>
+            <p className="text-gray-500 text-sm text-center mb-6">
+              Are you sure you want to cancel this upcoming tour? This action
+              cannot be undone.
+            </p>
+
+            {/* Buttons */}
+            <div className="flex gap-3">
+              <button
+                onClick={dismissCancelModal}
+                disabled={cancelling}
+                className="cursor-pointer flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-200 text-sm font-medium disabled:opacity-50"
+              >
+                Keep Tour
+              </button>
+              <button
+                onClick={confirmCancel}
+                disabled={cancelling}
+                className="cursor-pointer flex-1 px-4 py-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:shadow-lg transition-all duration-200 text-sm font-semibold disabled:opacity-50"
+              >
+                {cancelling ? "Cancelling..." : "Yes, Cancel"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8 md:mb-10">
@@ -429,18 +546,46 @@ export default function UpcomingToursPage() {
                         </div>
                       </div>
 
-                      <p className="text-gray-600 text-sm mb-4">
-                        {tour.tourDescription}
-                      </p>
+                      <div className="mb-3">
+                        <p className="text-gray-700 text-sm md:text-base">
+                          {expandedDescriptions[tour.bookingId]
+                            ? tour.tourDescription
+                            : tour.tourDescription.substring(0, 200) +
+                              (tour.tourDescription.length > 200 ? "..." : "")}
+                        </p>
+                        {tour.tourDescription.length > 200 && (
+                          <button
+                            onClick={() => toggleDescription(tour.bookingId)}
+                            className="cursor-pointer text-sky-600 hover:text-sky-500 text-xs underline mt-1 transition-colors"
+                          >
+                            {expandedDescriptions[tour.bookingId]
+                              ? "Show Less"
+                              : "Show More"}
+                          </button>
+                        )}
+                      </div>
                     </div>
 
                     <div className="flex items-center space-x-3">
-                      <button className="px-4 py-2 bg-sky-50 text-sky-700 rounded-lg border border-sky-200 hover:bg-sky-100 transition-colors text-sm font-medium">
+                      <button
+                        onClick={() =>
+                          router.push(
+                            `${EMPLOYEE_PAGE_PATH}/${tour.assignTo}?name=${tour.assignToName}`,
+                          )
+                        }
+                        className="cursor-pointer px-4 py-2 bg-sky-50 text-sky-700 rounded-lg border border-sky-200 hover:bg-sky-100 transition-colors text-sm font-medium"
+                      >
                         Contact Guide
                       </button>
                       <button
+                        onClick={() => handleCancelRequest(tour.bookingId)}
+                        className="cursor-pointer px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
+                      >
+                        Cancel
+                      </button>
+                      <button
                         onClick={() => toggleBookingExpansion(tour.bookingId)}
-                        className="p-2 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                        className="cursor-pointer p-2 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
                       >
                         <svg
                           className={`w-5 h-5 text-gray-600 transform transition-transform ${
@@ -515,23 +660,25 @@ export default function UpcomingToursPage() {
                               <span className="text-sm text-gray-600">
                                 Package
                               </span>
-                              <span className="font-medium">
+                              <span className="font-medium text-gray-800">
                                 {tour.packageName}
                               </span>
                             </div>
-                            <div className="flex justify-between items-center">
-                              <span className="text-sm text-gray-600">
-                                Schedule
-                              </span>
-                              <span className="font-medium">
-                                {tour.packageScheduleName}
-                              </span>
-                            </div>
+                            {tour.packageScheduleName && (
+                              <div className="flex justify-between items-center">
+                                <span className="text-sm text-gray-600">
+                                  Schedule
+                                </span>
+                                <span className="font-medium text-gray-800">
+                                  {tour.packageScheduleName}
+                                </span>
+                              </div>
+                            )}
                             <div className="flex justify-between items-center">
                               <span className="text-sm text-gray-600">
                                 Price per person
                               </span>
-                              <span className="font-medium">
+                              <span className="font-medium text-gray-800">
                                 {formatCurrency(tour.packagePricePerPerson)}
                               </span>
                             </div>
@@ -565,9 +712,11 @@ export default function UpcomingToursPage() {
                                   <div className="font-medium text-sm text-gray-800">
                                     {payment.paymentReference}
                                   </div>
-                                  <div className="text-xs text-gray-500">
-                                    Due: {formatDate(payment.dueDate)}
-                                  </div>
+                                  {payment.dueDate && (
+                                    <div className="text-xs text-gray-500">
+                                      Due: {formatDate(payment.dueDate)}
+                                    </div>
+                                  )}
                                 </div>
                                 <div className="text-right">
                                   <div className="font-semibold text-gray-800">
@@ -760,24 +909,25 @@ export default function UpcomingToursPage() {
           <h3 className="text-lg font-semibold text-gray-800 mb-6">
             Need Assistance?
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <button className="flex items-center justify-center space-x-3 bg-white text-sky-700 rounded-lg p-4 border border-sky-200 hover:bg-sky-50 transition-all duration-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <a
+              href={COMPANY_CONTACT_NUMBER_LINK}
+              className="cursor-pointer flex items-center justify-center space-x-3 bg-white
+               text-sky-700 rounded-lg p-4 border border-sky-200 hover:bg-sky-50 transition-all duration-200"
+            >
               <div className="w-10 h-10 bg-sky-100 rounded-lg flex items-center justify-center">
                 <span>📞</span>
               </div>
               <span className="font-medium">24/7 Support</span>
-            </button>
-            <button className="flex items-center justify-center space-x-3 bg-white text-emerald-700 rounded-lg p-4 border border-emerald-200 hover:bg-emerald-50 transition-all duration-200">
-              <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
-                <span>💳</span>
-              </div>
-              <span className="font-medium">Make Payment</span>
-            </button>
-            <button className="flex items-center justify-center space-x-3 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg p-4 hover:shadow-lg transition-all duration-200">
+            </a>
+            <button
+              onClick={() => router.push(SRI_LANKAN_TOUR_PAGE_PATH)}
+              className="cursor-pointer flex items-center justify-center space-x-3 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg p-4 hover:shadow-lg transition-all duration-200"
+            >
               <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
                 <span>📋</span>
               </div>
-              <span className="font-medium">View Full Itinerary</span>
+              <span className="font-medium">View All Tours</span>
             </button>
           </div>
         </div>

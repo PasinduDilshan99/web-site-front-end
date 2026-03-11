@@ -44,6 +44,11 @@ import {
 import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
 import SideBarLoading from "./SideBarLoading";
+import {
+  USER_PROFILE_PAGE_PATH,
+  USER_PROFILE_USER_PAGE_PATH,
+} from "@/utils/urls";
+import { USER_PLACE_HOLDER_IMAGE } from "@/utils/constant";
 
 // Sea Blue & Sea Green Theme Colors
 const THEME = {
@@ -340,7 +345,10 @@ export default function Sidebar() {
         if (active.parentId) {
           setExpandedItems((prev) => new Set(prev).add(active.parentId!));
         }
-      } else if (pathname === "/profile" || pathname === "/profile/user") {
+      } else if (
+        pathname === USER_PROFILE_PAGE_PATH ||
+        pathname === USER_PROFILE_USER_PAGE_PATH
+      ) {
         const profileItem = filteredSidebarData.find(
           (item) => item.name === "Profile",
         );
@@ -396,11 +404,11 @@ export default function Sidebar() {
       }
 
       if (item.url) {
-        const route = `/profile${item.url}`;
+        const route = `${USER_PROFILE_PAGE_PATH}${item.url}`;
         router.push(route);
       } else {
         const routeName = item.name.toLowerCase().replace(/\s+/g, "-");
-        router.push(`/profile/${routeName}`);
+        router.push(`${USER_PROFILE_PAGE_PATH}/${routeName}`);
       }
     },
     [router, isMobile, user],
@@ -667,7 +675,7 @@ export default function Sidebar() {
               <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-500 to-green-500 flex items-center justify-center flex-shrink-0">
                 <Image
                   alt="profile pic"
-                  src={user?.imageUrl || "/images/users/user-1.jpg"}
+                  src={user?.imageUrl || USER_PLACE_HOLDER_IMAGE}
                   width={400}
                   height={400}
                   className="h-full w-full object-cover rounded-lg"

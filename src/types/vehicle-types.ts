@@ -1,4 +1,4 @@
-// Vehicle API Types
+// Vehicle Types
 export interface ApiResponse<T> {
   code: number;
   status: string;
@@ -6,7 +6,25 @@ export interface ApiResponse<T> {
   data: T;
   timestamp: string;
 }
-
+// types/vehicle-types.ts
+export interface VehicleFilters {
+  search: string;
+  make: string;
+  bodyType: string;
+  yearRange: [number, number];
+  engineType: string;
+  transmission: string;
+  fuelType: string;
+  horsepowerRange: [number, number];
+  seatCapacity: string;
+  // priceRange: [number, number];
+  // Remove these if they're not needed:
+  // status: string;
+  // model: string;
+  // transmissionType: string;
+  // minHorsepower: number;
+  // maxHorsepower: number;
+}
 export interface Vehicle {
   vehicleId: number;
   registrationNumber: string;
@@ -106,21 +124,6 @@ export interface VehicleUsageLog {
   terminatedBy: number;
 }
 
-// Filter types
-export interface VehicleFilters {
-  search: string;
-  status: string;
-  make: string;
-  model: string;
-  bodyType: string;
-  yearRange: [number, number];
-  priceRange: [number, number];
-  engineType: string;
-  transmissionType: string;
-  fuelType: string;
-  minHorsepower: number;
-  maxHorsepower: number;
-}
 
 // Pagination types
 export interface PaginationState {
@@ -136,7 +139,7 @@ export type ActiveVehiclesResponse = ApiResponse<Vehicle[]>;
 // Vehicle API Types - Additional types for GET_VEHICLES_BY_ID response
 
 // New types for the specific API response structure
-export type VehicleByIdResponse = ApiResponse<VehicleById[]>
+export type VehicleByIdResponse = ApiResponse<VehicleById[]>;
 
 export interface VehicleById {
   vehicleId: number;
@@ -281,4 +284,169 @@ export interface LatestFuelRecord {
   fuelCost: number;
   fuelOdometer: number;
   refuelStation: string;
+}
+// ================================
+// Vehicle Specification Details API
+// GET /api/vehicles/specification/{id}
+// ================================
+
+export type VehicleSpecificationDetailsResponse =
+  ApiResponse<VehicleSpecificationDetails>;
+export interface VehicleSpecificationDetails {
+  specificationId: number;
+  make: string;
+  model: string;
+  year: number;
+  generation: string | null;
+  bodyType: string;
+  price: number;
+  engineType: string;
+  engineCapacity: string | null;
+  horsepowerHp: number;
+  torqueNm: number;
+  electricRangeKm: number | null;
+  drivetrain: string;
+  topSpeedKmh: number;
+  acceleration0To100: number;
+  co2EmissionsGKm: number | null;
+  doors: number;
+  seatCapacity: number;
+  dimensions: string | null;
+  wheelbaseMm: number | null;
+  weightKg: number | null;
+  wheelSize: string | null;
+  tireType: string | null;
+  upholsteryType: string | null;
+  sunroofType: string;
+  cruiseControlType: string;
+  entertainmentFeatures: string | null;
+  comfortFeatures: string | null;
+  ncapSafetyRating: number | null;
+  airbagsCount: number;
+  parkingCamera: string | null;
+  laneDepartureWarning: boolean;
+  safetyFeatures: string | null;
+  fuelTankCapacityLiters: number;
+  warrantyYears: number;
+  imageUrl: string | null;
+  airCondition: boolean;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+
+  transmission: TransmissionDetails;
+  fuelType: FuelTypeDetails;
+  airConditioningType: AirConditioningTypeDetails;
+  images: SpecificationImageDetails[];
+}
+
+export interface TransmissionDetails {
+  transmissionTypeId: number;
+  transmissionTypeName: string;
+  description: string;
+}
+
+export interface FuelTypeDetails {
+  fuelTypeId: number;
+  fuelTypeName: string;
+  description: string;
+}
+
+export interface AirConditioningTypeDetails {
+  acTypeId: number;
+  acTypeName: string;
+  description: string;
+}
+
+export interface SpecificationImageDetails {
+  imageId: number;
+  imageUrl: string;
+  imageName: string;
+  description: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface VehicleSpecificationSearchRequest {
+  make?: string | null;
+  model?: string | null;
+  year?: number | null;
+  bodyType?: string | null;
+  horsePower?: number | null;
+  seats?: number | null;
+  roofType?: string | null;
+  acType?: string | null;
+
+  pageNumber: number;
+  pageSize: number;
+}
+
+export interface VehicleSpecificationSearchResponseData {
+  totalRecords: number;
+  pageNumber: number;
+  pageSize: number;
+  vehicles: VehicleBasicDetails[];
+}
+
+export interface VehicleBasicDetails {
+  specificationId: number;
+  make: string;
+  model: string;
+  year: number;
+  bodyType: string;
+  horsepowerHp: number;
+  seatCapacity: number;
+  sunroofType: string;
+  acTypeName: string;
+  imageUrl: string;
+}
+
+// Vehicle Filter Types
+
+// Horse power range type
+export interface HorsePowerRange {
+  min: number;
+  max: number;
+}
+
+// Filter response returned from backend
+export interface VehicleSpecificationFilterResponse {
+  makes: string[];
+  models: string[];
+  years: number[];
+  bodyTypes: string[];
+  seats: number[];
+  roofTypes: string[];
+  acTypes: string[];
+  horsePowerRange: HorsePowerRange;
+}
+
+
+// types/vehicle-types.ts (add these to your existing file)
+
+export interface VehicleType {
+  vehicleTypeId: number;
+  name: string;
+  description: string;
+  status: string;
+  images: VehicleTypeImage[];
+}
+
+export interface VehicleTypeImage {
+  imageId: number;
+  imageName: string;
+  imageDescription: string;
+  imageUrl: string;
+}
+
+export interface VehicleTypesResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: VehicleType[];
+  timestamp: string;
+}
+
+export interface VehicleTypeFilters {
+  search: string;
 }

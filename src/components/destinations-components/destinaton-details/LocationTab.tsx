@@ -23,39 +23,56 @@ const LocationTab: React.FC<LocationTabProps> = ({ destination }) => {
 
   return (
     <div>
-      <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-4">Location Details</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <h4 className="font-semibold text-gray-900 mb-2">Coordinates</h4>
-          <div className="bg-gray-50 rounded-lg p-4">
-            <div className="flex justify-between text-sm">
+      <h3 className="text-base sm:text-lg lg:text-xl font-bold text-gray-900 mb-3 sm:mb-4">
+        Location Details
+      </h3>
+      
+      {/* Info cards - Responsive grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6">
+        {/* Coordinates Card */}
+        <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+          <h4 className="font-semibold text-gray-900 mb-2 text-sm sm:text-base">
+            Coordinates
+          </h4>
+          <div className="space-y-1.5 sm:space-y-2">
+            <div className="flex justify-between text-xs sm:text-sm">
               <span className="text-gray-600">Latitude:</span>
-              <span className="font-mono text-gray-900">
+              <span className="font-mono text-gray-900 font-medium">
                 {coordinates.lat.toFixed(6)}
               </span>
             </div>
-            <div className="flex justify-between text-sm mt-2">
+            <div className="flex justify-between text-xs sm:text-sm">
               <span className="text-gray-600">Longitude:</span>
-              <span className="font-mono text-gray-900">
+              <span className="font-mono text-gray-900 font-medium">
                 {coordinates.lng.toFixed(6)}
               </span>
             </div>
           </div>
         </div>
-        <div>
-          <h4 className="font-semibold text-gray-900 mb-2">Region</h4>
-          <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4">
-            <p className="text-cyan-800 font-medium">{destination.location}</p>
-            <p className="text-cyan-600 text-sm mt-1">Sri Lanka</p>
-          </div>
+
+        {/* Region Card */}
+        <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-3 sm:p-4">
+          <h4 className="font-semibold text-cyan-900 mb-2 text-sm sm:text-base">
+            Region
+          </h4>
+          <p className="text-cyan-800 font-medium text-sm sm:text-base">
+            {destination.location}
+          </p>
+          <p className="text-cyan-600 text-xs sm:text-sm mt-1">
+            Sri Lanka
+          </p>
         </div>
       </div>
 
-      {/* OpenStreetMap Integration using iframe */}
-      <div className="mt-6">
-        <h4 className="font-semibold text-gray-900 mb-3">Location on Map</h4>
+      {/* Map Section */}
+      <div>
+        <h4 className="font-semibold text-gray-900 mb-2 sm:mb-3 text-sm sm:text-base">
+          Location on Map
+        </h4>
+        
         <div className="rounded-lg overflow-hidden border border-gray-300 shadow-md">
-          <div className="h-[400px] w-full relative">
+          {/* Map Container - Responsive height */}
+          <div className="h-[250px] xs:h-[300px] sm:h-[350px] lg:h-[400px] w-full relative">
             <iframe
               width="100%"
               height="100%"
@@ -65,14 +82,16 @@ const LocationTab: React.FC<LocationTabProps> = ({ destination }) => {
               marginWidth={0}
               src={osmIframeUrl}
               title={`OpenStreetMap - ${destination.destinationName}`}
-              className="border-0"
+              className="border-0 absolute inset-0"
               loading="lazy"
             />
           </div>
-          <div className="bg-gray-50 px-4 py-3 border-t border-gray-200 flex justify-between items-center">
-            <div className="flex items-center text-sm text-gray-600">
+          
+          {/* Map Footer - Responsive layout */}
+          <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-t border-gray-200 flex flex-col xs:flex-row xs:justify-between xs:items-center gap-2">
+            <div className="flex items-center text-xs sm:text-sm text-gray-600">
               <svg
-                className="w-4 h-4 mr-2 text-blue-500"
+                className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-blue-500 flex-shrink-0"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -82,16 +101,17 @@ const LocationTab: React.FC<LocationTabProps> = ({ destination }) => {
                   clipRule="evenodd"
                 />
               </svg>
-              <span>Powered by OpenStreetMap</span>
+              <span className="truncate">Powered by OpenStreetMap</span>
             </div>
+            
             <a
               href={osmFullUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 text-sm flex items-center font-medium"
+              className="text-blue-600 hover:text-blue-800 text-xs sm:text-sm flex items-center font-medium"
             >
               <svg
-                className="w-4 h-4 mr-1"
+                className="w-3 h-3 sm:w-4 sm:h-4 mr-1 flex-shrink-0"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -101,44 +121,10 @@ const LocationTab: React.FC<LocationTabProps> = ({ destination }) => {
                   clipRule="evenodd"
                 />
               </svg>
-              Open in New Tab
+              <span>Open in New Tab</span>
             </a>
           </div>
         </div>
-        
-        {/* Map controls/info */}
-        {/* <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-blue-50 p-3 rounded-lg">
-            <div className="flex items-center">
-              <svg className="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-              </svg>
-              <span className="font-medium text-blue-800">Interactive</span>
-            </div>
-            <p className="text-blue-700 text-xs mt-1">Zoom and pan to explore</p>
-          </div>
-          
-          <div className="bg-green-50 p-3 rounded-lg">
-            <div className="flex items-center">
-              <svg className="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span className="font-medium text-green-800">Free & Open</span>
-            </div>
-            <p className="text-green-700 text-xs mt-1">OpenStreetMap data</p>
-          </div>
-          
-          <div className="bg-purple-50 p-3 rounded-lg">
-            <div className="flex items-center">
-              <svg className="w-5 h-5 text-purple-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <span className="font-medium text-purple-800">Precise</span>
-            </div>
-            <p className="text-purple-700 text-xs mt-1">Exact coordinates shown</p>
-          </div>
-        </div> */}
       </div>
     </div>
   );
