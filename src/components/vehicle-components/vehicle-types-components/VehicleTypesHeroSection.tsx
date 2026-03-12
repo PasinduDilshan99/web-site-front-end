@@ -125,7 +125,7 @@ const VehicleTypesHeroSection = () => {
   const currentSlideData = heroData[currentSlide] || {};
 
   return (
-    <div className="relative w-full h-[650px] lg:h-[800px] overflow-hidden bg-gradient-to-br from-teal-900 via-cyan-800 to-blue-900">
+    <div className="relative w-full h-[70vh] lg:h-[90vh] overflow-hidden bg-gradient-to-br from-teal-900 via-cyan-800 to-blue-900">
       {/* Image Slider */}
       <div className="relative w-full h-full">
         {heroData.map((item, index) => {

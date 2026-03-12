@@ -138,7 +138,7 @@ const VehicleSpecificationHeroSection: React.FC<
   return (
     <>
       {/* Hero Section with Slider */}
-      <div className="relative h-[60vh] sm:h-[70vh] lg:h-[80vh] min-h-[400px] sm:min-h-[500px] lg:min-h-[600px] overflow-hidden bg-gradient-to-br from-teal-900 via-cyan-900 to-blue-900">
+      <div className="relative h-[70vh] lg:h-[90vh] min-h-[400px] sm:min-h-[500px] lg:min-h-[600px] overflow-hidden bg-gradient-to-br from-teal-900 via-cyan-900 to-blue-900">
         {/* Image Slider */}
         <div className="relative w-full h-full">
           {vehicleSpec.images.map((image, index) => {

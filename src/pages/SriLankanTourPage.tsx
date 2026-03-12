@@ -202,8 +202,6 @@ const SriLankanTourPageContent: React.FC = () => {
         // Prepare API request
         const requestBody = buildSearchRequest(filterValues, page, pageSize);
 
-        console.log("Request Body:", requestBody); // For debugging
-
         const result = await TourService.searchTours(requestBody);
 
         if (result.code === 200) {
