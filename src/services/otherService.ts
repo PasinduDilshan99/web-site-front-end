@@ -22,7 +22,9 @@ export class OtherService {
       throw new Error("Failed to fetch weather data");
     }
 
-    return response.json();
+    // Parse JSON response
+    const data: WeatherResponse = await response.json();
+    return data;
   }
 
   static async uploadImage(file: File): Promise<UploadImageDataResponse> {

@@ -617,7 +617,7 @@ const SeasonDetailsPage = () => {
       />
 
       {/* ── Hero Section ── */}
-      <div className="relative h-[400px] md:h-[500px] lg:h-[600px] overflow-hidden">
+      <div className="relative h-[70vh] lg:h-[90vh] overflow-hidden">
         {images.length > 0 ? (
           <div className="relative w-full h-full">
             {images.map((image: SeasonImage, index: number) => (
@@ -654,7 +654,7 @@ const SeasonDetailsPage = () => {
                 e.stopPropagation();
                 prevSlide();
               }}
-              className="cursor-pointer absolute left-4 md:left-6 top-1/2 -translate-y-1/2 z-20 bg-white/10 backdrop-blur-sm text-white p-2 md:p-3 rounded-full hover:bg-white/30 active:scale-95 transition-all duration-300 group"
+              className="hidden lg:flex cursor-pointer absolute left-4 md:left-6 top-1/2 -translate-y-1/2 z-20 bg-white/10 backdrop-blur-sm text-white p-2 md:p-3 rounded-full hover:bg-white/30 active:scale-95 transition-all duration-300 group"
               aria-label="Previous image"
             >
               <svg
@@ -677,7 +677,7 @@ const SeasonDetailsPage = () => {
                 e.stopPropagation();
                 nextSlide();
               }}
-              className="cursor-pointer absolute right-4 md:right-6 top-1/2 -translate-y-1/2 z-20 bg-white/10 backdrop-blur-sm text-white p-2 md:p-3 rounded-full hover:bg-white/30 active:scale-95 transition-all duration-300 group"
+              className="hidden lg:flex cursor-pointer absolute right-4 md:right-6 top-1/2 -translate-y-1/2 z-20 bg-white/10 backdrop-blur-sm text-white p-2 md:p-3 rounded-full hover:bg-white/30 active:scale-95 transition-all duration-300 group"
               aria-label="Next image"
             >
               <svg

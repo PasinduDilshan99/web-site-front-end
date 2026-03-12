@@ -112,7 +112,7 @@ const VehicleDetailsHeroSection: React.FC<VehicleDetailsHeroSectionProps> = ({
   return (
     <>
       {/* Hero Section with Slider */}
-      <div className="relative h-[500px] md:h-[700px] overflow-hidden bg-gradient-to-br from-slate-900 via-teal-900 to-cyan-900">
+      <div className="relative h-[70vh] lg:h-[90vh] overflow-hidden bg-gradient-to-br from-slate-900 via-teal-900 to-cyan-900">
         {/* Image Slider */}
         <div className="relative w-full h-full">
           {allImages.map((image, index) => {
