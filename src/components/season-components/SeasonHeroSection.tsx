@@ -178,13 +178,13 @@ const SeasonHeroSection = () => {
 
       {/* Slide Counter */}
       {heroData.length > 1 && (
-        <div className="absolute top-12 lg:top-28 right-6 text-white/80 text-sm backdrop-blur-sm bg-black/30 px-3 py-1.5 rounded-full border border-white/20">
+        <div className="absolute top-6 lg:top-14 right-6 text-white/80 text-sm backdrop-blur-sm bg-black/30 px-3 py-1.5 rounded-full border border-white/20">
           {currentSlide + 1} / {heroData.length}
         </div>
       )}
 
       {/* Content Overlay */}
-      <div className="absolute inset-0 flex items-center justify-center pt-12 lg:pt-20">
+      <div className="absolute inset-0 flex items-center justify-center pt-2 lg:pt-4">
         <div className="container mx-auto px-4 md:px-6 lg:px-8">
           <div className="max-w-5xl text-white mx-auto text-center">
             <div className="mb-8">

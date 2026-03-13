@@ -1,14 +1,26 @@
 // other-types.ts
 
 export interface CurrentWeather {
+  time: string;
+  interval: number;
   temperature: number;
   windspeed: number;
   winddirection: number;
+  is_day: number;
   weathercode: number;
-  time: string;
 }
 
-export interface WeatherResponse {
+export interface CurrentWeatherUnits {
+  time: string;
+  interval: string;
+  temperature: string;
+  windspeed: string;
+  winddirection: string;
+  is_day: string;
+  weathercode: string;
+}
+
+export interface WeatherData {
   latitude: number;
   longitude: number;
   generationtime_ms: number;
@@ -16,7 +28,16 @@ export interface WeatherResponse {
   timezone: string;
   timezone_abbreviation: string;
   elevation: number;
+  current_weather_units: CurrentWeatherUnits;
   current_weather: CurrentWeather;
+}
+
+export interface WeatherResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: WeatherData;
+  timestamp: string;
 }
 
 // types/other-types.ts

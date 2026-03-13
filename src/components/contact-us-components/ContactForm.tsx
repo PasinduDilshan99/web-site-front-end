@@ -1020,7 +1020,7 @@ const ContactForm = () => {
                           </svg>
                         </div>
                         <div className="text-sm lg:text-lg">
-                          <p className="text-sm text-gray-700">
+                          <div className="text-sm text-gray-700">
                             <p className="font-semibold text-blue-600">
                               We&apos;ll contact you through your preferred
                               method.
@@ -1032,7 +1032,7 @@ const ContactForm = () => {
                             >
                               {COMPANY_CONTACT_NUMBER}
                             </a>
-                          </p>
+                          </div>
                         </div>
                       </div>
                     </div>

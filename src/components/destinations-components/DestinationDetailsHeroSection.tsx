@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { DestinationData, DestinationImage } from "@/types/destination-types";
 import { OtherService } from "@/services/otherService";
-import { WeatherResponse } from "@/types/other-types";
+import { WeatherResponse, CurrentWeather } from "@/types/other-types";
 import { SunIcon } from "lucide-react";
 
 interface DestinationDetailsHeroSectionProps {
@@ -16,7 +16,8 @@ const DestinationDetailsHeroSection: React.FC<
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
-  const [weatherData, setWeatherData] = useState<WeatherResponse | null>(null);
+  const [weatherResponse, setWeatherResponse] =
+    useState<WeatherResponse | null>(null);
   const [weatherLoading, setWeatherLoading] = useState(false);
   const [weatherError, setWeatherError] = useState<string | null>(null);
 
@@ -29,12 +30,12 @@ const DestinationDetailsHeroSection: React.FC<
         setWeatherLoading(true);
         setWeatherError(null);
 
-        const data = await OtherService.getCurrentWeather(
+        const response = await OtherService.getCurrentWeather(
           destination.latitude.toString(),
           destination.longitude.toString(),
         );
 
-        setWeatherData(data);
+        setWeatherResponse(response);
       } catch (err) {
         console.error("Error fetching weather:", err);
         setWeatherError("Weather data unavailable");
@@ -64,11 +65,13 @@ const DestinationDetailsHeroSection: React.FC<
     setIsAutoPlaying(false);
     setTimeout(() => setIsAutoPlaying(true), 10000);
   };
+
   const truncateDescription = (text: string, limit: number = 200) => {
     if (!text) return "";
     if (text.length <= limit) return text;
     return text.substring(0, limit) + "...";
   };
+
   const nextSlide = () => {
     setSelectedImageIndex((prev) => (prev + 1) % destination.images.length);
     setIsAutoPlaying(false);
@@ -145,12 +148,12 @@ const DestinationDetailsHeroSection: React.FC<
       setWeatherLoading(true);
       setWeatherError(null);
 
-      const data = await OtherService.getCurrentWeather(
+      const response = await OtherService.getCurrentWeather(
         destination.latitude.toString(),
         destination.longitude.toString(),
       );
 
-      setWeatherData(data);
+      setWeatherResponse(response);
     } catch (err) {
       console.error("Error retrying weather fetch:", err);
       setWeatherError("Failed to load weather");
@@ -158,6 +161,9 @@ const DestinationDetailsHeroSection: React.FC<
       setWeatherLoading(false);
     }
   };
+
+  // Get current weather from response
+  const currentWeather = weatherResponse?.data?.current_weather;
 
   if (!destination.images.length) {
     return (
@@ -241,7 +247,7 @@ const DestinationDetailsHeroSection: React.FC<
                       Retry
                     </button>
                   </div>
-                ) : weatherData?.current_weather ? (
+                ) : currentWeather ? (
                   <>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -251,10 +257,8 @@ const DestinationDetailsHeroSection: React.FC<
                             Current Weather
                           </p>
                           <p className="text-base font-bold text-teal-200">
-                            {weatherData.current_weather.temperature}°C /{" "}
-                            {celsiusToFahrenheit(
-                              weatherData.current_weather.temperature,
-                            )}
+                            {currentWeather.temperature}°C /{" "}
+                            {celsiusToFahrenheit(currentWeather.temperature)}
                             °F
                           </p>
                         </div>
@@ -265,12 +269,10 @@ const DestinationDetailsHeroSection: React.FC<
                     </div>
                     <div className="mt-2 flex items-center justify-between text-xs text-white/70">
                       <span className="truncate max-w-[150px]">
-                        {getWeatherDescription(
-                          weatherData.current_weather.weathercode,
-                        )}
+                        {getWeatherDescription(currentWeather.weathercode)}
                       </span>
                       <span className="flex-shrink-0 ml-2">
-                        Wind: {weatherData.current_weather.windspeed} km/h
+                        Wind: {currentWeather.windspeed} km/h
                       </span>
                     </div>
                   </>
@@ -311,29 +313,25 @@ const DestinationDetailsHeroSection: React.FC<
                       Retry
                     </button>
                   </div>
-                ) : weatherData?.current_weather ? (
+                ) : currentWeather ? (
                   <>
                     <div className="flex items-center gap-2 mb-2">
                       <SunIcon className="w-4 h-4 text-yellow-300 flex-shrink-0" />
                       <div>
                         <p className="text-xs text-white/80">Current Weather</p>
                         <p className="text-sm font-bold text-teal-200">
-                          {weatherData.current_weather.temperature}°C /{" "}
-                          {celsiusToFahrenheit(
-                            weatherData.current_weather.temperature,
-                          )}
+                          {currentWeather.temperature}°C /{" "}
+                          {celsiusToFahrenheit(currentWeather.temperature)}
                           °F
                         </p>
                       </div>
                     </div>
                     <p className="text-xs text-white/70 truncate">
-                      {getWeatherDescription(
-                        weatherData.current_weather.weathercode,
-                      )}
+                      {getWeatherDescription(currentWeather.weathercode)}
                     </p>
                     <div className="flex items-center justify-between mt-1">
                       <span className="text-xs text-white/60">
-                        Wind: {weatherData.current_weather.windspeed} km/h
+                        Wind: {currentWeather.windspeed} km/h
                       </span>
                       <span className="text-xs text-white/60">
                         {getClimateType(destination.latitude)}
@@ -377,29 +375,25 @@ const DestinationDetailsHeroSection: React.FC<
                       Retry
                     </button>
                   </div>
-                ) : weatherData?.current_weather ? (
+                ) : currentWeather ? (
                   <>
                     <div className="flex items-center gap-3 mb-2">
                       <SunIcon className="w-5 h-5 text-yellow-300 flex-shrink-0" />
                       <div>
                         <p className="text-sm text-white/80">Current Weather</p>
                         <p className="text-lg font-bold text-teal-200">
-                          {weatherData.current_weather.temperature}°C /{" "}
-                          {celsiusToFahrenheit(
-                            weatherData.current_weather.temperature,
-                          )}
+                          {currentWeather.temperature}°C /{" "}
+                          {celsiusToFahrenheit(currentWeather.temperature)}
                           °F
                         </p>
                       </div>
                     </div>
                     <p className="text-xs text-white/70 truncate">
-                      {getWeatherDescription(
-                        weatherData.current_weather.weathercode,
-                      )}
+                      {getWeatherDescription(currentWeather.weathercode)}
                     </p>
                     <div className="flex items-center justify-between mt-1">
                       <span className="text-xs text-white/60">
-                        Wind: {weatherData.current_weather.windspeed} km/h
+                        Wind: {currentWeather.windspeed} km/h
                       </span>
                       <span className="text-xs text-white/60">
                         {getClimateType(destination.latitude)}
@@ -434,7 +428,6 @@ const DestinationDetailsHeroSection: React.FC<
 
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 md:p-8 mx-auto max-w-3xl mb-8">
                   <p className="text-md md:text-lg lg:text-xl text-gray-100 leading-relaxed mb-6">
-                    {/* {destination.images[selectedImageIndex].imageDescription} */}
                     {truncateDescription(
                       destination.destinationDescription,
                       150,

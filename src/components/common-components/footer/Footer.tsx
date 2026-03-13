@@ -1,6 +1,14 @@
 "use client";
 import React, { JSX, useEffect, useState } from "react";
-import { COMPANY_CONTACT_NUMBER, COMPANY_INFO_EMAIL, COMPANY_LOCATION, COMPANY_NAME } from "@/utils/constant";
+import {
+  COMPANY_CONTACT_NUMBER,
+  COMPANY_CONTACT_NUMBER_LINK,
+  COMPANY_INFO_EMAIL,
+  COMPANY_LATITUDE,
+  COMPANY_LOCATION,
+  COMPANY_LONGITUDE,
+  COMPANY_NAME,
+} from "@/utils/constant";
 import { FooterService } from "@/services/footerService";
 import {
   FooterData,
@@ -49,11 +57,39 @@ const SeaTurtle = ({ size, flip }: { size: number; flip: boolean }) => (
     <line x1="19" y1="32" x2="41" y2="56" stroke="#0f766e" strokeWidth="0.8" />
     <line x1="41" y1="32" x2="19" y2="56" stroke="#0f766e" strokeWidth="0.8" />
     {/* Front flippers */}
-    <ellipse cx="10" cy="33" rx="7" ry="4" fill="#0d9488" transform="rotate(-40 10 33)" />
-    <ellipse cx="50" cy="33" rx="7" ry="4" fill="#0d9488" transform="rotate(40 50 33)" />
+    <ellipse
+      cx="10"
+      cy="33"
+      rx="7"
+      ry="4"
+      fill="#0d9488"
+      transform="rotate(-40 10 33)"
+    />
+    <ellipse
+      cx="50"
+      cy="33"
+      rx="7"
+      ry="4"
+      fill="#0d9488"
+      transform="rotate(40 50 33)"
+    />
     {/* Rear flippers */}
-    <ellipse cx="11" cy="57" rx="6" ry="3.5" fill="#0d9488" transform="rotate(30 11 57)" />
-    <ellipse cx="49" cy="57" rx="6" ry="3.5" fill="#0d9488" transform="rotate(-30 49 57)" />
+    <ellipse
+      cx="11"
+      cy="57"
+      rx="6"
+      ry="3.5"
+      fill="#0d9488"
+      transform="rotate(30 11 57)"
+    />
+    <ellipse
+      cx="49"
+      cy="57"
+      rx="6"
+      ry="3.5"
+      fill="#0d9488"
+      transform="rotate(-30 49 57)"
+    />
     {/* Tail */}
     <ellipse cx="30" cy="69" rx="3.5" ry="5" fill="#0f766e" />
   </svg>
@@ -97,7 +133,7 @@ const Footer = () => {
         delay: Math.random() * 6,
         duration: Math.random() * 10 + 14,
         flip: Math.random() > 0.5,
-      }))
+      })),
     );
   }, []);
 
@@ -231,12 +267,7 @@ const Footer = () => {
             {/* Logo & Company Name */}
             <div className="flex items-center space-x-3">
               <div className="w-12 h-12rounded-xl flex items-center justify-center shadow-lg">
-                <Image
-                src='/logo.png'
-                alt="logo"
-                width={2000}
-                height={2000}
-                />
+                <Image src="/logo.png" alt="logo" width={2000} height={2000} />
               </div>
               <div>
                 <h2 className="text-xl font-bold text-white">{COMPANY_NAME}</h2>
@@ -255,7 +286,10 @@ const Footer = () => {
 
             {/* Contact Info */}
             <div className="space-y-3">
-              <div className="flex items-center space-x-3 text-sm text-teal-100/70">
+              <a
+                href={COMPANY_CONTACT_NUMBER_LINK}
+                className="flex items-center space-x-3 text-sm text-teal-100/70 hover:text-teal-100 transition-colors"
+              >
                 <svg
                   className="w-5 h-5 text-sky-400 shrink-0"
                   fill="none"
@@ -270,8 +304,12 @@ const Footer = () => {
                   />
                 </svg>
                 <span>{COMPANY_CONTACT_NUMBER}</span>
-              </div>
-              <div className="flex items-center space-x-3 text-sm text-teal-100/70">
+              </a>
+
+              <a
+                href={`mailto:${COMPANY_INFO_EMAIL}`}
+                className="flex items-center space-x-3 text-sm text-teal-100/70 hover:text-teal-100 transition-colors"
+              >
                 <svg
                   className="w-5 h-5 text-sky-400 shrink-0"
                   fill="none"
@@ -286,8 +324,14 @@ const Footer = () => {
                   />
                 </svg>
                 <span>{COMPANY_INFO_EMAIL}</span>
-              </div>
-              <div className="flex items-center space-x-3 text-sm text-teal-100/70">
+              </a>
+
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${COMPANY_LATITUDE},${COMPANY_LONGITUDE}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-3 text-sm text-teal-100/70 hover:text-teal-100 transition-colors"
+              >
                 <svg
                   className="w-5 h-5 text-sky-400 shrink-0"
                   fill="none"
@@ -308,7 +352,7 @@ const Footer = () => {
                   />
                 </svg>
                 <span>{COMPANY_LOCATION}</span>
-              </div>
+              </a>
             </div>
           </div>
 
@@ -386,7 +430,7 @@ const Footer = () => {
             {/* Back to Top */}
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="text-teal-100/40 hover:text-teal-300 transition-colors duration-200 text-sm flex items-center"
+              className="cursor-pointer text-teal-100/40 hover:text-teal-300 transition-colors duration-200 text-sm flex items-center"
             >
               <svg
                 className="w-4 h-4 mr-1"
@@ -410,33 +454,69 @@ const Footer = () => {
       {/* ── Keyframes ── */}
       <style jsx global>{`
         @keyframes turtle-swim {
-          0%   { transform: translateY(0)      rotate(0deg);  opacity: 0; }
-          8%   { opacity: 1; }
-          20%  { transform: translateY(-20vh)  rotate(4deg); }
-          40%  { transform: translateY(-40vh)  rotate(-4deg); }
-          60%  { transform: translateY(-60vh)  rotate(3deg); }
-          80%  { transform: translateY(-80vh)  rotate(-3deg); opacity: 0.8; }
-          95%  { opacity: 0; }
-          100% { transform: translateY(-105vh) rotate(0deg);  opacity: 0; }
+          0% {
+            transform: translateY(0) rotate(0deg);
+            opacity: 0;
+          }
+          8% {
+            opacity: 1;
+          }
+          20% {
+            transform: translateY(-20vh) rotate(4deg);
+          }
+          40% {
+            transform: translateY(-40vh) rotate(-4deg);
+          }
+          60% {
+            transform: translateY(-60vh) rotate(3deg);
+          }
+          80% {
+            transform: translateY(-80vh) rotate(-3deg);
+            opacity: 0.8;
+          }
+          95% {
+            opacity: 0;
+          }
+          100% {
+            transform: translateY(-105vh) rotate(0deg);
+            opacity: 0;
+          }
         }
         @keyframes footer-orb-1 {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          50%       { transform: translate(30px, 20px) scale(1.1); }
+          0%,
+          100% {
+            transform: translate(0, 0) scale(1);
+          }
+          50% {
+            transform: translate(30px, 20px) scale(1.1);
+          }
         }
         @keyframes footer-orb-2 {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          50%       { transform: translate(-40px, -30px) scale(1.08); }
+          0%,
+          100% {
+            transform: translate(0, 0) scale(1);
+          }
+          50% {
+            transform: translate(-40px, -30px) scale(1.08);
+          }
         }
         @keyframes footer-wave {
-          0%   { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
         }
         @media (prefers-reduced-motion: reduce) {
-          * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+          * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+          }
         }
       `}</style>
     </footer>
   );
 };
 
-export default Footer;  
+export default Footer;

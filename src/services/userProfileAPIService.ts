@@ -291,8 +291,6 @@ export class UserProfileAPIService {
       }
 
       const data: HistoryResponse = await response.json();
-      console.log("Total records:", data.data.totalCount);
-      console.log("History:", data.data.history);
 
       return data;
     } catch (error) {
