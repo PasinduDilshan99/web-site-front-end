@@ -6,7 +6,25 @@ export interface ApiResponse<T> {
   data: T;
   timestamp: string;
 }
-
+// types/vehicle-types.ts
+export interface VehicleFilters {
+  search: string;
+  make: string;
+  bodyType: string;
+  yearRange: [number, number];
+  engineType: string;
+  transmission: string;
+  fuelType: string;
+  horsepowerRange: [number, number];
+  seatCapacity: string;
+  // priceRange: [number, number];
+  // Remove these if they're not needed:
+  // status: string;
+  // model: string;
+  // transmissionType: string;
+  // minHorsepower: number;
+  // maxHorsepower: number;
+}
 export interface Vehicle {
   vehicleId: number;
   registrationNumber: string;
@@ -106,21 +124,6 @@ export interface VehicleUsageLog {
   terminatedBy: number;
 }
 
-// Filter types
-export interface VehicleFilters {
-  search: string;
-  status: string;
-  make: string;
-  model: string;
-  bodyType: string;
-  yearRange: [number, number];
-  priceRange: [number, number];
-  engineType: string;
-  transmissionType: string;
-  fuelType: string;
-  minHorsepower: number;
-  maxHorsepower: number;
-}
 
 // Pagination types
 export interface PaginationState {
@@ -395,7 +398,7 @@ export interface VehicleBasicDetails {
   seatCapacity: number;
   sunroofType: string;
   acTypeName: string;
-  mainImageUrl: string;
+  imageUrl: string;
 }
 
 // Vehicle Filter Types
@@ -416,4 +419,34 @@ export interface VehicleSpecificationFilterResponse {
   roofTypes: string[];
   acTypes: string[];
   horsePowerRange: HorsePowerRange;
+}
+
+
+// types/vehicle-types.ts (add these to your existing file)
+
+export interface VehicleType {
+  vehicleTypeId: number;
+  name: string;
+  description: string;
+  status: string;
+  images: VehicleTypeImage[];
+}
+
+export interface VehicleTypeImage {
+  imageId: number;
+  imageName: string;
+  imageDescription: string;
+  imageUrl: string;
+}
+
+export interface VehicleTypesResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: VehicleType[];
+  timestamp: string;
+}
+
+export interface VehicleTypeFilters {
+  search: string;
 }

@@ -1,5 +1,5 @@
-import React from 'react';
-import { VehicleById } from '@/types/vehicle-types';
+import React from "react";
+import { VehicleById } from "@/types/vehicle-types";
 
 interface VehicleHeaderProps {
   vehicle: VehicleById;
@@ -21,24 +21,28 @@ export default function VehicleHeader({ vehicle }: VehicleHeaderProps) {
                 {vehicle.specification.make} {vehicle.specification.model}
               </h1>
               <p className="text-gray-600 mt-1">
-                {vehicle.specification.vehicleYear} • {vehicle.specification.generation} • {vehicle.specification.bodyType}
+                {vehicle.specification.vehicleYear} •{" "}
+                {vehicle.specification.generation} •{" "}
+                {vehicle.specification.bodyType}
               </p>
             </div>
           </div>
         </div>
-        
+
         <div className="mt-4 md:mt-0">
           <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
-            <div className="bg-teal-100 text-teal-800 px-4 py-2 rounded-full font-semibold text-sm">
-              {vehicle.registrationNumber}
-            </div>
-            <div className={`px-4 py-2 rounded-full font-semibold text-sm ${
+            {vehicle.registrationNumber && (
+              <div className="bg-teal-100 text-teal-800 px-4 py-2 rounded-full font-semibold text-sm">
+                {vehicle.registrationNumber}
+              </div>
+            )}
+            {/* <div className={`px-4 py-2 rounded-full font-semibold text-sm ${
               vehicle.statusName === 'ACTIVE' 
                 ? 'bg-green-100 text-green-800' 
                 : 'bg-red-100 text-red-800'
             }`}>
               {vehicle.statusName}
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

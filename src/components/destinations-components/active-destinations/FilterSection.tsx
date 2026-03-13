@@ -56,13 +56,13 @@ const FilterSection: React.FC<FilterSectionProps> = ({
         <div className="flex gap-3">
           <button
             onClick={onResetFilters}
-            className="px-6 py-2 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:from-sky-700 hover:to-teal-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg"
+            className="cursor-pointer px-6 py-2 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:from-sky-700 hover:to-teal-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg"
           >
             Reset Filters
           </button>
           <button
             onClick={handleSearchClick}
-            className="px-6 py-2 bg-gradient-to-r from-teal-600 to-sky-600 text-white rounded-lg hover:from-teal-700 hover:to-sky-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg flex items-center gap-2"
+            className="cursor-pointer px-6 py-2 bg-gradient-to-r from-teal-600 to-sky-600 text-white rounded-lg hover:from-teal-700 hover:to-sky-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg flex items-center gap-2"
           >
             <svg 
               className="w-4 h-4" 
@@ -198,7 +198,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
                       rating === filters.rating ? 0 : rating
                     )
                   }
-                  className={`p-2 rounded-lg transition-all duration-200 ${
+                  className={`cursor-pointer p-2 rounded-lg transition-all duration-200 ${
                     filters.rating >= rating
                       ? "bg-gradient-to-r from-yellow-400 to-yellow-500 text-white shadow-md"
                       : "bg-gray-200 text-gray-400 hover:bg-gray-300"
@@ -231,7 +231,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
         <div className="relative flex justify-center">
           <button
             onClick={toggleAdvancedFilters}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-sky-500 to-teal-500 text-white rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+            className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-sky-500 to-teal-500 text-white rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
           >
             {showAdvancedFilters ? (
               <>

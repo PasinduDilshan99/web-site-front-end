@@ -18,7 +18,8 @@ const FaqHeroSection = () => {
         setLoading(true);
         setError(null);
 
-        const { data: items, error } = await HeroSectionService.fetchFaqHeroData();
+        const { data: items, error } =
+          await HeroSectionService.fetchFaqHeroData();
 
         if (error) {
           setError(error);
@@ -85,12 +86,12 @@ const FaqHeroSection = () => {
   };
 
   if (loading) {
-    return <HeroSectionLoading text="FAQ hero content loading..."/>
+    return <HeroSectionLoading text="FAQ hero content loading..." />;
   }
 
   if (error || heroData.length === 0) {
     return (
-      <div className="relative w-full h-[500px] sm:h-[600px] md:h-[700px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900 flex items-center justify-center">
+      <div className="relative w-full h-[70vh] lg:h-[90vh] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900 flex items-center justify-center">
         <div className="text-center text-white px-4 max-w-2xl mx-auto">
           <div className="mb-6">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 text-white">
@@ -123,12 +124,12 @@ const FaqHeroSection = () => {
   const currentSlideData = heroData[currentSlide];
 
   return (
-    <div className="relative w-full h-[500px] sm:h-[600px] md:h-[650px] lg:h-[700px] xl:h-[750px] 2xl:h-[800px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
+    <div className="relative w-full h-[70vh] lg:h-[90vh] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
       {/* Image Slider - Only show gradient if no image or image failed */}
       <div className="relative w-full h-full">
         {heroData.map((item, index) => {
           const hasImage = item.imageUrl && !failedImages.has(index);
-          
+
           return (
             <div
               key={item.id || index}
@@ -160,55 +161,45 @@ const FaqHeroSection = () => {
         </div>
       )}
 
-      {/* Content Overlay */}
-      <div className="absolute inset-0 flex items-center">
-        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16">
-          <div className="max-w-xl sm:max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl text-white mx-auto">
-            <div className="mb-4 sm:mb-6 md:mb-8">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold mb-2 sm:mb-3 md:mb-4 leading-tight text-white">
+      {/* Content Overlay - Centered properly */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center">
+            {/* Title Section */}
+            <div className="mb-6 sm:mb-8">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 leading-tight text-white">
                 {currentSlideData.title || "Help Center"}
               </h1>
 
               {currentSlideData.subtitle && (
-                <div className="mb-3 sm:mb-4 md:mb-6">
-                  <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold mb-2 sm:mb-3 text-sky-100">
+                <div className="mb-4">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold mb-3 text-sky-100">
                     {currentSlideData.subtitle}
                   </h2>
-                  <div className="w-12 sm:w-16 md:w-20 h-0.5 sm:h-1 bg-gradient-to-r from-sky-400 to-teal-400 rounded-full shadow-lg"></div>
+                  <div className="w-20 h-1 bg-gradient-to-r from-sky-400 to-teal-400 mx-auto rounded-full"></div>
                 </div>
               )}
             </div>
 
-            <div className="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 lg:p-8 max-w-full sm:max-w-2xl md:max-w-3xl mb-4 sm:mb-6 md:mb-8 border border-white/10 shadow-2xl">
-              <p className="text-sm sm:text-base md:text-lg lg:text-xl mb-4 sm:mb-5 md:mb-6 text-slate-100 leading-relaxed">
+            {/* Description Card */}
+            <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-6 sm:p-8 md:p-10 mb-8 border border-white/10 shadow-2xl max-w-3xl mx-auto">
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-6 text-slate-100 leading-relaxed">
                 {currentSlideData.description ||
                   "Find quick answers to your questions about bookings, payments, support, and more. Our comprehensive FAQ section covers everything you need to know."}
               </p>
 
+              {/* Buttons */}
               {(currentSlideData.primaryButtonText ||
                 currentSlideData.secondaryButtonText) && (
-                <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 md:gap-5">
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   {currentSlideData.primaryButtonText && (
                     <button
                       onClick={() =>
                         handleButtonClick(currentSlideData.primaryButtonLink)
                       }
-                      className="w-full sm:w-auto px-5 sm:px-7 md:px-9 py-3 sm:py-4 md:py-5 bg-gradient-to-r from-sky-500 to-teal-500 text-white text-sm sm:text-base font-semibold rounded-xl sm:rounded-2xl hover:from-sky-600 hover:to-teal-600 transform hover:scale-[1.02] transition-all duration-300 shadow-2xl flex items-center justify-center gap-3 sm:gap-4 group"
+                      className="cursor-pointer px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-sky-500 to-teal-500 text-white text-sm sm:text-base font-semibold rounded-xl hover:from-sky-600 hover:to-teal-600 transform hover:scale-105 transition-all duration-300 shadow-2xl flex items-center justify-center gap-3 group min-w-[200px]"
                     >
-                      <svg
-                        className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 group-hover:rotate-12 transition-transform duration-300"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                      <span className="truncate">{currentSlideData.primaryButtonText}</span>
+                      <span>{currentSlideData.primaryButtonText}</span>
                     </button>
                   )}
                   {currentSlideData.secondaryButtonText && (
@@ -216,34 +207,22 @@ const FaqHeroSection = () => {
                       onClick={() =>
                         handleButtonClick(currentSlideData.secondaryButtonLink)
                       }
-                      className="w-full sm:w-auto px-5 sm:px-7 md:px-9 py-3 sm:py-4 md:py-5 border-2 border-sky-300/50 text-white text-sm sm:text-base font-semibold rounded-xl sm:rounded-2xl hover:bg-sky-50/20 hover:border-sky-200 backdrop-blur-sm transition-all duration-300 flex items-center justify-center gap-3 sm:gap-4 group"
+                      className="cursor-pointer px-6 sm:px-8 py-3 sm:py-4 border-2 border-sky-300/50 text-white text-sm sm:text-base font-semibold rounded-xl hover:bg-sky-50/20 hover:border-sky-200 backdrop-blur-sm transition-all duration-300 flex items-center justify-center gap-3 group min-w-[200px]"
                     >
-                      <svg
-                        className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 group-hover:scale-110 transition-transform duration-300"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                        />
-                      </svg>
-                      <span className="truncate">{currentSlideData.secondaryButtonText}</span>
+                      <span>{currentSlideData.secondaryButtonText}</span>
                     </button>
                   )}
                 </div>
               )}
             </div>
 
-            {/* Quick Stats */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 md:gap-5">
-              <div className="hidden lg:flex items-center gap-3 sm:gap-4 px-4 sm:px-5 md:px-6 py-3 sm:py-4 bg-white/5 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-sky-500/20 hover:border-sky-400/40 hover:bg-white/10 transition-all duration-300">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-sky-500/20 to-sky-600/20 flex items-center justify-center flex-shrink-0">
+            {/* Stats Cards - Centered */}
+            <div className="hidden lg:flex flex-wrap gap-4 justify-center">
+              {/* Solved Issues */}
+              <div className="hidden lg:flex items-center gap-3 px-5 py-3 bg-white/5 backdrop-blur-sm rounded-xl border border-sky-500/20 hover:border-sky-400/40 hover:bg-white/10 transition-all duration-300 min-w-[180px]">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-sky-500/20 to-sky-600/20 flex items-center justify-center flex-shrink-0">
                   <svg
-                    className="w-5 h-5 sm:w-6 sm:h-6 text-sky-300"
+                    className="w-5 h-5 text-sky-300"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -256,15 +235,17 @@ const FaqHeroSection = () => {
                     />
                   </svg>
                 </div>
-                <div className="min-w-0">
-                  <p className="text-xs sm:text-sm text-sky-200/90 truncate">Solved Issues</p>
-                  <p className="text-lg sm:text-xl md:text-2xl font-bold text-white">95%</p>
+                <div>
+                  <p className="text-xs text-sky-200/90">Solved Issues</p>
+                  <p className="text-xl font-bold text-white">95%</p>
                 </div>
               </div>
-              <div className="hidden lg:flex items-center gap-3 sm:gap-4 px-4 sm:px-5 md:px-6 py-3 sm:py-4 bg-white/5 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-teal-500/20 hover:border-teal-400/40 hover:bg-white/10 transition-all duration-300">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-teal-500/20 to-teal-600/20 flex items-center justify-center flex-shrink-0">
+
+              {/* Response Time */}
+              <div className="hidden lg:flex items-center gap-3 px-5 py-3 bg-white/5 backdrop-blur-sm rounded-xl border border-teal-500/20 hover:border-teal-400/40 hover:bg-white/10 transition-all duration-300 min-w-[180px]">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-500/20 to-teal-600/20 flex items-center justify-center flex-shrink-0">
                   <svg
-                    className="w-5 h-5 sm:w-6 sm:h-6 text-teal-300"
+                    className="w-5 h-5 text-teal-300"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -277,15 +258,17 @@ const FaqHeroSection = () => {
                     />
                   </svg>
                 </div>
-                <div className="min-w-0">
-                  <p className="text-xs sm:text-sm text-teal-200/90 truncate">Response Time</p>
-                  <p className="text-lg sm:text-xl md:text-2xl font-bold text-white">24h</p>
+                <div>
+                  <p className="text-xs text-teal-200/90">Response Time</p>
+                  <p className="text-xl font-bold text-white">1 hour</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 sm:gap-4 px-4 sm:px-5 md:px-6 py-3 sm:py-4 bg-white/5 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-cyan-500/20 hover:border-cyan-400/40 hover:bg-white/10 transition-all duration-300">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-cyan-500/20 to-cyan-600/20 flex items-center justify-center flex-shrink-0">
+
+              {/* Active Support */}
+              <div className="hidden lg:flex items-center gap-3 px-5 py-3 bg-white/5 backdrop-blur-sm rounded-xl border border-cyan-500/20 hover:border-cyan-400/40 hover:bg-white/10 transition-all duration-300 min-w-[180px]">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500/20 to-cyan-600/20 flex items-center justify-center flex-shrink-0">
                   <svg
-                    className="w-5 h-5 sm:w-6 sm:h-6 text-cyan-300"
+                    className="w-5 h-5 text-cyan-300"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -298,9 +281,9 @@ const FaqHeroSection = () => {
                     />
                   </svg>
                 </div>
-                <div className="min-w-0">
-                  <p className="text-xs sm:text-sm text-cyan-200/90 truncate">Active Support</p>
-                  <p className="text-lg sm:text-xl md:text-2xl font-bold text-white">24/7</p>
+                <div>
+                  <p className="text-xs text-cyan-200/90">Active Support</p>
+                  <p className="text-xl font-bold text-white">24/7</p>
                 </div>
               </div>
             </div>
@@ -313,11 +296,11 @@ const FaqHeroSection = () => {
         <>
           <button
             onClick={prevSlide}
-            className="absolute left-3 sm:left-4 md:left-5 lg:left-7 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 sm:p-3.5 md:p-4 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group z-10 shadow-lg"
+            className="cursor-pointer hidden lg:flex absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group z-10 shadow-lg"
             aria-label="Previous slide"
           >
             <svg
-              className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 group-hover:scale-110 transition-transform duration-200"
+              className="w-6 h-6 group-hover:scale-110 transition-transform duration-200"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -333,11 +316,11 @@ const FaqHeroSection = () => {
 
           <button
             onClick={nextSlide}
-            className="absolute right-3 sm:right-4 md:right-5 lg:right-7 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 sm:p-3.5 md:p-4 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group z-10 shadow-lg"
+            className="hidden lg:flex cursor-pointer absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group z-10 shadow-lg"
             aria-label="Next slide"
           >
             <svg
-              className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 group-hover:scale-110 transition-transform duration-200"
+              className="w-6 h-6 group-hover:scale-110 transition-transform duration-200"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -355,14 +338,14 @@ const FaqHeroSection = () => {
 
       {/* Slide Indicators */}
       {heroData.length > 1 && (
-        <div className="absolute bottom-7 sm:bottom-9 md:bottom-11 left-1/2 transform -translate-x-1/2 flex space-x-2 sm:space-x-3 z-10">
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3 z-10">
           {heroData.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 rounded-full transition-all duration-300 ${
+              className={`cursor-pointer w-2.5 h-2.5 rounded-full transition-all duration-300 ${
                 index === currentSlide
-                  ? "bg-gradient-to-r from-sky-400 to-teal-400 scale-125 shadow-lg"
+                  ? "bg-gradient-to-r from-sky-400 to-teal-400 w-8"
                   : "bg-white/40 hover:bg-white/60"
               }`}
               aria-label={`Go to slide ${index + 1}`}
@@ -373,7 +356,7 @@ const FaqHeroSection = () => {
 
       {/* Progress Bar */}
       {heroData.length > 1 && (
-        <div className="absolute bottom-0 left-0 w-full h-1 sm:h-1.5 bg-white/10">
+        <div className="absolute bottom-0 left-0 w-full h-1 bg-white/10">
           <div
             className="h-full bg-gradient-to-r from-sky-400 via-teal-400 to-cyan-400 transition-all duration-500"
             style={{

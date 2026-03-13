@@ -1,3 +1,4 @@
+// components/vehicle-components/specification-components/VehiclesLoading.tsx
 import React from "react";
 
 interface VehiclesLoadingProps {
@@ -6,7 +7,7 @@ interface VehiclesLoadingProps {
 
 const VehiclesLoading: React.FC<VehiclesLoadingProps> = ({ itemsPerPage = 12 }) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-seaBlue-50">
       {/* Header Skeleton */}
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-6 sm:py-8">
         <div className="text-center mb-8 sm:mb-10 lg:mb-12">

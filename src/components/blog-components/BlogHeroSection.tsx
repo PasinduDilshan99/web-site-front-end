@@ -17,7 +17,8 @@ const BlogHeroSection = () => {
       try {
         setLoading(true);
         setError(null);
-        const { data: items, error } = await HeroSectionService.fetchBlogHeroData();
+        const { data: items, error } =
+          await HeroSectionService.fetchBlogHeroData();
 
         if (error) {
           setError(error);
@@ -130,12 +131,12 @@ const BlogHeroSection = () => {
   const currentSlideData = heroData[currentSlide];
 
   return (
-    <div className="relative w-full h-[500px] md:h-[600px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
+    <div className="relative w-full h-[70vh] lg:h-[90vh] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
       {/* Image Slider - Only show image if available and not failed */}
       <div className="relative w-full h-full">
         {heroData.map((item, index) => {
           const hasImage = item.imageUrl && !failedImages.has(index);
-          
+
           return (
             <div
               key={item.id || index}
@@ -193,7 +194,7 @@ const BlogHeroSection = () => {
                       onClick={() =>
                         handleButtonClick(currentSlideData.primaryButtonLink)
                       }
-                      className="text-sm lg:text-md px-3 py-2 lg:px-6 lg:py-3 bg-gradient-to-r from-sky-500 to-teal-500 text-white font-semibold rounded-lg hover:from-sky-600 hover:to-teal-600 transform hover:scale-105 transition-all duration-300 shadow-lg flex items-center gap-2"
+                      className="cursor-pointer text-sm lg:text-md px-3 py-2 lg:px-6 lg:py-3 bg-gradient-to-r from-sky-500 to-teal-500 text-white font-semibold rounded-lg hover:from-sky-600 hover:to-teal-600 transform hover:scale-105 transition-all duration-300 shadow-lg flex items-center gap-2"
                     >
                       <svg
                         className="w-5 h-5"
@@ -216,7 +217,7 @@ const BlogHeroSection = () => {
                       onClick={() =>
                         handleButtonClick(currentSlideData.secondaryButtonLink)
                       }
-                      className="text-sm lg:text-md px-3 py-2 lg:px-6 lg:py-3 border-2 border-sky-300/50 text-white font-semibold rounded-lg hover:bg-sky-50/20 hover:border-sky-200 backdrop-blur-sm transition-all duration-300 flex items-center gap-2"
+                      className="cursor-pointer text-sm lg:text-md px-3 py-2 lg:px-6 lg:py-3 border-2 border-sky-300/50 text-white font-semibold rounded-lg hover:bg-sky-50/20 hover:border-sky-200 backdrop-blur-sm transition-all duration-300 flex items-center gap-2"
                     >
                       <svg
                         className="w-5 h-5"
@@ -236,7 +237,7 @@ const BlogHeroSection = () => {
                   )}
                   <button
                     onClick={() => (window.location.href = "/blogs/create")}
-                    className="text-sm lg:text-md px-3 py-2 lg:px-6 lg:py-3  bg-gradient-to-r from-cyan-500 to-sky-600 text-white font-semibold rounded-lg hover:from-cyan-600 hover:to-sky-700 transform hover:scale-105 transition-all duration-300 shadow-lg flex items-center gap-2"
+                    className="cursor-pointer text-sm lg:text-md px-3 py-2 lg:px-6 lg:py-3  bg-gradient-to-r from-cyan-500 to-sky-600 text-white font-semibold rounded-lg hover:from-cyan-600 hover:to-sky-700 transform hover:scale-105 transition-all duration-300 shadow-lg flex items-center gap-2"
                   >
                     <svg
                       className="w-5 h-5"
@@ -323,7 +324,7 @@ const BlogHeroSection = () => {
         <div className="hidden md:flex">
           <button
             onClick={prevSlide}
-            className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group shadow-lg"
+            className="cursor-pointer absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group shadow-lg"
             aria-label="Previous slide"
           >
             <svg
@@ -343,7 +344,7 @@ const BlogHeroSection = () => {
 
           <button
             onClick={nextSlide}
-            className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group shadow-lg"
+            className="cursor-pointer absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group shadow-lg"
             aria-label="Next slide"
           >
             <svg

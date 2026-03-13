@@ -43,7 +43,7 @@ const PermissionDenied = () => {
                 </div>
               </div>
               <h1 className="text-3xl font-bold text-white mb-2">Access Denied</h1>
-              <p className="text-teal-50 text-sm">You don't have permission to view this page</p>
+              <p className="text-teal-50 text-sm">You don&apos;t have permission to view this page</p>
             </div>
           </div>
 
@@ -58,7 +58,7 @@ const PermissionDenied = () => {
                 Oops! Permission Required
               </h2>
               <p className="text-gray-600 text-sm leading-relaxed">
-                It seems you don't have the necessary permissions to access this section. 
+                It seems you don&apos;t have the necessary permissions to access this section. 
                 Please contact your administrator or request access to proceed.
               </p>
             </div>

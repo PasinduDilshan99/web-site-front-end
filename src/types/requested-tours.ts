@@ -26,7 +26,7 @@ export interface Activity {
   bookingId: number;
   activityName: string;
   activityDescription: string;
-  activityCategory: string | null;
+  // activityCategory: string | null;
   activityDate: string;
   startTime: string;
   endTime: string;
@@ -91,11 +91,13 @@ export interface RequestedTour {
   tourId: number;
   tourName: string;
   tourDescription: string;
+  assignTo: number;
+  assignToName: string;
   tourDuration: number;
   startLocation: string;
   endLocation: string;
-  tourType: string;
-  tourCategory: string;
+  // tourType: string;
+  // tourCategory: string;
   packageName: string;
   packageDescription: string;
   packageTotalPrice: number;

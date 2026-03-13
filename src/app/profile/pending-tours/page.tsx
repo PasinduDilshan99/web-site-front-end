@@ -2,9 +2,15 @@
 "use client";
 import UserProfilePendingToursLoading from "@/components/user-profile-components/Loadings/UserProfilePendingToursLoading";
 import { useAuth } from "@/context/AuthContext";
+import { bookingService } from "@/services/bookingService";
 import { UserProfileAPIService } from "@/services/userProfileAPIService";
 import { PendingTour } from "@/types/pending-tours";
+import { PENDING_INQUIRY_BOOKING_STATUS } from "@/utils/constant";
 import { USER_PROFILE_PENDING_TOURS_VIEW_PRIVILEGE } from "@/utils/privileges";
+import {
+  SRI_LANKAN_TOUR_PAGE_PATH,
+  USER_PROFILE_PAGE_PATH,
+} from "@/utils/urls";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
@@ -16,13 +22,23 @@ export default function PendingToursPage() {
   const apiService = new UserProfileAPIService();
   const { user } = useAuth();
   const router = useRouter();
+  const [expandedDescriptions, setExpandedDescriptions] = useState<{
+    [key: number]: boolean;
+  }>({});
+
+  // ── Custom cancel-confirmation modal state ──
+  const [cancelModal, setCancelModal] = useState<{
+    open: boolean;
+    bookingId: number | null;
+  }>({ open: false, bookingId: null });
+  const [cancelling, setCancelling] = useState(false);
 
   useEffect(() => {
     if (
       user &&
       !user.privileges.includes(USER_PROFILE_PENDING_TOURS_VIEW_PRIVILEGE)
     ) {
-      router.push("/profile");
+      router.push(USER_PROFILE_PAGE_PATH);
     }
   }, [user, router]);
 
@@ -44,10 +60,17 @@ export default function PendingToursPage() {
     }
   };
 
+  const toggleDescription = (bookingId: number) => {
+    setExpandedDescriptions((prev) => ({
+      ...prev,
+      [bookingId]: !prev[bookingId],
+    }));
+  };
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-LK", {
       style: "currency",
-      currency: "LKR",
+      currency: "USD",
       minimumFractionDigits: 0,
     }).format(amount);
   };
@@ -96,17 +119,36 @@ export default function PendingToursPage() {
     setExpandedBooking(expandedBooking === bookingId ? null : bookingId);
   };
 
-  const handleCancelRequest = async (bookingId: number) => {
-    if (window.confirm("Are you sure you want to cancel this pending tour?")) {
-      try {
-        // Implement cancel API call here
-        console.log("Cancelling booking:", bookingId);
+  // ── Open modal instead of window.confirm ──
+  const handleCancelRequest = (bookingId: number) => {
+    setCancelModal({ open: true, bookingId });
+  };
+
+  // ── Called when user confirms in the modal ──
+  const confirmCancel = async () => {
+    if (cancelModal.bookingId === null) return;
+    try {
+      setCancelling(true);
+      const response = await bookingService.cancelBookingInquiry({
+        bookingId: cancelModal.bookingId,
+        bookingStatus: PENDING_INQUIRY_BOOKING_STATUS,
+      });
+      if (response.code === 200) {
+        setCancelModal({ open: false, bookingId: null });
         await loadPendingTours();
-      } catch (error) {
-        console.error("Failed to cancel request:", error);
-        alert("Failed to cancel request. Please try again.");
+      } else {
+        alert("Failed to cancel request.");
       }
+    } catch (error) {
+      console.error("Failed to cancel request:", error);
+      alert("Failed to cancel request. Please try again.");
+    } finally {
+      setCancelling(false);
     }
+  };
+
+  const dismissCancelModal = () => {
+    if (!cancelling) setCancelModal({ open: false, bookingId: null });
   };
 
   if (loading) {
@@ -145,10 +187,11 @@ export default function PendingToursPage() {
               No Pending Tours
             </h3>
             <p className="text-gray-600 mb-6 text-sm md:text-base">
-              You don&apos;t have any pending tours at the moment. Dive into our tours and start your adventure!
+              You don&apos;t have any pending tours at the moment. Dive into our
+              tours and start your adventure!
             </p>
             <button
-              onClick={() => router.push("/tours")}
+              onClick={() => router.push(SRI_LANKAN_TOUR_PAGE_PATH)}
               className="px-5 py-2.5 md:px-6 md:py-3 bg-gradient-to-r from-sky-500 to-teal-600 text-white rounded-lg hover:shadow-lg transition-all duration-300 text-sm md:text-base"
             >
               Browse Tours
@@ -161,6 +204,63 @@ export default function PendingToursPage() {
 
   return (
     <div className="flex-1 p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-sky-50 to-teal-50 min-h-screen">
+      {/* ── Cancel Confirmation Modal ── */}
+      {cancelModal.open && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-white/20 backdrop-blur-sm"
+          onClick={dismissCancelModal}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-full max-w-md p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Icon */}
+            <div className="flex items-center justify-center w-14 h-14 mx-auto mb-4 rounded-full bg-red-50 border border-red-100">
+              <svg
+                className="w-7 h-7 text-red-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
+                />
+              </svg>
+            </div>
+
+            {/* Text */}
+            <h3 className="text-xl font-bold text-gray-800 text-center mb-2">
+              Cancel Tour Request?
+            </h3>
+            <p className="text-gray-500 text-sm text-center mb-6">
+              Are you sure you want to cancel this pending tour? This action
+              cannot be undone.
+            </p>
+
+            {/* Buttons */}
+            <div className="flex gap-3">
+              <button
+                onClick={dismissCancelModal}
+                disabled={cancelling}
+                className="cursor-pointer flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-200 text-sm font-medium disabled:opacity-50"
+              >
+                Keep Tour
+              </button>
+              <button
+                onClick={confirmCancel}
+                disabled={cancelling}
+                className="cursor-pointer flex-1 px-4 py-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:shadow-lg transition-all duration-200 text-sm font-semibold disabled:opacity-50"
+              >
+                {cancelling ? "Cancelling..." : "Yes, Cancel"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6 md:mb-8">
@@ -173,7 +273,7 @@ export default function PendingToursPage() {
         </div>
 
         {/* Statistics - Responsive Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4 mb-6 md:mb-8">
           <div className="bg-white rounded-xl md:rounded-2xl shadow-lg border border-sky-200 p-3 md:p-4 text-center">
             <div className="text-xl md:text-2xl font-bold text-sky-600">
               {pendingTours.length}
@@ -185,11 +285,14 @@ export default function PendingToursPage() {
           <div className="bg-white rounded-xl md:rounded-2xl shadow-lg border border-teal-200 p-3 md:p-4 text-center">
             <div className="text-xl md:text-2xl font-bold text-teal-600">
               {formatCurrency(
-                pendingTours.reduce((sum, tour) => sum + tour.packageTotalPrice, 0),
+                pendingTours.reduce(
+                  (sum, tour) => sum + tour.packageTotalPrice,
+                  0,
+                ),
               )}
             </div>
             <div className="text-xs md:text-sm text-gray-600 mt-1">
-              Total Package Value*
+              Total Package Value<span className="text-red-600">*</span>
             </div>
           </div>
           <div className="bg-white rounded-xl md:rounded-2xl shadow-lg border border-cyan-200 p-3 md:p-4 text-center">
@@ -200,14 +303,14 @@ export default function PendingToursPage() {
               Total Days
             </div>
           </div>
-          <div className="bg-white rounded-xl md:rounded-2xl shadow-lg border border-emerald-200 p-3 md:p-4 text-center">
+          {/* <div className="bg-white rounded-xl md:rounded-2xl shadow-lg border border-emerald-200 p-3 md:p-4 text-center">
             <div className="text-xl md:text-2xl font-bold text-emerald-600">
-              {new Set(pendingTours.map(t => t.tourType)).size}
+              {new Set(pendingTours.map((t) => t.tourType)).size}
             </div>
             <div className="text-xs md:text-sm text-gray-600 mt-1">
               Tour Types
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Pending Tours List */}
@@ -230,15 +333,25 @@ export default function PendingToursPage() {
                       >
                         {tour.bookingStatus}
                       </span>
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-semibold border ${getTourTypeColor(tour.tourType)}`}
-                      >
-                        {tour.tourType}
-                      </span>
                     </div>
-                    <p className="text-sky-100 text-sm md:text-base mb-3 line-clamp-2">
-                      {tour.tourDescription}
-                    </p>
+                    <div className="mb-3">
+                      <p className="text-sky-100 text-sm md:text-base">
+                        {expandedDescriptions[tour.bookingId]
+                          ? tour.tourDescription
+                          : tour.tourDescription.substring(0, 200) +
+                            (tour.tourDescription.length > 200 ? "..." : "")}
+                      </p>
+                      {tour.tourDescription.length > 200 && (
+                        <button
+                          onClick={() => toggleDescription(tour.bookingId)}
+                          className="cursor-pointer text-sky-200 hover:text-sky-100 text-xs underline mt-1 transition-colors"
+                        >
+                          {expandedDescriptions[tour.bookingId]
+                            ? "Show Less"
+                            : "Show More"}
+                        </button>
+                      )}
+                    </div>
 
                     {/* Mobile: Stacked info */}
                     <div className="space-y-2 md:hidden">
@@ -278,11 +391,16 @@ export default function PendingToursPage() {
                       </div>
                       <div className="flex items-center space-x-1">
                         <span>📍</span>
-                        <span>{tour.startLocation} → {tour.endLocation}</span>
+                        <span>
+                          {tour.startLocation} → {tour.endLocation}
+                        </span>
                       </div>
                       <div className="flex items-center space-x-1">
                         <span>💰</span>
-                        <span>From {formatCurrency(tour.packagePricePerPerson)}/person</span>
+                        <span>
+                          From {formatCurrency(tour.packagePricePerPerson)}{" "}
+                          /person
+                        </span>
                       </div>
                       <div className="flex items-center space-x-1">
                         <span>⏱️</span>
@@ -290,13 +408,13 @@ export default function PendingToursPage() {
                       </div>
                       <div className="flex items-center space-x-1">
                         <span>🏷️</span>
-                        <span>{tour.tourCategory}</span>
+                        {/* <span>{tour.tourCategory}</span> */}
                       </div>
                     </div>
                   </div>
                   <button
                     onClick={() => toggleBookingExpansion(tour.bookingId)}
-                    className="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition-colors self-start"
+                    className="cursor-pointer bg-white/20 hover:bg-white/30 p-2 rounded-lg transition-colors self-start"
                   >
                     <svg
                       className={`w-5 h-5 md:w-6 md:h-6 transform transition-transform ${
@@ -348,14 +466,14 @@ export default function PendingToursPage() {
                         </span>
                       </div>
                     </div>
-                    <div className="flex gap-2 mt-3 sm:mt-0">
+                    {/* <div className="flex gap-2 mt-3 sm:mt-0">
                       <button
                         onClick={() => handleCancelRequest(tour.bookingId)}
-                        className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
+                        className="cursor-pointer px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
                       >
                         Cancel Request
                       </button>
-                    </div>
+                    </div> */}
                   </div>
 
                   {/* Tour Details Grid */}
@@ -369,13 +487,13 @@ export default function PendingToursPage() {
                       <div className="space-y-2 text-xs md:text-sm">
                         <div className="flex justify-between">
                           <span className="text-gray-600">Package Name:</span>
-                          <span className="font-semibold text-right">
+                          <span className="font-semibold text-right text-gray-600">
                             {tour.packageName}
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600">Description:</span>
-                          <span className="font-semibold text-right max-w-[200px]">
+                          <span className="font-semibold text-right max-w-[200px] text-gray-600">
                             {tour.packageDescription}
                           </span>
                         </div>
@@ -386,7 +504,9 @@ export default function PendingToursPage() {
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Total package value:</span>
+                          <span className="text-gray-600">
+                            Total package value:
+                          </span>
                           <span className="font-semibold text-teal-600">
                             {formatCurrency(tour.packageTotalPrice)}
                           </span>
@@ -401,7 +521,8 @@ export default function PendingToursPage() {
                         )}
                       </div>
                       <p className="text-xs text-gray-500 mt-3 italic">
-                        *Final price may vary based on selected options and number of travelers
+                        *Final price may vary based on selected options and
+                        number of travelers (this is the base value)
                       </p>
                     </div>
 
@@ -414,25 +535,25 @@ export default function PendingToursPage() {
                       <div className="space-y-2 text-xs md:text-sm">
                         <div className="flex justify-between">
                           <span className="text-gray-600">Name:</span>
-                          <span className="font-semibold text-right">
+                          <span className="font-semibold text-right text-gray-600">
                             {tour.userFullName}
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600">Username:</span>
-                          <span className="font-semibold text-right">
+                          <span className="font-semibold text-right text-gray-600">
                             {tour.username}
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600">Email:</span>
-                          <span className="font-semibold text-right break-all">
+                          <span className="font-semibold text-right break-all text-gray-600">
                             {tour.email}
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600">Mobile:</span>
-                          <span className="font-semibold text-right">
+                          <span className="font-semibold text-right text-gray-600">
                             {tour.mobileNumber1}
                           </span>
                         </div>
@@ -446,25 +567,31 @@ export default function PendingToursPage() {
                       <span className="text-cyan-600 mr-2">🌊</span>
                       Tour Information
                     </h3>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs md:text-sm">
+                    <div className="grid grid-cols-2 gap-4 text-xs md:text-sm">
                       <div>
-                        <span className="text-gray-600 block mb-1">Tour ID:</span>
-                        <span className="font-semibold text-gray-800">
+                        <span className="text-gray-600 block mb-1">
+                          Tour ID:
+                        </span>
+                        <span className="font-semibold text-gray-600">
                           {tour.tourId}
                         </span>
                       </div>
-                      <div>
+                      {/* <div>
                         <span className="text-gray-600 block mb-1">Type:</span>
-                        <span className={`px-2 py-1 rounded-full text-xs border ${getTourTypeColor(tour.tourType)}`}>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs border ${getTourTypeColor(tour.tourType)}`}
+                        >
                           {tour.tourType}
                         </span>
-                      </div>
-                      <div>
-                        <span className="text-gray-600 block mb-1">Category:</span>
+                      </div> */}
+                      {/* <div>
+                        <span className="text-gray-600 block mb-1">
+                          Category:
+                        </span>
                         <span className="font-semibold text-gray-800">
                           {tour.tourCategory}
                         </span>
-                      </div>
+                      </div> */}
                       <div>
                         <span className="text-gray-600 block mb-1">From:</span>
                         <span className="font-semibold text-gray-800">
@@ -478,7 +605,9 @@ export default function PendingToursPage() {
                         </span>
                       </div>
                       <div>
-                        <span className="text-gray-600 block mb-1">Duration:</span>
+                        <span className="text-gray-600 block mb-1">
+                          Duration:
+                        </span>
                         <span className="font-semibold text-gray-800">
                           {tour.tourDuration} days
                         </span>
@@ -489,14 +618,18 @@ export default function PendingToursPage() {
                   {/* Action Buttons */}
                   <div className="flex flex-col sm:flex-row gap-3 justify-end">
                     <button
-                      onClick={() => router.push(`/sri-lankan-tours/${tour.tourId}`)}
-                      className="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors text-sm"
+                      onClick={() =>
+                        router.push(
+                          `${SRI_LANKAN_TOUR_PAGE_PATH}/${tour.tourId}`,
+                        )
+                      }
+                      className="cursor-pointer px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors text-sm"
                     >
                       View Tour Details
                     </button>
                     <button
                       onClick={() => handleCancelRequest(tour.bookingId)}
-                      className="px-4 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors text-sm"
+                      className="cursor-pointer px-4 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors text-sm"
                     >
                       Cancel Booking
                     </button>
@@ -506,11 +639,13 @@ export default function PendingToursPage() {
             </div>
           ))}
         </div>
-        
+
         {/* Price Disclaimer */}
         <div className="mt-6 text-center">
           <p className="text-xs text-gray-500">
-            * All prices shown are starting from rates. Final pricing will be confirmed upon booking completion.
+            <span className="text-red-600">*</span> All prices shown are
+            starting from rates. Final pricing will be confirmed upon booking
+            completion.
           </p>
         </div>
       </div>

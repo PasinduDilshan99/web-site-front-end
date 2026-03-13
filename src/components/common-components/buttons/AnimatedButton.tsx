@@ -19,10 +19,10 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   onClick,
   className = "",
   size = "md",
-  gradientFrom = "from-teal-300",
+  gradientFrom = "from-emerald-400",
   gradientTo = "to-cyan-600",
-  hoverFrom = "hover:from-purple-700",
-  hoverTo = "hover:to-amber-700",
+  hoverFrom = "hover:from-teal-500",
+  hoverTo = "hover:to-blue-700",
   type = "button",
   disabled = false,
   fullWidth = false,
@@ -69,14 +69,15 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
     `,
   };
 
-  // Ultra-smooth transition classes
+  // Sea green and sea blue theme classes
   const smoothTransitionClasses = `
+  cursor-pointer
     bg-gradient-to-r ${gradientFrom} ${gradientTo}
     text-white font-semibold rounded-full
     relative overflow-hidden
     transform transition-all duration-700 ease-out
-    shadow-lg hover:shadow-2xl
-    focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-40
+    shadow-lg hover:shadow-2xl hover:shadow-teal-500/30
+    focus:outline-none focus:ring-4 focus:ring-emerald-500 focus:ring-opacity-40
     active:scale-[0.98]
     disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none
     ${fullWidth ? "w-full" : "w-auto"}
@@ -96,7 +97,7 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
     .trim();
 
   return (
-    <div className="pt-8 md:pt-10 lg:pt-12 xl:pt-14">
+    <div className=" pt-8 md:pt-10 lg:pt-12 xl:pt-14">
       <button
         type={type}
         onClick={onClick}

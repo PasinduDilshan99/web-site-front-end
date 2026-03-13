@@ -13,27 +13,21 @@ import {
   LucideIcon,
 } from "lucide-react";
 import { OurStoryService } from "@/services/ourStoryService"; // Import service
-import {
-  TimelineItem,
-  CoreValue,
-  OurStoryData,
-  ColorClasses,
-  ColorMap,
-} from "@/types/our-story-types"; // Import types
+import { OurStoryData, ColorMap } from "@/types/our-story-types"; // Import types
 import LoadingOurStory from "./LoadingOurStory";
 
 // Map Font Awesome class names to Lucide icons
 const iconMap: Record<string, LucideIcon> = {
   // Font Awesome regular
-  'fa-regular fa-calendar': Calendar,
-  'fa-regular fa-clock': Calendar,
-  
+  "fa-regular fa-calendar": Calendar,
+  "fa-regular fa-clock": Calendar,
+
   // Font Awesome solid
-  'fa-solid fa-users': Users,
-  'fa-solid fa-map-location-dot': Map,
-  'fa-solid fa-handshake': Handshake,
-  'fa-solid fa-rocket': Rocket,
-  
+  "fa-solid fa-users": Users,
+  "fa-solid fa-map-location-dot": Map,
+  "fa-solid fa-handshake": Handshake,
+  "fa-solid fa-rocket": Rocket,
+
   // Also keep the original Lucide names as fallback
   Calendar,
   Users,
@@ -83,11 +77,11 @@ const colorMap: ColorMap = {
 
 // Also add color mapping for the hex values from your data
 const hexToColorName: Record<string, string> = {
-  '#0891B2': 'blue',
-  '#0D9488': 'teal',
-  '#0284C7': 'blue',
-  '#059669': 'teal',
-  '#7C3AED': 'purple',
+  "#0891B2": "blue",
+  "#0D9488": "teal",
+  "#0284C7": "blue",
+  "#059669": "teal",
+  "#7C3AED": "purple",
 };
 
 const OurStory = () => {
@@ -127,8 +121,9 @@ const OurStory = () => {
     color: string,
     size = "w-5 h-5 sm:w-6 sm:h-6",
   ) => {
-    const IconComponent = iconMap[iconName] || iconMap[iconName.split(' ').pop() || ''];
-    
+    const IconComponent =
+      iconMap[iconName] || iconMap[iconName.split(" ").pop() || ""];
+
     if (!IconComponent) {
       console.warn(`Icon ${iconName} not found in iconMap`);
       // Return a default icon or null
@@ -138,7 +133,7 @@ const OurStory = () => {
     // Handle hex color codes
     const colorName = hexToColorName[color] || color;
     const colorClasses = colorMap[colorName] || colorMap.blue;
-    
+
     return <IconComponent className={`${size} ${colorClasses.text}`} />;
   };
 
@@ -160,7 +155,6 @@ const OurStory = () => {
     totalItems: number,
   ) => {
     const colorName = hexToColorName[color] || color;
-    const colorClasses = colorMap[colorName] || colorMap.blue;
 
     // Last item gets special treatment
     if (index === totalItems - 1) {
@@ -168,9 +162,12 @@ const OurStory = () => {
         return "bg-gradient-to-r from-blue-50 to-teal-50 border border-blue-100";
       }
       // For hex colors, we need to map to Tailwind classes
-      if (colorName === 'blue') return "bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-100";
-      if (colorName === 'teal') return "bg-gradient-to-r from-teal-50 to-teal-100 border border-teal-100";
-      if (colorName === 'purple') return "bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-100";
+      if (colorName === "blue")
+        return "bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-100";
+      if (colorName === "teal")
+        return "bg-gradient-to-r from-teal-50 to-teal-100 border border-teal-100";
+      if (colorName === "purple")
+        return "bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-100";
       return `bg-gradient-to-r from-${colorName}-50 to-${colorName}-100 border border-${colorName}-100`;
     }
 

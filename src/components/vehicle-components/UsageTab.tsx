@@ -11,7 +11,7 @@ const UsageTab: React.FC<UsageTabProps> = ({ vehicle }) => {
       <div className="text-center py-12">
         <div className="text-6xl mb-4">📊</div>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">No Usage History</h3>
-        <p className="text-gray-600">This vehicle hasn't been used yet.</p>
+        <p className="text-gray-600">This vehicle hasn&apos;t been used yet.</p>
       </div>
     );
   }

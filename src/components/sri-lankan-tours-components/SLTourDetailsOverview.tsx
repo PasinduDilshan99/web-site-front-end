@@ -1,10 +1,16 @@
-import { TourDetails } from "@/types/tour-types";
+import { DestinationWithId, TourDetails } from "@/types/tour-types";
+import { 
+  DESTINATIONS_PAGE_PATH, 
+  SRI_LANKAN_TOUR_CATEGORY_PATH, 
+  SRI_LANKAN_TOUR_TYPE_PATH 
+} from "@/utils/urls";
+import Link from "next/link";
 import React from "react";
 import ReactMarkdown from "react-markdown";
 
 interface SLTourDetailsOverviewProps {
   tour: TourDetails;
-  distinctDestinations: string[];
+  distinctDestinations: DestinationWithId[];
 }
 
 const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
@@ -17,15 +23,15 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg sm:rounded-2xl shadow-md sm:shadow-lg p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
-      <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">
+    <div className="bg-white rounded-xl sm:rounded-2xl shadow-md sm:shadow-lg p-4 sm:p-5 lg:p-8 mb-4 sm:mb-6 lg:mb-8">
+      <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800 mb-3 sm:mb-4 lg:mb-6">
         Tour Overview
       </h2>
 
-      {/* Professional Stats Grid - Now with 4 cards on large screens */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6 sm:mb-8">
+      {/* Professional Stats Grid - Responsive grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6 lg:mb-8">
         {/* Duration Card */}
-        <div className="bg-gradient-to-br from-sky-50 to-blue-50 rounded-xl p-4 sm:p-5 border border-sky-100 hover:shadow-md transition-all duration-300">
+        <div className="bg-gradient-to-br from-sky-50 to-blue-50 rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-5 border border-sky-100 hover:shadow-md transition-all duration-300">
           <div className="flex items-start gap-2 sm:gap-3">
             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-sky-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
               <svg
@@ -41,13 +47,13 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
               </svg>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs sm:text-sm font-medium text-sky-600 uppercase tracking-wider mb-0.5 sm:mb-1">
+              <p className="text-xs font-medium text-sky-600 uppercase tracking-wider mb-0.5">
                 Duration
               </p>
-              <p className="text-lg sm:text-xl font-bold text-gray-900 truncate">
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900 truncate">
                 {formatDuration(tour.duration)}
               </p>
-              <p className="text-xs text-gray-500 mt-0.5 sm:mt-1">
+              <p className="text-xs text-gray-500 mt-0.5">
                 {tour.duration} days
               </p>
             </div>
@@ -55,7 +61,7 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
         </div>
 
         {/* Start Location Card */}
-        <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-4 sm:p-5 border border-emerald-100 hover:shadow-md transition-all duration-300">
+        <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-5 border border-emerald-100 hover:shadow-md transition-all duration-300">
           <div className="flex items-start gap-2 sm:gap-3">
             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-emerald-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
               <svg
@@ -71,13 +77,13 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
               </svg>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs sm:text-sm font-medium text-emerald-600 uppercase tracking-wider mb-0.5 sm:mb-1">
+              <p className="text-xs font-medium text-emerald-600 uppercase tracking-wider mb-0.5">
                 Start Location
               </p>
-              <p className="text-lg sm:text-xl font-bold text-gray-900 truncate">
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900 truncate">
                 {tour.startLocation}
               </p>
-              <p className="text-xs text-gray-500 mt-0.5 sm:mt-1">
+              <p className="text-xs text-gray-500 mt-0.5 hidden xs:block">
                 Journey begins here
               </p>
             </div>
@@ -85,7 +91,7 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
         </div>
 
         {/* End Location Card */}
-        <div className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-xl p-4 sm:p-5 border border-teal-100 hover:shadow-md transition-all duration-300">
+        <div className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-5 border border-teal-100 hover:shadow-md transition-all duration-300">
           <div className="flex items-start gap-2 sm:gap-3">
             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-teal-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
               <svg
@@ -101,13 +107,13 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
               </svg>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs sm:text-sm font-medium text-teal-600 uppercase tracking-wider mb-0.5 sm:mb-1">
+              <p className="text-xs font-medium text-teal-600 uppercase tracking-wider mb-0.5">
                 End Location
               </p>
-              <p className="text-lg sm:text-xl font-bold text-gray-900 truncate">
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900 truncate">
                 {tour.endLocation}
               </p>
-              <p className="text-xs text-gray-500 mt-0.5 sm:mt-1">
+              <p className="text-xs text-gray-500 mt-0.5 hidden xs:block">
                 Journey ends here
               </p>
             </div>
@@ -115,7 +121,7 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
         </div>
 
         {/* Season Card */}
-        <div className="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-xl p-4 sm:p-5 border border-cyan-100 hover:shadow-md transition-all duration-300">
+        <div className="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-5 border border-cyan-100 hover:shadow-md transition-all duration-300">
           <div className="flex items-start gap-2 sm:gap-3">
             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-cyan-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
               <svg
@@ -131,13 +137,13 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
               </svg>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs sm:text-sm font-medium text-cyan-600 uppercase tracking-wider mb-0.5 sm:mb-1">
+              <p className="text-xs font-medium text-cyan-600 uppercase tracking-wider mb-0.5">
                 Best Season
               </p>
-              <p className="text-lg sm:text-xl font-bold text-gray-900 truncate">
+              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900 truncate">
                 {tour.seasonName}
               </p>
-              <p className="text-xs text-gray-500 mt-0.5 sm:mt-1 line-clamp-1">
+              <p className="text-xs text-gray-500 mt-0.5 truncate hidden xs:block">
                 {tour.seasonDescription || "Ideal time to visit"}
               </p>
             </div>
@@ -146,12 +152,12 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
       </div>
 
       {/* Two Column Layout for Categories and Types */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6 lg:mb-8">
         {/* Categories Section */}
         {tour.tourCategoryDto && tour.tourCategoryDto.length > 0 && (
-          <div className="bg-gradient-to-br from-teal-50 to-emerald-50 rounded-xl p-4 sm:p-5 border border-teal-200">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-5 h-5 sm:w-6 sm:h-6 bg-teal-500 rounded-full flex items-center justify-center">
+          <div className="bg-gradient-to-br from-teal-50 to-emerald-50 rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-5 border border-teal-200">
+            <div className="flex items-center gap-2 mb-2 sm:mb-3">
+              <div className="w-5 h-5 sm:w-6 sm:h-6 bg-teal-500 rounded-full flex items-center justify-center flex-shrink-0">
                 <svg
                   className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white"
                   fill="currentColor"
@@ -170,12 +176,14 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
             </div>
             <div className="flex flex-wrap gap-1.5 sm:gap-2">
               {tour.tourCategoryDto.map((category, index) => (
-                <span
+                <Link
                   key={category.tourCategoryId || index}
-                  className="inline-flex items-center px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium bg-white text-teal-700 border border-teal-300 shadow-sm hover:shadow-md transition-shadow duration-200"
+                  href={`${SRI_LANKAN_TOUR_CATEGORY_PATH}${encodeURIComponent(category.tourCategoryName)}`}
                 >
-                  {category.tourCategoryName}
-                </span>
+                  <span className="inline-flex items-center px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium bg-white text-teal-700 border border-teal-300 shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer hover:bg-teal-50">
+                    {category.tourCategoryName}
+                  </span>
+                </Link>
               ))}
             </div>
           </div>
@@ -183,9 +191,9 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
 
         {/* Types Section */}
         {tour.tourTypeDtos && tour.tourTypeDtos.length > 0 && (
-          <div className="bg-gradient-to-br from-sky-50 to-blue-50 rounded-xl p-4 sm:p-5 border border-sky-200">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-5 h-5 sm:w-6 sm:h-6 bg-sky-500 rounded-full flex items-center justify-center">
+          <div className="bg-gradient-to-br from-sky-50 to-blue-50 rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-5 border border-sky-200">
+            <div className="flex items-center gap-2 mb-2 sm:mb-3">
+              <div className="w-5 h-5 sm:w-6 sm:h-6 bg-sky-500 rounded-full flex items-center justify-center flex-shrink-0">
                 <svg
                   className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white"
                   fill="currentColor"
@@ -204,12 +212,14 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
             </div>
             <div className="flex flex-wrap gap-1.5 sm:gap-2">
               {tour.tourTypeDtos.map((type, index) => (
-                <span
+                <Link
                   key={type.tourTypeId || index}
-                  className="inline-flex items-center px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium bg-white text-sky-700 border border-sky-300 shadow-sm hover:shadow-md transition-shadow duration-200"
+                  href={`${SRI_LANKAN_TOUR_TYPE_PATH}${encodeURIComponent(type.tourTypeName)}`}
                 >
-                  {type.tourTypeName}
-                </span>
+                  <span className="inline-flex items-center px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium bg-white text-sky-700 border border-sky-300 shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer hover:bg-sky-50">
+                    {type.tourTypeName}
+                  </span>
+                </Link>
               ))}
             </div>
           </div>
@@ -218,11 +228,11 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
 
       {/* Destinations Section */}
       {distinctDestinations && distinctDestinations.length > 0 && (
-        <div className="mb-6 sm:mb-8">
-          <div className="flex items-center gap-2 mb-3 sm:mb-4">
-            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-amber-500 rounded-full flex items-center justify-center">
+        <div className="mb-4 sm:mb-6 lg:mb-8">
+          <div className="flex items-center gap-2 mb-2 sm:mb-3 lg:mb-4">
+            <div className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 bg-amber-500 rounded-full flex items-center justify-center flex-shrink-0">
               <svg
-                className="w-3 h-3 sm:w-4 sm:h-4 text-white"
+                className="w-3 h-3 sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4 text-white"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -233,30 +243,33 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
                 />
               </svg>
             </div>
-            <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-800">
+            <h3 className="text-sm sm:text-base lg:text-lg xl:text-xl font-semibold text-gray-800">
               Destinations ({distinctDestinations.length})
             </h3>
           </div>
-          
-          <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-4 sm:p-5 lg:p-6 border border-amber-200">
-            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+
+          <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6 border border-amber-200">
+            {/* Desktop view - horizontal layout with arrows */}
+            <div className="hidden md:flex md:flex-wrap md:items-center gap-2 lg:gap-3">
               {distinctDestinations.map((destination, index) => (
                 <React.Fragment key={index}>
-                  <span className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium bg-white text-amber-700 border border-amber-300 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105">
-                    <svg
-                      className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-1 sm:mr-1.5 text-amber-500"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    {destination}
-                  </span>
-                  
+                  <Link href={`${DESTINATIONS_PAGE_PATH}/${destination.destinationId}`}>
+                    <span className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium bg-white text-amber-700 border border-amber-300 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 cursor-pointer hover:bg-amber-50 whitespace-nowrap">
+                      <svg
+                        className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-1 sm:mr-1.5 text-amber-500 flex-shrink-0"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      {destination.destinationName}
+                    </span>
+                  </Link>
+
                   {index < distinctDestinations.length - 1 && (
                     <svg
                       className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400 flex-shrink-0"
@@ -275,42 +288,56 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
                 </React.Fragment>
               ))}
             </div>
-            
-            {/* {distinctDestinations.length > 5 && (
-              <div className="mt-2 sm:mt-3 text-xs text-amber-600 flex items-center gap-1">
-                <svg
-                  className="w-3 h-3 sm:w-4 sm:h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-                <span>Scroll horizontally to see all destinations</span>
-              </div>
-            )} */}
+
+            {/* Mobile view - vertical stacked */}
+            <div className="md:hidden space-y-2">
+              {distinctDestinations.map((destination, index) => (
+                <div key={index} className="flex items-center">
+                  <Link href={`${DESTINATIONS_PAGE_PATH}/${destination.destinationId}`} className="flex-1">
+                    <span className="inline-flex w-full items-center justify-between px-3 py-2 rounded-lg text-xs font-medium bg-white text-amber-700 border border-amber-300 shadow-sm hover:shadow-md transition-all duration-200 hover:bg-amber-50">
+                      <span className="flex items-center">
+                        <svg
+                          className="w-3 h-3 mr-1.5 text-amber-500 flex-shrink-0"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        {destination.destinationName}
+                      </span>
+                      {index < distinctDestinations.length - 1 && (
+                        <svg
+                          className="w-4 h-4 text-amber-400 rotate-90"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      )}
+                    </span>
+                  </Link>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}
 
-      {/* Status Badge */}
-      {/* <div className="mb-6 sm:mb-8">
-        <span className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
-          <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-emerald-500 rounded-full mr-1.5 sm:mr-2 animate-pulse"></span>
-          Status: {tour.statusName}
-        </span>
-      </div> */}
-
       {/* Description */}
       <div className="prose max-w-none">
-        <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-800 mb-2 sm:mb-3 flex items-center gap-2">
+        <h3 className="text-sm sm:text-base lg:text-lg xl:text-xl font-semibold text-gray-800 mb-2 sm:mb-3 flex items-center gap-2">
           <svg
-            className="w-4 h-4 sm:w-5 sm:h-5 text-teal-600"
+            className="w-4 h-4 sm:w-5 sm:h-5 text-teal-600 flex-shrink-0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -322,29 +349,37 @@ const SLTourDetailsOverview: React.FC<SLTourDetailsOverviewProps> = ({
               d="M4 6h16M4 12h16M4 18h7"
             />
           </svg>
-          Description
+          <span>Description</span>
         </h3>
-        <ReactMarkdown
-          components={{
-            strong: ({ node, ...props }) => (
-              <span className="font-bold text-teal-700 block mt-3 sm:mt-4 mb-1 sm:mb-2 text-sm sm:text-base lg:text-lg">
-                {props.children}
-              </span>
-            ),
-            p: ({ node, ...props }) => (
-              <p className="text-gray-700 leading-relaxed text-xs sm:text-sm lg:text-base mb-2 sm:mb-3">
-                {props.children}
-              </p>
-            ),
-            li: ({ node, ...props }) => (
-              <li className="text-gray-700 leading-relaxed text-xs sm:text-sm lg:text-base ml-3 sm:ml-4 list-disc">
-                {props.children}
-              </li>
-            ),
-          }}
-        >
-          {tour.tourDescription}
-        </ReactMarkdown>
+        
+        <div className="text-xs sm:text-sm lg:text-base">
+          <ReactMarkdown
+            components={{
+              strong: ({ node, ...props }) => (
+                <span className="font-bold text-teal-700 block mt-2 sm:mt-3 lg:mt-4 mb-1 sm:mb-2 text-sm sm:text-base lg:text-lg">
+                  {props.children}
+                </span>
+              ),
+              p: ({ node, ...props }) => (
+                <p className="text-gray-700 leading-relaxed text-xs sm:text-sm lg:text-base mb-2 sm:mb-3">
+                  {props.children}
+                </p>
+              ),
+              li: ({ node, ...props }) => (
+                <li className="text-gray-700 leading-relaxed text-xs sm:text-sm lg:text-base ml-3 sm:ml-4 lg:ml-6 list-disc mb-1">
+                  {props.children}
+                </li>
+              ),
+              ul: ({ node, ...props }) => (
+                <ul className="mb-2 sm:mb-3 lg:mb-4">
+                  {props.children}
+                </ul>
+              ),
+            }}
+          >
+            {tour.tourDescription}
+          </ReactMarkdown>
+        </div>
       </div>
     </div>
   );

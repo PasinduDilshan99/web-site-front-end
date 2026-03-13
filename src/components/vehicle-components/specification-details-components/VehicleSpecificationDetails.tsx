@@ -45,7 +45,7 @@ const VehicleSpecificationDetail: React.FC<VehicleSpecificationDetailsProps> = (
         </div>
 
         {/* Price and Status */}
-        <div className="border-t border-teal-100 pt-4 sm:pt-5">
+        {/* <div className="border-t border-teal-100 pt-4 sm:pt-5">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4">
             <div className="bg-gradient-to-r from-teal-50 to-cyan-50 rounded-xl p-3 sm:p-4">
               <p className="text-xs sm:text-sm text-teal-600">Price</p>
@@ -63,10 +63,10 @@ const VehicleSpecificationDetail: React.FC<VehicleSpecificationDetailsProps> = (
               </span>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Warranty */}
-        <div className="border-t border-cyan-100 pt-4 sm:pt-5">
+        {/* <div className="border-t border-cyan-100 pt-4 sm:pt-5">
           <div className="flex items-center gap-3 sm:gap-4">
             <div className="p-2 sm:p-3 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-lg">
               <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -80,7 +80,7 @@ const VehicleSpecificationDetail: React.FC<VehicleSpecificationDetailsProps> = (
               </p>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

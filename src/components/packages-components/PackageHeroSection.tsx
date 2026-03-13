@@ -3,6 +3,8 @@ import { HeroSectionService } from "@/services/heroSectionService";
 import { PackageHeroData } from "@/types/hero-section-types";
 import React, { useState, useEffect } from "react";
 import HeroSectionLoading from "../loading-components/HeroSectionLoading";
+import { SRI_LANKAN_TOUR_PAGE_PATH } from "@/utils/urls";
+import { useCommon } from "@/context/CommonContext";
 
 const PackageHeroSection = () => {
   const [loading, setLoading] = useState(true);
@@ -12,6 +14,7 @@ const PackageHeroSection = () => {
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [selectedFilter, setSelectedFilter] = useState<string>("all");
   const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
+  const { categories } = useCommon();
 
   useEffect(() => {
     const fetchHeroData = async () => {
@@ -19,7 +22,8 @@ const PackageHeroSection = () => {
         setLoading(true);
         setError(null);
 
-        const { data: items, error } = await HeroSectionService.fetchPackageHeroData();
+        const { data: items, error } =
+          await HeroSectionService.fetchPackageHeroData();
 
         if (error) {
           setError(error);
@@ -109,10 +113,11 @@ const PackageHeroSection = () => {
   });
 
   // Get current slide data from filtered packages
-  const currentSlideData = filteredPackages[currentSlide] || heroData[currentSlide] || {};
+  const currentSlideData =
+    filteredPackages[currentSlide] || heroData[currentSlide] || {};
 
   if (loading) {
-    return <HeroSectionLoading text="Packages hero content loading..."/>
+    return <HeroSectionLoading text="Packages hero content loading..." />;
   }
 
   if (error || heroData.length === 0) {
@@ -131,12 +136,12 @@ const PackageHeroSection = () => {
           <div className="space-y-4">
             <button
               onClick={() => window.location.reload()}
-              className="px-6 py-3 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:from-sky-700 hover:to-teal-700 transition-all duration-300 mr-4 shadow-md"
+              className="cursor-pointer px-6 py-3 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:from-sky-700 hover:to-teal-700 transition-all duration-300 mr-4 shadow-md"
             >
               Retry
             </button>
             <a
-              href="/tours"
+              href={SRI_LANKAN_TOUR_PAGE_PATH}
               className="px-6 py-3 border-2 border-sky-300 text-white rounded-lg hover:bg-sky-50 hover:text-slate-900 transition-all duration-300"
             >
               View All Tours
@@ -155,12 +160,12 @@ const PackageHeroSection = () => {
   };
 
   return (
-    <div className="relative w-full h-[800px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
+    <div className="relative w-full h-[70vh] lg:h-[90vh] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
       {/* Image Slider - Only show image if available and not failed */}
       <div className="relative w-full h-full">
         {heroData.map((item, index) => {
           const hasImage = item.imageUrl && !failedImages.has(index);
-          
+
           return (
             <div
               key={item.id || index}
@@ -186,65 +191,46 @@ const PackageHeroSection = () => {
       </div>
 
       {/* Package Badge */}
-      <div className="absolute top-6 left-6">
+      <div className="hidden lg:flex absolute top-6 left-6">
         <div className="flex items-center gap-2 px-4 py-2 bg-sky-500/20 backdrop-blur-sm rounded-full border border-sky-400/30">
           <div className="w-2 h-2 bg-sky-400 rounded-full animate-pulse"></div>
           <span className="text-sm font-medium text-white">
-            <span className="text-sky-200 font-bold">{heroData.length}</span> Packages Available
+            <span className="text-sky-200 font-bold">
+              {categories?.packageCategoryList.length}
+            </span>{" "}
+            Package categories Available
           </span>
         </div>
       </div>
 
       {/* Slide Counter */}
       {filteredPackages.length > 1 && (
-        <div className="absolute top-16 right-6 text-white/80 text-sm backdrop-blur-sm bg-black/30 px-3 py-1.5 rounded-full border border-white/20">
+        <div className="absolute top-8 lg:top-16 right-6 text-white/80 text-sm backdrop-blur-sm bg-black/30 px-3 py-1.5 rounded-full border border-white/20">
           {currentSlide + 1} / {filteredPackages.length}
         </div>
       )}
 
       {/* Content Overlay - CENTERED */}
-      <div className="absolute inset-0 flex items-center justify-center pt-20">
+      <div className="absolute inset-0 flex items-center justify-center md:pt-8 lg:pt-20">
         <div className="container mx-auto px-4 md:px-6 lg:px-8">
           <div className="max-w-5xl text-white mx-auto text-center">
-            {/* Duration Badge - CENTERED */}
-            <div className="mb-6">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
-                <svg
-                  className="w-4 h-4 text-sky-300"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                <span className="font-semibold">
-                  {extractDuration(currentSlideData.subtitle) || "Flexible Duration"}
-                </span>
-              </div>
-            </div>
-
             <div className="mb-8">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight tracking-tight">
                 {currentSlideData.title || "Curated Tour Packages"}
               </h1>
 
-              {currentSlideData.subtitle && (
+              {/* {currentSlideData.subtitle && (
                 <div className="mb-6">
                   <h2 className="text-2xl md:text-3xl font-semibold mb-3 text-sky-100">
                     {currentSlideData.subtitle}
                   </h2>
                   <div className="w-20 h-1 bg-gradient-to-r from-sky-400 to-teal-400 rounded-full mx-auto shadow-lg"></div>
                 </div>
-              )}
+              )} */}
             </div>
 
             <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 md:p-8 max-w-3xl mb-8 border border-white/10 shadow-2xl mx-auto">
-              <p className="text-lg md:text-xl mb-6 text-slate-100 leading-relaxed">
+              <p className="text-md md:text-lg lg:text-xl mb-6 text-slate-100 leading-relaxed">
                 {currentSlideData.description ||
                   "Choose from our expertly curated tour packages, designed to provide unforgettable experiences across Sri Lanka. All packages include accommodation, transportation, and guided tours."}
               </p>
@@ -257,7 +243,7 @@ const PackageHeroSection = () => {
                       onClick={() =>
                         handleButtonClick(currentSlideData.primaryButtonLink)
                       }
-                      className="px-8 py-4 bg-gradient-to-r from-sky-500 to-teal-500 text-white font-semibold rounded-xl hover:from-sky-600 hover:to-teal-600 transform hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-3 group"
+                      className="cursor-pointer w-full sm:w-auto px-5 sm:px-7 md:px-9 py-3 sm:py-4 md:py-5 bg-gradient-to-r from-sky-500 to-teal-500 text-white text-sm sm:text-base font-semibold rounded-xl sm:rounded-2xl hover:from-sky-600 hover:to-teal-600 transform hover:scale-[1.02] transition-all duration-300 shadow-2xl flex items-center justify-center gap-3 sm:gap-4 group"
                     >
                       <svg
                         className="w-6 h-6 group-hover:rotate-12 transition-transform duration-300"
@@ -280,7 +266,7 @@ const PackageHeroSection = () => {
                       onClick={() =>
                         handleButtonClick(currentSlideData.secondaryButtonLink)
                       }
-                      className="px-8 py-4 border-2 border-sky-300/50 text-white font-semibold rounded-xl hover:bg-sky-50/20 hover:border-sky-200 backdrop-blur-sm transition-all duration-300 flex items-center gap-3 group"
+                      className="cursor-pointer w-full sm:w-auto px-5 sm:px-7 md:px-9 py-3 sm:py-4 md:py-5 border-2 border-sky-300/50 text-white text-sm sm:text-base font-semibold rounded-xl sm:rounded-2xl hover:bg-sky-50/20 hover:border-sky-200 backdrop-blur-sm transition-all duration-300 flex items-center justify-center gap-3 sm:gap-4 group"
                     >
                       <svg
                         className="w-6 h-6 group-hover:scale-110 transition-transform duration-300"
@@ -303,7 +289,7 @@ const PackageHeroSection = () => {
             </div>
 
             {/* Package Features - CENTERED */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+            <div className="hidden lg:flex grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
               <div className="flex items-center gap-3 px-5 py-4 bg-white/5 backdrop-blur-sm rounded-xl border border-sky-500/20 hover:border-sky-400/40 hover:bg-white/10 transition-all duration-300">
                 <div className="w-12 h-12 rounded-full bg-sky-500/20 flex items-center justify-center">
                   <svg
@@ -377,7 +363,7 @@ const PackageHeroSection = () => {
         <>
           <button
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group md:left-6 shadow-lg"
+            className="hidden lg:flex cursor-pointer absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group md:left-6 shadow-lg"
             aria-label="Previous slide"
           >
             <svg
@@ -397,7 +383,7 @@ const PackageHeroSection = () => {
 
           <button
             onClick={nextSlide}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group md:right-6 shadow-lg"
+            className="hidden lg:flex cursor-pointer absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 border border-white/20 transition-all duration-300 group md:right-6 shadow-lg"
             aria-label="Next slide"
           >
             <svg
@@ -424,7 +410,7 @@ const PackageHeroSection = () => {
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+              className={`cursor-pointer w-2 h-2 rounded-full transition-all duration-300 ${
                 index === currentSlide
                   ? "bg-gradient-to-r from-sky-400 to-teal-400 scale-125 shadow-lg"
                   : "bg-white/40 hover:bg-white/60"

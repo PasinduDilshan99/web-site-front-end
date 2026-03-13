@@ -17,8 +17,8 @@ export interface PendingTour {
   tourDuration: number;
   startLocation: string;
   endLocation: string;
-  tourType: string;
-  tourCategory: string;
+  // tourType: string;
+  // tourCategory: string;
   packageName: string;
   packageDescription: string;
   packageTotalPrice: number;

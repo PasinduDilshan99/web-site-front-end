@@ -3,19 +3,21 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { DestinationData, DestinationImage } from "@/types/destination-types";
 import { OtherService } from "@/services/otherService";
-import { WeatherResponse } from "@/types/other-types";
+import { WeatherResponse, CurrentWeather } from "@/types/other-types";
+import { SunIcon } from "lucide-react";
 
 interface DestinationDetailsHeroSectionProps {
   destination: DestinationData;
 }
 
-const DestinationDetailsHeroSection: React.FC<DestinationDetailsHeroSectionProps> = ({
-  destination,
-}) => {
+const DestinationDetailsHeroSection: React.FC<
+  DestinationDetailsHeroSectionProps
+> = ({ destination }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
-  const [weatherData, setWeatherData] = useState<WeatherResponse | null>(null);
+  const [weatherResponse, setWeatherResponse] =
+    useState<WeatherResponse | null>(null);
   const [weatherLoading, setWeatherLoading] = useState(false);
   const [weatherError, setWeatherError] = useState<string | null>(null);
 
@@ -23,17 +25,17 @@ const DestinationDetailsHeroSection: React.FC<DestinationDetailsHeroSectionProps
   useEffect(() => {
     const fetchWeatherData = async () => {
       if (!destination.latitude || !destination.longitude) return;
-      
+
       try {
         setWeatherLoading(true);
         setWeatherError(null);
-        
-        const data = await OtherService.getCurrentWeather(
+
+        const response = await OtherService.getCurrentWeather(
           destination.latitude.toString(),
-          destination.longitude.toString()
+          destination.longitude.toString(),
         );
-        
-        setWeatherData(data);
+
+        setWeatherResponse(response);
       } catch (err) {
         console.error("Error fetching weather:", err);
         setWeatherError("Weather data unavailable");
@@ -64,6 +66,12 @@ const DestinationDetailsHeroSection: React.FC<DestinationDetailsHeroSectionProps
     setTimeout(() => setIsAutoPlaying(true), 10000);
   };
 
+  const truncateDescription = (text: string, limit: number = 200) => {
+    if (!text) return "";
+    if (text.length <= limit) return text;
+    return text.substring(0, limit) + "...";
+  };
+
   const nextSlide = () => {
     setSelectedImageIndex((prev) => (prev + 1) % destination.images.length);
     setIsAutoPlaying(false);
@@ -72,7 +80,8 @@ const DestinationDetailsHeroSection: React.FC<DestinationDetailsHeroSectionProps
 
   const prevSlide = () => {
     setSelectedImageIndex(
-      (prev) => (prev - 1 + destination.images.length) % destination.images.length
+      (prev) =>
+        (prev - 1 + destination.images.length) % destination.images.length,
     );
     setIsAutoPlaying(false);
     setTimeout(() => setIsAutoPlaying(true), 10000);
@@ -84,7 +93,7 @@ const DestinationDetailsHeroSection: React.FC<DestinationDetailsHeroSectionProps
 
   // Helper function to convert Celsius to Fahrenheit
   const celsiusToFahrenheit = (celsius: number): number => {
-    return Math.round((celsius * 9/5) + 32);
+    return Math.round((celsius * 9) / 5 + 32);
   };
 
   // Helper function to get weather description from weather code
@@ -119,7 +128,7 @@ const DestinationDetailsHeroSection: React.FC<DestinationDetailsHeroSectionProps
       96: "Thunderstorm with slight hail",
       99: "Thunderstorm with heavy hail",
     };
-    
+
     return weatherCodes[code] || "Unknown weather";
   };
 
@@ -134,17 +143,17 @@ const DestinationDetailsHeroSection: React.FC<DestinationDetailsHeroSectionProps
   // Retry weather fetch function
   const retryWeatherFetch = async () => {
     if (!destination.latitude || !destination.longitude) return;
-    
+
     try {
       setWeatherLoading(true);
       setWeatherError(null);
-      
-      const data = await OtherService.getCurrentWeather(
+
+      const response = await OtherService.getCurrentWeather(
         destination.latitude.toString(),
-        destination.longitude.toString()
+        destination.longitude.toString(),
       );
-      
-      setWeatherData(data);
+
+      setWeatherResponse(response);
     } catch (err) {
       console.error("Error retrying weather fetch:", err);
       setWeatherError("Failed to load weather");
@@ -153,13 +162,20 @@ const DestinationDetailsHeroSection: React.FC<DestinationDetailsHeroSectionProps
     }
   };
 
+  // Get current weather from response
+  const currentWeather = weatherResponse?.data?.current_weather;
+
   if (!destination.images.length) {
     return (
       <div className="relative h-96 bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900 flex items-center justify-center">
         <div className="absolute bottom-0 left-0 right-0 p-6 text-white bg-gradient-to-t from-black/60 to-transparent">
           <div className="max-w-7xl mx-auto text-center">
-            <h1 className="text-4xl font-bold mb-2">{destination.destinationName}</h1>
-            <p className="text-xl opacity-90">{destination.destinationDescription}</p>
+            <h1 className="text-4xl font-bold mb-2">
+              {destination.destinationName}
+            </h1>
+            <p className="text-xl opacity-90">
+              {destination.destinationDescription}
+            </p>
           </div>
         </div>
       </div>
@@ -169,12 +185,12 @@ const DestinationDetailsHeroSection: React.FC<DestinationDetailsHeroSectionProps
   return (
     <>
       {/* Hero Section with Slider */}
-      <div className="relative h-[500px] md:h-[600px] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
+      <div className="relative h-[70vh] lg:h-[90vh] overflow-hidden bg-gradient-to-br from-slate-900 via-sky-900 to-teal-900">
         {/* Image Slider */}
         <div className="relative w-full h-full">
           {destination.images.map((image, index) => {
             const hasImage = !failedImages.has(index);
-            
+
             return (
               <div
                 key={image.imageId}
@@ -208,88 +224,194 @@ const DestinationDetailsHeroSection: React.FC<DestinationDetailsHeroSectionProps
           })}
         </div>
 
-        {/* Weather Widget - Positioned to avoid overlap */}
         {destination.latitude && destination.longitude && (
-          <div className="absolute top-6 right-6 md:block z-20">
-            <div className="bg-white/10 backdrop-blur-2xl rounded-xl p-4 border border-white/20 min-w-[200px] shadow-lg">
-              {weatherLoading ? (
-                <div className="flex items-center gap-3">
-                  <div className="animate-pulse">
-                    <div className="w-5 h-5 bg-yellow-300/50 rounded-full"></div>
+          <div className="absolute top-0 left-0 right-0 bottom-0 pointer-events-none z-20">
+            {/* Mobile - Bottom Center (below sm) */}
+            <div className="block sm:hidden absolute bottom-12 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-sm pointer-events-auto">
+              <div className="bg-white/10 backdrop-blur-2xl rounded-xl p-3 border border-white/20 shadow-lg">
+                {weatherLoading ? (
+                  <div className="flex items-center justify-center gap-3">
+                    <div className="animate-pulse w-5 h-5 bg-yellow-300/50 rounded-full" />
+                    <div className="space-y-2">
+                      <div className="h-3 w-24 bg-white/30 rounded" />
+                      <div className="h-4 w-16 bg-white/30 rounded" />
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <div className="h-3 w-24 bg-white/30 rounded"></div>
-                    <div className="h-4 w-16 bg-white/30 rounded"></div>
-                  </div>
-                </div>
-              ) : weatherError ? (
-                <div className="text-center">
-                  <p className="text-sm text-white/80 mb-2">Weather Unavailable</p>
-                  <button
-                    onClick={retryWeatherFetch}
-                    className="text-xs bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-full transition-colors"
-                  >
-                    Retry
-                  </button>
-                </div>
-              ) : weatherData && weatherData.current_weather ? (
-                <>
-                  <div className="flex items-center gap-3 mb-2">
-                    <svg
-                      className="w-5 h-5 text-yellow-300"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+                ) : weatherError ? (
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-white/80">Weather Unavailable</p>
+                    <button
+                      onClick={retryWeatherFetch}
+                      className="text-xs bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-full transition-colors"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-                      />
-                    </svg>
+                      Retry
+                    </button>
+                  </div>
+                ) : currentWeather ? (
+                  <>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <SunIcon className="w-5 h-5 text-yellow-300 flex-shrink-0" />
+                        <div>
+                          <p className="text-xs text-white/80">
+                            Current Weather
+                          </p>
+                          <p className="text-base font-bold text-teal-200">
+                            {currentWeather.temperature}°C /{" "}
+                            {celsiusToFahrenheit(currentWeather.temperature)}
+                            °F
+                          </p>
+                        </div>
+                      </div>
+                      <span className="text-xs text-white/60 bg-white/10 px-2 py-1 rounded-full">
+                        {getClimateType(destination.latitude)}
+                      </span>
+                    </div>
+                    <div className="mt-2 flex items-center justify-between text-xs text-white/70">
+                      <span className="truncate max-w-[150px]">
+                        {getWeatherDescription(currentWeather.weathercode)}
+                      </span>
+                      <span className="flex-shrink-0 ml-2">
+                        Wind: {currentWeather.windspeed} km/h
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <SunIcon className="w-5 h-5 text-yellow-300/50 flex-shrink-0" />
                     <div>
-                      <p className="text-sm text-white/80">Current Weather</p>
-                      <p className="text-lg font-bold text-teal-200">
-                        {weatherData.current_weather.temperature}°C / {celsiusToFahrenheit(weatherData.current_weather.temperature)}°F
+                      <p className="text-sm text-white/80">Current Climate</p>
+                      <p className="text-base font-bold text-teal-300/50">
+                        --°C / --°F
                       </p>
                     </div>
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-xs text-white/70 truncate">
-                      {getWeatherDescription(weatherData.current_weather.weathercode)}
+                )}
+              </div>
+            </div>
+
+            {/* Tablet (sm) - Top Left */}
+            <div className="hidden sm:block md:hidden absolute top-4 left-4 pointer-events-auto">
+              <div className="bg-white/10 backdrop-blur-2xl rounded-xl p-3 border border-white/20 w-[200px] shadow-lg">
+                {weatherLoading ? (
+                  <div className="flex items-center gap-3">
+                    <div className="animate-pulse w-5 h-5 bg-yellow-300/50 rounded-full" />
+                    <div className="space-y-2">
+                      <div className="h-3 w-20 bg-white/30 rounded" />
+                      <div className="h-4 w-14 bg-white/30 rounded" />
+                    </div>
+                  </div>
+                ) : weatherError ? (
+                  <div className="text-center">
+                    <p className="text-sm text-white/80 mb-2">
+                      Weather Unavailable
                     </p>
-                    <div className="flex items-center justify-between">
+                    <button
+                      onClick={retryWeatherFetch}
+                      className="text-xs bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-full transition-colors"
+                    >
+                      Retry
+                    </button>
+                  </div>
+                ) : currentWeather ? (
+                  <>
+                    <div className="flex items-center gap-2 mb-2">
+                      <SunIcon className="w-4 h-4 text-yellow-300 flex-shrink-0" />
+                      <div>
+                        <p className="text-xs text-white/80">Current Weather</p>
+                        <p className="text-sm font-bold text-teal-200">
+                          {currentWeather.temperature}°C /{" "}
+                          {celsiusToFahrenheit(currentWeather.temperature)}
+                          °F
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-xs text-white/70 truncate">
+                      {getWeatherDescription(currentWeather.weathercode)}
+                    </p>
+                    <div className="flex items-center justify-between mt-1">
                       <span className="text-xs text-white/60">
-                        Wind: {weatherData.current_weather.windspeed} km/h
+                        Wind: {currentWeather.windspeed} km/h
                       </span>
                       <span className="text-xs text-white/60">
                         {getClimateType(destination.latitude)}
                       </span>
                     </div>
+                  </>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <SunIcon className="w-4 h-4 text-yellow-300/50 flex-shrink-0" />
+                    <div>
+                      <p className="text-xs text-white/80">Current Climate</p>
+                      <p className="text-sm font-bold text-teal-300/50">
+                        --°C / --°F
+                      </p>
+                    </div>
                   </div>
-                </>
-              ) : (
-                <div className="flex items-center gap-3">
-                  <svg
-                    className="w-5 h-5 text-yellow-300/50"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-                    />
-                  </svg>
-                  <div>
-                    <p className="text-sm text-white/80">Current Climate</p>
-                    <p className="text-lg font-bold text-teal-300/50">--°C / --°F</p>
+                )}
+              </div>
+            </div>
+
+            {/* Laptop/Desktop (md+) - Top Right */}
+            <div className="hidden md:block absolute top-6 right-6 pointer-events-auto">
+              <div className="bg-white/10 backdrop-blur-2xl rounded-xl p-4 border border-white/20 min-w-[220px] lg:min-w-[240px] shadow-lg">
+                {weatherLoading ? (
+                  <div className="flex items-center gap-3">
+                    <div className="animate-pulse w-5 h-5 bg-yellow-300/50 rounded-full" />
+                    <div className="space-y-2">
+                      <div className="h-3 w-24 bg-white/30 rounded" />
+                      <div className="h-4 w-16 bg-white/30 rounded" />
+                    </div>
                   </div>
-                </div>
-              )}
+                ) : weatherError ? (
+                  <div className="text-center">
+                    <p className="text-sm text-white/80 mb-2">
+                      Weather Unavailable
+                    </p>
+                    <button
+                      onClick={retryWeatherFetch}
+                      className="text-xs bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-full transition-colors"
+                    >
+                      Retry
+                    </button>
+                  </div>
+                ) : currentWeather ? (
+                  <>
+                    <div className="flex items-center gap-3 mb-2">
+                      <SunIcon className="w-5 h-5 text-yellow-300 flex-shrink-0" />
+                      <div>
+                        <p className="text-sm text-white/80">Current Weather</p>
+                        <p className="text-lg font-bold text-teal-200">
+                          {currentWeather.temperature}°C /{" "}
+                          {celsiusToFahrenheit(currentWeather.temperature)}
+                          °F
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-xs text-white/70 truncate">
+                      {getWeatherDescription(currentWeather.weathercode)}
+                    </p>
+                    <div className="flex items-center justify-between mt-1">
+                      <span className="text-xs text-white/60">
+                        Wind: {currentWeather.windspeed} km/h
+                      </span>
+                      <span className="text-xs text-white/60">
+                        {getClimateType(destination.latitude)}
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <SunIcon className="w-5 h-5 text-yellow-300/50 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm text-white/80">Current Climate</p>
+                      <p className="text-lg font-bold text-teal-300/50">
+                        --°C / --°F
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -298,69 +420,96 @@ const DestinationDetailsHeroSection: React.FC<DestinationDetailsHeroSectionProps
         <div className="absolute inset-0 flex items-center justify-center z-10">
           <div className="container mx-auto px-4 md:px-6 lg:px-8">
             <div className="max-w-6xl text-white text-center">
-              {/* Destination Category Badge - CENTERED */}
-              <div className="hidden mb-6 lg:flex flex-wrap gap-3 justify-center">
-                <span className="px-4 py-2 bg-sky-500/90 backdrop-blur-sm rounded-full text-sm font-semibold">
-                  {destination.categoryName}
-                </span>
-                <span className="px-4 py-2 bg-teal-500/90 backdrop-blur-sm rounded-full text-sm font-semibold flex items-center gap-2">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  {destination.location}
-                </span>
-                {destination.activities && destination.activities.length > 0 && (
-                  <span className="px-4 py-2 bg-cyan-500/90 backdrop-blur-sm rounded-full text-sm font-semibold flex items-center gap-2">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                    {destination.activities.length} Activities
-                  </span>
-                )}
-              </div>
-
               {/* Destination Title and Description - CENTERED */}
               <div className="mx-auto max-w-4xl">
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
                   {destination.destinationName}
                 </h1>
-                
+
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 md:p-8 mx-auto max-w-3xl mb-8">
                   <p className="text-md md:text-lg lg:text-xl text-gray-100 leading-relaxed mb-6">
-                    {destination.images[selectedImageIndex].imageDescription}
+                    {truncateDescription(
+                      destination.destinationDescription,
+                      150,
+                    )}
                   </p>
 
                   {/* Destination Info - CENTERED */}
                   <div className="flex flex-wrap gap-4 text-xs lg:text-sm justify-center">
                     <div className="flex items-center gap-2 px-4 py-2 bg-sky-500/20 rounded-full">
-                      <svg className="w-5 h-5 text-sky-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <svg
+                        className="w-5 h-5 text-sky-300"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
                       </svg>
                       <span className="font-medium">
                         Location: {destination.location}
                         {destination.latitude && destination.longitude && (
                           <span className="text-xs ml-2 opacity-75">
-                            ({destination.latitude.toFixed(4)}, {destination.longitude.toFixed(4)})
+                            ({destination.latitude.toFixed(4)},{" "}
+                            {destination.longitude.toFixed(4)})
                           </span>
                         )}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 px-4 py-2 bg-teal-500/20 rounded-full">
-                      <svg className="w-5 h-5 text-teal-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                      <svg
+                        className="w-5 h-5 text-teal-300"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                        />
                       </svg>
-                      <span className="font-medium">Category: {destination.categoryName}</span>
+                      <span className="font-medium">
+                        Category:{" "}
+                        {
+                          destination.destinationCategoryDetailsDtos.find(
+                            (data) => data.isPrimary === true,
+                          )?.name
+                        }
+                      </span>
                     </div>
-                    {destination.activities && destination.activities.length > 0 && (
-                      <div className="flex items-center gap-2 px-4 py-2 bg-cyan-500/20 rounded-full">
-                        <svg className="w-5 h-5 text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                        <span className="font-medium">{destination.activities.length} Available Activities</span>
-                      </div>
-                    )}
+                    {destination.activities &&
+                      destination.activities.length > 0 && (
+                        <div className="flex items-center gap-2 px-4 py-2 bg-cyan-500/20 rounded-full">
+                          <svg
+                            className="w-5 h-5 text-cyan-300"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M13 10V3L4 14h7v7l9-11h-7z"
+                            />
+                          </svg>
+                          <span className="font-medium">
+                            {destination.activities.length} Available Activities
+                          </span>
+                        </div>
+                      )}
                   </div>
                 </div>
               </div>
@@ -368,8 +517,18 @@ const DestinationDetailsHeroSection: React.FC<DestinationDetailsHeroSectionProps
               {/* Image Counter - CENTERED */}
               {destination.images.length > 1 && (
                 <div className="flex items-center gap-2 px-4 py-2 bg-black/40 backdrop-blur-sm rounded-full inline-flex mx-auto">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
                   </svg>
                   <span className="text-sm font-medium">
                     {selectedImageIndex + 1} / {destination.images.length}
@@ -385,7 +544,7 @@ const DestinationDetailsHeroSection: React.FC<DestinationDetailsHeroSectionProps
           <div className="hidden md:flex">
             <button
               onClick={prevSlide}
-              className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group z-20"
+              className="cursor-pointer absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group z-20"
               aria-label="Previous image"
             >
               <svg
@@ -405,7 +564,7 @@ const DestinationDetailsHeroSection: React.FC<DestinationDetailsHeroSectionProps
 
             <button
               onClick={nextSlide}
-              className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group z-20"
+              className="cursor-pointer absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300 group z-20"
               aria-label="Next image"
             >
               <svg
@@ -432,7 +591,7 @@ const DestinationDetailsHeroSection: React.FC<DestinationDetailsHeroSectionProps
               <button
                 key={index}
                 onClick={() => goToSlide(index)}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                className={`cursor-pointer w-3 h-3 rounded-full transition-all duration-300 ${
                   index === selectedImageIndex
                     ? "bg-gradient-to-r from-sky-400 to-teal-400 scale-125 shadow-lg"
                     : "bg-white/50 hover:bg-white/75"

@@ -5,7 +5,6 @@ import ContactHighlights from "@/components/contact-us-components/ContactHighlig
 import ContactUsHeroSection from "@/components/contact-us-components/ContactUsHeroSection";
 import ContactUsOffice from "@/components/contact-us-components/ContactUsOffice";
 import ContactUsSocialMedia from "@/components/contact-us-components/ContactUsSocialMedia";
-import Faq from "@/components/faq-components/Faq";
 import React from "react";
 
 const ContactUsPage = () => {
@@ -28,9 +27,6 @@ const ContactUsPage = () => {
       </div> */}
       {/* <div>
         <ContactUsSocialMedia />
-      </div> */}
-      {/* <div>
-        <Faq />
       </div> */}
       <div>
         <CallToAction />

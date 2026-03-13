@@ -104,28 +104,6 @@ const TourMap: React.FC = () => {
     useState<TourMapDestination | null>(null);
   const [hasInitialized, setHasInitialized] = useState(false);
 
-  // Log categories from context for debugging
-  useEffect(() => {
-    console.log("Categories from context:", categories);
-    if (categories?.destinationCategoryList) {
-      console.log(
-        "Destination categories:",
-        categories.destinationCategoryList,
-      );
-    }
-  }, [categories]);
-
-  // Log destinations for debugging
-  useEffect(() => {
-    console.log("Destinations:", destinations);
-    if (destinations.length > 0) {
-      console.log(
-        "First destination categories:",
-        destinations[0].destinationCategories,
-      );
-    }
-  }, [destinations]);
-
   // Create a map of category names to their data from context
   const categoryDataMap = useMemo(() => {
     const map = new Map();
@@ -133,9 +111,6 @@ const TourMap: React.FC = () => {
     // First, add categories from context if available
     if (categories?.destinationCategoryList) {
       categories.destinationCategoryList.forEach((cat) => {
-        console.log(
-          `Adding category from context: ${cat.destinationCategoryName} with color: ${cat.destinationCategoryColor}`,
-        );
         map.set(cat.destinationCategoryName, {
           color: cat.destinationCategoryColor,
           hoverColor: cat.destinationCategoryHoverColor,
@@ -147,7 +122,6 @@ const TourMap: React.FC = () => {
     // Add fallback colors for any categories that might not be in context
     Object.entries(FALLBACK_COLORS).forEach(([catName, colors]) => {
       if (!map.has(catName)) {
-        console.log(`Adding fallback color for: ${catName}`);
         map.set(catName, {
           color: colors.color,
           hoverColor: colors.hoverColor,
@@ -165,7 +139,6 @@ const TourMap: React.FC = () => {
       const categoryData = categoryDataMap.get(category);
       const color =
         categoryData?.color || FALLBACK_COLORS[category]?.color || "#3b82f6";
-      console.log(`Color for category "${category}": ${color}`);
       return color;
     },
     [categoryDataMap],
@@ -408,10 +381,6 @@ const TourMap: React.FC = () => {
           ? categoryHoverColor
           : currentCategory?.hoverColor || "#2563eb";
 
-      console.log(
-        `Marker for ${place.name}: using color ${markerColor} (primary category: ${primaryCategory})`,
-      );
-
       const marker = window.L.marker([place.lat, place.lng], {
         icon: createCustomIcon(markerColor, markerHoverColor),
         riseOnHover: true,
@@ -541,7 +510,7 @@ const TourMap: React.FC = () => {
           <SectionHeader
             subtitle="Explore the pearl of the Indian Ocean"
             title="Discover Sri Lanka"
-            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore."
+            description=""
             fromColor="#A855F7"
             toColor="#F59E0B"
           />
@@ -606,7 +575,7 @@ const TourMap: React.FC = () => {
         </div>
 
         {/* Category Selection - Dropdown (Mobile & Tablet) */}
-        <div className="lg:hidden mb-4 sm:mb-6">
+        <div className="lg:hidden mb-4 sm:mb-6 max-w-[90%] flex justify-center mx-auto ">
           <select
             value={selectedCategory}
             onChange={(e) => handleCategoryClick(e.target.value)}
@@ -641,7 +610,7 @@ const TourMap: React.FC = () => {
         <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl p-3 sm:p-4 md:p-6 lg:p-8">
           <div className="flex gap-4">
             {/* Map */}
-            <div className="flex-1">
+            <div className="flex-1 -z-0">
               <div
                 ref={mapRef}
                 className="w-full h-[400px] sm:h-[500px] md:h-[550px] lg:h-[600px] rounded-lg sm:rounded-xl overflow-hidden"

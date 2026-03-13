@@ -56,7 +56,10 @@ const DestinationImageGallery: React.FC<DestinationImageGalleryProps> = ({
               >
                 <Image
                   src={image.imageUrl}
-                  alt={image.imageDescription}
+                  alt={
+                    image.imageDescription ||
+                    `Thumbnail ${index + 1} for ${destination.destinationName}`
+                  }
                   width={80}
                   height={64}
                   className="w-full h-full object-cover"

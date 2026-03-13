@@ -5,6 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 import { UserProfileAPIService } from "@/services/userProfileAPIService";
 import { CouponData } from "@/types/coupon";
 import { USER_PROFILE_COUPONS_VIEW_PRIVILEGE } from "@/utils/privileges";
+import { USER_PROFILE_PAGE_PATH } from "@/utils/urls";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
@@ -24,7 +25,7 @@ export default function CouponsPage() {
       user &&
       !user.privileges.includes(USER_PROFILE_COUPONS_VIEW_PRIVILEGE)
     ) {
-      router.push("/profile");
+      router.push(USER_PROFILE_PAGE_PATH);
     }
   }, [user, router]);
 
@@ -57,7 +58,7 @@ export default function CouponsPage() {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-LK", {
       style: "currency",
-      currency: "LKR",
+      currency: "USD",
       minimumFractionDigits: 2,
     }).format(amount);
   };
@@ -188,7 +189,7 @@ export default function CouponsPage() {
             <button
               key={status}
               onClick={() => setFilter(status)}
-              className={`bg-white rounded-lg sm:rounded-xl shadow-sm sm:shadow-md border p-4 sm:p-5 text-center transition-all duration-300 hover:shadow-md sm:hover:shadow-lg active:scale-[0.98] ${
+              className={`cursor-pointer bg-white rounded-lg sm:rounded-xl shadow-sm sm:shadow-md border p-4 sm:p-5 text-center transition-all duration-300 hover:shadow-md sm:hover:shadow-lg active:scale-[0.98] ${
                 filter === status
                   ? "border-sky-500 shadow-md ring-2 ring-sky-100"
                   : "border-gray-200 hover:border-sky-300"
@@ -233,9 +234,9 @@ export default function CouponsPage() {
                 ? "You don't have any coupons yet. Start earning coupons by making bookings!"
                 : `You don't have any ${filter.toLowerCase()} coupons.`}
             </p>
-            <button className="px-6 py-3 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:shadow-lg transition-all duration-300 text-sm sm:text-base font-semibold">
+            {/* <button className="px-6 py-3 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-lg hover:shadow-lg transition-all duration-300 text-sm sm:text-base font-semibold">
               Explore Available Offers
-            </button>
+            </button> */}
           </div>
         ) : (
           <div className="space-y-4 sm:space-y-6">

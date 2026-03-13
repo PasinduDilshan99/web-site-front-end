@@ -21,6 +21,7 @@ import {
 import { TourService } from "@/services/tourService";
 import ToursLoading from "@/components/sri-lankan-tours-components/ToursLoading";
 import { useCommon } from "@/context/CommonContext";
+import SLTourDetailsLoadingError from "@/components/sri-lankan-tours-components/SLTourDetailsLoadingError";
 
 // Utility functions for URL params management
 const filtersToUrlParams = (
@@ -126,40 +127,51 @@ const SriLankanTourPageContent: React.FC = () => {
   useEffect(() => {
     if (categories) {
       // Extract tour type names
-      const typeNames = categories.tourTypeList.map(type => type.tourTypeName);
+      const typeNames = categories.tourTypeList.map(
+        (type) => type.tourTypeName,
+      );
       setTourTypes(typeNames);
 
       // Extract tour category names
-      const categoryNames = categories.tourCategoryList.map(cat => cat.tourCategoryName);
+      const categoryNames = categories.tourCategoryList.map(
+        (cat) => cat.tourCategoryName,
+      );
       setTourCategories(categoryNames);
     }
   }, [categories]);
 
   // Build search request from filters
-  const buildSearchRequest = useCallback((
-    filterValues: TourFilters,
-    page: number,
-    pageSize: number
-  ): TourSearchRequest => {
-    return {
-      name: filterValues.search || null,
-      minPrice: filterValues.priceRange[0] > 0 ? filterValues.priceRange[0] : null,
-      maxPrice: filterValues.priceRange[1] < 5000 ? filterValues.priceRange[1] : null,
-      duration: filterValues.duration ? parseInt(filterValues.duration) : null,
-      tourType: filterValues.tourType || null,
-      tourCategory: filterValues.tourCategory || null,
-      season: filterValues.season || null,
-      location: filterValues.location || null,
-      pageNumber: page,
-      pageSize: pageSize,
-    };
-  }, []);
+  const buildSearchRequest = useCallback(
+    (
+      filterValues: TourFilters,
+      page: number,
+      pageSize: number,
+    ): TourSearchRequest => {
+      return {
+        name: filterValues.search || null,
+        minPrice:
+          filterValues.priceRange[0] > 0 ? filterValues.priceRange[0] : null,
+        maxPrice:
+          filterValues.priceRange[1] < 5000 ? filterValues.priceRange[1] : null,
+        duration: filterValues.duration
+          ? parseInt(filterValues.duration)
+          : null,
+        tourType: filterValues.tourType || null,
+        tourCategory: filterValues.tourCategory || null,
+        season: filterValues.season || null,
+        location: filterValues.location || null,
+        pageNumber: page,
+        pageSize: pageSize,
+      };
+    },
+    [],
+  );
 
   // Fetch other filter options (seasons, locations, durations)
   const fetchFilterOptions = useCallback(async (): Promise<void> => {
     try {
       const options = await TourService.getFilterOptions();
-      
+
       setSeasons(options.seasons);
       setLocations(options.locations);
       setDurations(options.durations);
@@ -189,8 +201,6 @@ const SriLankanTourPageContent: React.FC = () => {
 
         // Prepare API request
         const requestBody = buildSearchRequest(filterValues, page, pageSize);
-
-        console.log("Request Body:", requestBody); // For debugging
 
         const result = await TourService.searchTours(requestBody);
 
@@ -225,7 +235,7 @@ const SriLankanTourPageContent: React.FC = () => {
         setLoading(true);
         await fetchFilterOptions();
         await fetchToursWithFilters(filters, currentPage, itemsPerPage);
-        
+
         // Uncomment these if needed
         // await fetchReviews();
         // await fetchTourHistory();
@@ -324,19 +334,10 @@ const SriLankanTourPageContent: React.FC = () => {
 
   if (error) {
     return (
-      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-br from-purple-500 via-purple-600 to-amber-500">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <ErrorState
-            title="Failed to Load tours"
-            message={error}
-            icon="alert"
-            variant="error"
-            size="md"
-            actionLabel="Try Again"
-            onAction={handleRetry}
-          />
-        </div>
-      </section>
+      <SLTourDetailsLoadingError
+        onRetry={handleRetry}
+        message="Couldn't load the Sri Lanka tour information."
+      />
     );
   }
 
@@ -368,38 +369,38 @@ const SriLankanTourPageContent: React.FC = () => {
 
       {/* Results Section */}
       <div id="results-section" className="mb-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <h3 className="text-2xl font-semibold text-sky-900">
-            {totalTours} Tour{totalTours !== 1 ? "s" : ""} Found
-          </h3>
+  <div className="flex flex-row items-center justify-between gap-3 mb-6">
+  <h3 className="text-lg sm:text-xl md:text-2xl font-semibold text-sky-900 leading-tight">
+    {totalTours} Tour{totalTours !== 1 ? "s" : ""} Found
+  </h3>
 
-          {/* Items Per Page Selector */}
-          <div className="flex items-center gap-3 bg-sky-50 rounded-lg px-4 py-2 border border-sky-200">
-            <label
-              htmlFor="itemsPerPage"
-              className="text-sm font-medium text-sky-800 whitespace-nowrap"
-            >
-              Show:
-            </label>
-            <select
-              id="itemsPerPage"
-              value={itemsPerPage}
-              onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
-              className="border text-sky-700 border-sky-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white transition-all duration-200 hover:border-sky-400"
-            >
-              <option value={6}>6</option>
-              <option value={8}>8</option>
-              <option value={10}>10</option>
-              <option value={12}>12</option>
-              <option value={16}>16</option>
-              <option value={20}>20</option>
-              <option value={24}>24</option>
-            </select>
-            <span className="text-sm text-sky-600 whitespace-nowrap font-medium">
-              per page
-            </span>
-          </div>
-        </div>
+  {/* Items Per Page Selector */}
+  <div className="flex items-center gap-2 sm:gap-3 bg-sky-50 rounded-lg px-3 sm:px-4 py-1.5 sm:py-2 border border-sky-200">
+    <label
+      htmlFor="itemsPerPage"
+      className="text-xs sm:text-sm font-medium text-sky-800 whitespace-nowrap"
+    >
+      Show:
+    </label>
+    <select
+      id="itemsPerPage"
+      value={itemsPerPage}
+      onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+      className="cursor-pointer border text-sky-700 border-sky-300 rounded-lg px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white transition-all duration-200 hover:border-sky-400"
+    >
+      <option value={6}>6</option>
+      <option value={8}>8</option>
+      <option value={10}>10</option>
+      <option value={12}>12</option>
+      <option value={16}>16</option>
+      <option value={20}>20</option>
+      <option value={24}>24</option>
+    </select>
+    <span className="hidden xs:inline text-xs sm:text-sm text-sky-600 whitespace-nowrap font-medium">
+      per page
+    </span>
+  </div>
+</div>
 
         {/* Tours Grid */}
         {tours.length > 0 ? (
@@ -468,7 +469,7 @@ const NoResults: React.FC<{ onResetFilters: () => void }> = ({
     </div>
     <button
       onClick={onResetFilters}
-      className="px-6 py-2 bg-gradient-to-r from-cyan-500 to-teal-500 text-white rounded-lg hover:from-cyan-600 hover:to-teal-600 transition-colors"
+      className="cursor-pointer px-6 py-2 bg-gradient-to-r from-cyan-500 to-teal-500 text-white rounded-lg hover:from-cyan-600 hover:to-teal-600 transition-colors"
     >
       Reset Filters
     </button>
@@ -550,7 +551,7 @@ const Pagination: React.FC<PaginationProps> = ({
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+          className="cursor-pointer px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
         >
           <svg
             className="w-4 h-4"
@@ -586,7 +587,7 @@ const Pagination: React.FC<PaginationProps> = ({
               <button
                 key={page}
                 onClick={() => onPageChange(page as number)}
-                className={`min-w-[40px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
+                className={`cursor-pointer min-w-[40px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
                   currentPage === page
                     ? "bg-gradient-to-r from-sky-600 to-teal-600 text-white shadow-lg transform scale-105"
                     : "text-sky-700 bg-white border-2 border-sky-300 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 hover:shadow-md"
@@ -604,7 +605,7 @@ const Pagination: React.FC<PaginationProps> = ({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+          className="cursor-pointer px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
         >
           <span className="hidden sm:inline">Next</span>
           <svg

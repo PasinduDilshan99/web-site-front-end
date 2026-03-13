@@ -208,7 +208,7 @@ export default function TestMap({
   return (
     <div
       id="map"
-      className="h-[400px] sm:h-[500px] md:h-[550px] lg:h-[600px] xl:h-[650px] w-full rounded-lg sm:rounded-xl lg:rounded-2xl overflow-hidden shadow-lg border border-gray-200"
+      className="h-[400px] -z-0 sm:h-[500px] md:h-[550px] lg:h-[600px] xl:h-[650px] w-full rounded-lg sm:rounded-xl lg:rounded-2xl overflow-hidden shadow-lg border border-gray-200"
     />
   );
 }

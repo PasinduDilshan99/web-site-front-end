@@ -2,9 +2,16 @@
 "use client";
 import UserProfileRequestedToursLoading from "@/components/user-profile-components/Loadings/UserProfileRequestedToursLoading";
 import { useAuth } from "@/context/AuthContext";
+import { bookingService } from "@/services/bookingService";
 import { UserProfileAPIService } from "@/services/userProfileAPIService";
 import { RequestedTour } from "@/types/requested-tours";
+import { PENDING_BOOKING_STATUS } from "@/utils/constant";
 import { USER_PROFILE_REQUESTED_TOURS_VIEW_PRIVILEGE } from "@/utils/privileges";
+import {
+  EMPLOYEE_PAGE_PATH,
+  SRI_LANKAN_TOUR_PAGE_PATH,
+  USER_PROFILE_PAGE_PATH,
+} from "@/utils/urls";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
@@ -16,13 +23,31 @@ export default function RequestedToursPage() {
   const apiService = new UserProfileAPIService();
   const { user } = useAuth();
   const router = useRouter();
+  const [expandedDescriptions, setExpandedDescriptions] = useState<{
+    [key: number]: boolean;
+  }>({});
+
+  // ── Custom cancel-confirmation modal state ──
+  const [cancelModal, setCancelModal] = useState<{
+    open: boolean;
+    bookingId: number | null;
+  }>({ open: false, bookingId: null });
+  const [cancelling, setCancelling] = useState(false);
+
+  // Add this function to toggle description
+  const toggleDescription = (bookingId: number) => {
+    setExpandedDescriptions((prev) => ({
+      ...prev,
+      [bookingId]: !prev[bookingId],
+    }));
+  };
 
   useEffect(() => {
     if (
       user &&
       !user.privileges.includes(USER_PROFILE_REQUESTED_TOURS_VIEW_PRIVILEGE)
     ) {
-      router.push("/profile");
+      router.push(USER_PROFILE_PAGE_PATH);
     }
   }, [user, router]);
 
@@ -47,7 +72,7 @@ export default function RequestedToursPage() {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-LK", {
       style: "currency",
-      currency: "LKR",
+      currency: "USD",
       minimumFractionDigits: 0,
     }).format(amount);
   };
@@ -168,16 +193,36 @@ export default function RequestedToursPage() {
     return "text-emerald-600 font-semibold";
   };
 
-  const handleCancelRequest = async (bookingId: number) => {
-    if (window.confirm("Are you sure you want to cancel this tour request?")) {
-      try {
-        console.log("Cancelling booking:", bookingId);
+  // ── Open modal instead of window.confirm ──
+  const handleCancelRequest = (bookingId: number) => {
+    setCancelModal({ open: true, bookingId });
+  };
+
+  // ── Called when user confirms in the modal ──
+  const confirmCancel = async () => {
+    if (cancelModal.bookingId === null) return;
+    try {
+      setCancelling(true);
+      const response = await bookingService.cancelBookingInquiry({
+        bookingId: cancelModal.bookingId,
+        bookingStatus: PENDING_BOOKING_STATUS,
+      });
+      if (response.code === 200) {
+        setCancelModal({ open: false, bookingId: null });
         await loadRequestedTours();
-      } catch (error) {
-        console.error("Failed to cancel request:", error);
-        alert("Failed to cancel request. Please try again.");
+      } else {
+        alert("Failed to cancel request.");
       }
+    } catch (error) {
+      console.error("Failed to cancel request:", error);
+      alert("Failed to cancel request. Please try again.");
+    } finally {
+      setCancelling(false);
     }
+  };
+
+  const dismissCancelModal = () => {
+    if (!cancelling) setCancelModal({ open: false, bookingId: null });
   };
 
   const handleSubmitDocument = (bookingId: number) => {
@@ -224,7 +269,7 @@ export default function RequestedToursPage() {
               adventure!
             </p>
             <button
-              onClick={() => router.push("/tours")}
+              onClick={() => router.push(SRI_LANKAN_TOUR_PAGE_PATH)}
               className="px-5 py-2.5 md:px-6 md:py-3 bg-gradient-to-r from-sky-500 to-teal-600 text-white rounded-lg hover:shadow-lg transition-all duration-300 text-sm md:text-base"
             >
               Browse Tours
@@ -237,6 +282,63 @@ export default function RequestedToursPage() {
 
   return (
     <div className="flex-1 p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-sky-25 to-teal-25 min-h-screen">
+      {/* ── Cancel Confirmation Modal ── */}
+      {cancelModal.open && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-white/20 backdrop-blur-sm"
+          onClick={dismissCancelModal}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-full max-w-md p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Icon */}
+            <div className="flex items-center justify-center w-14 h-14 mx-auto mb-4 rounded-full bg-red-50 border border-red-100">
+              <svg
+                className="w-7 h-7 text-red-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
+                />
+              </svg>
+            </div>
+
+            {/* Text */}
+            <h3 className="text-xl font-bold text-gray-800 text-center mb-2">
+              Cancel Tour Request?
+            </h3>
+            <p className="text-gray-500 text-sm text-center mb-6">
+              Are you sure you want to cancel this tour request? This action
+              cannot be undone.
+            </p>
+
+            {/* Buttons */}
+            <div className="flex gap-3">
+              <button
+                onClick={dismissCancelModal}
+                disabled={cancelling}
+                className="cursor-pointer flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-200 text-sm font-medium disabled:opacity-50"
+              >
+                Keep Request
+              </button>
+              <button
+                onClick={confirmCancel}
+                disabled={cancelling}
+                className="cursor-pointer flex-1 px-4 py-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:shadow-lg transition-all duration-200 text-sm font-semibold disabled:opacity-50"
+              >
+                {cancelling ? "Cancelling..." : "Yes, Cancel"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6 md:mb-8">
@@ -319,19 +421,36 @@ export default function RequestedToursPage() {
                         {tour.approvalStatus.replace("_", " ")}
                       </span>
                     </div>
-                    <p className="text-sky-100 text-sm md:text-base mb-3 line-clamp-2">
-                      {tour.tourDescription}
-                    </p>
+                    <div className="mb-3">
+                      <p className="text-sky-100 text-sm md:text-base">
+                        {expandedDescriptions[tour.bookingId]
+                          ? tour.tourDescription
+                          : tour.tourDescription.substring(0, 200) +
+                            (tour.tourDescription.length > 200 ? "..." : "")}
+                      </p>
+                      {tour.tourDescription.length > 200 && (
+                        <button
+                          onClick={() => toggleDescription(tour.bookingId)}
+                          className="cursor-pointer text-sky-200 hover:text-sky-100 text-xs underline mt-1 transition-colors"
+                        >
+                          {expandedDescriptions[tour.bookingId]
+                            ? "Show Less"
+                            : "Show More"}
+                        </button>
+                      )}
+                    </div>
 
                     {/* Mobile: Stacked info */}
                     <div className="space-y-2 md:hidden">
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-1">
-                          <span>📅</span>
-                          <span className="text-xs">
-                            {formatDate(tour.travelStartDate)}
-                          </span>
-                        </div>
+                        {tour.travelStartDate && (
+                          <div className="flex items-center space-x-1">
+                            <span>📅</span>
+                            <span className="text-xs">
+                              {formatDate(tour.travelStartDate)}
+                            </span>
+                          </div>
+                        )}
                         <div className="flex items-center space-x-1">
                           <span>👥</span>
                           <span className="text-xs">
@@ -360,29 +479,37 @@ export default function RequestedToursPage() {
 
                     {/* Desktop: Horizontal info */}
                     <div className="hidden md:flex flex-wrap gap-4 text-sm">
-                      <div className="flex items-center space-x-1">
-                        <span>📅</span>
-                        <span>
-                          {formatDate(tour.travelStartDate)} -{" "}
-                          {formatDate(tour.travelEndDate)}
-                        </span>
-                      </div>
+                      {tour.travelStartDate && (
+                        <div className="flex items-center space-x-1">
+                          <span>📅</span>
+                          <span>
+                            {formatDate(tour.travelStartDate)} -{" "}
+                            {formatDate(tour.travelEndDate)}
+                          </span>
+                        </div>
+                      )}
                       <div className="flex items-center space-x-1">
                         <span>👥</span>
-                        <span>{tour.totalPersons} travelers</span>
+                        <span>
+                          {tour.totalPersons === 0 ? 1 : tour.totalPersons}{" "}
+                          traveler
+                          {tour.totalPersons > 1 && "s"}
+                        </span>
                       </div>
                       <div className="flex items-center space-x-1">
                         <span>💰</span>
                         <span>{formatCurrency(tour.finalAmount)}</span>
                       </div>
-                      <div className="flex items-center space-x-1">
-                        <span>⏳</span>
-                        <span className={getDaysColor(tour.daysUntilTravel)}>
-                          {tour.daysUntilTravel > 0
-                            ? `${tour.daysUntilTravel} days to go`
-                            : `Started ${Math.abs(tour.daysUntilTravel)} days ago`}
-                        </span>
-                      </div>
+                      {
+                        <div className="flex items-center space-x-1">
+                          <span>⏳</span>
+                          <span className={getDaysColor(tour.daysUntilTravel)}>
+                            {tour.daysUntilTravel > 0
+                              ? `${tour.daysUntilTravel} days to go`
+                              : `Started ${Math.abs(tour.daysUntilTravel)} days ago`}
+                          </span>
+                        </div>
+                      }
                       <div className="flex items-center space-x-1">
                         <span>🏷️</span>
                         <span
@@ -395,7 +522,7 @@ export default function RequestedToursPage() {
                   </div>
                   <button
                     onClick={() => toggleBookingExpansion(tour.bookingId)}
-                    className="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition-colors self-start"
+                    className="cursor-pointer bg-white/20 hover:bg-white/30 p-2 rounded-lg transition-colors self-start"
                   >
                     <svg
                       className={`w-5 h-5 md:w-6 md:h-6 transform transition-transform ${
@@ -449,6 +576,16 @@ export default function RequestedToursPage() {
                       </div>
                     </div>
                     <div className="flex gap-2 mt-3 sm:mt-0">
+                      <button
+                        onClick={() =>
+                          router.push(
+                            `${EMPLOYEE_PAGE_PATH}/${tour.assignTo}?name=${tour.assignToName}`,
+                          )
+                        }
+                        className="cursor-pointer px-4 py-2 bg-sky-50 text-sky-700 rounded-lg border border-sky-200 hover:bg-sky-100 transition-colors text-sm font-medium"
+                      >
+                        Contact Guide
+                      </button>
                       {tour.documents.some(
                         (doc) =>
                           doc.requiredForApproval &&
@@ -464,9 +601,9 @@ export default function RequestedToursPage() {
                       {tour.approvalStatus === "PENDING_APPROVAL" && (
                         <button
                           onClick={() => handleCancelRequest(tour.bookingId)}
-                          className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
+                          className="cursor-pointer px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
                         >
-                          Cancel
+                          Cancel Tour
                         </button>
                       )}
                     </div>
@@ -482,21 +619,23 @@ export default function RequestedToursPage() {
                       <div className="space-y-2 text-xs md:text-sm">
                         <div className="flex justify-between">
                           <span className="text-gray-600">Package:</span>
-                          <span className="font-semibold">
+                          <span className="font-semibold text-gray-600">
                             {tour.packageName}
                           </span>
                         </div>
+                        {tour.packageScheduleName && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Schedule:</span>
+                            <span className="font-semibold text-gray-600">
+                              {tour.packageScheduleName}
+                            </span>
+                          </div>
+                        )}
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Schedule:</span>
-                          <span className="font-semibold">
-                            {tour.packageScheduleName}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">
+                          <span className="text-gray-600 ">
                             Price per person:
                           </span>
-                          <span className="font-semibold">
+                          <span className="font-semibold text-gray-600">
                             {formatCurrency(tour.packagePricePerPerson)}
                           </span>
                         </div>
@@ -517,13 +656,13 @@ export default function RequestedToursPage() {
                       <div className="space-y-2 text-xs md:text-sm">
                         <div className="flex justify-between">
                           <span className="text-gray-600">Total Amount:</span>
-                          <span className="font-semibold">
+                          <span className="font-semibold text-gray-600">
                             {formatCurrency(tour.totalAmount)}
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600">Discount:</span>
-                          <span className="font-semibold text-emerald-600">
+                          <span className="font-semibold text-emerald-600 text-gray-600">
                             -{formatCurrency(tour.discountAmount)}
                           </span>
                         </div>
@@ -531,7 +670,7 @@ export default function RequestedToursPage() {
                           <span className="text-gray-600">
                             Tax & Insurance:
                           </span>
-                          <span className="font-semibold">
+                          <span className="font-semibold text-gray-600">
                             {formatCurrency(
                               tour.taxAmount + tour.insuranceAmount,
                             )}
@@ -709,14 +848,16 @@ export default function RequestedToursPage() {
                                   </div>
                                 </div>
                               )}
-                              <div>
-                                <span className="text-gray-500 block mb-1">
-                                  Due:
-                                </span>
-                                <div className="font-medium">
-                                  {formatDate(payment.dueDate)}
+                              {payment.dueDate && (
+                                <div>
+                                  <span className="text-gray-500 block mb-1">
+                                    Due:
+                                  </span>
+                                  <div className="font-medium">
+                                    {formatDate(payment.dueDate)}
+                                  </div>
                                 </div>
-                              </div>
+                              )}
                               <div>
                                 <span className="text-gray-500 block mb-1">
                                   Invoice:

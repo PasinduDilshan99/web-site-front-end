@@ -14,6 +14,14 @@ import { RequestedTour, RequestedToursResponse } from "@/types/requested-tours";
 import { UpcomingTour, UpcomingToursResponse } from "@/types/upcoming-tours";
 import { PendingTour, PendingToursResponse } from "@/types/pending-tours";
 import UserProfileToursLoading from "@/components/user-profile-components/Loadings/ToursLoading";
+import {
+  USER_PROFILE_CANCELLED_TOURS_PAGE_PATH,
+  USER_PROFILE_COMPLETED_TOURS_PAGE_PATH,
+  USER_PROFILE_PAGE_PATH,
+  USER_PROFILE_PENDING_TOURS_PAGE_PATH,
+  USER_PROFILE_REQUESTED_TOURS_PAGE_PATH,
+  USER_PROFILE_UPCOMING_TOURS_PAGE_PATH,
+} from "@/utils/urls";
 
 // Combined Tour type for display
 interface DisplayTour {
@@ -24,7 +32,7 @@ interface DisplayTour {
   startDate: string;
   endDate: string;
   location: string;
-  tourType: string;
+  // tourType: string;
   price: number;
   participants: number;
   rating?: number;
@@ -35,7 +43,12 @@ interface DisplayTour {
   packageName: string;
   totalPersons: number;
   finalAmount: number;
-  originalData: CompletedTour | CancelledTour | RequestedTour | UpcomingTour | PendingTour;
+  originalData:
+    | CompletedTour
+    | CancelledTour
+    | RequestedTour
+    | UpcomingTour
+    | PendingTour;
 }
 
 // Tour category type
@@ -59,7 +72,7 @@ export default function ToursPage() {
       title: "Requested Tours",
       description: "Tours you have requested and pending confirmation",
       icon: "📝",
-      path: "/profile/requested-tours",
+      path: USER_PROFILE_REQUESTED_TOURS_PAGE_PATH,
       color: "from-sky-500 to-blue-600",
       count: 0,
     },
@@ -67,7 +80,7 @@ export default function ToursPage() {
       title: "Pending Tours",
       description: "Tours awaiting initial processing",
       icon: "⏳",
-      path: "/profile/pending-tours",
+      path: USER_PROFILE_PENDING_TOURS_PAGE_PATH,
       color: "from-amber-500 to-orange-600",
       count: 0,
     },
@@ -75,7 +88,7 @@ export default function ToursPage() {
       title: "Upcoming Tours",
       description: "Tours that are confirmed and coming soon",
       icon: "🗓️",
-      path: "/profile/upcoming-tours",
+      path: USER_PROFILE_UPCOMING_TOURS_PAGE_PATH,
       color: "from-teal-500 to-emerald-600",
       count: 0,
     },
@@ -83,7 +96,7 @@ export default function ToursPage() {
       title: "Completed Tours",
       description: "Tours you have successfully completed",
       icon: "✅",
-      path: "/profile/completed-tours",
+      path: USER_PROFILE_COMPLETED_TOURS_PAGE_PATH,
       color: "from-cyan-500 to-blue-600",
       count: 0,
     },
@@ -91,7 +104,7 @@ export default function ToursPage() {
       title: "Cancelled Tours",
       description: "Tours that have been cancelled or declined",
       icon: "❌",
-      path: "/profile/cancelled-tours",
+      path: USER_PROFILE_CANCELLED_TOURS_PAGE_PATH,
       color: "from-rose-500 to-pink-600",
       count: 0,
     },
@@ -103,7 +116,7 @@ export default function ToursPage() {
 
   useEffect(() => {
     if (user && !user.privileges.includes(USER_PROFILE_TOURS_VIEW_PRIVILEGE)) {
-      router.push("/profile");
+      router.push(USER_PROFILE_PAGE_PATH);
     }
   }, [user, router]);
 
@@ -145,7 +158,7 @@ export default function ToursPage() {
             startDate: tour.travelStartDate,
             endDate: tour.travelEndDate,
             location: tour.startLocation,
-            tourType: tour.tourType,
+            // tourType: tour.tourType,
             price: tour.finalAmount,
             participants: tour.totalPersons,
             images:
@@ -176,7 +189,7 @@ export default function ToursPage() {
             startDate: tour.travelStartDate,
             endDate: tour.travelEndDate,
             location: tour.startLocation,
-            tourType: tour.tourType,
+            // tourType: tour.tourType,
             price: tour.finalAmount,
             participants: tour.totalPersons,
             images:
@@ -207,7 +220,7 @@ export default function ToursPage() {
             startDate: tour.travelStartDate,
             endDate: tour.travelEndDate,
             location: tour.startLocation,
-            tourType: tour.tourType,
+            // tourType: tour.tourType,
             price: tour.finalAmount,
             participants: tour.totalPersons,
             images:
@@ -238,7 +251,7 @@ export default function ToursPage() {
             startDate: tour.travelStartDate,
             endDate: tour.travelEndDate,
             location: tour.startLocation,
-            tourType: tour.tourType,
+            // tourType: tour.tourType,
             price: tour.finalAmount,
             participants: tour.totalPersons,
             images:
@@ -269,7 +282,7 @@ export default function ToursPage() {
             startDate: tour.bookingDate, // Using booking date as placeholder
             endDate: tour.bookingDate, // Using booking date as placeholder
             location: tour.startLocation,
-            tourType: tour.tourType,
+            // tourType: tour.tourType,
             price: tour.packageTotalPrice,
             participants: 1, // Default value since not provided in PendingTour
             images: [],
@@ -442,7 +455,10 @@ export default function ToursPage() {
             <div className="mt-2 flex items-center space-x-2 text-xs">
               <span className="flex items-center space-x-1 px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
                 <span>📅</span>
-                <span>Booked: {new Date(pendingData.bookingDate).toLocaleDateString()}</span>
+                <span>
+                  Booked:{" "}
+                  {new Date(pendingData.bookingDate).toLocaleDateString()}
+                </span>
               </span>
               <span className="px-2 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200">
                 {pendingData.tourDuration} days
@@ -479,7 +495,9 @@ export default function ToursPage() {
             <div className="mt-2 flex items-center space-x-2 text-xs">
               <span className="px-2 py-1 rounded-full bg-green-50 text-green-700 border border-green-200">
                 Completed{" "}
-                {completedData.completionTime ? new Date(completedData.completionTime).toLocaleDateString() : ""}
+                {completedData.completionTime
+                  ? new Date(completedData.completionTime).toLocaleDateString()
+                  : ""}
               </span>
               {completedData.payments?.length > 0 && (
                 <span
@@ -539,7 +557,8 @@ export default function ToursPage() {
                     </span>
                   ) : (
                     <span className="text-xs sm:text-sm text-gray-500">
-                      Booked: {new Date(tour.startDate).toLocaleDateString("en-US", {
+                      Booked:{" "}
+                      {new Date(tour.startDate).toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",
                         year: "numeric",
@@ -566,9 +585,9 @@ export default function ToursPage() {
               </span>
               <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs sm:text-sm bg-gradient-to-r from-sky-50 to-teal-50 text-sky-800 border border-sky-200 font-medium">
                 <span className="mr-1.5">🎯</span>
-                <span className="truncate max-w-[120px] sm:max-w-[150px]">
+                {/* <span className="truncate max-w-[120px] sm:max-w-[150px]">
                   {tour.tourType}
-                </span>
+                </span> */}
               </span>
               {tour.packageName && (
                 <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs sm:text-sm bg-gradient-to-r from-purple-50 to-pink-50 text-purple-800 border border-purple-200 font-medium">
@@ -621,7 +640,7 @@ export default function ToursPage() {
                 <div className="flex items-center space-x-2 text-gray-600">
                   <span className="w-5 h-5">💰</span>
                   <span className="font-medium">
-                    LKR {tour.price.toLocaleString()}
+                    USD {tour.price.toLocaleString()}
                   </span>
                 </div>
               </div>
@@ -732,7 +751,7 @@ export default function ToursPage() {
             <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() => setActiveFilter("all")}
-                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-300 ${
+                className={`cursor-pointer px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-300 ${
                   activeFilter === "all"
                     ? "bg-gradient-to-r from-sky-500 to-teal-500 text-white shadow-md"
                     : "bg-white text-gray-700 border border-sky-200 hover:border-sky-300 hover:bg-sky-50"
@@ -742,7 +761,7 @@ export default function ToursPage() {
               </button>
               <button
                 onClick={() => setActiveFilter("requested")}
-                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-300 ${
+                className={`cursor-pointer px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-300 ${
                   activeFilter === "requested"
                     ? "bg-gradient-to-r from-sky-500 to-blue-500 text-white shadow-md"
                     : "bg-white text-gray-700 border border-sky-200 hover:border-sky-300 hover:bg-sky-50"
@@ -752,7 +771,7 @@ export default function ToursPage() {
               </button>
               <button
                 onClick={() => setActiveFilter("pending")}
-                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-300 ${
+                className={`cursor-pointer px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-300 ${
                   activeFilter === "pending"
                     ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md"
                     : "bg-white text-gray-700 border border-amber-200 hover:border-amber-300 hover:bg-amber-50"
@@ -762,7 +781,7 @@ export default function ToursPage() {
               </button>
               <button
                 onClick={() => setActiveFilter("upcoming")}
-                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-300 ${
+                className={`cursor-pointer px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-300 ${
                   activeFilter === "upcoming"
                     ? "bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-md"
                     : "bg-white text-gray-700 border border-teal-200 hover:border-teal-300 hover:bg-teal-50"
@@ -772,7 +791,7 @@ export default function ToursPage() {
               </button>
               <button
                 onClick={() => setActiveFilter("completed")}
-                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-300 ${
+                className={`cursor-pointer px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-300 ${
                   activeFilter === "completed"
                     ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-md"
                     : "bg-white text-gray-700 border border-cyan-200 hover:border-cyan-300 hover:bg-cyan-50"
@@ -782,7 +801,7 @@ export default function ToursPage() {
               </button>
               <button
                 onClick={() => setActiveFilter("cancelled")}
-                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-300 ${
+                className={`cursor-pointer px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-300 ${
                   activeFilter === "cancelled"
                     ? "bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-md"
                     : "bg-white text-gray-700 border border-rose-200 hover:border-rose-300 hover:bg-rose-50"
@@ -881,7 +900,10 @@ export default function ToursPage() {
               </div>
             </div>
             <div className="mt-4 text-center text-xs text-gray-500">
-              Total Value: LKR {allTours.reduce((acc, tour) => acc + tour.price, 0).toLocaleString()}
+              Total Value: USD{" "}
+              {allTours
+                .reduce((acc, tour) => acc + tour.price, 0)
+                .toLocaleString()}
             </div>
           </div>
         )}

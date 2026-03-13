@@ -3,6 +3,7 @@
 export interface AddBrowserHistoryRequest {
   type: string;
   dataId: number;
+  name: string;
 }
 
 // Backend response structure

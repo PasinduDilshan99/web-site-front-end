@@ -38,10 +38,10 @@ const DayContent: React.FC<DayContentProps> = ({
   openImageModal,
 }) => {
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 sm:space-y-6 md:space-y-8">
       {/* Destinations Section */}
-      <div className="space-y-6">
-        <h3 className="text-lg lg:text-2xl font-bold text-gray-900 mb-6">
+      <div className="space-y-4 sm:space-y-5 md:space-y-6">
+        <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 md:mb-6">
           Destinations & Activities
         </h3>
         {day.destinations.map((destinationWithActivities, idx) => (
@@ -58,6 +58,7 @@ const DayContent: React.FC<DayContentProps> = ({
           />
         ))}
       </div>
+      
       {/* Accommodations Section */}
       <AccommodationsSection accommodations={day.accommodations} />
     </div>

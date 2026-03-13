@@ -99,7 +99,7 @@ export interface ActiveToursType {
   startLocation: string;
   endLocation: string;
   tourTypeDtos: TourTypeDto[];
-  tourCategoryDtos: TourCategoryDto[];
+  tourCategoryDto: TourCategoryDto[];
   tourCategoryDescription: string;
   seasonName: string;
   seasonDescription: string;
@@ -464,6 +464,11 @@ export interface Destination {
   updatedBy: string | null;
   updaterImageUrl: string | null;
   images: DestinationImage[];
+}
+
+export interface DestinationWithId {
+  destinationId: number;
+  destinationName: string;
 }
 export interface ActivityImage {
   id: number;

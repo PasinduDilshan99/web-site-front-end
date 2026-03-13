@@ -2,6 +2,8 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { VehicleBasicDetails } from "@/types/vehicle-types";
+import { VEHICLE_SPECIFICATION_DETAILS_PATH } from "@/utils/urls";
+import { PLACE_HOLDER_IMAGE } from "@/utils/constant";
 
 interface VehiclesGridProps {
   vehicles: VehicleBasicDetails[];
@@ -13,13 +15,13 @@ const VehiclesGrid: React.FC<VehiclesGridProps> = ({ vehicles }) => {
       {vehicles.map((vehicle) => (
         <Link
           key={vehicle.specificationId}
-          href={`/vehicles/specification/${vehicle.specificationId}`}
+          href={`${VEHICLE_SPECIFICATION_DETAILS_PATH}/${vehicle.specificationId}?name=${vehicle.model}`}
           className="group bg-white/90 backdrop-blur-sm rounded-xl sm:rounded-2xl overflow-hidden shadow-lg border border-teal-200 hover:border-teal-400 hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1"
         >
           <div className="relative h-40 sm:h-44 lg:h-48 bg-gradient-to-br from-teal-100 to-cyan-100">
-            {vehicle.mainImageUrl ? (
+            {vehicle.imageUrl ? (
               <Image
-                src={vehicle.mainImageUrl}
+                src={vehicle.imageUrl || PLACE_HOLDER_IMAGE}
                 alt={`${vehicle.make} ${vehicle.model}`}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 width={400}
