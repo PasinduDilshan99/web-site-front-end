@@ -168,25 +168,25 @@ const TourHeroSection = () => {
 
       {/* Content Overlay - CENTERED */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16">
+        <div className="container mx-auto px-4 lg:px-8">
           <div className="max-w-xl sm:max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl text-white mx-auto text-center">
             <div className="mb-4 sm:mb-6 md:mb-8">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold mb-2 sm:mb-3 md:mb-4 leading-tight tracking-tight">
+              <h1 className="text-2xl lg:text-3xl xl:text-4xl 2xl:text-6xl font-bold mb-2 sm:mb-3 md:mb-4 leading-tight tracking-tight">
                 {currentSlideData.title || "Discover Sri Lanka"}
               </h1>
 
-              {currentSlideData.subtitle && (
+              {/* {currentSlideData.subtitle && (
                 <div className="mb-3 sm:mb-4 md:mb-6">
                   <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold mb-2 sm:mb-3 text-sky-100">
                     {currentSlideData.subtitle}
                   </h2>
                   <div className="w-12 sm:w-16 md:w-20 h-0.5 sm:h-1 bg-gradient-to-r from-sky-400 to-teal-400 rounded-full mx-auto shadow-lg"></div>
                 </div>
-              )}
+              )} */}
             </div>
 
-            <div className="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 lg:p-8 max-w-full sm:max-w-2xl md:max-w-3xl mb-4 sm:mb-6 md:mb-8 border border-white/10 shadow-2xl mx-auto">
-              <p className="text-sm sm:text-base md:text-lg lg:text-xl mb-4 sm:mb-5 md:mb-6 text-slate-100 leading-relaxed">
+            <div className="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl p-2 lg:p-4 max-w-full sm:max-w-2xl md:max-w-3xl mb-4 sm:mb-6 md:mb-8 border border-white/10 shadow-2xl mx-auto">
+              <p className="text-sm sm:text-md lg:text-lg mb-4 sm:mb-5 md:mb-6 text-slate-100 leading-relaxed line-clamp-2">
                 {currentSlideData.description ||
                   "Experience the beauty and diversity of Sri Lanka with our expertly curated tours. From golden beaches to misty mountains, we have the perfect adventure for every traveler."}
               </p>
@@ -383,7 +383,7 @@ const TourHeroSection = () => {
 
       {/* Slide Indicators */}
       {heroData.length > 1 && (
-        <div className="absolute bottom-7 sm:bottom-9 md:bottom-11 left-1/2 transform -translate-x-1/2 flex space-x-2 sm:space-x-3 z-10">
+        <div className="absolute bottom-3 sm:bottom-6 md:bottom-5 left-1/2 transform -translate-x-1/2 flex space-x-2 sm:space-x-3 z-10">
           {heroData.map((_, index) => (
             <button
               key={index}
