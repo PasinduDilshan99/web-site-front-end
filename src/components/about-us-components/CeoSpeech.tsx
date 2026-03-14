@@ -110,10 +110,14 @@ const CeoSpeech: React.FC = () => {
               </p>
             </div>
 
-            <div className="pt-6">
-              <p className="text-2xl font-bold text-blue-700">{ceoData.name}</p>
-              <p className="text-gray-500 italic">{ceoData.title}</p>
-            </div>
+            {ceoData.name && (
+              <div className="pt-6">
+                <p className="text-2xl font-bold text-blue-700">
+                  {ceoData.name}
+                </p>
+                <p className="text-gray-500 italic">{ceoData.title}</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -140,14 +144,16 @@ const CeoSpeech: React.FC = () => {
                 />
               </div>
 
-              <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-white rounded-2xl shadow-xl px-6 py-4 text-center min-w-[260px] border border-blue-100">
-                <h3 className="text-xl font-bold text-slate-800">
-                  {ceoData.name}
-                </h3>
-                <p className="text-blue-600 font-semibold text-sm">
-                  {ceoData.title}
-                </p>
-              </div>
+              {ceoData.name && (
+                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-white rounded-2xl shadow-xl px-6 py-4 text-center min-w-[260px] border border-blue-100">
+                  <h3 className="text-xl font-bold text-slate-800">
+                    {ceoData.name}
+                  </h3>
+                  <p className="text-blue-600 font-semibold text-sm">
+                    {ceoData.title}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 
@@ -179,10 +185,14 @@ const CeoSpeech: React.FC = () => {
               </p>
             </div>
 
-            <div className="pt-6">
-              <p className="text-2xl font-bold text-blue-700">{ceoData.name}</p>
-              <p className="text-gray-500 italic">{ceoData.title}</p>
-            </div>
+            {ceoData.name && (
+              <div className="pt-6">
+                <p className="text-2xl font-bold text-blue-700">
+                  {ceoData.name}
+                </p>
+                <p className="text-gray-500 italic">{ceoData.title}</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
