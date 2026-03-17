@@ -1,15 +1,14 @@
-import HomePage from "@/pages/HomePage";
-import { TAB_VIEW_NAME } from "@/utils/constant";
+import UnderConstructionPage from "@/components/common-components/under-construction/UnderConstruction";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: `Home | ${TAB_VIEW_NAME}`,
+  title: "Felicita Trips",
 };
 
 const page = () => {
   return (
     <div>
-      <HomePage />
+      <UnderConstructionPage />
     </div>
   );
 };

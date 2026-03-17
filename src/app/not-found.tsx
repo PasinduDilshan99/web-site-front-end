@@ -1,11 +1,6 @@
 "use client";
 
 import { COMPANY_NAME, COMPANY_THEME } from "@/utils/constant";
-import {
-  CONTACT_US_PAGE_PATH,
-  DESTINATIONS_PAGE_PATH,
-  SRI_LANKAN_TOUR_PAGE_PATH,
-} from "@/utils/urls";
 import Image from "next/image";
 import Link from "next/link";
 import { JSX, useEffect, useState } from "react";
@@ -432,22 +427,6 @@ export default function NotFound(): JSX.Element {
           >
             Need help finding your way?
           </p>
-          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs sm:text-sm">
-            {[
-              { href: CONTACT_US_PAGE_PATH, label: "Contact Us" },
-              { href: SRI_LANKAN_TOUR_PAGE_PATH, label: "Browse Tours" },
-              { href: DESTINATIONS_PAGE_PATH, label: "Destinations" },
-            ].map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="transition-colors duration-200 hover:text-teal-300"
-                style={{ color: "rgba(94,234,212,0.55)" }}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
         </div>
       </div>
 
