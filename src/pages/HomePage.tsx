@@ -7,7 +7,6 @@ import ContactForm from "@/components/contact-us-components/ContactForm";
 import WhyChooseUs from "@/components/home-page-components/whyChooseUs/WhyChooseUs";
 import OurServices from "@/components/home-page-components/ourServices/OurServices";
 import ActiveToursHomeGrid from "@/components/home-page-components/tours/ActiveToursHomeGrid";
-import TourMap from "@/components/home-page-components/tours/TourMap";
 import { useAuth } from "@/context/AuthContext";
 import { HOME_PAGE_VIEW_PRIVILEGE } from "@/utils/privileges";
 import PermissionDenied from "@/components/common-components/permission-denied/PermissionDenied";
@@ -34,9 +33,6 @@ export default function HomePage() {
       </div>
       <div>
         <ActiveToursHomeGrid />
-      </div>
-      <div>
-        <TourMap />
       </div>
       <div>
         <ActivityCategoriesHome />
