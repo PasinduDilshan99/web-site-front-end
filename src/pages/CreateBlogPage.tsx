@@ -936,14 +936,9 @@ const CreateBlogPage = () => {
                   {/* Preview Content */}
                   <div className="text-gray-700 leading-relaxed">
                     {previewContent.description ? (
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: previewContent.description.replace(
-                            /\n/g,
-                            "<br />",
-                          ),
-                        }}
-                      />
+                      <div className="whitespace-pre-line">
+                        {previewContent.description}
+                      </div>
                     ) : (
                       <div className="text-center py-12 text-gray-400">
                         <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />

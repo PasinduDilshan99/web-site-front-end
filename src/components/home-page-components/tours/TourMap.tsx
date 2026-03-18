@@ -90,6 +90,26 @@ const FALLBACK_COLORS: Record<string, { color: string; hoverColor: string }> = {
   "Adventure Sports": { color: "#FF4500", hoverColor: "#CC3700" },
 };
 
+const escapeHtml = (value: string): string =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
+const sanitizeCssColor = (value: string, fallback: string): string => {
+  const trimmed = value.trim();
+  const safeNamedColor = /^[a-zA-Z]{3,20}$/.test(trimmed);
+  const safeHex = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(
+    trimmed,
+  );
+  const safeRgbOrHsl =
+    /^(rgb|rgba|hsl|hsla)\(\s*[\d.%\s,]+\)$/.test(trimmed);
+
+  return safeNamedColor || safeHex || safeRgbOrHsl ? trimmed : fallback;
+};
+
 const TourMap: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const { categories } = useCommon();
@@ -293,34 +313,30 @@ const TourMap: React.FC = () => {
     mapInstanceRef.current = newMap;
   }, []);
 
-  // Load Leaflet CSS and JS
+  // Load Leaflet from local dependency instead of runtime CDN script injection.
   useEffect(() => {
-    // Check if Leaflet is already loaded
-    if (window.L) {
-      initMap();
-      return;
-    }
+    let isCancelled = false;
 
-    // Load Leaflet CSS
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
-    link.integrity = "sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=";
-    link.crossOrigin = "";
-    document.head.appendChild(link);
+    const loadLeaflet = async () => {
+      try {
+        if (!window.L) {
+          const leafletModule = await import("leaflet");
+          const leaflet = leafletModule.default ?? leafletModule;
+          window.L = leaflet as unknown as NonNullable<typeof window.L>;
+        }
 
-    // Load Leaflet JS
-    const script = document.createElement("script");
-    script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
-    script.integrity = "sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=";
-    script.crossOrigin = "";
-    script.onload = () => {
-      // Initialize map after Leaflet is loaded
-      setTimeout(initMap, 100);
+        if (!isCancelled) {
+          initMap();
+        }
+      } catch (leafletError) {
+        console.error("Failed to load Leaflet:", leafletError);
+      }
     };
-    document.head.appendChild(script);
+
+    loadLeaflet();
 
     return () => {
+      isCancelled = true;
       // Cleanup
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
@@ -339,10 +355,12 @@ const TourMap: React.FC = () => {
 
     // Create custom icon with category color
     const createCustomIcon = (color: string, hoverColor?: string) => {
+      const safeColor = sanitizeCssColor(color, "#3b82f6");
+      const safeHoverColor = sanitizeCssColor(hoverColor || color, safeColor);
       return window.L.divIcon({
         html: `
           <div style="
-            background-color: ${color};
+            background-color: ${safeColor};
             width: 24px;
             height: 24px;
             border: 3px solid white;
@@ -350,10 +368,9 @@ const TourMap: React.FC = () => {
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
             transition: all 0.2s ease;
             cursor: pointer;
-          " 
+          "
           class="marker-dot"
-          onmouseover="this.style.backgroundColor='${hoverColor || color}'; this.style.transform='scale(1.2)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.4)';"
-          onmouseout="this.style.backgroundColor='${color}'; this.style.transform='scale(1)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.3)';"></div>
+          data-hover-color="${safeHoverColor}"></div>
         `,
         className: "custom-marker",
         iconSize: [24, 24],
@@ -389,25 +406,32 @@ const TourMap: React.FC = () => {
       // Create popup content with category colors
       const categoriesHtml = place.categories
         .map((cat) => {
-          const catColor = getCategoryColor(cat);
-          return `<span style="display: inline-block; padding: 2px 8px; margin: 2px; border-radius: 12px; background-color: ${catColor}; color: white; font-size: 10px; font-weight: 600;">${cat}</span>`;
+          const catColor = sanitizeCssColor(getCategoryColor(cat), "#3b82f6");
+          return `<span style="display: inline-block; padding: 2px 8px; margin: 2px; border-radius: 12px; background-color: ${catColor}; color: white; font-size: 10px; font-weight: 600;">${escapeHtml(cat)}</span>`;
         })
         .join("");
+
+      const safeCategoryColor = sanitizeCssColor(categoryColor, "#3b82f6");
+      const safeName = escapeHtml(place.name);
+      const safeDescription = escapeHtml(
+        place.description || "No description available",
+      );
+      const safeLocation = escapeHtml(place.location || "");
 
       // Add popup with enhanced information and category colors
       marker.bindPopup(`
         <div style="padding: 12px; max-width: 280px;">
-          <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: bold; color: ${categoryColor}; border-bottom: 2px solid ${categoryColor}; padding-bottom: 4px;">
-            ${place.name}
+          <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: bold; color: ${safeCategoryColor}; border-bottom: 2px solid ${safeCategoryColor}; padding-bottom: 4px;">
+            ${safeName}
           </h3>
           <div style="margin: 8px 0; display: flex; flex-wrap: wrap; gap: 4px;">
             ${categoriesHtml}
           </div>
           <p style="margin: 8px 0 4px 0; font-size: 13px; color: #444; line-height: 1.4;">
-            ${place.description || "No description available"}
+            ${safeDescription}
           </p>
           <p style="margin: 4px 0; font-size: 12px; color: #666;">
-            <span style="font-weight: 600;">📍 Location:</span> ${place.location}
+            <span style="font-weight: 600;">Location:</span> ${safeLocation}
           </p>
           ${
             place.images && place.images.length > 0
@@ -895,3 +919,4 @@ const TourMap: React.FC = () => {
 };
 
 export default TourMap;
+

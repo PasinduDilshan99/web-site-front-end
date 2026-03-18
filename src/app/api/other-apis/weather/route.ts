@@ -15,7 +15,19 @@ export async function GET(request: Request) {
       );
     }
 
-    const backendUrl = `${WHETHER_DETAILS}?latitude=${latitude}&longitude=${longitude}`;
+    const lat = Number(latitude);
+    const lon = Number(longitude);
+    const isValidLatitude = Number.isFinite(lat) && lat >= -90 && lat <= 90;
+    const isValidLongitude = Number.isFinite(lon) && lon >= -180 && lon <= 180;
+
+    if (!isValidLatitude || !isValidLongitude) {
+      return NextResponse.json(
+        { error: "Invalid latitude/longitude values" },
+        { status: 400 },
+      );
+    }
+
+    const backendUrl = `${WHETHER_DETAILS}?latitude=${lat}&longitude=${lon}`;
 
     const response = await fetch(backendUrl, {
       method: "GET",
@@ -32,10 +44,7 @@ export async function GET(request: Request) {
       );
     }
 
-    const data = await response.json(); // <-- read body here
-    console.log("====================================");
-    console.log(data); // <-- now you see actual weather JSON
-    console.log("====================================");
+    const data = await response.json();
 
     return NextResponse.json(data);
   } catch (error) {

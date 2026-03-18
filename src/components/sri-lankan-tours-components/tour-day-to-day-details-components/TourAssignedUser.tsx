@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { 
   MapPin, 
   Phone, 
@@ -22,6 +22,11 @@ const TourAssignedUser: React.FC<TourAssignedUserProps> = ({ assignUser }) => {
   const params = useParams();
   const sriLankanTourId = params?.sriLankanTourId
   const [expandedTours, setExpandedTours] = useState(false);
+  const [imageLoadFailed, setImageLoadFailed] = useState(false);
+
+  useEffect(() => {
+    setImageLoadFailed(false);
+  }, [assignUser?.imageUrl]);
   
   if (!assignUser) {
     return (
@@ -65,22 +70,12 @@ const TourAssignedUser: React.FC<TourAssignedUserProps> = ({ assignUser }) => {
       <div className="flex items-start space-x-4 mb-6 pb-6 border-b border-gray-100">
         <div className="relative">
           <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-gradient-to-r from-sky-500 to-teal-500">
-            {assignUser.imageUrl ? (
+            {assignUser.imageUrl && !imageLoadFailed ? (
               <img
                 src={assignUser.imageUrl}
                 alt={fullName}
                 className="w-full h-full object-cover"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
-                  target.parentElement!.innerHTML = `
-                    <div class="w-full h-full bg-gradient-to-r from-sky-200 to-teal-200 flex items-center justify-center">
-                      <span class="text-2xl font-bold text-gray-700">
-                        ${assignUser.firstName.charAt(0)}${assignUser.lastName.charAt(0)}
-                      </span>
-                    </div>
-                  `;
-                }}
+                onError={() => setImageLoadFailed(true)}
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-r from-sky-200 to-teal-200 flex items-center justify-center">

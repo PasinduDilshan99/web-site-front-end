@@ -741,23 +741,14 @@ const BookingPage = () => {
   const printReceipt = () => {
     const printContent = document.getElementById("receipt-print-content");
     if (printContent) {
-      const originalContent = document.body.innerHTML;
       const printStyles = `
         <style>
+          body {
+            margin: 0;
+            padding: 16px;
+            color: #000;
+          }
           @media print {
-            body * {
-              visibility: hidden;
-            }
-            #receipt-print-content, #receipt-print-content * {
-              visibility: visible;
-            }
-            #receipt-print-content {
-              position: absolute;
-              left: 0;
-              top: 0;
-              width: 100%;
-              color: #000 !important;
-            }
             #receipt-print-content th,
             #receipt-print-content td {
               color: #000 !important;
@@ -774,10 +765,27 @@ const BookingPage = () => {
           }
         </style>
       `;
+      const printWindow = window.open("", "_blank", "noopener,noreferrer");
+      if (!printWindow) return;
 
-      document.body.innerHTML = printStyles + printContent.innerHTML;
-      window.print();
-      window.location.reload();
+      printWindow.document.write(`
+        <!doctype html>
+        <html>
+          <head>
+            <title>Booking Receipt</title>
+            ${printStyles}
+          </head>
+          <body>
+            <div id="receipt-print-content">${printContent.innerHTML}</div>
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.onload = () => {
+        printWindow.print();
+        printWindow.close();
+      };
     }
   };
 

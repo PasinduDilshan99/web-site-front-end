@@ -67,6 +67,30 @@ interface RouteStyle {
 const API_BASE_URL = "http://localhost:8080/felicita/v0/api";
 const ROUTING_API_URL = "https://router.project-osrm.org/route/v1/driving";
 const DEFAULT_TOUR_ID = 1;
+const FALLBACK_IMAGE_URL = "/placeholder-image.jpg";
+
+const escapeHtml = (value: string): string =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
+const sanitizeImageUrl = (url: string | undefined): string => {
+  if (!url) return FALLBACK_IMAGE_URL;
+  const trimmed = url.trim();
+  if (trimmed.startsWith("/")) return trimmed;
+  try {
+    const parsed = new URL(trimmed);
+    if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+      return trimmed;
+    }
+  } catch {
+    return FALLBACK_IMAGE_URL;
+  }
+  return FALLBACK_IMAGE_URL;
+};
 
 function TestMap({
   locations,
@@ -220,13 +244,12 @@ function createPhotoMarker(
     }</div>`;
   };
 
-  const markerImage = location.images[0]?.url || "/placeholder-image.jpg";
+  const markerImage = sanitizeImageUrl(location.images[0]?.url);
+  const locationName = escapeHtml(location.name);
 
   const iconHtml = `
     <div class="relative w-12 h-12 sm:w-14 sm:h-14 md:w-15 md:h-15 rounded-lg sm:rounded-xl overflow-hidden border-2 border-white shadow-lg transition-transform duration-200 hover:scale-105">
-      <img src="${markerImage}" alt="${
-    location.name
-  }" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/60x60?text=No+Image'" />
+      <img src="${markerImage}" alt="${locationName}" class="w-full h-full object-cover" onerror="this.src='${FALLBACK_IMAGE_URL}'" />
       ${getMarkerBadge()}
     </div>
   `;
@@ -292,25 +315,28 @@ function createPopupContent(
 
   const carouselItems = location.images
     .map(
-      (image, imgIndex) => `
+      (image, imgIndex) => {
+        const imageUrl = sanitizeImageUrl(image.url);
+        const imageName = escapeHtml(image.name);
+        const imageDescription = image.description
+          ? escapeHtml(image.description)
+          : "";
+        return `
     <div class="carousel-item ${
       imgIndex === 0 ? "active" : ""
     }" data-carousel-item="${imgIndex}">
-      <img src="${image.url}" class="carousel-image" alt="${
-        image.name
-      }" onerror="this.src='https://via.placeholder.com/400x240?text=Image+Not+Found'">
+      <img src="${imageUrl}" class="carousel-image" alt="${imageName}" onerror="this.src='${FALLBACK_IMAGE_URL}'">
       <div class="carousel-caption">
-        <h4 class="text-white font-semibold text-xs sm:text-sm">${
-          image.name
-        }</h4>
+        <h4 class="text-white font-semibold text-xs sm:text-sm">${imageName}</h4>
         ${
-          image.description
-            ? `<p class="text-white/80 text-xs mt-1 hidden sm:block">${image.description}</p>`
+          imageDescription
+            ? `<p class="text-white/80 text-xs mt-1 hidden sm:block">${imageDescription}</p>`
             : ""
         }
       </div>
     </div>
-  `
+  `;
+      }
     )
     .join("");
 
@@ -352,9 +378,7 @@ function createPopupContent(
       <div class="p-3 sm:p-4">
         <div class="flex items-start justify-between mb-2 sm:mb-3">
           <div class="flex-1">
-            <h3 class="text-lg sm:text-xl font-bold text-gray-800">${
-              location.name
-            }</h3>
+            <h3 class="text-lg sm:text-xl font-bold text-gray-800">${escapeHtml(location.name)}</h3>
             <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-1">
               ${
                 isStart
@@ -381,7 +405,7 @@ function createPopupContent(
         </div>
         ${
           location.description
-            ? `<div class="mb-3 sm:mb-4"><p class="text-gray-600 text-xs sm:text-sm leading-relaxed">${location.description}</p></div>`
+            ? `<div class="mb-3 sm:mb-4"><p class="text-gray-600 text-xs sm:text-sm leading-relaxed">${escapeHtml(location.description)}</p></div>`
             : ""
         }
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs sm:text-sm text-gray-500 border-t border-gray-100 pt-2 sm:pt-3">
