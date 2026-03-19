@@ -10,6 +10,7 @@ import ActiveToursHomeGrid from "@/components/home-page-components/tours/ActiveT
 import { useAuth } from "@/context/AuthContext";
 import { HOME_PAGE_VIEW_PRIVILEGE } from "@/utils/privileges";
 import PermissionDenied from "@/components/common-components/permission-denied/PermissionDenied";
+import TourMap from "@/components/home-page-components/tours/TourMap";
 
 export default function HomePage() {
 //   const { user } = useAuth();
@@ -33,6 +34,9 @@ export default function HomePage() {
       </div>
       <div>
         <ActiveToursHomeGrid />
+      </div>
+         <div>
+        <TourMap />
       </div>
       <div>
         <ActivityCategoriesHome />
