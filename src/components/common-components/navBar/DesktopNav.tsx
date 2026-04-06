@@ -9,6 +9,7 @@ import DesktopDropdown from "./DesktopDropdown";
 import MoreDropdown from "./MoreDropdown";
 import UserDropdown from "./UserDropdown";
 import Image from "next/image";
+import { CurrencySelector } from "../currency/CurrencySelector";
 
 interface DesktopNavProps {
   visibleItems: NavBarItem[];
@@ -158,6 +159,8 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
 
       {/* User Auth Section - Desktop */}
       <div className="hidden md:flex items-center space-x-4">
+        <CurrencySelector />
+
         {user ? (
           <UserDropdown
             user={user}

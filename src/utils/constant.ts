@@ -1,6 +1,7 @@
 // Company Details
 export const COMPANY_OWNER = "Nipunika Sathsarani";
 export const COMPANY_NAME = "Felicita Trips";
+export const COMPANY_ADDRESS = "351/10 Rajasinghe Mawatha, Hewagama, Kaduwela";
 export const COMPANY_INFO_EMAIL = "felicitatrips@gmail.com";
 export const COMPANY_CONTACT_NUMBER = "+94 701 774488";
 export const COMPANY_CONTACT_NUMBER_LINK = "tel:+94701774488";
@@ -45,6 +46,8 @@ export const PLACE_HOLDER_IMAGE =
   "https://res.cloudinary.com/dtzrivqye/image/upload/v1770879098/vyfco5fuhatkl95w0l65.avif";
 export const USER_PLACE_HOLDER_IMAGE =
   "https://res.cloudinary.com/dtzrivqye/image/upload/v1772899437/isw6kchtc9xsoxhumtrn.jpg";
+export const COMPANY_LOGO_IMAGE =
+  "https://res.cloudinary.com/dtzrivqye/image/upload/v1775493945/gi5x2y4vwaplhkwchp0p.png";
 
 // Browser History types
 export const ACTIVITY_BROWSER_HISTORY_TYPE = "ACTIVITIES";

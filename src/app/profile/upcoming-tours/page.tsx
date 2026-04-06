@@ -2,6 +2,7 @@
 "use client";
 import UserProfileUpcomingToursLoading from "@/components/user-profile-components/Loadings/UserProfileUpcomingToursLoading";
 import { useAuth } from "@/context/AuthContext";
+import { useCurrency } from "@/context/CurrencyContext";
 import { bookingService } from "@/services/bookingService";
 import { UserProfileAPIService } from "@/services/userProfileAPIService";
 import { UpcomingTour } from "@/types/upcoming-tours";
@@ -28,6 +29,7 @@ export default function UpcomingToursPage() {
   >("upcoming");
   const apiService = new UserProfileAPIService();
   const router = useRouter();
+  const { formatPrice } = useCurrency();
 
   const { user } = useAuth();
   const [expandedDescriptions, setExpandedDescriptions] = useState<{
@@ -73,14 +75,6 @@ export default function UpcomingToursPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-LK", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 0,
-    }).format(amount);
   };
 
   const formatDate = (dateString: string) => {
@@ -471,7 +465,7 @@ export default function UpcomingToursPage() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
             <div className="flex items-center justify-between mb-2">
               <div className="text-2xl font-bold text-gray-800">
-                {formatCurrency(
+                {formatPrice(
                   upcomingTours.reduce(
                     (sum, tour) => sum + tour.finalAmount,
                     0,
@@ -535,7 +529,7 @@ export default function UpcomingToursPage() {
                         <div className="flex items-center space-x-2">
                           <span className="text-gray-400">💰</span>
                           <span className="font-semibold">
-                            {formatCurrency(tour.finalAmount)}
+                            {formatPrice(tour.finalAmount)}
                           </span>
                         </div>
                         <div className="flex items-center space-x-2">
@@ -615,12 +609,12 @@ export default function UpcomingToursPage() {
                         Payment Progress
                       </span>
                       <span className="text-sm font-semibold text-gray-800">
-                        {formatCurrency(
+                        {formatPrice(
                           tour.payments
                             .filter((p) => p.paymentStatus === "COMPLETED")
                             .reduce((sum, p) => sum + p.amount, 0),
                         )}{" "}
-                        / {formatCurrency(tour.finalAmount)}
+                        / {formatPrice(tour.finalAmount)}
                       </span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2.5">
@@ -635,7 +629,7 @@ export default function UpcomingToursPage() {
                     </div>
                     {nextPayment && (
                       <div className="mt-2 text-sm text-amber-600">
-                        Next payment of {formatCurrency(nextPayment.amount)} due{" "}
+                        Next payment of {formatPrice(nextPayment.amount)} due{" "}
                         {formatDate(nextPayment.dueDate)}
                       </div>
                     )}
@@ -679,7 +673,7 @@ export default function UpcomingToursPage() {
                                 Price per person
                               </span>
                               <span className="font-medium text-gray-800">
-                                {formatCurrency(tour.packagePricePerPerson)}
+                                {formatPrice(tour.packagePricePerPerson)}
                               </span>
                             </div>
                             {tour.discountPercentage > 0 && (
@@ -720,7 +714,7 @@ export default function UpcomingToursPage() {
                                 </div>
                                 <div className="text-right">
                                   <div className="font-semibold text-gray-800">
-                                    {formatCurrency(payment.amount)}
+                                    {formatPrice(payment.amount)}
                                   </div>
                                   <span
                                     className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(payment.paymentStatus)}`}
@@ -839,7 +833,7 @@ export default function UpcomingToursPage() {
                                   </div>
                                   <div className="text-right">
                                     <div className="font-bold text-gray-800 mb-2">
-                                      {formatCurrency(activity.totalPrice)}
+                                      {formatPrice(activity.totalPrice)}
                                     </div>
                                     <div className="text-sm text-gray-500">
                                       {activity.numberOfParticipants}{" "}

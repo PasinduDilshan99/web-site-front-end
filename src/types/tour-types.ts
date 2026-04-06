@@ -1,4 +1,4 @@
-import { VehicleSpecification } from './vehicle-types';
+import { VehicleSpecification } from "./vehicle-types";
 export interface Schedule {
   scheduleId: number;
   scheduleName: string;
@@ -98,6 +98,7 @@ export interface ActiveToursType {
   longitude: number;
   startLocation: string;
   endLocation: string;
+  tourStartingPrice: number;
   tourTypeDtos: TourTypeDto[];
   tourCategoryDto: TourCategoryDto[];
   tourCategoryDescription: string;
@@ -492,7 +493,7 @@ export interface Activity {
   minParticipate: number;
   maxParticipate: number;
   season: string;
-  seasonId:number;
+  seasonId: number;
   status: string;
   createdAt: string;
   updatedAt: string;
@@ -517,7 +518,7 @@ export interface Hotel {
 export interface Transport {
   transportId: number;
   transportType: string;
-  vehicleTypeId:number;
+  vehicleTypeId: number;
   vehicleModel: string;
   vehicleSpecificationId: number;
   seatCount: number;

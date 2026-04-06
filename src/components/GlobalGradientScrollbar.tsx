@@ -1,44 +1,52 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 const GlobalGradientScrollbar: React.FC = () => {
   useEffect(() => {
-    // Add smooth scrolling and gradient classes to html element
     const html = document.documentElement;
     const body = document.body;
-    
-    // Add gradient scrollbar class
-    html.classList.add('gradient-scrollbar');
-    
-    // Set min-height to ensure scrollbar is visible
-    body.style.minHeight = '100vh';
-    body.style.overflowX = 'hidden';
-    
-    // Optional: Add a transition for smooth hover effects
-    const style = document.createElement('style');
+
+    html.classList.add("gradient-scrollbar");
+
+    body.style.minHeight = "100vh";
+    body.style.overflowX = "hidden";
+
+    const style = document.createElement("style");
     style.textContent = `
+      /* Scrollbar thumb: sea green → sea blue */
       html::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #0E9E8E, #0B7EA8);
+        border-radius: 8px;
         transition: background 0.3s ease;
       }
-      
-      /* For Firefox */
+
+      /* Hover effect: slightly deeper tones */
+      html::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #0B7EA8, #095f82);
+      }
+
+      /* Scrollbar track */
+      html::-webkit-scrollbar-track {
+        background: #dbeafe; /* soft ocean track */
+      }
+
+      /* General scrollbar color for Firefox */
       html {
-        scrollbar-color: #f59e0b #f1f5f9;
+        scrollbar-color: #0E9E8E #dbeafe;
         transition: scrollbar-color 0.3s ease;
       }
       
       html:hover {
-        scrollbar-color: #d97706 #f1f5f9;
+        scrollbar-color: #0B7EA8 #dbeafe;
       }
     `;
     document.head.appendChild(style);
-    
+
     return () => {
-      // Cleanup
-      html.classList.remove('gradient-scrollbar');
-      body.style.minHeight = '';
-      body.style.overflowX = '';
+      html.classList.remove("gradient-scrollbar");
+      body.style.minHeight = "";
+      body.style.overflowX = "";
       if (document.head.contains(style)) {
         document.head.removeChild(style);
       }

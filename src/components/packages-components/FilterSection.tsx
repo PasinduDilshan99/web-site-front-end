@@ -1,9 +1,13 @@
 import { Filters } from "@/types/packages-types";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useCurrency } from "@/context/CurrencyContext";
 
 interface FilterSectionProps {
   filters: Filters;
-  onFilterChange: (filterName: keyof Filters, value: Filters[keyof Filters]) => void;
+  onFilterChange: (
+    filterName: keyof Filters,
+    value: Filters[keyof Filters],
+  ) => void;
   onSearch: () => void;
   onResetFilters: () => void;
   packageTypes: string[];
@@ -20,29 +24,76 @@ const FilterSection: React.FC<FilterSectionProps> = ({
   locations,
   durations,
 }) => {
+  const { currentCurrency, convertPrice, formatPrice } = useCurrency();
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
-  const formatPrice = (price: number): string => {
-    return new Intl.NumberFormat("en-LK", {
-      style: "currency",
-      currency: "LKR",
-    }).format(price);
-  };
+  // Local state for price range in SELECTED currency (what user sees/enters)
+  const [localPriceRange, setLocalPriceRange] = useState<[number, number]>(
+    () => {
+      // Convert the USD price range from filters to selected currency
+      const minInSelectedCurrency =
+        filters.priceRange[0] > 0 ? convertPrice(filters.priceRange[0]) : 0;
+      const maxInSelectedCurrency =
+        filters.priceRange[1] < 100000
+          ? convertPrice(filters.priceRange[1])
+          : 100000;
+      return [minInSelectedCurrency, maxInSelectedCurrency];
+    },
+  );
+
+  // Update local price range when filters change or currency changes
+  useEffect(() => {
+    const minInSelectedCurrency =
+      filters.priceRange[0] > 0 ? convertPrice(filters.priceRange[0]) : 0;
+    const maxInSelectedCurrency =
+      filters.priceRange[1] < 100000
+        ? convertPrice(filters.priceRange[1])
+        : 100000;
+    setLocalPriceRange([minInSelectedCurrency, maxInSelectedCurrency]);
+  }, [filters.priceRange, currentCurrency, convertPrice]);
 
   const toggleAdvancedFilters = () => {
     setShowAdvancedFilters(!showAdvancedFilters);
   };
 
-  const handlePriceChange = (minMax: 'min' | 'max', value: number) => {
-    if (minMax === 'min') {
-      onFilterChange("priceRange", [value, filters.priceRange[1]]);
-    } else {
-      onFilterChange("priceRange", [filters.priceRange[0], value]);
+  const handlePriceChange = (
+    minMax: "min" | "max",
+    valueInSelectedCurrency: number,
+  ) => {
+    // Convert the user's input from selected currency to USD for API
+    let valueInUSD = valueInSelectedCurrency;
+
+    if (currentCurrency.code !== "USD") {
+      // Convert from selected currency back to USD
+      // Since convertPrice goes USD -> Selected, we need to reverse it
+      valueInUSD = valueInSelectedCurrency / currentCurrency.rate;
     }
+
+    const newPriceRangeInUSD: [number, number] =
+      minMax === "min"
+        ? [valueInUSD, filters.priceRange[1]]
+        : [filters.priceRange[0], valueInUSD];
+
+    // Update the filter with USD values (API expects USD)
+    onFilterChange("priceRange", newPriceRangeInUSD);
+
+    // Update local display with selected currency values
+    setLocalPriceRange((prev) =>
+      minMax === "min"
+        ? [valueInSelectedCurrency, prev[1]]
+        : [prev[0], valueInSelectedCurrency],
+    );
   };
 
   const handleSearchClick = () => {
     onSearch();
+  };
+
+  // Get max price in selected currency for placeholder
+  const getMaxPricePlaceholder = (): number => {
+    const maxUSD = 100000;
+    if (currentCurrency.code === "USD") return maxUSD;
+    return convertPrice(maxUSD);
   };
 
   return (
@@ -62,17 +113,17 @@ const FilterSection: React.FC<FilterSectionProps> = ({
             onClick={handleSearchClick}
             className="cursor-pointer px-6 py-2 bg-gradient-to-r from-teal-600 to-sky-600 text-white rounded-lg hover:from-teal-700 hover:to-sky-700 transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg flex items-center gap-2"
           >
-            <svg 
-              className="w-4 h-4" 
-              fill="none" 
-              stroke="currentColor" 
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" 
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               />
             </svg>
             Search
@@ -96,35 +147,71 @@ const FilterSection: React.FC<FilterSectionProps> = ({
           />
         </div>
 
-        {/* Price Range */}
+        {/* Price Range - User enters in selected currency */}
         <div className="space-y-2">
           <label className="block text-sm font-semibold text-sky-800">
-            Price Range ($)
+            Price Range ({currentCurrency.code})
           </label>
+
+          {/* Display current price range in selected currency */}
           {/* <div className="flex justify-between text-sm font-medium text-sky-700 mb-2">
             <span>{formatPrice(filters.priceRange[0])}</span>
+            <span>-</span>
             <span>{formatPrice(filters.priceRange[1])}</span>
           </div> */}
+
+          {/* Price input fields - values in SELECTED currency */}
           <div className="flex gap-4">
-            <input
-              type="number"
-              min="0"
-              max="100000"
-              value={filters.priceRange[0]}
-              onChange={(e) => handlePriceChange('min', parseInt(e.target.value, 10) || 0)}
-              className="w-1/2 px-3 py-1 border border-sky-300 rounded-md md:text-md text-lg text-gray-600 focus:outline-none focus:ring-1 focus:ring-sky-400"
-              placeholder="Min"
-            />
-            <input
-              type="number"
-              min="0"
-              max="100000"
-              value={filters.priceRange[1]}
-              onChange={(e) => handlePriceChange('max', parseInt(e.target.value, 10) || 100000)}
-              className="w-1/2 px-3 py-1 border border-sky-300 rounded-md md:text-md text-lg text-gray-600 focus:outline-none focus:ring-1 focus:ring-sky-400"
-              placeholder="Max"
-            />
+            <div className="flex-1">
+              <input
+                type="number"
+                min="0"
+                step={
+                  currentCurrency.code === "JPY" ||
+                  currentCurrency.code === "KRW"
+                    ? "100"
+                    : "10"
+                }
+                value={localPriceRange[0]}
+                onChange={(e) =>
+                  handlePriceChange("min", parseFloat(e.target.value) || 0)
+                }
+                className="w-full px-3 py-2 border border-sky-300 rounded-md text-gray-600 focus:outline-none focus:ring-1 focus:ring-sky-400"
+                placeholder={`Min ${currentCurrency.code}`}
+              />
+              <label className="block text-xs text-sky-600 mb-1">
+                Min ({currentCurrency.code})
+              </label>
+            </div>
+            <div className="flex-1">
+              <input
+                type="number"
+                min="0"
+                step={
+                  currentCurrency.code === "JPY" ||
+                  currentCurrency.code === "KRW"
+                    ? "100"
+                    : "10"
+                }
+                value={localPriceRange[1]}
+                onChange={(e) =>
+                  handlePriceChange(
+                    "max",
+                    parseFloat(e.target.value) || getMaxPricePlaceholder(),
+                  )
+                }
+                className="w-full px-3 py-2 border border-sky-300 rounded-md text-gray-600 focus:outline-none focus:ring-1 focus:ring-sky-400"
+                placeholder={`Max ${currentCurrency.code}`}
+              />
+              <label className="block text-xs text-sky-600 mb-1">
+                Max ({currentCurrency.code})
+              </label>
+            </div>
           </div>
+
+          {/* <p className="text-xs text-gray-500 mt-1">
+            Enter prices in {currentCurrency.code}
+          </p> */}
         </div>
 
         {/* Duration */}
@@ -187,7 +274,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
         }`}
       >
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Location - Full width on mobile, 1/3 on larger screens */}
+          {/* Location */}
           <div className="space-y-2 lg:col-span-1 mt-5">
             <label className="block text-sm font-semibold text-teal-800">
               Start Location
@@ -212,7 +299,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
             </select>
           </div>
 
-          {/* Group Size - Full width on mobile, 1/3 on larger screens */}
+          {/* Group Size */}
           <div className="space-y-2 lg:col-span-1">
             <label className="block text-sm font-semibold text-teal-800">
               Group Size
@@ -247,7 +334,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
             </div>
           </div>
 
-          {/* Date Range - Full width on mobile, 1/3 on larger screens */}
+          {/* Date Range */}
           <div className="space-y-2 lg:col-span-1">
             <label className="block text-sm font-semibold text-teal-800">
               Availability
@@ -326,7 +413,11 @@ const FilterSection: React.FC<FilterSectionProps> = ({
       </div>
 
       {/* Active Filters Summary */}
-      <ActiveFiltersSummary filters={filters} onFilterChange={onFilterChange} />
+      <ActiveFiltersSummary
+        filters={filters}
+        onFilterChange={onFilterChange}
+        formatPrice={formatPrice}
+      />
     </div>
   );
 };
@@ -334,20 +425,18 @@ const FilterSection: React.FC<FilterSectionProps> = ({
 // Active Filters Summary Component
 interface ActiveFiltersSummaryProps {
   filters: Filters;
-  onFilterChange: (filterName: keyof Filters, value: Filters[keyof Filters]) => void;
+  onFilterChange: (
+    filterName: keyof Filters,
+    value: Filters[keyof Filters],
+  ) => void;
+  formatPrice: (price: number) => string;
 }
 
-const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({ 
-  filters, 
-  onFilterChange 
+const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
+  filters,
+  onFilterChange,
+  formatPrice,
 }) => {
-  const formatPrice = (price: number): string => {
-    return new Intl.NumberFormat("en-LK", {
-      style: "currency",
-      currency: "LKR",
-    }).format(price);
-  };
-
   interface ActiveFilter {
     name: keyof Filters;
     label: string;
@@ -355,7 +444,7 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
   }
 
   const activeFilters: ActiveFilter[] = [];
-  
+
   if (filters.search) {
     activeFilters.push({
       name: "search",
@@ -363,7 +452,7 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
       value: filters.search,
     });
   }
-  
+
   if (filters.duration) {
     activeFilters.push({
       name: "duration",
@@ -371,7 +460,7 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
       value: filters.duration,
     });
   }
-  
+
   if (filters.packageType) {
     activeFilters.push({
       name: "packageType",
@@ -379,7 +468,7 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
       value: filters.packageType,
     });
   }
-  
+
   if (filters.location) {
     activeFilters.push({
       name: "location",
@@ -387,7 +476,7 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
       value: filters.location,
     });
   }
-  
+
   if (filters.minPersons) {
     activeFilters.push({
       name: "minPersons",
@@ -395,7 +484,7 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
       value: filters.minPersons,
     });
   }
-  
+
   if (filters.maxPersons) {
     activeFilters.push({
       name: "maxPersons",
@@ -403,7 +492,7 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
       value: filters.maxPersons,
     });
   }
-  
+
   if (filters.startDate) {
     activeFilters.push({
       name: "startDate",
@@ -411,7 +500,7 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
       value: filters.startDate,
     });
   }
-  
+
   if (filters.endDate) {
     activeFilters.push({
       name: "endDate",
@@ -419,7 +508,7 @@ const ActiveFiltersSummary: React.FC<ActiveFiltersSummaryProps> = ({
       value: filters.endDate,
     });
   }
-  
+
   if (filters.priceRange[0] > 0 || filters.priceRange[1] < 100000) {
     activeFilters.push({
       name: "priceRange",

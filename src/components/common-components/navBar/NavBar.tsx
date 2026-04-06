@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { NavBarItem } from "@/types/nav-bar-types";
-import { COMPANY_NAME } from "@/utils/constant";
+import { COMPANY_ADDRESS, COMPANY_NAME } from "@/utils/constant";
 import NavBarContainer from "./NavBarContainer";
 import DesktopNav from "./DesktopNav";
 import MobileNav from "./MobileNav";
@@ -10,6 +10,7 @@ import ScrolledDesktopNav from "./ScrolledDesktopNav";
 import ScrolledMobileNav from "./ScrolledMobileNav";
 import { NavBarService } from "@/services/navBarService";
 import BasicLoading from "../basic-loading/BasicLoading";
+import TopBar from "../TopBar";
 
 const NavBar = () => {
   const [loading, setLoading] = useState(true);
@@ -129,6 +130,7 @@ const NavBar = () => {
   return (
     <NavBarContainer isScrolled={isScrolled}>
       {/* Main NavBar */}
+      <TopBar />
       <nav
         className={`backdrop-blur-md border-b shadow-lg sticky top-0 z-50 transition-transform duration-300 ${
           isScrolled ? "-translate-y-full" : "translate-y-0"

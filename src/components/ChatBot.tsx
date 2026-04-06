@@ -1,551 +1,1453 @@
-// components/ChatBot.tsx
-'use client';
-
-import { useState, useRef, useEffect } from 'react';
-import { MessageSquare, X, Bot, User, Minimize2, Send } from 'lucide-react';
+// components/home-page-components/ChatBot.tsx
+"use client";
+import React, { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { COMPANY_LOGO_IMAGE } from "@/utils/constant";
+import Image from "next/image";
 
 interface Message {
   id: number;
   text: string;
-  sender: 'bot' | 'user';
+  sender: "bot" | "user";
+  timestamp: Date;
 }
 
-interface Option {
-  id: number;
-  text: string;
-  nextQuestion?: string;
-  action?: () => void;
-}
+type FlowType =
+  | "main"
+  | "tours"
+  | "activities"
+  | "destinations"
+  | "contact"
+  | "social";
+type ToursStep = "category" | "duration" | "tourType" | "season" | "budget";
+type ActivitiesStep = "category" | "season" | "duration";
+type DestinationsStep = "category" | "location" | "rating";
 
-interface UserInfo {
-  name: string;
-  email: string;
-  mobile: string;
-}
-
-const getGreeting = () => {
-  const hour = new Date().getHours();
-  if (hour < 12) return "Good morning";
-  if (hour < 18) return "Good afternoon";
-  return "Good evening";
+const seaTheme = {
+  primary: "#0D9488",
+  primaryDark: "#0F766E",
+  primaryLight: "#14B8A6",
+  background: "#FFFFFF",
+  surface: "#F0FDFA",
+  border: "#CCFBF1",
+  text: "#1F2937",
+  textSecondary: "#6B7280",
+  accent: "#06B6D4",
 };
 
-const travelOptions: Record<string, { question: string; options: Option[] }> = {
-  initial: {
-    question: `${getGreeting()}! I'm your travel assistant. To provide you personalized assistance, could you please share your details?`,
-    options: []
-  },
-  userInfo: {
-    question: "Please fill in your details:",
-    options: []
-  },
-  mainMenu: {
-    question: "How can I assist you today?",
-    options: [
-      { id: 1, text: "Book a trip or holiday package", nextQuestion: "booking" },
-      { id: 2, text: "Check travel deals & offers", nextQuestion: "deals" },
-      { id: 3, text: "Get destination recommendations", nextQuestion: "recommendations" },
-      { id: 4, text: "Contact travel agent", nextQuestion: "contactAgent" }
-    ]
-  },
-  booking: {
-    question: "Great! What type of trip are you looking for?",
-    options: [
-      { id: 1, text: "Beach & Resort holidays", nextQuestion: "beachDetails" },
-      { id: 2, text: "Mountain & Adventure trips", nextQuestion: "mountainDetails" },
-      { id: 3, text: "City tours & Shopping", nextQuestion: "cityDetails" },
-      { id: 4, text: "Contact travel agent for booking", nextQuestion: "contactAgent" }
-    ]
-  },
-  beachDetails: {
-    question: "Perfect! Beach holidays available. Would you like details about:",
-    options: [
-      { id: 1, text: "Maldives packages", action: () => window.location.href = "/packages/maldives" },
-      { id: 2, text: "Bali vacation deals", action: () => window.location.href = "/packages/bali" },
-      { id: 3, text: "Thailand island hopping", action: () => window.location.href = "/packages/thailand" },
-      { id: 4, text: "Contact agent for beach holidays", nextQuestion: "contactAgent" }
-    ]
-  },
-  mountainDetails: {
-    question: "Adventure awaits! Which mountain destination interests you?",
-    options: [
-      { id: 1, text: "Swiss Alps trekking", action: () => window.location.href = "/packages/swiss-alps" },
-      { id: 2, text: "Himalayan expeditions", action: () => window.location.href = "/packages/himalayas" },
-      { id: 3, text: "New Zealand adventure", action: () => window.location.href = "/packages/new-zealand" },
-      { id: 4, text: "Contact agent for adventure trips", nextQuestion: "contactAgent" }
-    ]
-  },
-  cityDetails: {
-    question: "City tours available! Choose your preferred destination:",
-    options: [
-      { id: 1, text: "European city tours", action: () => window.location.href = "/packages/europe" },
-      { id: 2, text: "Asian metropolis tours", action: () => window.location.href = "/packages/asia" },
-      { id: 3, text: "USA & Canada cities", action: () => window.location.href = "/packages/usa-canada" },
-      { id: 4, text: "Contact agent for city tours", nextQuestion: "contactAgent" }
-    ]
-  },
-  deals: {
-    question: "Here are our current travel deals:",
-    options: [
-      { id: 1, text: "Last minute offers (50% off)", action: () => window.location.href = "/deals/last-minute" },
-      { id: 2, text: "Early bird discounts", action: () => window.location.href = "/deals/early-bird" },
-      { id: 3, text: "Group travel discounts", action: () => window.location.href = "/deals/group" },
-      { id: 4, text: "Contact agent for best deals", nextQuestion: "contactAgent" }
-    ]
-  },
-  recommendations: {
-    question: "Based on popular choices, I recommend:",
-    options: [
-      { id: 1, text: "Romantic getaways", nextQuestion: "romanticDetails" },
-      { id: 2, text: "Family vacation spots", nextQuestion: "familyDetails" },
-      { id: 3, text: "Solo travel destinations", nextQuestion: "soloDetails" },
-      { id: 4, text: "Contact agent for recommendations", nextQuestion: "contactAgent" }
-    ]
-  },
-  romanticDetails: {
-    question: "Perfect for couples! Which romantic destination?",
-    options: [
-      { id: 1, text: "Paris & Venice", action: () => window.location.href = "/romantic/paris-venice" },
-      { id: 2, text: "Maldives overwater villas", action: () => window.location.href = "/romantic/maldives" },
-      { id: 3, text: "Greek islands cruise", action: () => window.location.href = "/romantic/greece" },
-      { id: 4, text: "Contact agent for romantic trips", nextQuestion: "contactAgent" }
-    ]
-  },
-  familyDetails: {
-    question: "Family-friendly destinations:",
-    options: [
-      { id: 1, text: "Disney World packages", action: () => window.location.href = "/family/disney" },
-      { id: 2, text: "Bali family resorts", action: () => window.location.href = "/family/bali" },
-      { id: 3, text: "Japan family tour", action: () => window.location.href = "/family/japan" },
-      { id: 4, text: "Contact agent for family trips", nextQuestion: "contactAgent" }
-    ]
-  },
-  soloDetails: {
-    question: "Great for solo travelers:",
-    options: [
-      { id: 1, text: "Backpacking Southeast Asia", action: () => window.location.href = "/solo/se-asia" },
-      { id: 2, text: "Europe solo tour", action: () => window.location.href = "/solo/europe" },
-      { id: 3, text: "Australia adventure", action: () => window.location.href = "/solo/australia" },
-      { id: 4, text: "Contact agent for solo travel", nextQuestion: "contactAgent" }
-    ]
-  },
-  contactAgent: {
-    question: "I'll connect you with a travel expert. How would you prefer to communicate?",
-    options: [
-      { id: 1, text: "Call me on my mobile", action: () => window.open('tel:+1234567890') },
-      { id: 2, text: "Email me the details", action: () => window.location.href = "mailto:info@travelagency.com" },
-      { id: 3, text: "WhatsApp conversation", action: () => window.open('https://wa.me/1234567890') },
-      { id: 4, text: "Visit office for discussion", action: () => window.location.href = "/contact/locations" }
-    ]
-  },
-  visaInfo: {
-    question: "Visa assistance available for:",
-    options: [
-      { id: 1, text: "Schengen visa Europe", action: () => window.location.href = "/visa/schengen" },
-      { id: 2, text: "USA visa process", action: () => window.location.href = "/visa/usa" },
-      { id: 3, text: "UK visa guidance", action: () => window.location.href = "/visa/uk" },
-      { id: 4, text: "Contact visa expert", nextQuestion: "contactAgent" }
-    ]
-  },
-  flights: {
-    question: "Flight booking options:",
-    options: [
-      { id: 1, text: "Search international flights", action: () => window.location.href = "/flights/international" },
-      { id: 2, text: "Domestic flight deals", action: () => window.location.href = "/flights/domestic" },
-      { id: 3, text: "Business class offers", action: () => window.location.href = "/flights/business" },
-      { id: 4, text: "Contact flight agent", nextQuestion: "contactAgent" }
-    ]
-  },
-  hotels: {
-    question: "Hotel booking assistance:",
-    options: [
-      { id: 1, text: "Luxury 5-star hotels", action: () => window.location.href = "/hotels/luxury" },
-      { id: 2, text: "Budget accommodations", action: () => window.location.href = "/hotels/budget" },
-      { id: 3, text: "Resorts & Villas", action: () => window.location.href = "/hotels/resorts" },
-      { id: 4, text: "Contact hotel specialist", nextQuestion: "contactAgent" }
-    ]
-  }
-};
-
-export default function ChatBot() {
+const ChatBot = () => {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    { id: 1, text: travelOptions.initial.question, sender: 'bot' }
-  ]);
-  const [currentStep, setCurrentStep] = useState<string>('initial');
-  const [userInfo, setUserInfo] = useState<UserInfo>({
-    name: '',
-    email: '',
-    mobile: ''
+  const [isClosing, setIsClosing] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isTyping, setIsTyping] = useState(false);
+  const [currentFlow, setCurrentFlow] = useState<FlowType>("main");
+
+  // Tours state
+  const [toursData, setToursData] = useState({
+    category: "",
+    duration: "",
+    tourType: "",
+    season: "",
+    budget: "",
   });
-  const [infoStep, setInfoStep] = useState<'name' | 'email' | 'mobile'>('name');
-  const [isInfoComplete, setIsInfoComplete] = useState(false);
+  const [toursStep, setToursStep] = useState<ToursStep>("category");
+
+  // Activities state
+  const [activitiesData, setActivitiesData] = useState({
+    category: "",
+    season: "",
+    duration: "",
+  });
+  const [activitiesStep, setActivitiesStep] =
+    useState<ActivitiesStep>("category");
+
+  // Destinations state
+  const [destinationsData, setDestinationsData] = useState({
+    category: "",
+    location: "",
+    rating: "",
+  });
+  const [destinationsStep, setDestinationsStep] =
+    useState<DestinationsStep>("category");
+
+  const [quickReplies, setQuickReplies] = useState<string[]>([]);
+  const [visibleMessages, setVisibleMessages] = useState<Set<number>>(
+    new Set(),
+  );
+  const [isMobile, setIsMobile] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatWindowRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to bottom when new messages are added
   useEffect(() => {
-    if (messagesEndRef.current && isOpen && !isMinimized) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [messages, isOpen, isMinimized]);
+    const checkMobile = () => setIsMobile(window.innerWidth < 640);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
-  const validateInfo = () => {
-    return userInfo.name.trim() !== '' && userInfo.mobile.trim() !== '';
-  };
-
-  const handleContinue = () => {
-    if (!validateInfo()) {
-      alert('Please provide at least your name and mobile number');
-      return;
-    }
-
-    // Add user info summary to chat
-    const infoMessage = `Name: ${userInfo.name}\nEmail: ${userInfo.email || 'Not provided'}\nMobile: ${userInfo.mobile}`;
-    
-    const userMessage: Message = {
-      id: messages.length + 1,
-      text: infoMessage,
-      sender: 'user'
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isOpen &&
+        !isMobile &&
+        chatWindowRef.current &&
+        buttonRef.current &&
+        !chatWindowRef.current.contains(event.target as Node) &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
+        handleClose();
+      }
     };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isOpen, isMobile]);
 
-    const botMessage: Message = {
-      id: messages.length + 2,
-      text: `Thank you, ${userInfo.name}! ${travelOptions.mainMenu.question}`,
-      sender: 'bot'
+  useEffect(() => {
+    if (isMobile && isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
     };
+  }, [isMobile, isOpen]);
 
-    setMessages(prev => [...prev, userMessage, botMessage]);
-    setCurrentStep('mainMenu');
-    setIsInfoComplete(true);
+  // Improved scroll to bottom function with multiple attempts
+  const scrollToBottom = () => {
+    // Immediate scroll
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+
+    // Scroll after a short delay for content rendering
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 50);
+
+    // Additional scroll after animation frames
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 150);
   };
 
-  const handleOptionClick = (option: Option) => {
-    // Add user's choice to messages
-    const userMessage: Message = {
-      id: messages.length + 1,
-      text: option.text,
-      sender: 'user'
-    };
-    
-    setMessages(prev => [...prev, userMessage]);
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isTyping, quickReplies]);
 
-    // Handle option action
-    if (option.action) {
-      setTimeout(() => option.action!(), 300);
-      return;
-    }
-
-    // Move to next question if specified
-    if (option.nextQuestion && travelOptions[option.nextQuestion]) {
-      setTimeout(() => {
-        const botMessage: Message = {
-          id: messages.length + 2,
-          text: travelOptions[option.nextQuestion!].question,
-          sender: 'bot'
-        };
-        setMessages(prev => [...prev, botMessage]);
-        setCurrentStep(option.nextQuestion!);
-      }, 500);
-    }
-  };
-
-  const handleInfoSubmit = (value: string) => {
-    setUserInfo(prev => ({
-      ...prev,
-      [infoStep]: value
-    }));
-
-    // Move to next step or complete
-    if (infoStep === 'name') {
-      setInfoStep('email');
-      const botMessage: Message = {
-        id: messages.length + 1,
-        text: "Great! What's your email address? (Optional)",
-        sender: 'bot'
-      };
-      setMessages(prev => [...prev, botMessage]);
-    } else if (infoStep === 'email') {
-      setInfoStep('mobile');
-      const botMessage: Message = {
-        id: messages.length + 1,
-        text: "Please provide your mobile number:",
-        sender: 'bot'
-      };
-      setMessages(prev => [...prev, botMessage]);
-    } else if (infoStep === 'mobile') {
-      handleContinue();
-    }
-  };
-
-  const resetChat = () => {
-    setMessages([{ id: 1, text: travelOptions.initial.question, sender: 'bot' }]);
-    setCurrentStep('initial');
-    setUserInfo({ name: '', email: '', mobile: '' });
-    setInfoStep('name');
-    setIsInfoComplete(false);
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setIsOpen(false);
+      setIsClosing(false);
+    }, 280);
   };
 
   const handleToggle = () => {
-    if (!isOpen) {
-      setIsOpen(true);
-      setIsMinimized(false);
-    } else if (isMinimized) {
-      setIsMinimized(false);
-    } else {
-      setIsMinimized(true);
+    if (isOpen) handleClose();
+    else setIsOpen(true);
+  };
+
+  const addBotMessage = (text: string, delay: number = 350): Promise<void> => {
+    return new Promise((resolve) => {
+      setIsTyping(true);
       setTimeout(() => {
-        setIsOpen(false);
-      }, 300);
-    }
+        const newId = Date.now();
+        setMessages((prev) => [
+          ...prev,
+          { id: newId, text, sender: "bot", timestamp: new Date() },
+        ]);
+        setIsTyping(false);
+        setTimeout(() => {
+          setVisibleMessages((prev) => new Set([...prev, newId]));
+          scrollToBottom(); // Scroll after message becomes visible
+          resolve();
+        }, 30);
+      }, delay);
+    });
   };
 
-  const handleMinimize = () => {
-    setIsMinimized(true);
+  const addUserMessage = (text: string) => {
+    const newId = Date.now();
+    setMessages((prev) => [
+      ...prev,
+      { id: newId, text, sender: "user", timestamp: new Date() },
+    ]);
     setTimeout(() => {
-      setIsOpen(false);
-    }, 300);
+      setVisibleMessages((prev) => new Set([...prev, newId]));
+      scrollToBottom();
+    }, 30);
   };
 
-  const getInfoPrompt = () => {
-    switch (infoStep) {
-      case 'name':
-        return "What's your name?";
-      case 'email':
-        return "What's your email address? (Optional)";
-      case 'mobile':
-        return "Please provide your mobile number:";
-      default:
-        return "";
+  useEffect(() => {
+    if (isOpen && messages.length === 0) {
+      const init = async () => {
+        await addBotMessage(
+          "Good day! Welcome to Felicita Trips. How may I assist you with your Sri Lanka travel plans today?",
+          500,
+        );
+        setQuickReplies([
+          "Tour Packages",
+          "Activities & Experiences",
+          "Destinations",
+          "Contact Support",
+          "Social Media",
+        ]);
+        scrollToBottom();
+      };
+      init();
     }
+  }, [isOpen]);
+
+  const resetToMain = async () => {
+    setCurrentFlow("main");
+    setToursData({
+      category: "",
+      duration: "",
+      tourType: "",
+      season: "",
+      budget: "",
+    });
+    setActivitiesData({ category: "", season: "", duration: "" });
+    setDestinationsData({ category: "", location: "", rating: "" });
+    await addBotMessage(
+      "How may I assist you further with your Sri Lanka travel plans?",
+      500,
+    );
+    setQuickReplies([
+      "Tour Packages",
+      "Activities & Experiences",
+      "Destinations",
+      "Contact Support",
+      "Social Media",
+    ]);
+    scrollToBottom();
+  };
+
+  const handleMainMenu = async (selection: string) => {
+    if (selection.includes("Tour")) {
+      setCurrentFlow("tours");
+      setToursStep("category");
+      await addBotMessage(
+        "Thank you for your interest in our tour packages. I'll help you find the perfect itinerary.",
+        500,
+      );
+      await addBotMessage(
+        "Please select the tour category that best aligns with your travel preferences:",
+        500,
+      );
+      setQuickReplies([
+        "Luxury",
+        "Budget",
+        "Family",
+        "Solo Traveler",
+        "Group",
+        "Cultural",
+        "Wildlife",
+        "Beach",
+        "Adventure",
+        "Honeymoon",
+        "Wellness",
+        "Photography",
+        "Food & Culinary",
+        "Short Getaway",
+        "Extended Tour",
+      ]);
+      scrollToBottom();
+    } else if (selection.includes("Activities")) {
+      setCurrentFlow("activities");
+      setActivitiesStep("category");
+      await addBotMessage(
+        "Excellent choice. Sri Lanka offers a diverse range of exceptional experiences.",
+        500,
+      );
+      await addBotMessage(
+        "Please specify the type of activities you're interested in:",
+        500,
+      );
+      setQuickReplies([
+        "Adventure & Outdoor",
+        "Water Sports & Marine",
+        "Wildlife & Safari",
+        "Cultural & Heritage",
+        "Sightseeing & Scenic",
+        "Wellness & Ayurveda",
+        "Food & Culinary",
+        "Beach & Coastal",
+        "Tea Trails & Plantations",
+        "Village & Rural Experiences",
+        "Railway & Scenic Journeys",
+        "Festivals & Events",
+      ]);
+      scrollToBottom();
+    } else if (selection.includes("Destinations")) {
+      setCurrentFlow("destinations");
+      setDestinationsStep("category");
+      await addBotMessage(
+        "Wonderful. Let me help you discover Sri Lanka's most captivating destinations.",
+        500,
+      );
+      await addBotMessage("What type of destination appeals to you most?", 500);
+      setQuickReplies([
+        "Cultural & Heritage",
+        "Beach & Coastal",
+        "Wildlife & Nature",
+        "Hill Country & Tea",
+        "Adventure & Sports",
+        "Wellness & Ayurveda",
+        "Religious & Sacred",
+        "Village & Rural Experiences",
+        "Luxury & Honeymoon",
+        "Budget & Backpacker",
+      ]);
+      scrollToBottom();
+    } else if (selection.includes("Contact")) {
+      setCurrentFlow("contact");
+      await addBotMessage(
+        "I'd be happy to connect you with our support team. Please select your preferred method of contact:",
+        500,
+      );
+      setQuickReplies(["WhatsApp", "Phone Call", "Email", "Submit Inquiry"]);
+      scrollToBottom();
+    } else if (selection.includes("Social")) {
+      setCurrentFlow("social");
+      await addBotMessage(
+        "Stay connected with us on social media. Which platform would you like to visit?",
+        500,
+      );
+      setQuickReplies(["Instagram", "LinkedIn", "YouTube"]);
+      scrollToBottom();
+    }
+  };
+
+  const handleToursFlow = async (selection: string) => {
+    const updateData = { ...toursData };
+
+    switch (toursStep) {
+      case "category":
+        updateData.category = selection;
+        setToursData(updateData);
+        await addBotMessage(
+          `Thank you. ${selection} tours are an excellent choice for experiencing Sri Lanka's finest offerings.`,
+          500,
+        );
+        await addBotMessage(
+          "Please indicate your preferred tour duration (in days). You may select from our standard packages or specify a custom duration:",
+          500,
+        );
+        setQuickReplies([
+          "5 Days",
+          "7 Days",
+          "9 Days",
+          "12 Days",
+          "14 Days",
+          "Custom Duration",
+        ]);
+        setToursStep("duration");
+        scrollToBottom();
+        break;
+
+      case "duration":
+        updateData.duration =
+          selection === "Custom Duration"
+            ? "null"
+            : selection.replace(" Days", "");
+        setToursData(updateData);
+        await addBotMessage(`Noted: ${selection}`, 500);
+        await addBotMessage(
+          "Please specify the tour type that best matches your interests:",
+          500,
+        );
+        setQuickReplies([
+          "Adventure",
+          "Cultural",
+          "Wildlife",
+          "Beach",
+          "Wellness & Ayurveda",
+          "Hill Country",
+          "Honeymoon",
+          "Family",
+          "Photography",
+          "Food & Culinary",
+          "Luxury",
+          "Budget",
+          "Solo Traveler",
+          "Group Tours",
+          "Private Tours",
+          "Short Breaks",
+          "Extended Tours",
+        ]);
+        setToursStep("tourType");
+        scrollToBottom();
+        break;
+
+      case "tourType":
+        updateData.tourType = selection;
+        setToursData(updateData);
+        await addBotMessage(
+          `Excellent choice. ${selection} tours showcase some of Sri Lanka's most remarkable experiences.`,
+          500,
+        );
+        await addBotMessage(
+          "Which travel season do you prefer? This will help us recommend the most suitable destinations and experiences:",
+          500,
+        );
+        setQuickReplies([
+          "Adventure Sports Season",
+          "Bird Watching Premium",
+          "North Coast Season",
+          "Cultural Triangle Shoulder",
+          "Whale Watching Peak",
+          "Surfing Peak Season",
+          "Wildlife Gathering Season",
+          "Hill Country Cool Season",
+          "Wet Inter-Monsoon",
+          "Hot Inter-Monsoon",
+          "Peak East Coast",
+          "Peak West & South",
+          "All Year Round",
+        ]);
+        setToursStep("season");
+        scrollToBottom();
+        break;
+
+      case "season":
+        updateData.season = selection;
+        setToursData(updateData);
+        await addBotMessage(
+          `Thank you. ${selection} offers wonderful travel conditions for your chosen itinerary.`,
+          500,
+        );
+        await addBotMessage(
+          "Please specify your maximum budget per person (in USD). This will help us curate the best options within your range:",
+          500,
+        );
+        setQuickReplies([
+          "$500",
+          "$1,000",
+          "$1,500",
+          "$2,000",
+          "$3,000",
+          "$5,000",
+          "No Limit",
+        ]);
+        setToursStep("budget");
+        scrollToBottom();
+        break;
+
+      case "budget":
+        const maxPrice =
+          selection === "No Limit"
+            ? "999999"
+            : selection.replace("$", "").replace(",", "");
+        updateData.budget = maxPrice;
+        setToursData(updateData);
+
+        const params = new URLSearchParams();
+        if (updateData.tourType && updateData.tourType !== "null")
+          params.append("tourType", encodeURIComponent(updateData.tourType));
+        if (updateData.category && updateData.category !== "null")
+          params.append(
+            "tourCategory",
+            encodeURIComponent(updateData.category),
+          );
+        if (updateData.season && updateData.season !== "null")
+          params.append("season", encodeURIComponent(updateData.season));
+        if (updateData.budget && updateData.budget !== "null")
+          params.append("maxPrice", updateData.budget);
+        if (updateData.duration && updateData.duration !== "null")
+          params.append("duration", updateData.duration);
+
+        const url = `/sri-lankan-tours${params.toString() ? `?${params.toString()}` : ""}`;
+
+        await addBotMessage(
+          `Perfect. I've gathered all your preferences. I will now redirect you to our curated selection of ${updateData.category} tours that match your criteria.`,
+          800,
+        );
+        await addBotMessage(
+          `Please wait while I retrieve the best options for you...`,
+          500,
+        );
+        scrollToBottom();
+
+        setTimeout(() => {
+          router.push(url);
+          handleClose();
+        }, 1500);
+        break;
+    }
+  };
+
+  const handleActivitiesFlow = async (selection: string) => {
+    const updateData = { ...activitiesData };
+
+    switch (activitiesStep) {
+      case "category":
+        updateData.category = selection;
+        setActivitiesData(updateData);
+        await addBotMessage(
+          `Thank you. ${selection} activities are among Sri Lanka's most cherished experiences.`,
+          500,
+        );
+        await addBotMessage(
+          "Please indicate your preferred travel season, as this affects activity availability and conditions:",
+          500,
+        );
+        setQuickReplies([
+          "Adventure Sports Season",
+          "Bird Watching Premium",
+          "North Coast Season",
+          "Cultural Triangle Shoulder",
+          "Whale Watching Peak",
+          "Surfing Peak Season",
+          "Wildlife Gathering Season",
+          "Hill Country Cool Season",
+          "Wet Inter-Monsoon",
+          "Hot Inter-Monsoon",
+          "Peak East Coast",
+          "Peak West & South",
+          "All Year Round",
+        ]);
+        setActivitiesStep("season");
+        scrollToBottom();
+        break;
+
+      case "season":
+        updateData.season = selection;
+        setActivitiesData(updateData);
+        await addBotMessage(
+          `Excellent. ${selection} provides optimal conditions for your selected activities.`,
+          500,
+        );
+        await addBotMessage(
+          "How many days would you like to allocate for these activities? This will help us structure an appropriate itinerary:",
+          500,
+        );
+        setQuickReplies([
+          "1 Day",
+          "2 Days",
+          "3 Days",
+          "4 Days",
+          "5 Days",
+          "8 Days",
+        ]);
+        setActivitiesStep("duration");
+        scrollToBottom();
+        break;
+
+      case "duration":
+        updateData.duration = selection
+          .replace(" Days", "")
+          .replace(" Day", "");
+        setActivitiesData(updateData);
+
+        const params = new URLSearchParams();
+        if (updateData.category && updateData.category !== "null")
+          params.append("category", encodeURIComponent(updateData.category));
+        if (updateData.duration && updateData.duration !== "null")
+          params.append("duration", updateData.duration);
+        if (updateData.season && updateData.season !== "null")
+          params.append("season", encodeURIComponent(updateData.season));
+
+        const url = `/activities${params.toString() ? `?${params.toString()}` : ""}`;
+
+        await addBotMessage(
+          `Thank you. I've processed your preferences. I will now direct you to our comprehensive selection of ${updateData.category} activities.`,
+          800,
+        );
+        await addBotMessage(`Redirecting you to view the best options...`, 500);
+        scrollToBottom();
+
+        setTimeout(() => {
+          router.push(url);
+          handleClose();
+        }, 1500);
+        break;
+    }
+  };
+
+  const handleDestinationsFlow = async (selection: string) => {
+    const updateData = { ...destinationsData };
+
+    switch (destinationsStep) {
+      case "category":
+        updateData.category = selection;
+        setDestinationsData(updateData);
+        await addBotMessage(
+          `Thank you. ${selection} destinations showcase the remarkable diversity of Sri Lanka's landscape and culture.`,
+          500,
+        );
+        await addBotMessage(
+          "Please specify your preferred region or province for a more targeted recommendation:",
+          500,
+        );
+        setQuickReplies([
+          "Central Province",
+          "Uva Province",
+          "Southern Province",
+          "North Central Province",
+          "Northern Province",
+          "Western Province",
+          "Eastern Province",
+          "Hambantota, Sri Lanka",
+          "Gal Oya, Sri Lanka",
+          "North Western Province",
+          "Sabaragamuwa Province",
+          "Belihuloya, Sabaragamuwa Province, Sri Lanka",
+        ]);
+        setDestinationsStep("location");
+        scrollToBottom();
+        break;
+
+      case "location":
+        updateData.location = selection;
+        setDestinationsData(updateData);
+        await addBotMessage(
+          `Thank you. ${selection} offers wonderful travel opportunities.`,
+          500,
+        );
+        await addBotMessage(
+          "Please select your minimum preferred rating (1-5 stars) to ensure we recommend only the highest-quality destinations:",
+          500,
+        );
+        setQuickReplies(["1 Star", "2 Stars", "3 Stars", "4 Stars", "5 Stars"]);
+        setDestinationsStep("rating");
+        scrollToBottom();
+        break;
+
+      case "rating":
+        updateData.rating = selection
+          .replace(" Stars", "")
+          .replace(" Star", "");
+        setDestinationsData(updateData);
+
+        const params = new URLSearchParams();
+        if (updateData.category && updateData.category !== "null")
+          params.append("category", encodeURIComponent(updateData.category));
+        if (updateData.location && updateData.location !== "null")
+          params.append("location", encodeURIComponent(updateData.location));
+        if (updateData.rating && updateData.rating !== "null")
+          params.append("rating", updateData.rating);
+
+        const url = `/destinations${params.toString() ? `?${params.toString()}` : ""}`;
+
+        await addBotMessage(
+          `Perfect. Based on your criteria, I will now show you the finest ${updateData.rating}-star ${updateData.category} destinations in ${updateData.location}.`,
+          800,
+        );
+        await addBotMessage(
+          `Preparing your personalized destination recommendations...`,
+          500,
+        );
+        scrollToBottom();
+
+        setTimeout(() => {
+          router.push(url);
+          handleClose();
+        }, 1500);
+        break;
+    }
+  };
+
+  const handleContactFlow = async (selection: string) => {
+    if (selection.includes("WhatsApp")) {
+      await addBotMessage(
+        "Thank you. I'm opening WhatsApp so you can connect directly with our support team. They typically respond within minutes.",
+        500,
+      );
+      scrollToBottom();
+      setTimeout(() => {
+        window.open("https://wa.me/94701774488", "_blank");
+        handleClose();
+      }, 800);
+    } else if (selection.includes("Phone")) {
+      await addBotMessage(
+        "Thank you. I will initiate a call to our support line. Our team is available 24/7 to assist you.",
+        500,
+      );
+      scrollToBottom();
+      setTimeout(() => {
+        window.location.href = "tel:+94701774488";
+        handleClose();
+      }, 800);
+    } else if (selection.includes("Email")) {
+      await addBotMessage(
+        "Thank you. I'll open your email client with our address pre-filled. We typically respond to all inquiries within 2-4 hours.",
+        500,
+      );
+      scrollToBottom();
+      setTimeout(() => {
+        window.location.href = "mailto:felicitatrips@gmail.com";
+        handleClose();
+      }, 800);
+    } else if (selection.includes("Inquiry")) {
+      await addBotMessage(
+        "Thank you. I'll direct you to our inquiry form where you can provide your details, and our travel specialists will prepare a customized response.",
+        500,
+      );
+      scrollToBottom();
+      setTimeout(() => {
+        router.push("/contact-us#contact-form");
+        handleClose();
+      }, 800);
+    }
+  };
+
+  const handleSocialFlow = async (selection: string) => {
+    if (selection.includes("Instagram")) {
+      await addBotMessage(
+        "Thank you for your interest. Opening our Instagram page where we regularly share stunning visuals and travel inspiration from across Sri Lanka.",
+        500,
+      );
+      scrollToBottom();
+      setTimeout(() => {
+        window.open("https://www.instagram.com/felicitatrips", "_blank");
+        handleClose();
+      }, 800);
+    } else if (selection.includes("LinkedIn")) {
+      await addBotMessage(
+        "Thank you. Opening our LinkedIn page where we share industry insights, company updates, and professional travel resources.",
+        500,
+      );
+      scrollToBottom();
+      setTimeout(() => {
+        window.open("https://linkedin.com/company/felicita-trips", "_blank");
+        handleClose();
+      }, 800);
+    } else if (selection.includes("YouTube")) {
+      await addBotMessage(
+        "Thank you. Opening our YouTube channel featuring destination guides, travel tips, and virtual tours of Sri Lanka's most spectacular locations.",
+        500,
+      );
+      scrollToBottom();
+      setTimeout(() => {
+        window.open("https://youtube.com/@felicita-trips", "_blank");
+        handleClose();
+      }, 800);
+    }
+  };
+
+  const handleUserResponse = async (selection: string) => {
+    addUserMessage(selection);
+    setQuickReplies([]);
+    scrollToBottom();
+
+    if (currentFlow === "main") {
+      await handleMainMenu(selection);
+    } else if (currentFlow === "tours") {
+      await handleToursFlow(selection);
+    } else if (currentFlow === "activities") {
+      await handleActivitiesFlow(selection);
+    } else if (currentFlow === "destinations") {
+      await handleDestinationsFlow(selection);
+    } else if (currentFlow === "contact") {
+      await handleContactFlow(selection);
+      await resetToMain();
+    } else if (currentFlow === "social") {
+      await handleSocialFlow(selection);
+      await resetToMain();
+    }
+  };
+
+  const formatTime = (date: Date): string => {
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  };
+
+  const refreshChat = () => {
+    setMessages([]);
+    setCurrentFlow("main");
+    setToursData({
+      category: "",
+      duration: "",
+      tourType: "",
+      season: "",
+      budget: "",
+    });
+    setActivitiesData({ category: "", season: "", duration: "" });
+    setDestinationsData({ category: "", location: "", rating: "" });
+    setQuickReplies([]);
+    setVisibleMessages(new Set());
+    setIsOpen(false);
+    setTimeout(() => {
+      setIsOpen(true);
+    }, 300);
   };
 
   return (
     <>
-      {/* Chat Button */}
+      {isMobile && isOpen && (
+        <div
+          className={`chat-backdrop ${isClosing ? "chat-backdrop--closing" : "chat-backdrop--open"}`}
+          onClick={handleClose}
+        />
+      )}
+
       <button
+        ref={buttonRef}
         onClick={handleToggle}
-        className={`fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 text-white rounded-full shadow-xl flex items-center justify-center transition-all duration-300 z-50
-          ${!isOpen ? 'animate-bounce-once hover:scale-110' : 'scale-100 hover:scale-105'}
-        `}
-        aria-label={isOpen ? "Close chat" : "Open chat assistant"}
+        className="chat-fab"
         style={{
-          boxShadow: '0 10px 25px -5px rgba(59, 130, 246, 0.5)',
-          animation: !isOpen ? 'bounceOnce 2s infinite' : 'none'
+          backgroundColor: seaTheme.primary,
+          boxShadow: `0 8px 32px ${seaTheme.primary}55`,
         }}
+        aria-label="Toggle chat"
       >
-        {!isOpen ? (
-          <MessageSquare size={28} />
-        ) : (
-          <X size={28} />
-        )}
+        <span
+          className={`chat-fab-icon ${isOpen ? "chat-fab-icon--close" : "chat-fab-icon--open"}`}
+        >
+          {isOpen ? (
+            <svg
+              className="icon-svg"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2.5}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          ) : (
+            <svg
+              className="icon-svg"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+              />
+            </svg>
+          )}
+        </span>
+        {!isOpen && <span className="chat-fab-badge" />}
       </button>
 
-      {/* Chat Window */}
-      <div className={`fixed bottom-24 right-6 w-96 bg-white rounded-2xl shadow-2xl flex flex-col z-50 border border-gray-200 overflow-hidden
-        transition-all duration-300 ease-out
-        ${isOpen && !isMinimized ? 
-          'opacity-100 scale-100 translate-y-0' : 
-          isOpen && isMinimized ?
-          'opacity-0 scale-95 -translate-y-4' :
-          'opacity-0 scale-95 translate-y-4 pointer-events-none'
-        }
-      `}>
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-2xl">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-              <Bot className="text-blue-600" size={24} />
+      {isOpen && (
+        <div
+          ref={chatWindowRef}
+          className={`chat-window ${isClosing ? "chat-window--closing" : "chat-window--open"} ${isMobile ? "chat-window--mobile" : ""}`}
+          style={{
+            backgroundColor: seaTheme.background,
+            border: isMobile ? "none" : `1px solid ${seaTheme.border}`,
+          }}
+        >
+          <div
+            className="chat-header"
+            style={{ backgroundColor: seaTheme.primary }}
+          >
+            <div className="chat-header-left">
+              <div className="chat-avatar">
+                <Image
+                  src={COMPANY_LOGO_IMAGE}
+                  alt="Felicita Trips Logo"
+                  className="chat-avatar-logo"
+                  width={1000}
+                  height={1000}
+                />
+                <span className="chat-avatar-status" />
+              </div>
+              <div>
+                <h3 className="chat-title">Felicita Trips Concierge</h3>
+                <p className="chat-subtitle">Online • Travel Specialist</p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-bold">Travel Assistant</h3>
-              <p className="text-sm text-blue-100">Online • Ready to help</p>
+            <div className="chat-header-actions">
+              <button
+                className="chat-refresh-btn"
+                onClick={refreshChat}
+                aria-label="Start over"
+              >
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  />
+                </svg>
+              </button>
+              <button
+                className="chat-close-btn"
+                onClick={handleClose}
+                aria-label="Close chat"
+              >
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2.5}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={resetChat}
-              className="p-2 hover:bg-white/20 rounded-full transition-colors"
-              aria-label="Reset chat"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-            </button>
-            <button
-              onClick={handleMinimize}
-              className="p-2 hover:bg-white/20 rounded-full transition-colors"
-              aria-label="Minimize chat"
-            >
-              <Minimize2 size={20} />
-            </button>
-            <button
-              onClick={handleToggle}
-              className="p-2 hover:bg-white/20 rounded-full transition-colors"
-              aria-label="Close chat"
-            >
-              <X size={20} />
-            </button>
-          </div>
-        </div>
 
-        {/* Chat Messages */}
-        <div className="flex-1 p-4 overflow-y-auto bg-gradient-to-b from-gray-50 to-blue-50 max-h-96">
-          <div className="space-y-4">
+          <div className="chat-messages" ref={messagesContainerRef}>
             {messages.map((message) => (
               <div
                 key={message.id}
-                className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                className={`chat-message-wrapper ${visibleMessages.has(message.id) ? "chat-message-wrapper--visible" : ""}`}
               >
-                <div className={`max-w-[80%] rounded-2xl p-3 whitespace-pre-line ${
-                  message.sender === 'user'
-                    ? 'bg-blue-600 text-white rounded-br-none'
-                    : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none'
-                }`}>
-                  <div className="flex items-center gap-2 mb-1">
-                    {message.sender === 'bot' ? (
-                      <Bot size={16} className="text-blue-500" />
-                    ) : (
-                      <User size={16} className="text-white" />
-                    )}
-                    <span className="text-xs font-medium">
-                      {message.sender === 'bot' ? 'Travel Assistant' : 'You'}
+                {message.sender === "bot" && (
+                  <div className="chat-message-avatar">
+                    <div
+                      className="chat-message-avatar-icon"
+                      style={{ backgroundColor: seaTheme.primaryLight }}
+                    >
+                      <svg
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        width="14"
+                        height="14"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                )}
+                <div
+                  className={`chat-message-content ${message.sender === "user" ? "chat-message-content--user" : "chat-message-content--bot"}`}
+                >
+                  <div
+                    className={`chat-bubble ${message.sender === "user" ? "chat-bubble--user" : "chat-bubble--bot"}`}
+                    style={{
+                      backgroundColor:
+                        message.sender === "user"
+                          ? seaTheme.primary
+                          : seaTheme.surface,
+                      color:
+                        message.sender === "user" ? "#ffffff" : seaTheme.text,
+                    }}
+                  >
+                    <p
+                      className="chat-bubble-text"
+                      style={{ whiteSpace: "pre-wrap" }}
+                    >
+                      {message.text}
+                    </p>
+                    <span
+                      className="chat-bubble-time"
+                      style={{
+                        color:
+                          message.sender === "user"
+                            ? "rgba(255,255,255,0.65)"
+                            : seaTheme.textSecondary,
+                      }}
+                    >
+                      {formatTime(message.timestamp)}
                     </span>
                   </div>
-                  <p className="text-sm">{message.text}</p>
                 </div>
+                {message.sender === "user" && (
+                  <div className="chat-message-avatar-placeholder" />
+                )}
               </div>
             ))}
 
-            {/* Info Collection Form (if not completed) */}
-            {!isInfoComplete && currentStep === 'initial' && (
-              <div className="space-y-4 mt-4">
-                <div className="flex justify-start">
-                  <div className="max-w-[80%] rounded-2xl p-3 bg-white border border-gray-200 rounded-bl-none">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Bot size={16} className="text-blue-500" />
-                      <span className="text-xs font-medium">Travel Assistant</span>
-                    </div>
-                    <p className="text-sm mb-2">{getInfoPrompt()}</p>
-                    <input
-                      type={infoStep === 'email' ? 'email' : infoStep === 'mobile' ? 'tel' : 'text'}
-                      placeholder={
-                        infoStep === 'name' ? 'Your name' :
-                        infoStep === 'email' ? 'your.email@example.com' :
-                        '+1234567890'
-                      }
-                      value={userInfo[infoStep]}
-                      onChange={(e) => setUserInfo(prev => ({ ...prev, [infoStep]: e.target.value }))}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      onKeyPress={(e) => e.key === 'Enter' && handleInfoSubmit(userInfo[infoStep])}
+            {isTyping && (
+              <div className="chat-message-wrapper chat-message-wrapper--visible">
+                <div className="chat-message-avatar">
+                  <div
+                    className="chat-message-avatar-icon"
+                    style={{ backgroundColor: seaTheme.primaryLight }}
+                  >
+                    <svg
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      width="14"
+                      height="14"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <div className="chat-message-content chat-message-content--bot">
+                  <div
+                    className="chat-bubble chat-bubble--bot chat-bubble--typing"
+                    style={{ backgroundColor: seaTheme.surface }}
+                  >
+                    <span
+                      className="typing-dot"
+                      style={{ backgroundColor: seaTheme.textSecondary }}
                     />
-                    <div className="flex justify-between items-center mt-2">
-                      <span className="text-xs text-gray-500">
-                        {infoStep === 'mobile' ? 'Required' : infoStep === 'name' ? 'Required' : 'Optional'}
-                      </span>
-                      <button
-                        onClick={() => handleInfoSubmit(userInfo[infoStep])}
-                        disabled={infoStep === 'name' && !userInfo.name.trim() || infoStep === 'mobile' && !userInfo.mobile.trim()}
-                        className="px-4 py-1 text-sm bg-blue-600 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors"
-                      >
-                        {infoStep === 'mobile' ? 'Continue →' : 'Next'}
-                      </button>
-                    </div>
+                    <span
+                      className="typing-dot"
+                      style={{ backgroundColor: seaTheme.textSecondary }}
+                    />
+                    <span
+                      className="typing-dot"
+                      style={{ backgroundColor: seaTheme.textSecondary }}
+                    />
                   </div>
                 </div>
               </div>
             )}
-
             <div ref={messagesEndRef} />
           </div>
-        </div>
 
-        {/* Options (only show if not in info collection) */}
-        {isInfoComplete && travelOptions[currentStep].options.length > 0 && (
-          <div className="p-4 border-t bg-white rounded-b-2xl">
-            <div className="grid grid-cols-2 gap-2 mb-3">
-              {travelOptions[currentStep].options.map((option) => (
+          {quickReplies.length > 0 && (
+            <div className="chat-quick-replies">
+              {quickReplies.map((reply, idx) => (
                 <button
-                  key={option.id}
-                  onClick={() => handleOptionClick(option)}
-                  className="p-3 text-sm text-blue-300 text-left bg-gray-50 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 border border-gray-200 rounded-xl transition-all duration-200 hover:shadow-sm"
+                  key={idx}
+                  onClick={() => handleUserResponse(reply)}
+                  className="chat-quick-reply-btn"
+                  style={{
+                    backgroundColor: `${seaTheme.primary}10`,
+                    border: `1px solid ${seaTheme.primary}30`,
+                    color: seaTheme.primary,
+                  }}
                 >
-                  {option.text}
+                  {reply}
                 </button>
               ))}
             </div>
-            
-            {/* Quick Access Buttons */}
-            <div className="flex flex-wrap gap-2 mb-4">
-              <button
-                onClick={() => handleOptionClick(travelOptions.flights.options[0])}
-                className="px-3 py-1 text-xs bg-green-100 text-green-800 rounded-full hover:bg-green-200 transition-colors"
-              >
-                ✈️ Flights
-              </button>
-              <button
-                onClick={() => handleOptionClick(travelOptions.hotels.options[0])}
-                className="px-3 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full hover:bg-yellow-200 transition-colors"
-              >
-                🏨 Hotels
-              </button>
-              <button
-                onClick={() => handleOptionClick(travelOptions.visaInfo.options[0])}
-                className="px-3 py-1 text-xs bg-purple-100 text-purple-800 rounded-full hover:bg-purple-200 transition-colors"
-              >
-                📋 Visa Info
-              </button>
-              <button
-                onClick={() => handleOptionClick(travelOptions.contactAgent.options[0])}
-                className="px-3 py-1 text-xs bg-red-100 text-red-800 rounded-full hover:bg-red-200 transition-colors"
-              >
-                📞 Call Agent
-              </button>
-            </div>
+          )}
 
-            {/* Footer */}
-            <div className="mt-4 pt-4 border-t text-center">
-              <p className="text-xs text-gray-500">
-                Powered by Travel Agency Assistant • {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • User: {userInfo.name}
-              </p>
-            </div>
+          <div className="chat-footer" style={{ borderColor: seaTheme.border }}>
+            <p
+              className="chat-footer-text"
+              style={{ color: seaTheme.textSecondary }}
+            >
+              Felicita Trips | Premium Sri Lanka Travel Experiences | 24/7
+              Concierge Support
+            </p>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* Add CSS animations */}
-      <style jsx global>{`
-        @keyframes bounceOnce {
-          0%, 100% {
+      <style jsx>{`
+        .chat-fab {
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          z-index: 1000;
+          width: 56px;
+          height: 56px;
+          border-radius: 50%;
+          border: none;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition:
+            transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+            box-shadow 0.25s ease;
+          outline: none;
+        }
+        .chat-fab:hover {
+          transform: scale(1.1) translateY(-2px);
+        }
+        .chat-fab:active {
+          transform: scale(0.94);
+        }
+        .chat-fab-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .icon-svg {
+          width: 24px;
+          height: 24px;
+          color: white;
+        }
+        .chat-fab-badge {
+          position: absolute;
+          top: -2px;
+          right: -2px;
+          width: 12px;
+          height: 12px;
+          background: #ef4444;
+          border-radius: 50%;
+          border: 2px solid white;
+          animation: badge-pulse 2s ease-in-out infinite;
+        }
+        .chat-backdrop {
+          position: fixed;
+          inset: 0;
+          z-index: 998;
+          background: rgba(0, 0, 0, 0.45);
+          backdrop-filter: blur(2px);
+        }
+        .chat-backdrop--open {
+          animation: fade-in 0.25s ease forwards;
+        }
+        .chat-backdrop--closing {
+          animation: fade-out 0.28s ease forwards;
+        }
+        .chat-window {
+          position: fixed;
+          bottom: 84px;
+          right: 20px;
+          z-index: 999;
+          width: clamp(360px, 35vw, 480px);
+          height: clamp(560px, 80vh, 700px);
+          border-radius: 20px;
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+          transform-origin: bottom right;
+          box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
+        }
+        .chat-window--open {
+          animation: window-enter 0.35s cubic-bezier(0.34, 1.45, 0.64, 1)
+            forwards;
+        }
+        .chat-window--closing {
+          animation: window-exit 0.28s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+        }
+        .chat-window--mobile {
+          bottom: 0 !important;
+          right: 0 !important;
+          left: 0 !important;
+          width: 100% !important;
+          height: 92dvh !important;
+          border-radius: 20px 20px 0 0 !important;
+        }
+        .chat-window--mobile.chat-window--open {
+          animation: sheet-enter 0.38s cubic-bezier(0.34, 1.3, 0.64, 1) forwards;
+        }
+        .chat-header {
+          padding: 14px 16px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-shrink: 0;
+        }
+        .chat-header-left {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+        .chat-header-actions {
+          display: flex;
+          gap: 8px;
+        }
+        .chat-avatar {
+          position: relative;
+          width: 40px;
+          height: 40px;
+          border-width: 2px;
+          border-radius: 50%;
+          background: rgb(255, 255, 255);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .chat-avatar-icon {
+          width: 22px;
+          height: 22px;
+          color: white;
+        }
+        .chat-avatar-status {
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          width: 10px;
+          height: 10px;
+          background: #22c55e;
+          border-radius: 50%;
+          border: 2px solid white;
+        }
+        .chat-title {
+          font-size: 15px;
+          font-weight: 600;
+          color: white;
+          margin: 0;
+        }
+        .chat-subtitle {
+          font-size: 11px;
+          color: rgba(255, 255, 255, 0.8);
+          margin: 2px 0 0;
+        }
+        .chat-refresh-btn,
+        .chat-close-btn {
+          background: rgba(255, 255, 255, 0.15);
+          border: none;
+          border-radius: 8px;
+          width: 34px;
+          height: 34px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+        .chat-refresh-btn:hover {
+          background: rgba(255, 255, 255, 0.3);
+          transform: rotate(180deg);
+        }
+        .chat-close-btn:hover {
+          background: rgba(255, 255, 255, 0.3);
+          transform: scale(1.05);
+        }
+        .chat-messages {
+          flex: 1;
+          overflow-y: auto;
+          padding: 16px;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+        .chat-messages::-webkit-scrollbar {
+          width: 4px;
+        }
+        .chat-messages::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .chat-messages::-webkit-scrollbar-thumb {
+          background: rgba(0, 0, 0, 0.15);
+          border-radius: 4px;
+        }
+        .chat-message-wrapper {
+          display: flex;
+          gap: 8px;
+          align-items: flex-start;
+          opacity: 0;
+          transform: translateY(10px);
+          transition:
+            opacity 0.3s ease,
+            transform 0.35s ease;
+        }
+        .chat-message-wrapper--visible {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        .chat-message-avatar {
+          flex-shrink: 0;
+          width: 32px;
+        }
+        .chat-message-avatar-icon {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .chat-message-avatar-placeholder {
+          flex-shrink: 0;
+          width: 32px;
+        }
+        .chat-message-content {
+          flex: 1;
+          display: flex;
+        }
+        .chat-message-content--bot {
+          justify-content: flex-start;
+        }
+        .chat-message-content--user {
+          justify-content: flex-end;
+        }
+        .chat-bubble {
+          max-width: 80%;
+          border-radius: 18px;
+          padding: 10px 14px;
+        }
+        .chat-bubble--bot {
+          border-bottom-left-radius: 4px;
+        }
+        .chat-bubble--user {
+          border-bottom-right-radius: 4px;
+        }
+        .chat-bubble-text {
+          font-size: 14px;
+          line-height: 1.5;
+          margin: 0;
+        }
+        .chat-bubble-time {
+          font-size: 10px;
+          display: block;
+          margin-top: 4px;
+          opacity: 0.7;
+        }
+        .chat-bubble--typing {
+          padding: 12px 16px;
+          display: flex;
+          gap: 5px;
+        }
+        .typing-dot {
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          animation: typing-bounce 1.2s ease-in-out infinite;
+        }
+        .typing-dot:nth-child(1) {
+          animation-delay: 0ms;
+        }
+        .typing-dot:nth-child(2) {
+          animation-delay: 160ms;
+        }
+        .typing-dot:nth-child(3) {
+          animation-delay: 320ms;
+        }
+        .chat-quick-replies {
+          padding: 8px 12px 12px;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          flex-shrink: 0;
+          max-height: 120px;
+          overflow-y: auto;
+        }
+        .chat-quick-reply-btn {
+          padding: 8px 14px;
+          border-radius: 20px;
+          font-size: 13px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          white-space: nowrap;
+        }
+        .chat-quick-reply-btn:hover {
+          transform: translateY(-2px);
+          background: rgba(13, 148, 136, 0.2) !important;
+        }
+        .chat-avatar-logo {
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          object-fit: cover;
+        }
+        .chat-footer {
+          padding: 8px 16px;
+          text-align: center;
+          border-top: 1px solid;
+          flex-shrink: 0;
+        }
+        .chat-footer-text {
+          font-size: 10px;
+          margin: 0;
+          opacity: 0.7;
+        }
+        @media (min-width: 1024px) {
+          .chat-fab {
+            bottom: 28px;
+            right: 28px;
+            width: 60px;
+            height: 60px;
+          }
+          .chat-window {
+            width: 440px;
+            height: 640px;
+            bottom: 100px;
+            right: 28px;
+          }
+        }
+        @keyframes window-enter {
+          from {
+            opacity: 0;
+            transform: scale(0.9) translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+          }
+        }
+        @keyframes window-exit {
+          from {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+          }
+          to {
+            opacity: 0;
+            transform: scale(0.9) translateY(20px);
+          }
+        }
+        @keyframes sheet-enter {
+          from {
+            opacity: 0;
+            transform: translateY(100%);
+          }
+          to {
+            opacity: 1;
             transform: translateY(0);
           }
-          50% {
-            transform: translateY(-10px);
+        }
+        @keyframes sheet-exit {
+          from {
+            opacity: 1;
+            transform: translateY(0);
+          }
+          to {
+            opacity: 0;
+            transform: translateY(100%);
           }
         }
-
-        .animate-bounce-once {
-          animation: bounceOnce 2s ease-in-out infinite;
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
         }
-
-        .overflow-y-auto::-webkit-scrollbar {
-          width: 6px;
+        @keyframes fade-out {
+          from {
+            opacity: 1;
+          }
+          to {
+            opacity: 0;
+          }
         }
-
-        .overflow-y-auto::-webkit-scrollbar-track {
-          background: #f1f1f1;
-          border-radius: 3px;
+        @keyframes badge-pulse {
+          0%,
+          100% {
+            opacity: 1;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 0.6;
+            transform: scale(0.85);
+          }
         }
-
-        .overflow-y-auto::-webkit-scrollbar-thumb {
-          background: #888;
-          border-radius: 3px;
-        }
-
-        .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-          background: #555;
+        @keyframes typing-bounce {
+          0%,
+          60%,
+          100% {
+            transform: translateY(0);
+          }
+          30% {
+            transform: translateY(-5px);
+          }
         }
       `}</style>
     </>
   );
-}
+};
+
+export default ChatBot;

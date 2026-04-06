@@ -16,7 +16,7 @@ const ContactUsPage = () => {
       <div>
         <ContactHighlights />
       </div>
-      <div>
+      <div id="contact-form">
         <ContactForm />
       </div>
       {/* <div>

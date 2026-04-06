@@ -2,6 +2,7 @@
 "use client";
 import UserProfileCouponsLoading from "@/components/user-profile-components/Loadings/UserProfileCouponsLoading";
 import { useAuth } from "@/context/AuthContext";
+import { useCurrency } from "@/context/CurrencyContext";
 import { UserProfileAPIService } from "@/services/userProfileAPIService";
 import { CouponData } from "@/types/coupon";
 import { USER_PROFILE_COUPONS_VIEW_PRIVILEGE } from "@/utils/privileges";
@@ -19,6 +20,7 @@ export default function CouponsPage() {
   const apiService = new UserProfileAPIService();
   const router = useRouter();
   const { user } = useAuth();
+  const { formatPrice } = useCurrency();
 
   useEffect(() => {
     if (
@@ -53,14 +55,6 @@ export default function CouponsPage() {
       month: "short",
       day: "numeric",
     });
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-LK", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 2,
-    }).format(amount);
   };
 
   const getStatusColor = (status: string) => {
@@ -115,8 +109,6 @@ export default function CouponsPage() {
 
   const copyToClipboard = (code: string) => {
     navigator.clipboard.writeText(code);
-    // You can add a toast notification here
-    console.log("Copied to clipboard:", code);
   };
 
   if (loading) {
@@ -319,7 +311,7 @@ export default function CouponsPage() {
                         Minimum Cart
                       </p>
                       <p className="font-semibold text-gray-800 text-sm sm:text-base">
-                        {formatCurrency(coupon.discountInfo.minimumCartValue)}
+                        {formatPrice(coupon.discountInfo.minimumCartValue)}
                       </p>
                     </div>
                     <div className="bg-gray-50 p-3 sm:p-4 rounded-lg border border-gray-200">
@@ -327,7 +319,7 @@ export default function CouponsPage() {
                         Max Discount
                       </p>
                       <p className="font-semibold text-gray-800 text-sm sm:text-base">
-                        {formatCurrency(coupon.discountInfo.maximumDiscount)}
+                        {formatPrice(coupon.discountInfo.maximumDiscount)}
                       </p>
                     </div>
                   </div>

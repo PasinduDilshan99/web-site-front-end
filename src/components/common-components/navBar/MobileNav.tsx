@@ -7,6 +7,7 @@ import { User } from "@/context/AuthContext";
 import { useAuth } from "@/context/AuthContext";
 import MobileMenuItem from "./MobileMenuItem";
 import { LOGIN_PAGE_PATH, SIGNUP_PAGE_PATH } from "@/utils/urls";
+import { MobileCurrencySelector } from "../currency/MobileCurrencySelector";
 
 interface MobileNavProps {
   visibleNavBarItems: NavBarItem[];
@@ -51,6 +52,10 @@ const MobileNav: React.FC<MobileNavProps> = ({
           {visibleNavBarItems.map((item) => (
             <MobileMenuItem key={item.id} item={item} onClose={handleClose} />
           ))}
+
+          <div className="px-4 py-3">
+            <MobileCurrencySelector />
+          </div>
 
           {/* Mobile Auth Links */}
           <div
