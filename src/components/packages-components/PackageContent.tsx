@@ -1,4 +1,5 @@
 import { useAuth } from "@/context/AuthContext";
+import { useCurrency } from "@/context/CurrencyContext";
 import { addBrowserHistory } from "@/services/browserHistoryService";
 import { ActivePackagesForFilters } from "@/types/packages-types";
 import { PACKAGE_BROWSER_HISTORY_TYPE } from "@/utils/constant";
@@ -17,13 +18,7 @@ const PackageContent: React.FC<PackageContentProps> = ({
 }) => {
   const router = useRouter();
   const { user } = useAuth();
-
-  const formatPrice = (price: number): string => {
-    return new Intl.NumberFormat("en-LK", {
-      style: "currency",
-      currency: "USD",
-    }).format(price);
-  };
+  const { formatPrice, currentCurrency, convertPrice } = useCurrency();
 
   const calculateDiscountedPrice = (): number => {
     return pkg.pricePerPerson * (1 - pkg.discountPercentage / 100);

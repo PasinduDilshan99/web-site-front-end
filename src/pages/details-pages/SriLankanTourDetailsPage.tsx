@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import ReviewsSection from "@/components/sri-lankan-tours-components/ReviewsSection";
 import dynamic from "next/dynamic";
+import { useCurrency } from "@/context/CurrencyContext";
 
 const TourMapContainer = dynamic(
   () =>
@@ -51,7 +52,10 @@ import { TourAssignedEmployeeResponse } from "@/types/employee-types"; // Import
 import { TourService } from "@/services/tourService";
 import SriLankanTourDetailsLoading from "@/components/sri-lankan-tours-components/SriLankanTourDetailsLoading";
 import PackageLoadingError from "@/components/sri-lankan-tours-components/tour-day-to-day-details-components/PackageLoadingError";
-import { PACKAGE_COMPARE_PAGE_PATH, PACKAGE_DETAILS_PAGE_PATH } from "@/utils/urls";
+import {
+  PACKAGE_COMPARE_PAGE_PATH,
+  PACKAGE_DETAILS_PAGE_PATH,
+} from "@/utils/urls";
 
 const SriLankanTourDetailsPage = () => {
   const params = useParams();
@@ -71,6 +75,7 @@ const SriLankanTourDetailsPage = () => {
   const [galleryLoading, setGalleryLoading] = useState<boolean>(true);
   const [galleryError, setGalleryError] = useState<string | null>(null);
   const [dayDetails, setDayDetails] = React.useState<DayDetails[]>([]);
+  const { formatPrice, currentCurrency, convertPrice } = useCurrency();
   // Add this with your other useState declarations
   const [distinctDestinations, setDistinctDestinations] = useState<
     DestinationWithId[]
@@ -534,265 +539,269 @@ const SriLankanTourDetailsPage = () => {
 
   // Package selector component
   const PackageSelector = () => {
-  if (packagesLoading) {
+    if (packagesLoading) {
+      return (
+        <div className="mb-4 sm:mb-6 lg:mb-8 p-4 sm:p-5 lg:p-6 bg-gradient-to-r from-sky-50 to-teal-50 rounded-lg sm:rounded-xl lg:rounded-2xl">
+          <div className="text-center py-4 sm:py-6 lg:py-8">
+            <div className="inline-block animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 lg:h-10 lg:w-10 border-2 border-sky-600 border-t-transparent"></div>
+            <p className="mt-2 sm:mt-3 text-xs sm:text-sm lg:text-base text-gray-600">
+              Loading packages...
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    if (packagesError) {
+      return (
+        <PackageLoadingError
+          onRetry={handleRetryPackages}
+          message="Couldn't load the selected package."
+        />
+      );
+    }
+
+    if (packages.length === 0) {
+      return null;
+    }
+
     return (
-      <div className="mb-4 sm:mb-6 lg:mb-8 p-4 sm:p-5 lg:p-6 bg-gradient-to-r from-sky-50 to-teal-50 rounded-lg sm:rounded-xl lg:rounded-2xl">
-        <div className="text-center py-4 sm:py-6 lg:py-8">
-          <div className="inline-block animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 lg:h-10 lg:w-10 border-2 border-sky-600 border-t-transparent"></div>
-          <p className="mt-2 sm:mt-3 text-xs sm:text-sm lg:text-base text-gray-600">
-            Loading packages...
-          </p>
-        </div>
-      </div>
-    );
-  }
+      <div className="mb-4 sm:mb-6 lg:mb-8 p-4 sm:p-5 md:p-6 lg:p-8 bg-gradient-to-r from-sky-50 to-teal-50 rounded-xl sm:rounded-2xl shadow-md sm:shadow-lg">
+        {/* Header section - Responsive layout */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6 lg:mb-8">
+          <div className="flex-1 min-w-0">
+            <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-1 sm:mb-2">
+              Select Your Package
+            </h3>
+            <p className="text-gray-600 text-xs sm:text-sm lg:text-base max-w-xl line-clamp-2 sm:line-clamp-1">
+              Choose the package that best suits your preferences and budget
+            </p>
+          </div>
 
-  if (packagesError) {
-    return (
-      <PackageLoadingError
-        onRetry={handleRetryPackages}
-        message="Couldn't load the selected package."
-      />
-    );
-  }
-
-  if (packages.length === 0) {
-    return null;
-  }
-
-  return (
-    <div className="mb-4 sm:mb-6 lg:mb-8 p-4 sm:p-5 md:p-6 lg:p-8 bg-gradient-to-r from-sky-50 to-teal-50 rounded-xl sm:rounded-2xl shadow-md sm:shadow-lg">
-      {/* Header section - Responsive layout */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6 lg:mb-8">
-        <div className="flex-1 min-w-0">
-          <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-1 sm:mb-2">
-            Select Your Package
-          </h3>
-          <p className="text-gray-600 text-xs sm:text-sm lg:text-base max-w-xl line-clamp-2 sm:line-clamp-1">
-            Choose the package that best suits your preferences and budget
-          </p>
-        </div>
-        
-        <div className="flex-shrink-0">
-          <button
-            className="cursor-pointer group flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 text-sky-600 font-medium border-2 border-sky-200 rounded-lg sm:rounded-xl hover:border-sky-600 hover:bg-sky-600 hover:text-white transition-all duration-300 shadow-sm hover:shadow-md w-full sm:w-auto text-xs sm:text-sm lg:text-base"
-            onClick={() =>
-              router.push(
-                `${PACKAGE_COMPARE_PAGE_PATH}${
-                  tour?.tourName || "name"
-                }&tour-id=${sriLankanTourId}`,
-              )
-            }
-          >
-            <svg
-              className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-5 lg:h-5 transition-transform duration-300 group-hover:scale-110 flex-shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+          <div className="flex-shrink-0">
+            <button
+              className="cursor-pointer group flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 text-sky-600 font-medium border-2 border-sky-200 rounded-lg sm:rounded-xl hover:border-sky-600 hover:bg-sky-600 hover:text-white transition-all duration-300 shadow-sm hover:shadow-md w-full sm:w-auto text-xs sm:text-sm lg:text-base"
+              onClick={() =>
+                router.push(
+                  `${PACKAGE_COMPARE_PAGE_PATH}${
+                    tour?.tourName || "name"
+                  }&tour-id=${sriLankanTourId}`,
+                )
+              }
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-            <span className="hidden xs:inline">Compare Packages</span>
-            <span className="xs:hidden">Compare</span>
-          </button>
+              <svg
+                className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-5 lg:h-5 transition-transform duration-300 group-hover:scale-110 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+              <span className="hidden xs:inline">Compare Packages</span>
+              <span className="xs:hidden">Compare</span>
+            </button>
+          </div>
         </div>
-      </div>
 
-      {/* Packages grid - Fully responsive columns */}
-      <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-5 xl:gap-6">
-        {packages.map((pkg) => {
-          const isSelected = selectedPackage?.packageId === pkg.packageId;
+        {/* Packages grid - Fully responsive columns */}
+        <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-5 xl:gap-6">
+          {packages.map((pkg) => {
+            const isSelected = selectedPackage?.packageId === pkg.packageId;
 
-          return (
-            <div
-              key={pkg.packageId}
-              onClick={() => handlePackageSelect(pkg)}
-              className={`relative flex flex-col rounded-xl sm:rounded-2xl cursor-pointer transition-all duration-300 overflow-hidden ${
-                isSelected
-                  ? "shadow-lg shadow-[#0B7EA8]/20 scale-[1.01] sm:scale-[1.02]"
-                  : "shadow-sm hover:shadow-md hover:-translate-y-0.5"
-              }`}
-              style={{
-                border: isSelected
-                  ? "2px solid #0B7EA8"
-                  : "2px solid #e5e7eb",
-                background: "#fff",
-              }}
-            >
-              {/* Colored top accent bar */}
+            return (
               <div
-                className="h-1 w-full flex-shrink-0"
+                key={pkg.packageId}
+                onClick={() => handlePackageSelect(pkg)}
+                className={`relative flex flex-col rounded-xl sm:rounded-2xl cursor-pointer transition-all duration-300 overflow-hidden ${
+                  isSelected
+                    ? "shadow-lg shadow-[#0B7EA8]/20 scale-[1.01] sm:scale-[1.02]"
+                    : "shadow-sm hover:shadow-md hover:-translate-y-0.5"
+                }`}
                 style={{
-                  background: isSelected
-                    ? "linear-gradient(90deg, #0B7EA8, #0E9E8E)"
-                    : pkg.color || "#e5e7eb",
+                  border: isSelected
+                    ? "2px solid #0B7EA8"
+                    : "2px solid #e5e7eb",
+                  background: "#fff",
                 }}
-              />
-
-              {/* Card body */}
-              <div className="flex flex-col flex-1 p-3 sm:p-4 lg:p-5">
-                {/* Header: name + selected indicator */}
-                <div className="flex items-start justify-between gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
-                  <h4 className="text-sm sm:text-base lg:text-lg font-bold text-gray-900 leading-snug line-clamp-2 flex-1">
-                    {pkg.packageName}
-                  </h4>
-
-                  {/* Selected radio indicator */}
-                  <div
-                    className="w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 transition-all duration-200"
-                    style={{
-                      border: isSelected ? "none" : "2px solid #d1d5db",
-                      background: isSelected
-                        ? "linear-gradient(135deg, #0B7EA8, #0E9E8E)"
-                        : "transparent",
-                    }}
-                  >
-                    {isSelected && (
-                      <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-white rounded-full" />
-                    )}
-                  </div>
-                </div>
-
-                {/* Description */}
-                <p className="text-xs sm:text-sm text-gray-500 leading-relaxed line-clamp-2 mb-2 sm:mb-3 lg:mb-4 flex-1">
-                  {pkg.packageDescription}
-                </p>
-
-                {/* Price block */}
+              >
+                {/* Colored top accent bar */}
                 <div
-                  className="rounded-lg sm:rounded-xl px-2 sm:px-3 py-2 sm:py-2.5 mb-2 sm:mb-3 lg:mb-4"
+                  className="h-1 w-full flex-shrink-0"
                   style={{
                     background: isSelected
-                      ? "linear-gradient(135deg, rgba(11,126,168,0.07), rgba(14,158,142,0.07))"
-                      : "rgba(249,250,251,1)",
-                    border: isSelected
-                      ? "1px solid #b3e0f2"
-                      : "1px solid #f3f4f6",
+                      ? "linear-gradient(90deg, #0B7EA8, #0E9E8E)"
+                      : pkg.color || "#e5e7eb",
                   }}
-                >
-                  <p className="text-[8px] sm:text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-0.5">
-                    Starting From
-                  </p>
-                  <div className="flex items-baseline gap-0.5 sm:gap-1 flex-wrap">
-                    <span
-                      className="text-base sm:text-lg lg:text-xl xl:text-2xl font-extrabold"
-                      style={{ color: isSelected ? "#0B7EA8" : "#111827" }}
+                />
+
+                {/* Card body */}
+                <div className="flex flex-col flex-1 p-3 sm:p-4 lg:p-5">
+                  {/* Header: name + selected indicator */}
+                  <div className="flex items-start justify-between gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+                    <h4 className="text-sm sm:text-base lg:text-lg font-bold text-gray-900 leading-snug line-clamp-2 flex-1">
+                      {pkg.packageName}
+                    </h4>
+
+                    {/* Selected radio indicator */}
+                    <div
+                      className="w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 transition-all duration-200"
+                      style={{
+                        border: isSelected ? "none" : "2px solid #d1d5db",
+                        background: isSelected
+                          ? "linear-gradient(135deg, #0B7EA8, #0E9E8E)"
+                          : "transparent",
+                      }}
                     >
-                      USD {pkg?.pricePerPerson?.toLocaleString() ?? "0"}
-                    </span>
-                    <span className="text-[10px] sm:text-xs text-gray-400 font-medium">
-                      /person
-                    </span>
+                      {isSelected && (
+                        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-white rounded-full" />
+                      )}
+                    </div>
                   </div>
 
-                  {pkg?.discount > 0 && (
-                    <div className="flex items-center gap-1 sm:gap-1.5 mt-1 sm:mt-1.5">
+                  {/* Description */}
+                  <p className="text-xs sm:text-sm text-gray-500 leading-relaxed line-clamp-2 mb-2 sm:mb-3 lg:mb-4 flex-1">
+                    {pkg.packageDescription}
+                  </p>
+
+                  {/* Price block */}
+                  <div
+                    className="rounded-lg sm:rounded-xl px-2 sm:px-3 py-2 sm:py-2.5 mb-2 sm:mb-3 lg:mb-4"
+                    style={{
+                      background: isSelected
+                        ? "linear-gradient(135deg, rgba(11,126,168,0.07), rgba(14,158,142,0.07))"
+                        : "rgba(249,250,251,1)",
+                      border: isSelected
+                        ? "1px solid #b3e0f2"
+                        : "1px solid #f3f4f6",
+                    }}
+                  >
+                    <p className="text-[8px] sm:text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-0.5">
+                      Starting From
+                    </p>
+                    <div className="flex items-baseline gap-0.5 sm:gap-1 flex-wrap">
                       <span
-                        className="inline-flex items-center gap-0.5 sm:gap-1 px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[11px] font-semibold"
-                        style={{
-                          background: "rgba(14,158,142,0.12)",
-                          color: "#0b7d70",
-                        }}
+                        className="text-base sm:text-lg lg:text-xl xl:text-2xl font-extrabold"
+                        style={{ color: isSelected ? "#0B7EA8" : "#111827" }}
                       >
-                        <svg
-                          className="w-2 h-2 sm:w-2.5 sm:h-2.5"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                        Save {Math.round(pkg.discount)}%
+                        {formatPrice(pkg?.pricePerPerson ?? 0)}
+                      </span>
+                      <span className="text-[10px] sm:text-xs text-gray-400 font-medium">
+                        /person
                       </span>
                     </div>
-                  )}
-                </div>
 
-                {/* CTA button */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push(`${PACKAGE_DETAILS_PAGE_PATH}/${pkg.packageId}?name=${encodeURIComponent(pkg.packageName)}`);
-                  }}
-                  className="cursor-pointer w-full py-1.5 sm:py-2 lg:py-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 hover:shadow-md hover:-translate-y-px active:scale-95 flex items-center justify-center gap-1 sm:gap-1.5"
-                  style={
-                    isSelected
-                      ? {
-                          background:
-                            "linear-gradient(135deg, #0B7EA8, #0E9E8E)",
-                          color: "#fff",
-                        }
-                      : {
-                          background: "transparent",
-                          color: "#0B7EA8",
-                          border: "1.5px solid #b3e0f2",
-                        }
-                  }
-                >
-                  <span className="xs:inline">Show Details</span>
-                  <span className="xs:hidden">Details</span>
-                  <svg
-                    className="w-3 h-3 sm:w-3.5 sm:h-3.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                    {pkg?.discount > 0 && (
+                      <div className="flex items-center gap-1 sm:gap-1.5 mt-1 sm:mt-1.5">
+                        <span
+                          className="inline-flex items-center gap-0.5 sm:gap-1 px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[11px] font-semibold"
+                          style={{
+                            background: "rgba(14,158,142,0.12)",
+                            color: "#0b7d70",
+                          }}
+                        >
+                          <svg
+                            className="w-2 h-2 sm:w-2.5 sm:h-2.5"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          Save {Math.round(pkg.discount)}%
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* CTA button */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(
+                        `${PACKAGE_DETAILS_PAGE_PATH}/${pkg.packageId}?name=${encodeURIComponent(pkg.packageName)}`,
+                      );
+                    }}
+                    className="cursor-pointer w-full py-1.5 sm:py-2 lg:py-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 hover:shadow-md hover:-translate-y-px active:scale-95 flex items-center justify-center gap-1 sm:gap-1.5"
+                    style={
+                      isSelected
+                        ? {
+                            background:
+                              "linear-gradient(135deg, #0B7EA8, #0E9E8E)",
+                            color: "#fff",
+                          }
+                        : {
+                            background: "transparent",
+                            color: "#0B7EA8",
+                            border: "1.5px solid #b3e0f2",
+                          }
+                    }
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2.5}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </button>
+                    <span className="xs:inline">Show Details</span>
+                    <span className="xs:hidden">Details</span>
+                    <svg
+                      className="w-3 h-3 sm:w-3.5 sm:h-3.5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2.5}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </button>
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
 
-      {/* Selected Package Confirmation - Responsive */}
-      {selectedPackage && (
-        <div className="mt-3 sm:mt-4 lg:mt-6 p-3 sm:p-4 lg:p-5 bg-white rounded-lg sm:rounded-xl border border-sky-200">
-          <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-2 sm:gap-3 lg:gap-4">
-            <div className="flex-1 min-w-0">
-              <h4 className="font-bold text-gray-900 text-xs sm:text-sm lg:text-base">
-                Selected Package:{" "}
-                <span className="text-sky-600 truncate">
-                  {selectedPackage.packageName}
-                </span>
-              </h4>
-              <p className="text-xs sm:text-sm text-gray-600 mt-0.5 sm:mt-1 line-clamp-2 sm:line-clamp-1">
-                {selectedPackage.packageDescription}
-              </p>
-              <div className="mt-1 sm:mt-2 text-xs text-sky-600 font-medium">
-                <span className="hidden xs:inline">Package-specific details and schedules will be shown below</span>
-                <span className="xs:hidden">Package details below</span>
+        {/* Selected Package Confirmation - Responsive */}
+        {selectedPackage && (
+          <div className="mt-3 sm:mt-4 lg:mt-6 p-3 sm:p-4 lg:p-5 bg-white rounded-lg sm:rounded-xl border border-sky-200">
+            <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-2 sm:gap-3 lg:gap-4">
+              <div className="flex-1 min-w-0">
+                <h4 className="font-bold text-gray-900 text-xs sm:text-sm lg:text-base">
+                  Selected Package:{" "}
+                  <span className="text-sky-600 truncate">
+                    {selectedPackage.packageName}
+                  </span>
+                </h4>
+                <p className="text-xs sm:text-sm text-gray-600 mt-0.5 sm:mt-1 line-clamp-2 sm:line-clamp-1">
+                  {selectedPackage.packageDescription}
+                </p>
+                <div className="mt-1 sm:mt-2 text-xs text-sky-600 font-medium">
+                  <span className="hidden xs:inline">
+                    Package-specific details and schedules will be shown below
+                  </span>
+                  <span className="xs:hidden">Package details below</span>
+                </div>
               </div>
-            </div>
-            
-            <div className="text-left xs:text-right flex-shrink-0">
-              <div className="text-sm sm:text-base lg:text-lg font-bold text-sky-600">
-                USD {selectedPackage.pricePerPerson.toLocaleString()}
-              </div>
-              <div className="text-xs sm:text-sm text-gray-500">
-                per person
+
+              <div className="text-left xs:text-right flex-shrink-0">
+                <div className="text-sm sm:text-base lg:text-lg font-bold text-sky-600">
+                  {formatPrice(selectedPackage.pricePerPerson)}
+                </div>
+                <div className="text-xs sm:text-sm text-gray-500">
+                  per person
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
-  );
-};
+        )}
+      </div>
+    );
+  };
 
   if (tourLoading) {
     return <SriLankanTourDetailsLoading />;

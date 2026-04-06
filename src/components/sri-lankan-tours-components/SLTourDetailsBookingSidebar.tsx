@@ -18,6 +18,7 @@ import BookingModal, {
 import BookingSuccessMessage from "../booking-components/BookingSuccessMessage";
 import { bookingService } from "@/services/bookingService";
 import { TourDetails } from "@/types/tour-types";
+import { useCurrency } from "@/context/CurrencyContext";
 
 interface SLTourDetailsBookingSidebarProps {
   tour: TourDetails;
@@ -40,7 +41,7 @@ const SLTourDetailsBookingSidebar: React.FC<
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const { formatPrice, currentCurrency, convertPrice } = useCurrency();
   const { user } = useAuth();
 
   const price = selectedPackage?.pricePerPerson || 50;
@@ -120,14 +121,14 @@ const SLTourDetailsBookingSidebar: React.FC<
               </span>
               {hasDiscount && (
                 <div className="text-[10px] sm:text-xs text-gray-500 line-through mt-0.5">
-                  ${price?.toLocaleString()}
+                  {formatPrice(price)}
                 </div>
               )}
             </div>
             <div className="text-left xs:text-right">
               <div className="flex items-baseline justify-start xs:justify-end gap-1 sm:gap-2 flex-wrap">
                 <span className="text-xl sm:text-2xl lg:text-3xl font-bold text-sky-600">
-                  ${(price - (price * discount) / 100).toLocaleString()}
+                  {formatPrice(price - (price * discount) / 100)}
                 </span>
                 {hasDiscount && (
                   <div className="text-[8px] sm:text-xs text-emerald-600 font-medium bg-emerald-100 px-1 sm:px-1.5 lg:px-2 py-0.5 sm:py-1 rounded-full">
@@ -135,7 +136,9 @@ const SLTourDetailsBookingSidebar: React.FC<
                   </div>
                 )}
               </div>
-              <p className="text-[10px] sm:text-xs text-gray-500 mt-0.5">per person</p>
+              <p className="text-[10px] sm:text-xs text-gray-500 mt-0.5">
+                per person
+              </p>
             </div>
           </div>
 
@@ -161,7 +164,9 @@ const SLTourDetailsBookingSidebar: React.FC<
                   {selectedPackage.packageDayByDayDtoList.length > 1 ? "s" : ""}
                 </span>
                 <span className="text-gray-400">•</span>
-                <span className="truncate max-w-[120px] xs:max-w-none">Complete itinerary</span>
+                <span className="truncate max-w-[120px] xs:max-w-none">
+                  Complete itinerary
+                </span>
               </div>
             </div>
           )}

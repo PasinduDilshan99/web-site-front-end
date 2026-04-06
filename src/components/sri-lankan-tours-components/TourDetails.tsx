@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
+import { useCurrency } from "@/context/CurrencyContext";
 import { addBrowserHistory } from "@/services/browserHistoryService";
 import { ActiveToursType } from "@/types/tour-types";
 import { TOUR_BROWSER_HISTORY_TYPE } from "@/utils/constant";
@@ -32,7 +33,6 @@ const TagGroup: React.FC<TagGroupProps> = ({
   const visible = items.slice(0, maxVisible);
   const hasMore = hidden.length > 0;
 
-  // Measure the overflow area whenever it mounts / items change
   useEffect(() => {
     if (overflowRef.current) {
       setOverflowHeight(overflowRef.current.scrollHeight);
@@ -80,7 +80,6 @@ const TagGroup: React.FC<TagGroupProps> = ({
 
   return (
     <div className="flex flex-col gap-1.5">
-      {/* Always-visible tags */}
       <div className="flex gap-1.5 flex-wrap">
         {visible.map((item, index) => (
           <span
@@ -126,7 +125,6 @@ const TagGroup: React.FC<TagGroupProps> = ({
         )}
       </div>
 
-      {/* Animated overflow tags */}
       {hasMore && (
         <div
           ref={overflowRef}
@@ -136,7 +134,6 @@ const TagGroup: React.FC<TagGroupProps> = ({
             opacity: expanded ? 1 : 0,
             transition:
               "max-height 320ms cubic-bezier(0.4,0,0.2,1), opacity 240ms ease",
-            // small top padding only when open, to avoid flash
             paddingTop: expanded ? 2 : 0,
           }}
           aria-hidden={!expanded}
@@ -147,7 +144,6 @@ const TagGroup: React.FC<TagGroupProps> = ({
               className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border"
               style={{
                 ...tagStyle,
-                // stagger reveal
                 transitionDelay: expanded ? `${index * 30}ms` : "0ms",
                 transform: expanded ? "translateY(0)" : "translateY(-4px)",
                 transition: "transform 200ms ease, opacity 200ms ease",
@@ -166,6 +162,7 @@ const TagGroup: React.FC<TagGroupProps> = ({
 // ── Main component ────────────────────────────────────────────────────────────
 const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
   const { user } = useAuth();
+  const { formatPrice, currentCurrency } = useCurrency();
 
   const formatDuration = (days: number) => {
     const nights = days > 0 ? days - 1 : 0;
@@ -190,7 +187,6 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
 
   const { days, nights } = formatDuration(tour.duration);
 
-  // Normalise to the shape TagGroup expects
   const typeItems = (tour.tourTypeDtos ?? []).map((t) => ({
     id: t.tourTypeId,
     name: t.tourTypeName,
@@ -200,6 +196,28 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
     id: c.tourCategoryId,
     name: c.tourCategoryName,
   }));
+
+  // Format the price in the selected currency
+  const formattedPrice = formatPrice(tour.tourStartingPrice);
+  
+  // Extract the numeric part and symbol for display (optional)
+  const getPriceDisplay = () => {
+    const formatted = formattedPrice;
+    // Try to extract symbol and number
+    const match = formatted.match(/^([^\d]+)?([\d,.]+)$/);
+    if (match) {
+      return {
+        symbol: match[1]?.trim() || currentCurrency.symbol,
+        number: match[2] || formatted,
+      };
+    }
+    return {
+      symbol: currentCurrency.symbol,
+      number: formatted,
+    };
+  };
+
+  const priceDisplay = getPriceDisplay();
 
   return (
     <div className="p-4 sm:p-5 md:p-6 flex-1 flex flex-col gap-3 sm:gap-4">
@@ -211,34 +229,70 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
         {tour.tourName}
       </h3>
 
-      {/* ── Duration Badge ── */}
-      <div className="inline-flex items-stretch rounded-xl overflow-hidden border border-[#b3e0f2] shadow-sm text-xs font-semibold tracking-wide self-start">
-        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0B7EA8] text-white">
-          <svg
-            className="w-3.5 h-3.5 opacity-90"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              fillRule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-              clipRule="evenodd"
-            />
-          </svg>
-          <span>{days}</span>
-          <span className="font-normal opacity-80">Days</span>
+      {/* ── Duration Badge + Starting Price ── */}
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        {/* Duration */}
+        <div className="inline-flex items-stretch rounded-xl overflow-hidden border border-[#b3e0f2] shadow-sm text-xs font-semibold tracking-wide self-start">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0B7EA8] text-white">
+            <svg
+              className="w-3.5 h-3.5 opacity-90"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <span>{days}</span>
+            <span className="font-normal opacity-80">Days</span>
+          </div>
+          <div className="w-px bg-white/30" />
+          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0E9E8E] text-white">
+            <svg
+              className="w-3.5 h-3.5 opacity-90"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+            </svg>
+            <span>{nights}</span>
+            <span className="font-normal opacity-80">Nights</span>
+          </div>
         </div>
-        <div className="w-px bg-white/30" />
-        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0E9E8E] text-white">
-          <svg
-            className="w-3.5 h-3.5 opacity-90"
-            fill="currentColor"
-            viewBox="0 0 20 20"
+
+        {/* ── Starting Price - Updated for multi-currency ── */}
+        <div
+          className="inline-flex flex-col items-end rounded-xl px-3 py-1.5 border self-start"
+          style={{
+            background:
+              "linear-gradient(135deg, rgba(11,126,168,0.06), rgba(14,158,142,0.06))",
+            borderColor: "#b3e0f2",
+          }}
+        >
+          <span
+            className="text-[9px] font-semibold uppercase tracking-widest"
+            style={{ color: "#0B7EA8" }}
           >
-            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-          </svg>
-          <span>{nights}</span>
-          <span className="font-normal opacity-80">Nights</span>
+            Starting from
+          </span>
+          <div className="flex items-baseline gap-1">
+            <span
+              className="text-[11px] font-semibold"
+              style={{ color: "#0E9E8E" }}
+            >
+              {currentCurrency.code}
+            </span>
+            <span
+              className="text-base font-bold leading-none"
+              style={{ color: "#095f82" }}
+            >
+              {typeof priceDisplay.number === 'string' 
+                ? priceDisplay.number 
+                : tour.tourStartingPrice.toLocaleString()}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -361,7 +415,6 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
             className="w-full group inline-flex justify-center items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-white flex-shrink-0 relative overflow-hidden"
             style={{ background: "linear-gradient(135deg, #0B7EA8, #0E9E8E)" }}
           >
-            {/* Shimmer sweep on hover */}
             <span
               className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"
               style={{
@@ -369,16 +422,12 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
                   "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)",
               }}
             />
-
-            {/* Shadow pulse ring */}
             <span
               className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
               style={{ boxShadow: "0 0 0 3px rgba(14,158,142,0.3)" }}
             />
-
             <span className="relative flex content-center text-center justify-center items-center gap-1.5 transition-transform duration-200 group-hover:-translate-y-px group-active:translate-y-0 group-active:scale-95">
               More Details
-              {/* Arrow slides right on hover */}
               <svg
                 className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1"
                 fill="none"

@@ -2,6 +2,7 @@
 "use client";
 import UserProfileRequestedToursLoading from "@/components/user-profile-components/Loadings/UserProfileRequestedToursLoading";
 import { useAuth } from "@/context/AuthContext";
+import { useCurrency } from "@/context/CurrencyContext";
 import { bookingService } from "@/services/bookingService";
 import { UserProfileAPIService } from "@/services/userProfileAPIService";
 import { RequestedTour } from "@/types/requested-tours";
@@ -23,6 +24,8 @@ export default function RequestedToursPage() {
   const apiService = new UserProfileAPIService();
   const { user } = useAuth();
   const router = useRouter();
+  const { formatPrice } = useCurrency();
+
   const [expandedDescriptions, setExpandedDescriptions] = useState<{
     [key: number]: boolean;
   }>({});
@@ -67,14 +70,6 @@ export default function RequestedToursPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-LK", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 0,
-    }).format(amount);
   };
 
   const formatDate = (dateString: string) => {
@@ -385,7 +380,7 @@ export default function RequestedToursPage() {
           </div>
           <div className="bg-white rounded-xl md:rounded-2xl shadow-lg border border-cyan-200 p-3 md:p-4 text-center">
             <div className="text-xl md:text-2xl font-bold text-cyan-600">
-              {formatCurrency(
+              {formatPrice(
                 requestedTours.reduce((sum, tour) => sum + tour.finalAmount, 0),
               )}
             </div>
@@ -462,7 +457,7 @@ export default function RequestedToursPage() {
                         <div className="flex items-center space-x-1">
                           <span>💰</span>
                           <span className="text-xs">
-                            {formatCurrency(tour.finalAmount)}
+                            {formatPrice(tour.finalAmount)}
                           </span>
                         </div>
                         <div className="flex items-center space-x-1">
@@ -498,7 +493,7 @@ export default function RequestedToursPage() {
                       </div>
                       <div className="flex items-center space-x-1">
                         <span>💰</span>
-                        <span>{formatCurrency(tour.finalAmount)}</span>
+                        <span>{formatPrice(tour.finalAmount)}</span>
                       </div>
                       {
                         <div className="flex items-center space-x-1">
@@ -636,7 +631,7 @@ export default function RequestedToursPage() {
                             Price per person:
                           </span>
                           <span className="font-semibold text-gray-600">
-                            {formatCurrency(tour.packagePricePerPerson)}
+                            {formatPrice(tour.packagePricePerPerson)}
                           </span>
                         </div>
                         <div className="flex justify-between">
@@ -657,13 +652,13 @@ export default function RequestedToursPage() {
                         <div className="flex justify-between">
                           <span className="text-gray-600">Total Amount:</span>
                           <span className="font-semibold text-gray-600">
-                            {formatCurrency(tour.totalAmount)}
+                            {formatPrice(tour.totalAmount)}
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600">Discount:</span>
                           <span className="font-semibold text-emerald-600 text-gray-600">
-                            -{formatCurrency(tour.discountAmount)}
+                            -{formatPrice(tour.discountAmount)}
                           </span>
                         </div>
                         <div className="flex justify-between">
@@ -671,9 +666,7 @@ export default function RequestedToursPage() {
                             Tax & Insurance:
                           </span>
                           <span className="font-semibold text-gray-600">
-                            {formatCurrency(
-                              tour.taxAmount + tour.insuranceAmount,
-                            )}
+                            {formatPrice(tour.taxAmount + tour.insuranceAmount)}
                           </span>
                         </div>
                         <div className="flex justify-between border-t border-gray-200 pt-2">
@@ -681,7 +674,7 @@ export default function RequestedToursPage() {
                             Final Amount:
                           </span>
                           <span className="font-bold text-teal-600">
-                            {formatCurrency(tour.finalAmount)}
+                            {formatPrice(tour.finalAmount)}
                           </span>
                         </div>
                       </div>
@@ -757,7 +750,7 @@ export default function RequestedToursPage() {
                               </div>
                               <div className="flex justify-between md:flex-col md:items-end gap-2">
                                 <div className="font-bold text-emerald-600 text-sm md:text-base">
-                                  {formatCurrency(activity.totalPrice)}
+                                  {formatPrice(activity.totalPrice)}
                                 </div>
                                 <span
                                   className={`px-2 py-1 rounded-full text-xs border ${getDocumentStatusColor(activity.activityStatus)}`}
@@ -828,7 +821,7 @@ export default function RequestedToursPage() {
                               </div>
                               <div className="flex justify-between md:flex-col md:items-end gap-2">
                                 <div className="font-bold text-purple-600 text-sm md:text-base">
-                                  {formatCurrency(payment.amount)}
+                                  {formatPrice(payment.amount)}
                                 </div>
                                 <span
                                   className={`px-2 py-1 rounded-full text-xs border ${getPaymentStatusColor(payment.paymentStatus)}`}

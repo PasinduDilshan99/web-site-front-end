@@ -1,12 +1,13 @@
 // Company Details
 export const COMPANY_OWNER = "Nipunika Sathsarani";
 export const COMPANY_NAME = "Felicita Trips";
+export const COMPANY_ADDRESS = "351/10 Rajasinghe Mawatha, Hewagama, Kaduwela";
 export const COMPANY_INFO_EMAIL = "felicitatrips@gmail.com";
-export const COMPANY_CONTACT_NUMBER = "+94 710 774488";
-export const COMPANY_CONTACT_NUMBER_LINK = "tel:+94710774488";
+export const COMPANY_CONTACT_NUMBER = "+94 701 774488";
+export const COMPANY_CONTACT_NUMBER_LINK = "tel:+94701774488";
 export const COMPANY_SMS_CONTACT_NUMBER_LINK = "sms:+94710774488";
-export const COMPANY_WHATSAPP_CONTACT_NUMBER_LINK = "https://wa.me/94710774488";
-export const COMPANY_EMERGENCY_CONTACT_NUMBER = "+94 710 774488";
+export const COMPANY_WHATSAPP_CONTACT_NUMBER_LINK = "https://wa.me/94701774488";
+export const COMPANY_EMERGENCY_CONTACT_NUMBER = "+94 701 774488";
 export const COMPANY_LOCATION = "Colombo, Sri Lanka";
 export const COMPANY_LONGITUDE = 79.97891916858308;
 export const COMPANY_LATITUDE = 6.934789851969375;
@@ -45,6 +46,8 @@ export const PLACE_HOLDER_IMAGE =
   "https://res.cloudinary.com/dtzrivqye/image/upload/v1770879098/vyfco5fuhatkl95w0l65.avif";
 export const USER_PLACE_HOLDER_IMAGE =
   "https://res.cloudinary.com/dtzrivqye/image/upload/v1772899437/isw6kchtc9xsoxhumtrn.jpg";
+export const COMPANY_LOGO_IMAGE =
+  "https://res.cloudinary.com/dtzrivqye/image/upload/v1775493945/gi5x2y4vwaplhkwchp0p.png";
 
 // Browser History types
 export const ACTIVITY_BROWSER_HISTORY_TYPE = "ACTIVITIES";

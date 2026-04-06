@@ -9,6 +9,8 @@ import NavBar from "@/components/common-components/navBar/NavBar";
 import LinkBar from "@/components/common-components/linkBar/LinkBar";
 import Footer from "../components/common-components/footer/Footer";
 import { CommonProvider } from "@/context/CommonContext";
+import { CurrencyProvider } from "@/context/CurrencyContext";
+import MusicRing from "@/components/MusicRing";
 
 export const metadata: Metadata = {
   title: {
@@ -26,17 +28,20 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AuthProvider>
-          <CommonProvider>
-            {/* <DecemberSnowfall /> */}
-            {/* <GlobalGradientScrollbar /> */}
-            {/* <LinkBar /> */}
-            <NavBar />
-            <main>{children}</main>
-            <Footer />
-            {/* <ChatBot /> */}
-          </CommonProvider>
-        </AuthProvider>
+        <CurrencyProvider>
+          <AuthProvider>
+            <CommonProvider>
+              {/* <DecemberSnowfall /> */}
+              <GlobalGradientScrollbar />
+              <MusicRing/>
+              {/* <LinkBar /> */}
+              <NavBar />
+              <main>{children}</main>
+              <Footer />
+              <ChatBot />
+            </CommonProvider>
+          </AuthProvider>
+        </CurrencyProvider>
       </body>
     </html>
   );

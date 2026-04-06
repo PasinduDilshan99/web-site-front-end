@@ -2,6 +2,7 @@
 "use client";
 import UserProfileCancelledToursLoading from "@/components/user-profile-components/Loadings/UserProfileCancelledToursLoading";
 import { useAuth } from "@/context/AuthContext";
+import { useCurrency } from "@/context/CurrencyContext";
 import { UserProfileAPIService } from "@/services/userProfileAPIService";
 import { CancelledTour } from "@/types/cancelled-tours";
 import { USER_PROFILE_CANCELLED_TOURS_VIEW_PRIVILEGE } from "@/utils/privileges";
@@ -21,7 +22,7 @@ export default function CancelledToursPage() {
   const [expandedDescriptions, setExpandedDescriptions] = useState<{
     [key: number]: boolean;
   }>({});
-
+  const { formatPrice } = useCurrency();
   // Add this function to toggle description
   const toggleDescription = (bookingId: number) => {
     setExpandedDescriptions((prev) => ({
@@ -55,15 +56,6 @@ export default function CancelledToursPage() {
       setLoading(false);
     }
   };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-LK", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 0,
-    }).format(amount);
-  };
-
   const formatDate = (dateString: string) => {
     if (!dateString) return "N/A";
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -250,7 +242,7 @@ export default function CancelledToursPage() {
           </div>
           <div className="bg-white rounded-xl md:rounded-2xl shadow-md border border-emerald-200 p-3 md:p-4 text-center">
             <div className="text-lg md:text-xl lg:text-2xl font-bold text-emerald-600">
-              {formatCurrency(refundStats.totalRefunded)}
+              {formatPrice(refundStats.totalRefunded)}
             </div>
             <div className="text-xs md:text-sm text-slate-600 mt-1">
               Total Refunded
@@ -258,7 +250,7 @@ export default function CancelledToursPage() {
           </div>
           <div className="bg-white rounded-xl md:rounded-2xl shadow-md border border-red-200 p-3 md:p-4 text-center">
             <div className="text-lg md:text-xl lg:text-2xl font-bold text-red-600">
-              {formatCurrency(refundStats.totalCancellationFees)}
+              {formatPrice(refundStats.totalCancellationFees)}
             </div>
             <div className="text-xs md:text-sm text-slate-600 mt-1">
               Cancellation Fees
@@ -373,14 +365,12 @@ export default function CancelledToursPage() {
                       </div>
                       <div className="flex items-center gap-1">
                         <span className="text-slate-400">💰</span>
-                        <span>
-                          Original: {formatCurrency(tour.finalAmount)}
-                        </span>
+                        <span>Original: {formatPrice(tour.finalAmount)}</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <span className="text-slate-400">💸</span>
                         <span className="text-emerald-300">
-                          Refund: {formatCurrency(tour.refundedAmount)}
+                          Refund: {formatPrice(tour.refundedAmount)}
                         </span>
                       </div>
                     </div>
@@ -449,7 +439,7 @@ export default function CancelledToursPage() {
                             Cancellation Fee
                           </div>
                           <div className="font-medium text-red-600">
-                            {formatCurrency(tour.cancellationFee)}
+                            {formatPrice(tour.cancellationFee)}
                           </div>
                         </div>
                         <div>
@@ -496,7 +486,7 @@ export default function CancelledToursPage() {
                               Original Amount
                             </div>
                             <div className="font-medium text-gray-700">
-                              {formatCurrency(tour.finalAmount)}
+                              {formatPrice(tour.finalAmount)}
                             </div>
                           </div>
                           <div>
@@ -504,7 +494,7 @@ export default function CancelledToursPage() {
                               Cancellation Fee
                             </div>
                             <div className="font-medium text-red-600">
-                              -{formatCurrency(tour.cancellationFee)}
+                              -{formatPrice(tour.cancellationFee)}
                             </div>
                           </div>
                         </div>
@@ -514,7 +504,7 @@ export default function CancelledToursPage() {
                               Refund Amount
                             </span>
                             <span className="font-bold text-emerald-600 text-lg">
-                              {formatCurrency(tour.refundAmount)}
+                              {formatPrice(tour.refundAmount)}
                             </span>
                           </div>
                         </div>
@@ -593,7 +583,7 @@ export default function CancelledToursPage() {
                             Price per person
                           </div>
                           <div className="font-medium text-gray-700">
-                            {formatCurrency(tour.packagePricePerPerson)}
+                            {formatPrice(tour.packagePricePerPerson)}
                           </div>
                         </div>
                         <div>
@@ -642,7 +632,7 @@ export default function CancelledToursPage() {
                               {participant.participantRefundAmount > 0 && (
                                 <div className="text-emerald-600 font-medium text-sm">
                                   Refund:{" "}
-                                  {formatCurrency(
+                                  {formatPrice(
                                     participant.participantRefundAmount,
                                   )}
                                 </div>
@@ -680,7 +670,7 @@ export default function CancelledToursPage() {
                               </div>
                               <div className="text-right">
                                 <div className="font-bold text-sky-600">
-                                  {formatCurrency(payment.amount)}
+                                  {formatPrice(payment.amount)}
                                 </div>
                                 <span
                                   className={`px-2 py-0.5 rounded-full text-xs border ${getRefundStatusColor(payment.paymentStatus)}`}
@@ -723,7 +713,7 @@ export default function CancelledToursPage() {
                                       Refund Amount
                                     </div>
                                     <div className="font-medium text-emerald-600">
-                                      {formatCurrency(payment.refundAmount)}
+                                      {formatPrice(payment.refundAmount)}
                                     </div>
                                   </div>
                                 )}
@@ -743,7 +733,7 @@ export default function CancelledToursPage() {
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <div className="text-center p-3 bg-white rounded-lg border border-red-200 shadow-sm">
                         <div className="text-lg md:text-xl font-bold text-red-600">
-                          {formatCurrency(tour.cancellationFee)}
+                          {formatPrice(tour.cancellationFee)}
                         </div>
                         <div className="text-xs text-slate-600 mt-1">
                           Cancellation Fee
@@ -751,7 +741,7 @@ export default function CancelledToursPage() {
                       </div>
                       <div className="text-center p-3 bg-white rounded-lg border border-emerald-200 shadow-sm">
                         <div className="text-lg md:text-xl font-bold text-emerald-600">
-                          {formatCurrency(tour.refundAmount)}
+                          {formatPrice(tour.refundAmount)}
                         </div>
                         <div className="text-xs text-slate-600 mt-1">
                           Eligible Refund
@@ -759,7 +749,7 @@ export default function CancelledToursPage() {
                       </div>
                       <div className="text-center p-3 bg-white rounded-lg border border-sky-200 shadow-sm">
                         <div className="text-lg md:text-xl font-bold text-sky-600">
-                          {formatCurrency(tour.refundedAmount)}
+                          {formatPrice(tour.refundedAmount)}
                         </div>
                         <div className="text-xs text-slate-600 mt-1">
                           Actual Refund

@@ -2,6 +2,7 @@
 "use client";
 import UserProfilePendingToursLoading from "@/components/user-profile-components/Loadings/UserProfilePendingToursLoading";
 import { useAuth } from "@/context/AuthContext";
+import { useCurrency } from "@/context/CurrencyContext";
 import { bookingService } from "@/services/bookingService";
 import { UserProfileAPIService } from "@/services/userProfileAPIService";
 import { PendingTour } from "@/types/pending-tours";
@@ -25,7 +26,7 @@ export default function PendingToursPage() {
   const [expandedDescriptions, setExpandedDescriptions] = useState<{
     [key: number]: boolean;
   }>({});
-
+  const { formatPrice } = useCurrency();
   // ── Custom cancel-confirmation modal state ──
   const [cancelModal, setCancelModal] = useState<{
     open: boolean;
@@ -65,14 +66,6 @@ export default function PendingToursPage() {
       ...prev,
       [bookingId]: !prev[bookingId],
     }));
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-LK", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 0,
-    }).format(amount);
   };
 
   const formatDate = (dateString: string) => {
@@ -284,7 +277,7 @@ export default function PendingToursPage() {
           </div>
           <div className="bg-white rounded-xl md:rounded-2xl shadow-lg border border-teal-200 p-3 md:p-4 text-center">
             <div className="text-xl md:text-2xl font-bold text-teal-600">
-              {formatCurrency(
+              {formatPrice(
                 pendingTours.reduce(
                   (sum, tour) => sum + tour.packageTotalPrice,
                   0,
@@ -371,7 +364,7 @@ export default function PendingToursPage() {
                         <div className="flex items-center space-x-1">
                           <span>💰</span>
                           <span className="text-xs">
-                            From {formatCurrency(tour.packagePricePerPerson)}
+                            {formatPrice(tour.packagePricePerPerson)}
                           </span>
                         </div>
                         <div className="flex items-center space-x-1">
@@ -398,8 +391,7 @@ export default function PendingToursPage() {
                       <div className="flex items-center space-x-1">
                         <span>💰</span>
                         <span>
-                          From {formatCurrency(tour.packagePricePerPerson)}{" "}
-                          /person
+                          From {formatPrice(tour.packagePricePerPerson)} /person
                         </span>
                       </div>
                       <div className="flex items-center space-x-1">
@@ -500,7 +492,7 @@ export default function PendingToursPage() {
                         <div className="flex justify-between border-t border-sky-200 pt-2 mt-2">
                           <span className="text-gray-600">Starting from:</span>
                           <span className="font-semibold text-sky-600">
-                            {formatCurrency(tour.packagePricePerPerson)}/person
+                            {formatPrice(tour.packagePricePerPerson)}/person
                           </span>
                         </div>
                         <div className="flex justify-between">
@@ -508,7 +500,7 @@ export default function PendingToursPage() {
                             Total package value:
                           </span>
                           <span className="font-semibold text-teal-600">
-                            {formatCurrency(tour.packageTotalPrice)}
+                            {formatPrice(tour.packageTotalPrice)}
                           </span>
                         </div>
                         {tour.discountPercentage > 0 && (

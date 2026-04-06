@@ -18,6 +18,8 @@ import {
 } from "@/types/destination-types";
 import { DestinationService } from "@/services/destinationService";
 import { useCommon } from "@/context/CommonContext";
+import { PLACE_HOLDER_IMAGE } from "@/utils/constant";
+import DOMPurify from "dompurify";
 
 // Define proper types for Leaflet
 declare global {
@@ -67,7 +69,7 @@ const DestinationImageWithFallback = ({
       className="object-cover"
       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       onError={() => {
-        setImgSrc("/api/placeholder/400/300?text=Destination");
+        setImgSrc(PLACE_HOLDER_IMAGE);
       }}
     />
   );
@@ -394,33 +396,35 @@ const TourMap: React.FC = () => {
         })
         .join("");
 
-      // Add popup with enhanced information and category colors
+      // Helper function to truncate text with TypeScript types
+      const truncateText = (
+        text: string | null | undefined,
+        maxLength: number,
+      ): string => {
+        if (!text) return "No description available";
+        if (text.length <= maxLength) return text;
+        return text.substring(0, maxLength) + "...";
+      };
+      const safeName = DOMPurify.sanitize(place.name || "");
+      const safeDescription = DOMPurify.sanitize(
+        truncateText(place.description, 100),
+      );
+      const safeLocation = DOMPurify.sanitize(place.location || "");
       marker.bindPopup(`
-        <div style="padding: 12px; max-width: 280px;">
-          <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: bold; color: ${categoryColor}; border-bottom: 2px solid ${categoryColor}; padding-bottom: 4px;">
-            ${place.name}
-          </h3>
-          <div style="margin: 8px 0; display: flex; flex-wrap: wrap; gap: 4px;">
-            ${categoriesHtml}
-          </div>
-          <p style="margin: 8px 0 4px 0; font-size: 13px; color: #444; line-height: 1.4;">
-            ${place.description || "No description available"}
-          </p>
-          <p style="margin: 4px 0; font-size: 12px; color: #666;">
-            <span style="font-weight: 600;">📍 Location:</span> ${place.location}
-          </p>
-          ${
-            place.images && place.images.length > 0
-              ? `
-          <p style="margin: 4px 0 0 0; font-size: 11px; color: #888; border-top: 1px solid #eee; padding-top: 4px;">
-            📸 ${place.images.length} image${place.images.length !== 1 ? "s" : ""} available
-          </p>
-          `
-              : ""
-          }
-        </div>
-      `);
+  <div style="padding: 12px; max-width: 280px;">
+    <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: bold;">
+      ${safeName}
+    </h3>
 
+    <p style="margin: 8px 0; font-size: 13px;">
+      ${safeDescription}
+    </p>
+
+    <p style="margin: 4px 0; font-size: 12px;">
+      📍 ${safeLocation}
+    </p>
+  </div>
+`);
       // Add click event
       marker.on("click", () => {
         const destination = destinations.find(

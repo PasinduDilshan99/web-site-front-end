@@ -7,6 +7,7 @@ import BookingSuccessMessage from "../booking-components/BookingSuccessMessage";
 import { bookingService } from "@/services/bookingService";
 import { useAuth } from "@/context/AuthContext";
 import { WishListService } from "@/services/wishListService";
+import { useCurrency } from "@/context/CurrencyContext";
 
 interface BookingSectionProps {
   packageData: ActivePackagesType;
@@ -20,7 +21,7 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
   const { user } = useAuth();
   const [isWishlisted, setIsWishlisted] = useState(packageData.isWished);
   const [loadingWishlist, setLoadingWishlist] = useState(false);
-
+  const { formatPrice, currentCurrency, convertPrice } = useCurrency();
   const handleSubmitBooking = async (formData: BookingFormData) => {
     setIsSubmitting(true);
 
@@ -66,15 +67,6 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
     } finally {
       setLoadingWishlist(false);
     }
-  };
-
-  const formatPrice = (price: number): string => {
-    return new Intl.NumberFormat("en-LK", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price);
   };
 
   const calculateDiscountedPrice = (): number => {
@@ -215,8 +207,8 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
             !user
               ? "border-gray-200 text-gray-400 bg-gray-50 cursor-not-allowed"
               : isWishlisted
-              ? "border-rose-300 text-rose-600 bg-rose-50 hover:bg-rose-100 hover:border-rose-400"
-              : "border-sky-300 text-sky-700 hover:border-sky-400 hover:bg-sky-50"
+                ? "border-rose-300 text-rose-600 bg-rose-50 hover:bg-rose-100 hover:border-rose-400"
+                : "border-sky-300 text-sky-700 hover:border-sky-400 hover:bg-sky-50"
           }`}
         >
           {loadingWishlist ? (
@@ -259,8 +251,8 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
           {!user
             ? "Login to Save"
             : isWishlisted
-            ? "Wishlisted"
-            : "Save for Later"}
+              ? "Wishlisted"
+              : "Save for Later"}
         </button>
 
         {/* ── Share button ── */}

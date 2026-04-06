@@ -95,9 +95,6 @@ const CardImage = React.memo(
 
     const handleError = () => {
       if (!imgError) {
-        console.log(
-          `Why Choose Us image failed to load for ${alt}, using placeholder`,
-        );
         setImgSrc(PLACE_HOLDER_IMAGE);
         setImgError(true);
         onError();
@@ -110,9 +107,11 @@ const CardImage = React.memo(
           src={imgSrc}
           alt={alt}
           fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="object-cover group-hover:scale-110 transition-transform duration-500"
           onError={handleError}
           unoptimized={imgError}
+          loading="eager"
         />
         {imgError && (
           <div className="absolute inset-0 bg-gradient-to-br from-purple-100/50 to-amber-100/50 flex items-center justify-center">

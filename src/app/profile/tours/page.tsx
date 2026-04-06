@@ -22,6 +22,7 @@ import {
   USER_PROFILE_REQUESTED_TOURS_PAGE_PATH,
   USER_PROFILE_UPCOMING_TOURS_PAGE_PATH,
 } from "@/utils/urls";
+import { useCurrency } from "@/context/CurrencyContext";
 
 // Combined Tour type for display
 interface DisplayTour {
@@ -113,6 +114,7 @@ export default function ToursPage() {
   const { user } = useAuth();
   const router = useRouter();
   const [apiService] = useState(() => new UserProfileAPIService());
+  const { formatPrice, currentCurrency, convertPrice } = useCurrency();
 
   useEffect(() => {
     if (user && !user.privileges.includes(USER_PROFILE_TOURS_VIEW_PRIVILEGE)) {
@@ -639,9 +641,7 @@ export default function ToursPage() {
                 </div>
                 <div className="flex items-center space-x-2 text-gray-600">
                   <span className="w-5 h-5">💰</span>
-                  <span className="font-medium">
-                    USD {tour.price.toLocaleString()}
-                  </span>
+                  <span className="font-medium">{formatPrice(tour.price)}</span>
                 </div>
               </div>
               <span
@@ -900,7 +900,7 @@ export default function ToursPage() {
               </div>
             </div>
             <div className="mt-4 text-center text-xs text-gray-500">
-              Total Value: USD{" "}
+              Total Value: {currentCurrency.symbol}{" "}
               {allTours
                 .reduce((acc, tour) => acc + tour.price, 0)
                 .toLocaleString()}

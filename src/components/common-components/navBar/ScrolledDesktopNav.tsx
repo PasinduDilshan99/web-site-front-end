@@ -8,6 +8,7 @@ import { useAuth } from "@/context/AuthContext";
 import ScrolledDesktopDropdown from "./ScrolledDesktopDropdown";
 import UserDropdown from "./UserDropdown";
 import Image from "next/image";
+import { CurrencySelector } from "../currency/CurrencySelector";
 
 interface ScrolledDesktopNavProps {
   visibleItems: NavBarItem[];
@@ -379,6 +380,7 @@ const ScrolledDesktopNav: React.FC<ScrolledDesktopNavProps> = ({
 
       {/* Compact User Auth Section - Desktop */}
       <div className="hidden md:flex items-center space-x-3">
+         <CurrencySelector />
         {user ? (
           <UserDropdown
             user={user}

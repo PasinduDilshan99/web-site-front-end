@@ -2,6 +2,7 @@
 "use client";
 import UserProfileCompletedToursLoading from "@/components/user-profile-components/Loadings/UserProfileCompletedToursLoading";
 import { useAuth } from "@/context/AuthContext";
+import { useCurrency } from "@/context/CurrencyContext";
 import { UserProfileAPIService } from "@/services/userProfileAPIService";
 import { CompletedTour } from "@/types/completed-tours";
 import { USER_PROFILE_COMPLETED_TOURS_VIEW_PRIVILEGE } from "@/utils/privileges";
@@ -16,6 +17,7 @@ export default function CompletedToursPage() {
   const [expandedBooking, setExpandedBooking] = useState<number | null>(null);
   const apiService = new UserProfileAPIService();
   const router = useRouter();
+  const { formatPrice } = useCurrency();
 
   const { user } = useAuth();
   const [expandedDescriptions, setExpandedDescriptions] = useState<{
@@ -55,14 +57,6 @@ export default function CompletedToursPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-LK", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 0,
-    }).format(amount);
   };
 
   const formatDate = (dateString: string) => {
@@ -227,7 +221,7 @@ export default function CompletedToursPage() {
           </div>
           <div className="bg-white rounded-xl shadow-md border border-gray-200 p-4 md:p-6 text-center hover:shadow-lg transition-shadow duration-300">
             <div className="text-2xl md:text-3xl font-bold text-purple-600 mb-1">
-              {formatCurrency(
+              {formatPrice(
                 completedTours.reduce((sum, tour) => sum + tour.finalAmount, 0),
               )}
             </div>
@@ -322,7 +316,7 @@ export default function CompletedToursPage() {
                             d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                           />
                         </svg>
-                        <span>{formatCurrency(tour.finalAmount)}</span>
+                        <span>{formatPrice(tour.finalAmount)}</span>
                       </div>
                     </div>
                   </div>
@@ -391,7 +385,7 @@ export default function CompletedToursPage() {
                             Price per person:
                           </span>
                           <span className="font-semibold text-gray-800">
-                            {formatCurrency(tour.packagePricePerPerson)}
+                            {formatPrice(tour.packagePricePerPerson)}
                           </span>
                         </div>
                         <div className="flex justify-between py-1">
@@ -424,13 +418,13 @@ export default function CompletedToursPage() {
                         <div className="flex justify-between py-1">
                           <span className="text-gray-600">Total Amount:</span>
                           <span className="font-semibold text-gray-800">
-                            {formatCurrency(tour.totalAmount)}
+                            {formatPrice(tour.totalAmount)}
                           </span>
                         </div>
                         <div className="flex justify-between py-1">
                           <span className="text-gray-600">Discount:</span>
                           <span className="font-semibold text-emerald-600">
-                            -{formatCurrency(tour.discountAmount)}
+                            -{formatPrice(tour.discountAmount)}
                           </span>
                         </div>
                         <div className="flex justify-between py-1">
@@ -438,9 +432,7 @@ export default function CompletedToursPage() {
                             Tax & Insurance:
                           </span>
                           <span className="font-semibold text-gray-800">
-                            {formatCurrency(
-                              tour.taxAmount + tour.insuranceAmount,
-                            )}
+                            {formatPrice(tour.taxAmount + tour.insuranceAmount)}
                           </span>
                         </div>
                         <div className="flex justify-between py-1 pt-2 border-t border-gray-300">
@@ -448,7 +440,7 @@ export default function CompletedToursPage() {
                             Final Amount:
                           </span>
                           <span className="font-bold text-teal-600">
-                            {formatCurrency(tour.finalAmount)}
+                            {formatPrice(tour.finalAmount)}
                           </span>
                         </div>
                       </div>
@@ -564,7 +556,7 @@ export default function CompletedToursPage() {
                                 {activity.activityName}
                               </h4>
                               <span className="bg-emerald-100 text-emerald-800 px-2 py-1 rounded-lg text-xs md:text-sm font-semibold whitespace-nowrap">
-                                {formatCurrency(activity.totalPrice)}
+                                {formatPrice(activity.totalPrice)}
                               </span>
                             </div>
                             <p className="text-gray-600 text-xs md:text-sm mb-2 md:mb-3 line-clamp-2">
@@ -685,7 +677,7 @@ export default function CompletedToursPage() {
                               </div>
                               <div className="flex flex-col items-start md:items-end gap-1">
                                 <div className="font-bold text-purple-600 text-sm md:text-base">
-                                  {formatCurrency(payment.amount)}
+                                  {formatPrice(payment.amount)}
                                 </div>
                                 <span
                                   className={`px-2 py-1 rounded-full text-xs font-semibold border ${getStatusColor(payment.paymentStatus)}`}

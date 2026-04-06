@@ -7,10 +7,10 @@ import ContactForm from "@/components/contact-us-components/ContactForm";
 import WhyChooseUs from "@/components/home-page-components/whyChooseUs/WhyChooseUs";
 import OurServices from "@/components/home-page-components/ourServices/OurServices";
 import ActiveToursHomeGrid from "@/components/home-page-components/tours/ActiveToursHomeGrid";
-import TourMap from "@/components/home-page-components/tours/TourMap";
 import { useAuth } from "@/context/AuthContext";
 import { HOME_PAGE_VIEW_PRIVILEGE } from "@/utils/privileges";
 import PermissionDenied from "@/components/common-components/permission-denied/PermissionDenied";
+import TourMap from "@/components/home-page-components/tours/TourMap";
 
 export default function HomePage() {
 //   const { user } = useAuth();
@@ -35,7 +35,7 @@ export default function HomePage() {
       <div>
         <ActiveToursHomeGrid />
       </div>
-      <div>
+         <div>
         <TourMap />
       </div>
       <div>

@@ -6,6 +6,7 @@ import { User } from "@/context/AuthContext";
 import { useAuth } from "@/context/AuthContext";
 import MobileMenuItem from "./MobileMenuItem";
 import Image from "next/image";
+import { MobileCurrencySelector } from "../currency/MobileCurrencySelector";
 
 interface ScrolledMobileNavProps {
   visibleNavBarItems: NavBarItem[];
@@ -55,6 +56,9 @@ const ScrolledMobileNav: React.FC<ScrolledMobileNavProps> = ({
               isScrolled={true}
             />
           ))}
+          <div className="">
+            <MobileCurrencySelector />
+          </div>
 
           {/* Compact Mobile Auth Links */}
           <div
