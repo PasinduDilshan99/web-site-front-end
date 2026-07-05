@@ -196,6 +196,8 @@ export const GET_ACTIVE_GALLERY_IMAGES_DATA_FE = `${API}${GALLERY}/active-images
 
 // Inquiry
 export const ADD_INQUIRY_DATA_FE = `${API}${INQUIRY}/create`;
+export const ADD_CHAT_BOT_INQUIRY_DATA_FE = `${API}${INQUIRY}/chat-bot-request`;
+
 
 // Footer
 export const GET_ALL_FOOTER_DATA_FE = `${API}${FOOTER}`;

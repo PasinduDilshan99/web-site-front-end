@@ -9,7 +9,11 @@
 
 // Staging
 const PROTOCOL = "https";
+<<<<<<< HEAD
 const DOMAIN = "stg-api.felicitatrips.com"; // staging backend domain
+=======
+const DOMAIN = "test-api.felicitatrips.com"; // staging backend domain
+>>>>>>> 10f1d30 (ad)
 const PORT = "443"; // HTTPS
 const CONTEXT_ROOT = "felicita";
 const VERSION = "/v0";
@@ -223,6 +227,7 @@ export const GET_ACTIVE_GALLERY_IMAGES_DATA = `${BASE_PATH}${API}${VERSION}${GAL
 
 // Inquiry
 export const ADD_INQUIRY_DATA = `${BASE_PATH}${API}${VERSION}${INQUIRY}/create`;
+export const ADD_CHAT_BOT_INQUIRY_DATA = `${BASE_PATH}${API}${VERSION}${INQUIRY}/chat-bot-request`;
 
 // Footer
 export const GET_ALL_FOOTER_DATA = `${BASE_PATH}${API}${VERSION}${FOOTER}/all`;

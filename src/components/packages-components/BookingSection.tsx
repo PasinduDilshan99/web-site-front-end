@@ -28,7 +28,9 @@ const BookingSection: React.FC<BookingSectionProps> = ({ packageData }) => {
     try {
       await bookingService.insertBookingInquiry({
         tourId: formData.tourId,
+        tourName: packageData.tourName,
         packageId: formData.packageId ?? null,
+        packageName: packageData.packageName,
         name: formData?.name,
         email: formData?.email,
         contactNumber: formData?.contactNumber,

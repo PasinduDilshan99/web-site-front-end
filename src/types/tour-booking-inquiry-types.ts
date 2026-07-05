@@ -2,7 +2,9 @@
 
 export interface TourBookingInquiryRequest {
   tourId: number;
+  tourName:string;
   packageId?: number | null;
+  packageName?: string | null;
   name?: string;
   email?: string;
   contactNumber?: string;
