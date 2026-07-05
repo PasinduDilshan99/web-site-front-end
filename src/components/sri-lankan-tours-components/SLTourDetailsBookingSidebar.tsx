@@ -59,9 +59,7 @@ const SLTourDetailsBookingSidebar: React.FC<
     try {
       await bookingService.insertBookingInquiry({
         tourId: formData.tourId,
-        tourName: tour.tourName,
         packageId: formData.packageId ?? null,
-        packageName: selectedPackage?.packageName,
         name: formData?.name,
         email: formData?.email,
         contactNumber: formData?.contactNumber,
