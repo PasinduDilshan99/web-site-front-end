@@ -197,10 +197,16 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
     name: c.tourCategoryName,
   }));
 
+  // SAFE PRICE HANDLING - Check if price exists and is a valid number
+  const safePrice =
+    tour.tourStartingPrice && !isNaN(tour.tourStartingPrice)
+      ? tour.tourStartingPrice
+      : 0;
+
   // Format the price in the selected currency
-  const formattedPrice = formatPrice(tour.tourStartingPrice);
-  
-  // Extract the numeric part and symbol for display (optional)
+  const formattedPrice = formatPrice(safePrice);
+
+  // Extract the numeric part and symbol for display
   const getPriceDisplay = () => {
     const formatted = formattedPrice;
     // Try to extract symbol and number
@@ -288,9 +294,7 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tour }) => {
               className="text-base font-bold leading-none"
               style={{ color: "#095f82" }}
             >
-              {typeof priceDisplay.number === 'string' 
-                ? priceDisplay.number 
-                : tour.tourStartingPrice.toLocaleString()}
+              {priceDisplay.number}
             </span>
           </div>
         </div>

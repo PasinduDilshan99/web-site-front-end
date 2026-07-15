@@ -76,6 +76,7 @@ const ChatBot = () => {
     new Set(),
   );
   const [isMobile, setIsMobile] = useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatWindowRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -83,10 +84,15 @@ const ChatBot = () => {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 640);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    const checkScreenSize = () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      setIsMobile(width < 640);
+      setIsSmallScreen(height < 700 || width < 480);
+    };
+    checkScreenSize();
+    window.addEventListener("resize", checkScreenSize);
+    return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
   useEffect(() => {
@@ -833,7 +839,7 @@ const ChatBot = () => {
       {isOpen && (
         <div
           ref={chatWindowRef}
-          className={`chat-window ${isClosing ? "chat-window--closing" : "chat-window--open"} ${isMobile ? "chat-window--mobile" : ""}`}
+          className={`chat-window ${isClosing ? "chat-window--closing" : "chat-window--open"} ${isMobile ? "chat-window--mobile" : ""} ${isSmallScreen ? "chat-window--small" : ""}`}
           style={{
             backgroundColor: seaTheme.background,
             border: isMobile ? "none" : `1px solid ${seaTheme.border}`,
@@ -1113,8 +1119,9 @@ const ChatBot = () => {
           bottom: 84px;
           right: 20px;
           z-index: 999;
-          width: clamp(360px, 35vw, 480px);
-          height: clamp(560px, 80vh, 700px);
+          width: clamp(340px, 35vw, 480px);
+          height: clamp(480px, 75vh, 700px);
+          max-height: calc(100vh - 120px);
           border-radius: 20px;
           display: flex;
           flex-direction: column;
@@ -1129,16 +1136,86 @@ const ChatBot = () => {
         .chat-window--closing {
           animation: window-exit 0.28s cubic-bezier(0.55, 0, 1, 0.45) forwards;
         }
+        .chat-window--small {
+          height: clamp(380px, 65vh, 500px) !important;
+          max-height: calc(100vh - 100px) !important;
+          bottom: 76px !important;
+          right: 12px !important;
+          width: clamp(300px, 30vw, 400px) !important;
+        }
         .chat-window--mobile {
           bottom: 0 !important;
           right: 0 !important;
           left: 0 !important;
           width: 100% !important;
           height: 92dvh !important;
+          max-height: 92dvh !important;
           border-radius: 20px 20px 0 0 !important;
         }
         .chat-window--mobile.chat-window--open {
           animation: sheet-enter 0.38s cubic-bezier(0.34, 1.3, 0.64, 1) forwards;
+        }
+        .chat-window--mobile .chat-header {
+          padding: 12px 14px;
+        }
+        .chat-window--mobile .chat-messages {
+          padding: 12px;
+        }
+        .chat-window--mobile .chat-quick-replies {
+          padding: 6px 10px 10px;
+          max-height: 90px;
+        }
+        .chat-window--mobile .chat-quick-reply-btn {
+          padding: 6px 12px;
+          font-size: 12px;
+        }
+        .chat-window--small .chat-header {
+          padding: 10px 12px;
+        }
+        .chat-window--small .chat-title {
+          font-size: 13px;
+        }
+        .chat-window--small .chat-subtitle {
+          font-size: 10px;
+        }
+        .chat-window--small .chat-avatar {
+          width: 32px;
+          height: 32px;
+        }
+        .chat-window--small .chat-messages {
+          padding: 10px;
+          gap: 8px;
+        }
+        .chat-window--small .chat-bubble {
+          padding: 8px 12px;
+        }
+        .chat-window--small .chat-bubble-text {
+          font-size: 13px;
+        }
+        .chat-window--small .chat-quick-replies {
+          padding: 4px 8px 8px;
+          max-height: 80px;
+          gap: 6px;
+        }
+        .chat-window--small .chat-quick-reply-btn {
+          padding: 5px 10px;
+          font-size: 11px;
+        }
+        .chat-window--small .chat-footer {
+          padding: 4px 12px;
+        }
+        .chat-window--small .chat-footer-text {
+          font-size: 9px;
+        }
+        .chat-window--small .chat-refresh-btn,
+        .chat-window--small .chat-close-btn {
+          width: 28px;
+          height: 28px;
+        }
+        .chat-window--small .chat-refresh-btn svg,
+        .chat-window--small .chat-close-btn svg {
+          width: 14px;
+          height: 14px;
         }
         .chat-header {
           padding: 14px 16px;
@@ -1146,6 +1223,7 @@ const ChatBot = () => {
           align-items: center;
           justify-content: space-between;
           flex-shrink: 0;
+          min-height: 60px;
         }
         .chat-header-left {
           display: flex;
@@ -1166,6 +1244,7 @@ const ChatBot = () => {
           display: flex;
           align-items: center;
           justify-content: center;
+          flex-shrink: 0;
         }
         .chat-avatar-icon {
           width: 22px;
@@ -1187,11 +1266,13 @@ const ChatBot = () => {
           font-weight: 600;
           color: white;
           margin: 0;
+          line-height: 1.2;
         }
         .chat-subtitle {
           font-size: 11px;
           color: rgba(255, 255, 255, 0.8);
           margin: 2px 0 0;
+          line-height: 1.2;
         }
         .chat-refresh-btn,
         .chat-close-btn {
@@ -1206,6 +1287,7 @@ const ChatBot = () => {
           color: white;
           cursor: pointer;
           transition: all 0.2s ease;
+          flex-shrink: 0;
         }
         .chat-refresh-btn:hover {
           background: rgba(255, 255, 255, 0.3);
@@ -1222,6 +1304,7 @@ const ChatBot = () => {
           display: flex;
           flex-direction: column;
           gap: 12px;
+          min-height: 0;
         }
         .chat-messages::-webkit-scrollbar {
           width: 4px;
@@ -1258,6 +1341,7 @@ const ChatBot = () => {
           display: flex;
           align-items: center;
           justify-content: center;
+          flex-shrink: 0;
         }
         .chat-message-avatar-placeholder {
           flex-shrink: 0;
@@ -1277,6 +1361,7 @@ const ChatBot = () => {
           max-width: 80%;
           border-radius: 18px;
           padding: 10px 14px;
+          word-break: break-word;
         }
         .chat-bubble--bot {
           border-bottom-left-radius: 4px;
@@ -1323,6 +1408,14 @@ const ChatBot = () => {
           flex-shrink: 0;
           max-height: 120px;
           overflow-y: auto;
+          align-items: center;
+        }
+        .chat-quick-replies::-webkit-scrollbar {
+          width: 3px;
+        }
+        .chat-quick-replies::-webkit-scrollbar-thumb {
+          background: rgba(0, 0, 0, 0.1);
+          border-radius: 4px;
         }
         .chat-quick-reply-btn {
           padding: 8px 14px;
@@ -1332,10 +1425,14 @@ const ChatBot = () => {
           cursor: pointer;
           transition: all 0.2s ease;
           white-space: nowrap;
+          flex-shrink: 0;
         }
         .chat-quick-reply-btn:hover {
           transform: translateY(-2px);
           background: rgba(13, 148, 136, 0.2) !important;
+        }
+        .chat-quick-reply-btn:active {
+          transform: scale(0.95);
         }
         .chat-avatar-logo {
           width: 100%;
@@ -1348,11 +1445,16 @@ const ChatBot = () => {
           text-align: center;
           border-top: 1px solid;
           flex-shrink: 0;
+          min-height: 36px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
         .chat-footer-text {
           font-size: 10px;
           margin: 0;
           opacity: 0.7;
+          line-height: 1.3;
         }
         @media (min-width: 1024px) {
           .chat-fab {
@@ -1366,6 +1468,23 @@ const ChatBot = () => {
             height: 640px;
             bottom: 100px;
             right: 28px;
+            max-height: calc(100vh - 140px);
+          }
+          .chat-window--small {
+            height: 520px !important;
+            max-height: calc(100vh - 120px) !important;
+            bottom: 92px !important;
+            right: 24px !important;
+            width: 380px !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .chat-window--small {
+            height: 75vh !important;
+            max-height: 75vh !important;
+            bottom: 72px !important;
+            right: 8px !important;
+            width: calc(100% - 16px) !important;
           }
         }
         @keyframes window-enter {
