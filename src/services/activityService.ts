@@ -150,8 +150,8 @@ export class ActivityService {
     );
   }
 
+  // FIXED: Handle null season values
   static async fetchFilterOptions(): Promise<{
-    // categories: string[];
     seasons: string[];
     durations: number[];
     participantsOptions: number[];
@@ -182,21 +182,17 @@ export class ActivityService {
       const result: PaginatedActivityResponse = await response.json();
 
       if (result.code === 200 && result.data) {
-        // Extract unique values for filters
-        // const categoriesList = [
-        //   ...new Set(
-        //     result.data.activityResponseDtos.map(
-        //       (activity) => activity.category_name,
-        //     ),
-        //   ),
-        // ];
+        // FIXED: Filter out null/undefined season before splitting
         const seasonsList = [
           ...new Set(
-            result.data.activityResponseDtos.flatMap((activity) =>
-              activity.season.split(",").map((s) => s.trim()),
-            ),
+            result.data.activityResponseDtos
+              .filter(activity => activity.season) // Remove null/undefined
+              .flatMap((activity) =>
+                activity.season.split(",").map((s) => s.trim())
+              ),
           ),
         ];
+        
         const durationsList = [
           ...new Set(
             result.data.activityResponseDtos.map((activity) =>
@@ -204,6 +200,7 @@ export class ActivityService {
             ),
           ),
         ].sort((a, b) => a - b);
+        
         const participantsList = [
           ...new Set(
             result.data.activityResponseDtos.map(
@@ -211,6 +208,7 @@ export class ActivityService {
             ),
           ),
         ].sort((a, b) => a - b);
+        
         const statusesList = [
           ...new Set(
             result.data.activityResponseDtos.map((activity) => activity.status),
@@ -218,7 +216,6 @@ export class ActivityService {
         ];
 
         return {
-          // categories: categoriesList,
           seasons: seasonsList,
           durations: durationsList,
           participantsOptions: participantsList,
@@ -227,7 +224,6 @@ export class ActivityService {
         };
       } else {
         return {
-          // categories: [],
           seasons: [],
           durations: [],
           participantsOptions: [],
@@ -238,7 +234,6 @@ export class ActivityService {
     } catch (err) {
       console.error("Error fetching filter options:", err);
       return {
-        // categories: [],
         seasons: [],
         durations: [],
         participantsOptions: [],
@@ -250,8 +245,6 @@ export class ActivityService {
   }
 
   // Fetch activities with filters - main API call function
-  // services/activityService.ts
-
   static buildSearchRequest(filters: ActivityFilters): ActivitySearchRequest {
     return {
       name: filters.search || null,

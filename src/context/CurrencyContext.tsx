@@ -16,7 +16,6 @@ export interface Currency {
   flag?: string;
 }
 
-// Available currencies - most commonly used
 // Available currencies - most commonly used for Sri Lankan travel agency (Alphabetical by code)
 export const SUPPORTED_CURRENCIES: Currency[] = [
   { code: "AED", symbol: "د.إ", name: "UAE Dirham", rate: 3.67, flag: "🇦🇪" },
@@ -149,13 +148,19 @@ const CurrencyContext = createContext<CurrencyContextType | undefined>(
   undefined,
 );
 
+// Helper function to get USD currency
+const getUSDCurrency = (): Currency => {
+  const usd = SUPPORTED_CURRENCIES.find(c => c.code === "USD");
+  return usd || SUPPORTED_CURRENCIES[0]; // Fallback to first if USD not found
+};
+
 // Hook with default values during prerendering
 export const useCurrency = () => {
   const context = useContext(CurrencyContext);
 
   if (!context) {
     // Default currency is USD
-    const defaultCurrency = SUPPORTED_CURRENCIES[0];
+    const defaultCurrency = getUSDCurrency();
 
     return {
       currencies: SUPPORTED_CURRENCIES,
@@ -182,8 +187,8 @@ export const CurrencyProvider: React.FC<CurrencyProviderProps> = ({
   const [currencies, setCurrencies] =
     useState<Currency[]>(SUPPORTED_CURRENCIES);
   const [currentCurrency, setCurrentCurrency] = useState<Currency>(
-    SUPPORTED_CURRENCIES[0],
-  ); // USD as default
+    getUSDCurrency() // Set USD as default
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
