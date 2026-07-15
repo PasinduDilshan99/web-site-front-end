@@ -84,8 +84,11 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
     }
   };
 
-  const getSeasonBadges = (seasonString: string) =>
-    seasonString.split(",").map((s) => s.trim());
+  // FIXED: Handle null/undefined season
+  const getSeasonBadges = (seasonString: string | null | undefined) => {
+    if (!seasonString) return [];
+    return seasonString.split(",").map((s) => s.trim());
+  };
 
   // Categories logic
   const categories = activity.activities_category || [];
@@ -273,7 +276,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
           </div>
         </div>
 
-        {/* Best Seasons */}
+        {/* Best Seasons - FIXED with null check */}
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-1.5">
             <span
@@ -288,9 +291,10 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
             <div className="flex-1 h-px bg-gradient-to-r from-[#40E0D0]/30 to-transparent" />
           </div>
           <div className="flex flex-wrap gap-1.5">
+            {/* FIXED: Added better key and null check */}
             {getSeasonBadges(activity.season).map((season, idx) => (
               <span
-                key={idx}
+                key={`${season}-${idx}`}
                 className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border"
                 style={{
                   background: "linear-gradient(135deg, rgba(251,191,36,0.10), rgba(245,158,11,0.10))",

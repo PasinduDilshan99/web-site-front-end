@@ -523,74 +523,92 @@ const Pagination: React.FC<PaginationProps> = ({
 
   return (
     <div className="flex flex-col items-center justify-between gap-3 mt-8 pt-6 border-t border-sky-200 sm:flex-row">
-  
-  {/* Results count */}
-  <div className="text-xs sm:text-sm text-sky-600 font-medium order-2 sm:order-1">
-    Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} results
-  </div>
+      {/* Results count */}
+      <div className="text-xs sm:text-sm text-sky-600 font-medium order-2 sm:order-1">
+        Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of{" "}
+        {totalItems} results
+      </div>
 
-  {/* Pagination controls */}
-  <div className="flex items-center gap-1.5 sm:gap-2 order-1 sm:order-2">
-    
-    {/* Previous */}
-    <button
-      onClick={() => onPageChange(currentPage - 1)}
-      disabled={currentPage === 1}
-      className="cursor-pointer px-2.5 sm:px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-1.5"
-      aria-label="Previous page"
-    >
-      <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-      </svg>
-      <span className="hidden sm:inline">Previous</span>
-    </button>
-
-    {/* Page numbers */}
-    <div className="flex items-center gap-1">
-      {pageNumbers.map((page, index) => {
-        if (page === "...") {
-          return (
-            <span
-              key={`ellipsis-${index}`}
-              className="w-8 sm:w-10 text-center py-2 text-xs sm:text-sm font-medium text-sky-400"
-            >
-              …
-            </span>
-          );
-        }
-
-        return (
-          <button
-            key={page}
-            onClick={() => onPageChange(page as number)}
-            className={`min-w-[32px] sm:min-w-[40px] px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-lg transition-all duration-300 cursor-pointer ${
-              currentPage === page
-                ? "bg-gradient-to-r from-sky-600 to-teal-600 text-white shadow-lg scale-105"
-                : "text-sky-700 bg-white border-2 border-sky-300 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 hover:shadow-md"
-            }`}
-            aria-label={`Page ${page}`}
-            aria-current={currentPage === page ? "page" : undefined}
+      {/* Pagination controls */}
+      <div className="flex items-center gap-1.5 sm:gap-2 order-1 sm:order-2">
+        {/* Previous */}
+        <button
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="cursor-pointer px-2.5 sm:px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-1.5"
+          aria-label="Previous page"
+        >
+          <svg
+            className="w-4 h-4 shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
           >
-            {page}
-          </button>
-        );
-      })}
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+          <span className="hidden sm:inline">Previous</span>
+        </button>
+
+        {/* Page numbers */}
+        <div className="flex items-center gap-1">
+          {pageNumbers.map((page, index) => {
+            if (page === "...") {
+              return (
+                <span
+                  key={`ellipsis-${index}`}
+                  className="w-8 sm:w-10 text-center py-2 text-xs sm:text-sm font-medium text-sky-400"
+                >
+                  …
+                </span>
+              );
+            }
+
+            return (
+              <button
+                key={page}
+                onClick={() => onPageChange(page as number)}
+                className={`min-w-[32px] sm:min-w-[40px] px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-lg transition-all duration-300 cursor-pointer ${
+                  currentPage === page
+                    ? "bg-gradient-to-r from-sky-600 to-teal-600 text-white shadow-lg scale-105"
+                    : "text-sky-700 bg-white border-2 border-sky-300 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 hover:shadow-md"
+                }`}
+                aria-label={`Page ${page}`}
+                aria-current={currentPage === page ? "page" : undefined}
+              >
+                {page}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Next */}
+        <button
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="cursor-pointer px-2.5 sm:px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-1.5"
+          aria-label="Next page"
+        >
+          <span className="hidden sm:inline">Next</span>
+          <svg
+            className="w-4 h-4 shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        </button>
+      </div>
     </div>
-
-    {/* Next */}
-    <button
-      onClick={() => onPageChange(currentPage + 1)}
-      disabled={currentPage === totalPages}
-      className="cursor-pointer px-2.5 sm:px-4 py-2 text-sm font-medium text-sky-700 bg-white border-2 border-sky-300 rounded-lg hover:bg-sky-50 hover:text-sky-800 hover:border-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-1.5"
-      aria-label="Next page"
-    >
-      <span className="hidden sm:inline">Next</span>
-      <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-      </svg>
-    </button>
-
-  </div>
-</div>
   );
 };
